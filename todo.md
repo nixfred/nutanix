@@ -362,7 +362,19 @@ Appendices:
     - `ncc log_collector run_all` for support log bundles accurate.
   - Suspect (kept as-is):
     - Move log file path `/opt/xtract-vm/logs/` — Move's history includes the legacy "Xtract" branding; the path persists in some Move versions. Acceptable as-is.
-- [ ] appendix-h-competitive-matrix.md
+- [x] appendix-h-competitive-matrix.md — STATUS: findings-recorded, one refinement made, References section added
+  - Refinement applied:
+    - **HyperFlex section**: replaced vague "Cisco announced end-of-development in 2024" with the authoritative dates from Cisco's official EOL announcement (last order Sep 11, 2024; last bug-fix maintenance Sep 11, 2025; last subscription renewal Feb 28, 2029) and named the Cisco-Nutanix partnership migration product **Cisco Compute Hyperconverged with Nutanix** running on qualifying UCS M6 hardware (consistent with Appendix B's correction).
+  - Confirmed:
+    - The competitive playbook is engagement methodology (positioning, discovery questions, kill questions, win/loss conditions, what-NOT-to-say). Thin technical surface; the technical claims it does make derive from Appendix B and the modules.
+    - VMware (VxRail / vSAN ReadyNodes) positioning consistent with Appendix B and Module 09.
+    - HPE positioning (SimpliVity, Alletra dHCI, GreenLake) accurate; OEM partnership (Nutanix on HPE DX) consistent with Module 02.
+    - Dell APEX positioning consistent with Module 09 consumption-model framing.
+    - Azure Stack HCI positioning consistent with Appendix B.
+    - Scale Computing HC3, StorMagic positioning reasonable for SMB / edge segments.
+    - Ceph / SDS-on-commodity positioning honest; matches the "operational complexity vs licensing savings" trade-off framing in Module 09.
+    - Status quo / "do nothing" framing accurate.
+  - References section added linking to Cisco's official HyperFlex EOL announcement, Futurum's industry analysis, and the Appendix B / Module 09 / Module 06 References sections that source the feature-and-pricing tables behind the positioning playbooks.
 - [ ] appendix-i-reference-architectures.md
 - [ ] appendix-j-poc-playbook.md
 - [ ] appendix-k-cert-tracker.md

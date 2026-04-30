@@ -105,7 +105,7 @@ You lose when: customer has a long-term VMware ELA protecting them from post-Bro
 
 ### Quick Read
 
-**What it is:** Cisco's HCI platform built on UCS hardware with the HX Data Platform storage layer. Cisco announced end-of-development in 2024; existing deployments continue to operate with declining support runway.
+**What it is:** Cisco's HCI platform built on UCS hardware with the HX Data Platform (HXDP) storage layer. Cisco announced HXDP end-of-life in 2024 with a defined support runway: **last order date September 11, 2024; last bug-fix maintenance September 11, 2025; last subscription renewal February 28, 2029**. The recommended Cisco-led migration path is **Cisco Compute Hyperconverged with Nutanix** — Nutanix software running on qualifying Cisco UCS M6 hardware, the joint Cisco-Nutanix partnership product. Existing HyperFlex customers preserve their UCS hardware investment and swap the HCI software stack to Nutanix.
 
 **Market position:** Active customer base evaluating alternatives. The conversation is rarely "HyperFlex vs Nutanix" anymore; it's "what do we replace HyperFlex with?"
 
@@ -519,6 +519,18 @@ Be the partner who helps with what they haven't done. Build the TCO. Map the wor
 6. **Not naming "do nothing" as a competitor.** Most lost deals lose to status quo, not to another vendor.
 7. **Avoiding head-to-head POCs.** If you're confident, invite them; if you're not, address why first.
 8. **Pressure-selling timing.** Customers act on their timeline; pretending otherwise backfires.
+
+---
+
+## References
+
+This appendix is competitive engagement methodology and positioning. The technical claims it does make (HyperFlex EOL dates, the Cisco-Nutanix partnership product, Azure Stack HCI architecture, Scale Computing positioning) are sourced from the Comparison Matrix appendix and the modules. Highlights specific to this appendix:
+
+- [Cisco HyperFlex Data Platform End-of-Life Announcement](https://www.cisco.com/c/en/us/products/collateral/hyperconverged-infrastructure/hyperflex-hx-series/hyperflex-data-platform-eol.html). Authoritative HXDP EOL dates used in the HyperFlex section.
+- [Cisco Discontinues HyperFlex to Focus on Nutanix-Based HCI (Futurum Group)](https://futurumgroup.com/insights/cisco-discontinues-hyperflex-to-focus-on-nutanix-based-hci/). Industry coverage of the Cisco-Nutanix migration partnership.
+- [Appendix B References](./appendix-b-comparison-matrix.md#references) — the source for the broader feature-by-feature tables backing this appendix's positioning conversations.
+- [Module 09 References](../09-licensing-economics.md#references) — the source for the post-Broadcom pricing references used in the VMware section.
+- [Module 06 References](../06-networking-flow.md#references) — Flow vs NSX-T positioning, Flow Network Security licensing.
 
 ---
 
