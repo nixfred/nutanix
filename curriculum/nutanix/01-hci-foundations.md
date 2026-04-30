@@ -500,6 +500,19 @@ You are now ready to look at a specific HCI implementation, Nutanix, and see wha
 
 ---
 
+## References
+
+Authoritative sources verified during the technical review pass on this module. Use these to validate the version-sensitive claims (AOS, CE, Prism, NC2) before quoting them in front of customers.
+
+- [Nutanix Community Edition v2.1 — Recommended Hardware](https://portal.nutanix.com/docs/Nutanix-Community-Edition-Getting-Started-v2_1:top-sysreqs-ce-r.html). Boot disk, hot tier, and RAM minimums for CE; the source for the lab specs in this module.
+- [Nutanix AOS End-of-Life Calendar (endoflife.date)](https://endoflife.date/nutanix-aos). Current AOS release tracking. AOS 7.5 is the current major as of April 2026.
+- [AOS 7.5.1.1 Support Window (eosl.date)](https://eosl.date/eol/product/nutanix-aos/). Confirms the April 2026 GA release and the December 2027 end-of-support date.
+- [v4 API General Availability Announcement (Nutanix blog)](https://www.nutanix.com/blog/announcing-the-v4-api-and-sdk-general-availability-in-pc-2024-3-aos-7-0). v4 REST GA shipped with Prism Central 2024.3 / AOS 7.0; backs the "Nutanix v4 REST" reference in this module.
+- [Nutanix Cloud Clusters (NC2) on AWS](https://www.nutanix.com/products/nutanix-cloud-clusters/aws). Official product page confirming the NC2 product name.
+- [Prism Web Console Login Documentation](https://portal.nutanix.com/page/documents/details?targetId=Web-Console-Guide-Prism-v6_7:wc-login-wc-t.html). Default `admin` / `nutanix/4u` first-login credentials, port 9440, and the forced password change on first login.
+
+---
+
 ## Cross-References
 
 - **Next:** [Module 2: The Nutanix Stack, Node, CVM, Cluster](./02-nutanix-architecture.md)

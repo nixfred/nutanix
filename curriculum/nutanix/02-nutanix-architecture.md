@@ -747,6 +747,20 @@ You are now ready to look at the hypervisor question, AHV, what it is, what it d
 
 ---
 
+## References
+
+Authoritative sources verified during the technical review pass on this module. Cite these when defending the CVM tax discussion or the cluster-sizing recommendations in front of a sharp customer.
+
+- [Nutanix Bible — Cluster Components](https://www.nutanixbible.com/2f-book-of-basics-cluster-components.html). Authoritative service-by-service reference for Stargate, Cassandra, Curator, Zeus, Pithos, Medusa, and Acropolis. The taxonomy in this module follows this source. (Medusa is the abstraction layer fronting Cassandra; this module treats it as part of the metadata service for pedagogical clarity.)
+- [Nutanix Two-Node ROBO Best Practices (BP-2083)](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:BP-2083-ROBO-Deployment). Two-node cluster topology, witness placement, and operational guidance.
+- [Witness VM Requirements](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:witness-requirements.html). Witness minimum specs (2 vCPU, 6 GB RAM, 25 GB disk), the ≤ 500 ms latency requirement, and the constraint that Witness VMs cannot run on AWS or Azure.
+- [Nutanix Hardware Platforms — OEM Partners](https://www.nutanix.com/products/hardware-platforms). Authoritative list of OEM platforms: Cisco, HPE, Lenovo, Fujitsu, Dell, plus Nutanix NX and Supermicro. Backs the "Nutanix runs on Dell XC, HPE DX, Cisco UCS, Lenovo HX, Supermicro" claim in this module.
+- [AOS 6.8 nCLI Command Reference](https://portal.nutanix.com/page/documents/details?targetId=Command-Ref-AOS-v6_8:man-ncli-c.html). Authoritative source for `ncli cluster set-external-ip-address` and other cluster-management commands.
+- [Nutanix Bible — CLI Reference](https://www.nutanixbible.com/19b-cli.html). `cluster`, `ncli`, and `ncc` command coverage including the `cluster -s <ip1>,<ip2>,<ip3> create` syntax used in the lab section.
+- [AOS 7.5 — Controller VM Specifications (gated)](https://portal.nutanix.com/page/documents/details?targetId=Advanced-Admin-AOS:app-nutanix-cloud-infra-cvm-field-specifications-c.html). Authoritative source for AOS 7.5 CVM vCPU and memory allocation defaults. Requires Nutanix Support Portal authentication; the sizing table in this module is derived from public-domain summaries and should be re-validated with portal access during deployment planning.
+
+---
+
 ## Cross-References
 
 - **Previous:** [Module 1: HCI Foundations](./01-hci-foundations.md)

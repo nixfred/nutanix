@@ -41,7 +41,7 @@
 
 **Goal:** every technical claim in the curriculum holds up against authoritative sources as of April 2026. The site rests on this. Wrong facts here compound everywhere.
 
-**Method:** read each file with a fine tooth comb playing the role of a senior Nutanix engineer. For every claim about Nutanix architecture, product names, version numbers, default credentials, port numbers, exam blueprints, performance numbers, sizing rules, CLI syntax, partner-stack names (VMware, Pure, NetApp, HPE, Cisco), and competitive comparisons, verify against an authoritative source (Nutanix portal docs, Nutanix Bible, Nutanix University blueprints, vendor sites, RFCs, etc.). Record findings inline in this todo.md per file.
+**Method:** read each file with a fine tooth comb playing the role of a senior Nutanix engineer. For every claim about Nutanix architecture, product names, version numbers, default credentials, port numbers, exam blueprints, performance numbers, sizing rules, CLI syntax, partner-stack names (VMware, Pure, NetApp, HPE, Cisco), and competitive comparisons, verify against an authoritative source (Nutanix portal docs, Nutanix Bible, Nutanix University blueprints, vendor sites, RFCs, etc.). Record findings inline in this todo.md per file. **Add a `## References` section to the source markdown of every reviewed module/appendix**, before its `## Cross-References` block, listing the authoritative sources verified during the pass with descriptive titles and links. This is what lets a reader (or a future SA defending a claim in front of a customer) follow the chain back to the source.
 
 **Per-file findings format:**
 ```
@@ -55,7 +55,7 @@
 
 Modules:
 - [ ] 00-framework.md (meta-spec; check pedagogy claims, blueprint % numbers, callout taxonomy)
-- [x] 01-hci-foundations.md — STATUS: findings-recorded, one correction made
+- [x] 01-hci-foundations.md — STATUS: findings-recorded, one correction made, References section added
   - Confirmed:
     - Prism Element URL pattern `https://<cluster-IP>:9440` and port 9440. Source: Nutanix portal docs, multiple community references.
     - Default first-login credentials `admin` / `nutanix/4u` for Prism Element (must be changed on first login). Source: Nutanix Prism 6.7 web-console docs, ervik.as/nutanix-default-credentials. Still current as of AOS 7.x.
@@ -71,7 +71,27 @@ Modules:
     - Cert blueprint estimates "NCA ~12% / NCP-MCI ~5% / NCM-MCI ~2%" for HCI fundamentals are plausible but unsourced. Real fix belongs in 00-framework.md and appendix-k-cert-tracker.md once the official current Nutanix blueprint PDFs are pulled and reconciled. Flag for the framework pass.
     - "50-70% reduction in infrastructure operational hours" already self-flagged in the curriculum text ("verify against your own customer base before quoting specific percentages"). Acceptable as-is.
     - "Position Nutanix Files / Mine for backup" — Files (file storage) and Mine (backup-integration platform) are different products; the slash reads ambiguous but not technically wrong. Optional clarity edit on a future copy pass.
-- [ ] 02-nutanix-architecture.md
+- [x] 02-nutanix-architecture.md — STATUS: findings-recorded, no corrections required, References section added
+  - Confirmed:
+    - CVM service list (Stargate = data path; Cassandra = distributed metadata; Curator = background scrub/rebalance/ILM; Zeus = cluster config + ZooKeeper interface; Pithos = vDisk config; Acropolis = AHV VM lifecycle). Source: nutanixbible.com/2f-book-of-basics-cluster-components, next.nutanix.com community knowledge base.
+    - Cassandra characterization "forked, optimized version of Apache Cassandra" matches Nutanix Bible's "heavily modified Apache Cassandra."
+    - Pithos still current as a per-node vDisk config manager built on top of Cassandra.
+    - Three-node minimum production cluster confirmed (Zeus/ZooKeeper quorum requirement).
+    - Two-node ROBO cluster requires external Witness VM in separate failure domain. Witness VM minimum spec confirmed: 2 vCPU / 6 GB RAM / 25 GB disk; latency to cluster ≤ 500 ms; cannot run on AWS or Azure. Source: portal.nutanix.com BP-2083 ROBO Deployment best practices.
+    - Cluster create command syntax `cluster -s <ip1>,<ip2>,<ip3> create` exact match to current Nutanix nCLI docs (AOS 6.8+ nCLI reference).
+    - OEM partner mapping: Dell XC, HPE DX, Cisco UCS, Lenovo HX, plus Fujitsu and Supermicro. Curriculum's list (Dell XC, HPE DX, Cisco UCS, Lenovo HX, Supermicro, plus NX) is accurate; Fujitsu missing but optional.
+    - Foundation Standalone (laptop) vs Foundation Central (Prism Central, fleet scale) split is correct.
+    - LCM as the day-two coordinated upgrade tool (AOS, AHV, BIOS, BMC, NIC firmware, drive firmware, NCC, Foundation, Files, Objects, Volumes, NKE) confirmed.
+    - NCC `ncc health_checks run_all` command syntax confirmed.
+    - Default CVM SSH user `nutanix` with default password `nutanix/4u` (forced change on first login) confirmed.
+    - Cluster external IP via `ncli cluster set-external-ip-address external-ip-address=<vip>` is valid AOS 6.8+ syntax.
+    - Block awareness as fault-domain feature for chassis-level redundancy confirmed.
+    - RF2/RF3 semantics, single-node failure recovery flow (HA restart + Curator-driven re-replication) confirmed.
+    - Data locality semantics (VM moves but data follows over time via background services) confirmed.
+  - Suspect (kept as-is, flagged for cross-file pass):
+    - CVM resource sizing table is labeled "AOS 7.5 generation" with specific vCPU/RAM numbers (8/32 minimum, 12/48 typical, 14-16/64+ heavy). The Nutanix Support Portal page for AOS 7.5 CVM specifications is gated; could not verify exact numbers from public sources. Historical defaults were 8 vCPU / 16 GB with 24 GB floor at AOS 5.0; the curriculum's higher numbers are plausible for AOS 7.5 with production features but should be cross-checked with portal access during Phase TR finalization.
+    - Service list omits Medusa, the abstraction layer that fronts Cassandra. Pedagogically reasonable (treating Cassandra as "the metadata service" hides implementation detail), but worth flagging for Module 05 (DSF deep dive) consistency check; if Module 05 invokes Medusa by name the abstraction needs to be introduced here too.
+  - No source-markdown corrections applied; module's technical claims hold.
 - [ ] 03-ahv-hypervisor.md
 - [ ] 04-prism-management.md
 - [ ] 05-dsf-storage-deep-dive.md
