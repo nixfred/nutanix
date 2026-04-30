@@ -1,0 +1,1243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 6: Networking and Microsegmentation</title>
+  <meta name="description" content="AHV networking from vSphere muscle memory: Open vSwitch, bridges and bonds, virtual networks, IPAM, Flow Network Security microsegmentation, Flow Virtual Networking VPCs, and twelve practice questions for NCP-NS." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Module 6: Networking and Microsegmentation" />
+  <meta property="og:description" content="AHV networking, OVS, Flow Network Security, Flow Virtual Networking. NCP-NS preparation." />
+  <meta property="og:image" content="../../public/images/hero-06-networking-flow.svg" />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85); font-variant-numeric: tabular-nums;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+    figure.diagram .badge.wb { color: var(--success); background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.40); }
+    figure.diagram .badge.cert { color: var(--warning); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.40); }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption { margin-top: 16px; color: var(--text-secondary); font-size: 14px; font-style: italic; max-width: 70ch; }
+
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">06 · Networking and Microsegmentation</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-06-networking-flow.svg" alt="Three-tier microsegmentation: Web, App, and DB tier planes connected by allowed cyan traffic arcs (443 inbound, 8080 to App, 5432 to DB) and a severed red lateral arc showing Web-to-DB blocked, all sitting above an Open vSwitch substrate band." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/06-networking-flow</div>
+      <h1 class="module-title">Module 6: Networking and Microsegmentation</h1>
+      <div class="meta-row">
+        <span class="chip read">~38 min read</span>
+        <span class="chip cert">NCA ~10%</span>
+        <span class="chip cert">NCP-MCI ~18%</span>
+        <span class="chip cert">NCP-NS ~50%</span>
+        <span class="chip cert">NCM-MCI ~12%</span>
+      </div>
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~10%) · NCP-MCI (~18%) · NCP-NS (~50% heavy) · NCM-MCI (~12%)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #16, #17, #20, #25 · Discovery Q-NET-01 through Q-NET-04, Q-SEC-01</span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Modules 01 through 05</li>
+            <li>vSphere networking (vSS, vDS, port groups, VLAN trunking)</li>
+            <li>Working CE cluster</li>
+            <li>Familiarity with VLAN concepts and IP routing</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">Open vSwitch (OVS)</span>
+            <span class="term-chip">Bridge (br0, br0.local)</span>
+            <span class="term-chip">Bond</span>
+            <span class="term-chip">Virtual Network</span>
+            <span class="term-chip">VLAN</span>
+            <span class="term-chip">IPAM</span>
+            <span class="term-chip">Flow Network Security</span>
+            <span class="term-chip">Flow Virtual Networking (FVN)</span>
+            <span class="term-chip">VPC</span>
+            <span class="term-chip">Microsegmentation</span>
+            <span class="term-chip">Service Insertion</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Configure AHV networking from vSphere muscle memory.</strong> AHV uses different vocabulary (Open vSwitch, bridges, bonds, virtual networks) for largely equivalent concepts. By the end of this module the mapping is automatic.</li>
+        <li><strong>Pass roughly half of NCP-NS</strong> (Nutanix Certified Professional, Network and Security). The 7.5 version opened for public scheduling on April 4, 2026. Roughly half of its blueprint is the material in this module.</li>
+        <li><strong>Build a microsegmentation policy using categories</strong> and explain why category-driven policy is operationally cleaner than the IP-based ACL world.</li>
+        <li><strong>Defend Flow against an NSX-T-loyal architect.</strong> Flow Network Security is competitive with NSX-T's distributed firewall for VM microsegmentation, often simpler. Flow Virtual Networking is younger than NSX-T and behind it for advanced routing. Draw the comparison without flinching.</li>
+        <li><strong>Make the network economics case.</strong> Flow Network Security is licensed via NCI Ultimate or the Security Add-On for NCI Pro; FVN is bundled at the platform level. NSX-T is a separate VMware product with its own licensing.</li>
+        <li><strong>Diagnose AHV networking issues from the CLI.</strong> OVS bridges, bonds, virtual networks, Flow policy state.</li>
+      </ol>
+      <p>The network is the dimension where customers diverge most. Some come from a Cisco-only world and don't trust software-defined networking. Some come from heavy NSX-T deployments and want to know what they lose. Some treat the network as commodity. Read the customer; pick the framing.</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>Picture a vSphere host. Physical NICs (vmnics) are aggregated into a vSwitch (vSS for standard, vDS for distributed). Port groups define VLAN tagging and policy. Each VM connects to a port group. NIC teaming is configured at the vSwitch level (active-active, active-standby, route-based-on-IP-hash, etc.). vCenter centralizes this on vDS: one configuration deployed across many hosts.</p>
+      <p>You also know the limits. vSS is per-host configuration. vDS used to require Enterprise Plus (post-Broadcom: bundled into Foundation/Cloud Foundation tiers). NIC teaming policies are well-defined but bonded across many configurations.</p>
+      <p>Now switch underneath. AHV networking uses <strong>Open vSwitch (OVS)</strong>: an open-source production-grade software switch that runs in the Linux kernel of every AHV host. The same OVS used in Red Hat OpenStack, OVN, and many Linux-based virtualization platforms.</p>
+
+      <table>
+        <thead><tr><th>vSphere Term</th><th>AHV / OVS Term</th></tr></thead>
+        <tbody>
+          <tr><td>vSphere Distributed Switch (vDS)</td><td>(no exact equivalent; per-host config managed centrally via Prism Central)</td></tr>
+          <tr><td>Standard vSwitch (vSS)</td><td>Open vSwitch bridge (typically <code>br0</code>)</td></tr>
+          <tr><td>Port Group</td><td>Virtual Network (or "subnet" in Prism)</td></tr>
+          <tr><td>VLAN trunk on uplinks</td><td>VLAN configuration on the bond / bridge</td></tr>
+          <tr><td>NIC Teaming Policy (active-standby, IP hash)</td><td>Bond Mode (active-backup, balance-slb, balance-tcp, LACP)</td></tr>
+          <tr><td>vmkernel ports (management, vMotion, etc.)</td><td>Internal interfaces on <code>br0.local</code> (CVM/host management)</td></tr>
+        </tbody>
+      </table>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When a vSphere admin asks "is this just vSwitches with different names?", the right answer is partly yes and partly no. <em>"OVS gives you the equivalent of a distributed switch managed via Prism Central, with bridges, bonds, and VLAN configuration that map cleanly onto your vDS knowledge. The vocabulary is different but the operational concepts transfer in an afternoon. The bigger story is what comes on top: Flow gives you NSX-style microsegmentation included with NCI Ultimate (or the Security Add-On for NCI Pro), with category-driven policy that's easier to operate than IP-based ACLs."</em></p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="ovs">Open vSwitch: The Substrate</h3>
+      <p>OVS is the software switch underneath every AHV host. It runs in the Linux kernel. Each AHV host has at least two bridges by default:</p>
+      <ul>
+        <li><strong><code>br0</code></strong> (the data bridge). Carries user VM traffic. Connected to the host's physical NICs (typically via a bond). This is where your VMs' NICs land.</li>
+        <li><strong><code>br0.local</code></strong> (the local management bridge). Used for CVM-to-hypervisor traffic and internal management. Not exposed to user VMs.</li>
+      </ul>
+      <p>Inside <code>br0</code>, OVS handles VLAN tagging, MAC learning, broadcast/multicast, and (for Flow Network Security) flow rules that implement the firewall.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCP-NS</span></div>
+        <p>OVS bridges are testable. Memorize: <code>br0</code> is the user-traffic bridge connected to physical NICs via a bond. <code>br0.local</code> is the management bridge for CVM-hypervisor communication. Trap distractor: a single bridge handles everything (false). On NCP-NS, expect questions about how Flow rules attach to OVS at the bridge level.</p>
+      </aside>
+
+      <h3 id="bonds">Bonds: NIC Teaming for AHV</h3>
+      <p>A <strong>bond</strong> in AHV is a Linux bonding interface (or, more recently, OVS bond) that aggregates multiple physical NICs into a single logical link. Bonds provide redundancy and (for some modes) load balancing.</p>
+
+      <table>
+        <thead><tr><th>Bond Mode</th><th>What It Does</th><th>When to Use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>active-backup</strong></td><td>One active NIC; others standby. Failover on link loss.</td><td>Default. Simplest. Works with any switch.</td></tr>
+          <tr><td><strong>balance-slb</strong></td><td>OVS balances by source MAC. No switch-side configuration required.</td><td>Better-than-active-backup throughput without LACP.</td></tr>
+          <tr><td><strong>balance-tcp</strong></td><td>Balances per-flow on TCP/IP headers. Requires LACP on the switch.</td><td>Best throughput with proper switch coordination.</td></tr>
+          <tr><td><strong>LACP (active-active)</strong></td><td>802.3ad link aggregation. Requires LACP on the switch.</td><td>Production with proper switch configuration.</td></tr>
+        </tbody>
+      </table>
+      <p><strong>The default for new clusters</strong> is typically active-backup. Most production deployments upgrade to balance-slb (no switch-side change needed). LACP / balance-tcp is supported but <strong>Nutanix's official recommendation has historically leaned away from LACP</strong> because misconfigured upstream switches can disable cluster connectivity in ways that are hard to recover from in the field. If you choose LACP, document the switch-side configuration carefully and validate before go-live.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>Bond modes map cleanly onto vSphere NIC teaming policies. Active-backup is "Use Explicit Failover Order." Balance-slb is roughly "Route Based on Source MAC Hash." LACP is "Route Based on IP Hash" with LACP enabled on the vDS.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>AHV bonds are configured per host but managed centrally via Prism Central in newer AOS versions (Network Controller workflow). For legacy configurations, use <code>manage_ovs</code> from the AHV CLI. Plan to use the Prism-driven workflow for new deployments; legacy CLI is for troubleshooting and edge cases.</p>
+      </aside>
+
+      <h3 id="virtual-networks">Virtual Networks (the Port Group Equivalent)</h3>
+      <p>A <strong>Virtual Network</strong> in Nutanix vocabulary is the equivalent of a vSphere port group. It carries:</p>
+      <ul>
+        <li><strong>VLAN tag</strong> (or none, for untagged traffic).</li>
+        <li><strong>Optional IPAM</strong>: the cluster can act as DHCP for VMs on this network.</li>
+        <li><strong>Connection to a bridge</strong> (typically <code>br0</code>).</li>
+      </ul>
+      <p>When you create a VM and attach it to a Virtual Network, the VM's vNIC lands on <code>br0</code> with the configured VLAN. Inter-VM traffic on the same VLAN flows at OVS speed (in-host, kernel-level). Inter-VLAN traffic exits via the bond uplink to the physical network.</p>
+      <p><strong>Naming convention:</strong> virtual networks in Prism are commonly named <code>vlan.&lt;id&gt;</code> (e.g., <code>vlan.100</code>), though arbitrary names are allowed.</p>
+
+      <h3 id="ipam">IPAM: When Nutanix Acts as Your DHCP</h3>
+      <p>For each Virtual Network, you can enable <strong>IPAM</strong>. When IPAM is enabled, AHV provides DHCP services for VMs on that network. You configure the subnet, default gateway, DNS servers, and DHCP pool range.</p>
+      <p>This is useful for self-contained tenant networks (test/dev, isolated environments, VDI floating pools) where you don't want to rely on external DHCP. For production environments connected to the corporate network, you typically disable IPAM and let the physical network's DHCP serve VMs.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCP-NS</span></div>
+        <p>IPAM is testable. Memorize: IPAM provides DHCP services to VMs on a Virtual Network where it is enabled. Per-virtual-network. Trap distractor: IPAM is required for any AHV virtual network (false; IPAM is optional and typically disabled when an external DHCP server exists).</p>
+      </aside>
+
+      <h3 id="diagram-ahv-stack">Diagram: AHV Networking Stack</h3>
+      <figure class="diagram" id="ahv-networking-stack">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCP-NS</span>
+        </div>
+        <svg id="diagram-ahv-stack-svg" viewBox="0 0 1000 540" role="img" aria-label="The AHV networking stack from physical NICs at the bottom through bond, br0, virtual networks (VLAN-tagged), to VMs at the top, with br0.local shown to the side for management traffic."></svg>
+        <figcaption>From physical NICs up to VMs. Bonds aggregate NICs, bridges carry traffic, virtual networks provide VLAN-tagged port groups. The same OVS used in OpenStack and many Linux platforms.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="cycle-2">The Cycle, Frame Two: AHV Networking as Linux Plus OVS</h3>
+      <p>For network engineers from the Linux world, AHV networking is just Linux networking with Open vSwitch as the switch. The CLI tools you would use on any Linux host (<code>ip</code>, <code>ovs-vsctl</code>, <code>ovs-ofctl</code>, <code>ip link</code>) work on the AHV hypervisor.</p>
+      <ul>
+        <li>Standard troubleshooting tools work. <code>tcpdump</code> on <code>br0</code> shows VM traffic. <code>ovs-vsctl show</code> lists bridges and ports. <code>ovs-appctl</code> queries OVS internals.</li>
+        <li>Standard automation works. Ansible, Terraform, custom scripts can manipulate OVS configuration where the Nutanix abstraction is insufficient.</li>
+        <li>The architecture is auditable. There is no proprietary kernel module hiding what the network does. OVS is open source and well-understood.</li>
+      </ul>
+
+      <h3 id="cycle-3">The Cycle, Frame Three: Networking as Policy, Not Topology</h3>
+      <p>In traditional networking, you secure VMs by VLAN segmentation, ACLs on switch ports, and firewall rules at gateways. Topology drives policy: a VM is in <code>vlan.100</code>, and policy is whatever applies to <code>vlan.100</code>. Move the VM, the policy changes.</p>
+      <p>Flow Network Security inverts this. Policy is defined by <strong>categories</strong> (Module 4) attached to VMs, not by topology. A VM tagged <code>Tier: Web</code> follows the Web-tier policy regardless of which VLAN it lives in. Move the VM to a different cluster, the policy follows.</p>
+
+      <h3 id="cycle-4">The Cycle, Frame Four: What Comes Free vs What Costs</h3>
+      <p>VMware networking scales up by license tier:</p>
+      <ul>
+        <li>vSS (standard switch): included.</li>
+        <li>vDS (distributed switch): historically Enterprise Plus, now bundled in Foundation tiers.</li>
+        <li>NSX-T microsegmentation: separate NSX licensing, per-CPU or per-workload.</li>
+        <li>NSX-T routing/edge services: even higher NSX tiers.</li>
+      </ul>
+      <p>Nutanix:</p>
+      <ul>
+        <li>AHV networking with OVS, virtual networks, IPAM: included with NCI baseline.</li>
+        <li><strong>Flow Network Security (microsegmentation):</strong> licensed via <strong>NCI Ultimate</strong>, or via the optional <strong>Security Add-On</strong> for NCI Pro (per usable TiB; bundles Data-at-Rest Encryption with Flow microsegmentation). It is <strong>not</strong> an NCM tier feature; do not confuse the NCM management tiers with Flow's NCI-side licensing.</li>
+        <li><strong>Flow Virtual Networking (VPC overlay, advanced routing):</strong> bundled at the platform level with PC / AOS; specific feature gating depends on PC and AOS version.</li>
+      </ul>
+      <p>The customer paying separately for NSX-T microsegmentation will find Flow Network Security at NCI Ultimate (or as the Security Add-On) a meaningful licensing change. Always run the actual numbers; the answer depends on tier, workload size, and whether the Security Add-On's encryption capabilities also displace another vendor's tooling.</p>
+
+      <hr/>
+
+      <h3 id="flow-network-security">Flow Network Security: Microsegmentation Done Differently</h3>
+      <p><strong>Flow Network Security</strong> is Nutanix's distributed firewall and microsegmentation product. It runs across all AHV hosts in the cluster (Prism Central drives policy distribution; OVS enforces rules at each host).</p>
+      <ul>
+        <li>Define <strong>categories</strong> on VMs (e.g., <code>Tier: Web</code>, <code>Tier: App</code>, <code>Tier: DB</code>, <code>Environment: Prod</code>).</li>
+        <li>Define <strong>rules</strong> that apply to category groups: "VMs with <code>Tier: Web</code> may receive traffic from anywhere on port 443; may send traffic to VMs with <code>Tier: App</code> on port 8080; may not communicate with <code>Tier: DB</code> directly."</li>
+        <li>Rules are <strong>stateful</strong> (return traffic is automatically permitted for established connections).</li>
+        <li>Enforcement is <strong>distributed</strong>: each host enforces rules for VMs running on that host. There is no central firewall bottleneck.</li>
+        <li>Default policy is configurable: explicit-allow (whitelist, the secure default) or explicit-deny.</li>
+      </ul>
+
+      <pre>Web tier (VMs with Tier: Web):
+  Inbound from any: 443/tcp, 80/tcp (allow)
+  Outbound to App tier: 8080/tcp (allow)
+  Default: deny
+
+App tier (VMs with Tier: App):
+  Inbound from Web tier: 8080/tcp (allow)
+  Outbound to DB tier: 5432/tcp (allow)
+  Default: deny
+
+DB tier (VMs with Tier: DB):
+  Inbound from App tier: 5432/tcp (allow)
+  Outbound: deny
+  Default: deny</pre>
+
+      <p>The result: a three-tier application where each tier can only reach the next; lateral movement (a compromised Web VM directly reaching DB) is blocked at the OVS flow-rule level. No physical network changes. No VLAN reorganization. Categories assigned in Prism Central drive everything.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Microsegmentation is the security demo that converts customers. The 90-second demo: <em>"Watch me build a three-tier microsegmentation policy in front of you. Web can talk to App, App can talk to DB, no other lateral movement allowed. I will deploy three VMs with the right categories, deploy the policy, and show you the traffic blocked."</em> Customers who have tried to build equivalent ACLs on physical switches respond viscerally. Always offer the demo when discovery surfaces a security or compliance team.</p>
+      </aside>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-NS</span></div>
+        <p>Flow Network Security is the largest topic on NCP-NS. Memorize: Flow uses categories to scope rules; rules are stateful; enforcement is distributed across hosts via OVS flow rules; default policies can be allowlist or denylist; policy distribution comes from Prism Central. Trap distractors: Flow requires a central firewall appliance (false), or Flow rules are based on IP addresses only (categories are primary; IP-based rules are also supported).</p>
+      </aside>
+
+      <h3 id="diagram-flow-microseg">Diagram: Flow Microsegmentation</h3>
+      <figure class="diagram" id="flow-microsegmentation">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-NS</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-flow-microseg-svg" viewBox="0 0 1000 540" role="img" aria-label="Three-tier application with Web, App, and DB category groups. Allowed flows shown in green: 443 inbound to Web, 8080 from Web to App, 5432 from App to DB. Blocked flows shown in red: Web to DB direct, DB outbound. OVS bridges underneath enforce rules at each host."></svg>
+        <figcaption>Three-tier application secured by category-driven Flow Network Security. Lateral movement blocked at the OVS flow-rule level on each host.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="fvn">Flow Virtual Networking (FVN): The VPC Overlay</h3>
+      <p><strong>Flow Virtual Networking</strong> is Nutanix's overlay network product. It provides VPC-style virtual networks: isolated, multi-subnet networks with their own routing, NAT, and policy, decoupled from the underlying physical network topology.</p>
+      <ul>
+        <li><strong>Virtual Private Clouds (VPCs).</strong> Create isolated network environments with their own IP space.</li>
+        <li><strong>Routing between VPCs.</strong> Internal routing rules, similar to AWS VPC peering.</li>
+        <li><strong>NAT.</strong> Inbound and outbound NAT for VPC-to-physical traffic.</li>
+        <li><strong>External connectivity.</strong> Connect VPCs to the physical network via gateway services.</li>
+        <li><strong>BGP integration.</strong> Some configurations support BGP with the upstream physical network.</li>
+        <li><strong>Service insertion.</strong> Insert third-party network services (firewalls, load balancers) into VPC traffic flow.</li>
+      </ul>
+      <p>FVN is meaningfully newer than Flow Network Security (introduced in PC 2022+, with substantial maturity gains in 2024-2025). For customers with simple network requirements (flat or VLAN-segmented), FVN is overkill. For customers who want true overlay networking, multi-tenant VPCs, or hybrid-cloud network parity, FVN is the right tool.</p>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Flow Virtual Networking and NSX-T overlap in concept but differ in maturity. NSX-T is more mature for advanced routing patterns, edge services, and the third-party ecosystem. FVN is simpler to operate, included in the platform, and increasingly capable. For typical multi-tenant VPC use cases, FVN is sufficient and the licensing math favors it. For complex routing or established NSX-T deployments, NSX-T retains an edge. Be honest about which scenario your customer is in.</p>
+      </aside>
+
+      <h3 id="diagram-fvn">Diagram: Flow Virtual Networking Topology</h3>
+      <figure class="diagram" id="flow-virtual-networking">
+        <div class="badges">
+          <span class="badge cert">NCP-NS</span>
+        </div>
+        <svg id="diagram-fvn-svg" viewBox="0 0 1000 540" role="img" aria-label="A multi-VPC FVN deployment: Production, Dev, and Shared-Services VPCs inside a Nutanix cluster, with internal routing arrows showing allowed and denied paths, a VPC gateway providing NAT and BGP to the corporate network, and an optional service-insertion path through a third-party firewall."></svg>
+        <figcaption>A multi-VPC FVN deployment with internal routing, NAT, BGP integration, and service insertion for a third-party firewall.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="service-insertion">Service Insertion: Third-Party Security Integration</h3>
+      <p>For customers who run third-party network security (Palo Alto VM-Series, Check Point, Fortinet, etc.) and want to insert those services into Flow's traffic flow, FVN supports <strong>service insertion</strong>:</p>
+      <ol>
+        <li>Deploy the third-party security VM (e.g., a Palo Alto VM-Series instance) on the cluster.</li>
+        <li>Configure FVN to redirect specific traffic flows through the security VM.</li>
+        <li>The security VM inspects, applies its own policy, and forwards (or drops).</li>
+      </ol>
+      <p>This lets customers leverage their existing security tooling without giving up Flow Network Security for VM-level microsegmentation. The two layers complement: Flow does VM-tier microsegmentation; the third-party service does deep packet inspection, IDS/IPS, threat prevention.</p>
+      <p><strong>The honest framing:</strong> Flow Network Security is competitive for microsegmentation. FVN provides VPC-style overlays. For deep packet inspection and advanced threat prevention, you typically still want a specialized security product. Service insertion lets you have both.</p>
+
+      <hr/>
+
+      <h3 id="lacks-vs-nsx">What Networking Genuinely Lacks Compared to NSX-T</h3>
+      <ol>
+        <li><strong>Advanced routing patterns.</strong> NSX-T has years of depth in distributed routing, BGP integration, OSPF, dynamic routing protocols. FVN handles common cases well but does not match NSX-T's full routing feature set.</li>
+        <li><strong>Edge services maturity.</strong> NSX-T's edge services (load balancing, VPN, gateway firewall, IDS/IPS) are mature and well-integrated. Nutanix relies more on service insertion for advanced services.</li>
+        <li><strong>Third-party ecosystem depth.</strong> NSX-T has had more time to develop integrations with third-party security and networking products.</li>
+        <li><strong>Geographic / multi-cluster networking.</strong> NSX-T Federation provides multi-site network policy with strong consistency. FVN is increasingly capable here but not yet at NSX-T Federation parity.</li>
+        <li><strong>Some performance-tuning depth at the network plane</strong> for very large, very dense deployments.</li>
+      </ol>
+      <p>For typical mid-market and enterprise general-purpose deployments, none of these are deal-breakers. For customers running deep NSX-T deployments or with hyperscale requirements, the gaps are real.</p>
+
+      <h3 id="differentiates">What Networking Has That Differentiates Nutanix</h3>
+      <ol>
+        <li><strong>Open vSwitch as the substrate.</strong> Open standard, auditable, well-understood.</li>
+        <li><strong>Category-driven policy.</strong> Operationally cleaner than IP-based ACLs for typical enterprise use.</li>
+        <li><strong>Bundle-friendly licensing for microsegmentation.</strong> Flow Network Security ships with NCI Ultimate or the Security Add-On for NCI Pro; NSX-T microsegmentation is separately licensed.</li>
+        <li><strong>Single management plane.</strong> Network configuration, microsegmentation, and policy all live in Prism Central alongside compute and storage.</li>
+        <li><strong>Native integration with categories from compute and storage.</strong> A single category like <code>Environment: Production</code> drives backup policy, microsegmentation, quotas, and reporting.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Build a Microsegmentation Policy</h2>
+      <aside class="callout lab">
+        <div class="label">Lab · ~2.5 hours · 3-node CE cluster with Prism Central</div>
+        <p>Configure AHV networking, deploy VMs onto a virtual network, build a Flow Network Security microsegmentation policy with categories, verify enforcement. Note: Flow on Community Edition is limited; the lab still teaches workflow and concepts.</p>
+      </aside>
+      <ol>
+        <li><strong>Inventory existing networking.</strong> From a CVM:
+          <pre>manage_ovs show_uplinks
+manage_ovs show_bridges
+manage_ovs show_bonds</pre>
+        </li>
+        <li><strong>Create three Virtual Networks</strong> in Prism Element:
+          <ul>
+            <li><code>vlan.100</code> for Web tier (VLAN 100, IPAM disabled)</li>
+            <li><code>vlan.200</code> for App tier (VLAN 200, IPAM enabled, 10.20.30.0/24)</li>
+            <li><code>vlan.300</code> for DB tier (VLAN 300, IPAM enabled, 10.20.40.0/24)</li>
+          </ul>
+        </li>
+        <li><strong>Deploy three VMs</strong> (one per tier). Use any small Linux image. Boot them.</li>
+        <li><strong>Define categories in Prism Central:</strong> Key <code>Tier</code>, Values <code>Web</code>, <code>App</code>, <code>DB</code>.</li>
+        <li><strong>Apply categories to VMs</strong> from Prism Central VM list.</li>
+        <li><strong>Create a Flow Network Security policy</strong> in Prism Central → Policies → Security Policies → Create. Application Type: 3-tier (Web/App/DB). Define rules per the data path; default deny.</li>
+        <li><strong>Test the policy.</strong> Web → App on 8080 should succeed; Web → DB direct should fail; App → DB on 5432 should succeed.</li>
+        <li><strong>Inspect OVS flow rules</strong> on an AHV host: <code>ovs-ofctl dump-flows br0</code>. You should see flow entries that implement the firewall rules.</li>
+        <li><strong>Optional: enable monitor mode</strong> first to capture traffic without enforcing, then enable enforcement. This is the recommended customer pattern.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="practice">Practice Questions</h2>
+      <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions.</p>
+
+      <section class="practice">
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCA · NCP-MCI · NCP-NS</span></div>
+          <p class="qprompt">What is the role of <code>br0</code> in AHV networking?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>The local management bridge for CVM-hypervisor traffic.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>The default OVS bridge that connects to physical NICs (via a bond) and carries user VM traffic.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A backup interface used only during failure scenarios.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>The DHCP server for AHV's IPAM functionality.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p><code>br0</code> is the default OVS data bridge. It connects to physical NICs (typically through a bond) and carries all user VM traffic. Virtual networks attach to <code>br0</code> with VLAN tags.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) That describes <code>br0.local</code>, not <code>br0</code>.</li>
+              <li>C) <code>br0</code> is the active bridge in normal operation.</li>
+              <li>D) IPAM is per-virtual-network, not a function of any bridge.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is the seductive distractor for someone who confuses the data and management bridges. <code>br0</code> = data; <code>br0.local</code> = management.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCP-MCI · NCP-NS</span></div>
+          <p class="qprompt">Which bond mode does NOT require corresponding configuration on the upstream physical switch?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>LACP (active-active)</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Balance-tcp</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Active-backup</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Both A and B</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Active-backup uses one NIC at a time and switches over on link failure. It requires no special switch configuration; any switch supporting basic Ethernet works.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) LACP requires the switch to support and be configured for 802.3ad.</li>
+              <li>B) Balance-tcp requires LACP-style aggregation on the switch.</li>
+              <li>D) Both require switch configuration.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>Customers who default to LACP as "the right answer" miss that LACP requires switch-side cooperation. Active-backup is the simpler, switch-agnostic default.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCP-MCI · NCP-NS</span></div>
+          <p class="qprompt">Which describes Nutanix's IPAM (IP Address Management)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A required service that handles all DHCP for any AHV VM.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>An optional per-virtual-network service where the cluster acts as a DHCP server for VMs on that network.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A service that replaces the customer's existing AD-integrated DHCP server.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A service that requires a separate licensing fee.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>IPAM is an optional per-virtual-network feature. When enabled, the cluster provides DHCP for that network's VMs. When disabled (typical for production), VMs use external DHCP from the corporate network.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) IPAM is optional, not required.</li>
+              <li>C) IPAM coexists with corporate DHCP; customers typically disable IPAM where corporate DHCP serves.</li>
+              <li>D) IPAM is included with AHV.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects a partial understanding. IPAM is a tool, not a requirement.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCP-MCI · NCP-NS</span></div>
+          <p class="qprompt">What does Flow Network Security primarily provide?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>VPC-style overlay networking with multiple isolated subnets.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Distributed firewall and microsegmentation, with rules driven by VM categories rather than IP addresses.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Load balancing and reverse proxy services for inbound traffic.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Deep packet inspection and IDS/IPS.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Flow Network Security is the distributed firewall product. Rules are defined per category and enforced by OVS flow rules on each AHV host.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) That describes Flow Virtual Networking (FVN).</li>
+              <li>C) Flow is not a load balancer.</li>
+              <li>D) Flow has some intrusion-detection capabilities but is not primarily a deep-packet-inspection product.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>Confusion between Flow Network Security (microsegmentation) and Flow Virtual Networking (overlays). Network Security = microsegmentation; Virtual Networking = overlays.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCP-NS</span></div>
+          <p class="qprompt">Which is true about Flow Network Security policy enforcement?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Policies are enforced at a central firewall appliance that all traffic must traverse.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Policies are enforced at each AHV host via OVS flow rules; enforcement is distributed.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Policies are enforced at the physical switch via ACLs configured by Nutanix.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Policies are enforced only on inbound traffic; outbound is uncontrolled.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Each host enforces rules for the VMs running on it, via OVS flow entries. This avoids the bottleneck of centralized firewalls and allows microsegmentation at scale.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Centralized enforcement is the older model. Flow specifically does not work this way.</li>
+              <li>C) Flow operates at the OVS layer in AHV, not on physical switches.</li>
+              <li>D) Stateful rules apply in both directions.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is what older firewall architectures looked like. Test-writers know this old mental model is sticky.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which is the correct mapping of vSphere networking concepts to AHV/OVS concepts?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>vDS port group → AHV bridge; NIC team → bond; VLAN trunk → IPAM.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>vDS port group → Virtual Network; vSwitch → OVS bridge; NIC teaming policy → bond mode.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>vSS → Flow Network Security; vDS → Flow Virtual Networking; port group → category.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>vCenter → Open vSwitch; ESXi → AHV; port group → service insertion.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>vDS port groups map to AHV Virtual Networks. vSwitch maps to OVS bridge. NIC teaming policy maps to bond mode.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Misaligns multiple terms; IPAM is unrelated to VLAN trunking.</li>
+              <li>C) Conflates Flow products with vSphere base networking.</li>
+              <li>D) Misaligns multiple concepts.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>This question rewards practitioners who have actually built the mental mapping.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">NCP-NS · sales-relevant</span></div>
+          <p class="qprompt">A customer has 50 VMs running a three-tier application on AHV. They want microsegmentation so Web cannot directly reach DB, even though all three tiers share the same VLAN. Recommended approach?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Deploy NSX-T separately and configure microsegmentation through NSX-T.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Reorganize the VMs into separate VLANs and configure ACLs on the physical switches.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Define <code>Tier</code> categories on the VMs (Web, App, DB) and create Flow Network Security rules that allow Web → App → DB but deny Web → DB direct.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Deploy a virtual firewall and route all VM-to-VM traffic through it.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>This is exactly the use case Flow Network Security was designed for: VM-tier microsegmentation independent of VLAN topology, driven by categories. Distributed enforcement, no central firewall bottleneck.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) NSX-T deployment is unnecessary; Flow handles this at NCI Ultimate (or Security Add-On for NCI Pro).</li>
+              <li>B) VLAN reorganization is the old way; doesn't scale to many policies.</li>
+              <li>D) Centralized firewall creates a bottleneck.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and B work but are operationally inferior. The exam rewards the architecturally correct approach.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">Sales-relevant</span></div>
+          <p class="qprompt">Senior network architect: "We've spent 4 years building NSX-T. Why would I look at Flow?" Strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"Flow is much simpler than NSX-T. You should switch."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"NSX-T continues to work on Nutanix-on-ESXi. You don't have to migrate. For new AHV workloads, Flow Network Security provides VM-tier microsegmentation that's competitive with NSX-T's distributed firewall, with included licensing. For your established NSX-T deployments, keep them; the platforms coexist. Let me understand your specific NSX-T use cases and we can decide where Flow fits."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"Flow has every NSX-T feature included for free."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"NSX-T is going away because of Broadcom; you should switch immediately."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Respects the architect's investment, names the coexistence pattern (NSX-T on ESXi-on-Nutanix continues to work), differentiates Flow Network Security from NSX-T's full feature set, and proposes a discovery conversation.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Dismissive of years of work.</li>
+              <li>C) Untrue. Flow Network Security is competitive for microsegmentation; NSX-T retains advantages for advanced routing and edge services.</li>
+              <li>D) Speculative and aggressive. Costs you the relationship.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>Confident overclaims (A, C) and competitive negativity (D) all read as sales pressure. The honest answer respects existing architecture.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCP-NS</span></div>
+          <p class="qprompt">Which correctly distinguishes Flow Network Security from Flow Virtual Networking?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Flow Network Security provides overlay networks; Flow Virtual Networking provides microsegmentation.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Flow Network Security provides distributed firewall and microsegmentation driven by categories; Flow Virtual Networking provides VPC-style overlay networks with internal routing, NAT, and physical-network integration.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>They are the same product, marketed under two names.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Flow Network Security is for AHV; Flow Virtual Networking is for ESXi.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Network Security = firewall/segmentation. Virtual Networking = overlays/VPCs/routing. Different products solving different problems.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Reverses the products' purposes.</li>
+              <li>C) Distinct products with different feature sets.</li>
+              <li>D) Both are AHV-native.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>New learners conflate the two Flow products because they share the brand name.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCP-NS · sales-relevant</span></div>
+          <p class="qprompt">A 10-node AHV cluster has Flow Network Security enabled. Considering FVN for a new multi-tenant project. Which is correct?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>FVN and Flow Network Security cannot coexist on the same cluster.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>FVN and Flow Network Security can coexist; FVN provides VPC-style isolation while Flow Network Security provides microsegmentation within or across VPCs.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Enabling FVN requires migrating to ESXi.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>FVN replaces Flow Network Security.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>The two products are complementary. FVN provides VPC isolation and overlay networking; Flow Network Security provides VM-level microsegmentation. Many real deployments use both.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Not true; they coexist by design.</li>
+              <li>C) FVN runs on AHV.</li>
+              <li>D) Different products with different purposes.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>B requires understanding the products are layered, not competing.</p>
+          </div>
+        </article>
+
+        <article class="question ncx" data-correct="OPEN">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · NCP-NS prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style design: financial-services compliance network and security architecture.</p>
+          <div class="scenario">
+            <p><strong>Scenario:</strong> A financial-services customer is deploying a new Nutanix cluster for their core banking application. Three-tier system (Web/App/DB) with sensitive customer data. Compliance requires:</p>
+            <ul>
+              <li>VM-level microsegmentation (no lateral movement between tiers).</li>
+              <li>Audit logging of all denied traffic.</li>
+              <li>Network isolation between Production and DR environments.</li>
+              <li>Service insertion of an existing Palo Alto VM-Series for DPI on incoming traffic.</li>
+              <li>Multi-tenant isolation between Banking, Wealth Management, and Internal Apps business units.</li>
+              <li>Integration with corporate identity for policy administration.</li>
+            </ul>
+            <p><strong>Challenge:</strong> Walk through your design.</p>
+          </div>
+          <textarea placeholder="VPC topology? Categories? Flow rules per tier? Service insertion? Audit logging? Identity integration? What you'd ask the customer next?"></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>VPC topology with FVN.</strong> Three VPCs, one per business unit. Each VPC has its own IP space and isolation by default. Inter-VPC routing rules for required cross-business shared services.</li>
+              <li><strong>Per-VPC virtual networks.</strong> Within each VPC, separate subnets for Web, App, DB tiers. VLAN tagging for routing semantics where physical-network integration is required.</li>
+              <li><strong>Categories.</strong> <code>BusinessUnit</code> (Banking/Wealth/InternalApps), <code>Tier</code> (Web/App/DB), <code>Environment</code> (Prod/DR), <code>Compliance</code> (PCI/SOX as applicable).</li>
+              <li><strong>Flow Network Security policies.</strong> Web allows inbound 443 from internet (after Palo Alto); outbound 8080 to App. App allows inbound 8080 from Web; outbound 5432 to DB. DB allows inbound 5432 from App only; outbound denied. Cross-business-unit denial by default.</li>
+              <li><strong>Service insertion.</strong> Configure FVN service insertion to redirect all internet-facing inbound traffic through the Palo Alto VM-Series before it reaches the Web tier.</li>
+              <li><strong>Audit logging.</strong> Configure Flow to log all denies; forward to the customer's SIEM.</li>
+              <li><strong>Production/DR isolation.</strong> Use <code>Environment</code> categories. Cross-environment policies are denial-by-default; explicit replication-traffic rules permit Async / NearSync (Module 7).</li>
+              <li><strong>Identity integration.</strong> Prism Central with SAML to the customer's IdP. Map identity groups to Prism roles for policy administration.</li>
+              <li><strong>What you still need:</strong> specific compliance frameworks (PCI v4.0, GLBA, SOX), Palo Alto VM-Series model and licensing, separate management VPC for PC, corporate-network BGP topology, audit-log retention requirements.</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Defaulting to flat virtual networks without VPCs for multi-tenant isolation.</li>
+              <li>Using IP-based ACLs instead of category-driven Flow rules.</li>
+              <li>Forgetting service insertion for the existing Palo Alto.</li>
+              <li>Not addressing audit logging requirements.</li>
+              <li>Treating Production/DR as the same security zone.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="question ncx" data-correct="OPEN">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · NCP-NS prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style architectural defense: an NSX-T-loyal architect challenges Flow.</p>
+          <div class="scenario">
+            <p><strong>Scenario:</strong> Customer's senior network and security architect (12 years of NSX-T):</p>
+            <blockquote>"Flow looks fine for basic microsegmentation, but our environment uses NSX-T's distributed routing, gateway services with stateful firewall, IDS/IPS at the edge, BGP integration with our SD-WAN, L2VPN to remote sites, and a third-party-integration ecosystem we've spent years tuning. Flow doesn't have most of that. Why would we walk away from NSX-T?"</blockquote>
+            <p><strong>Challenge:</strong> Respond. He has named real NSX-T capabilities. Address each.</p>
+          </div>
+          <textarea placeholder="Acknowledge the NSX-T capability set. Reframe each capability against FVN / Flow / service insertion. Address the L2VPN gap honestly. Close with a feature-mapping POC."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the NSX-T capability set is real and substantial.</strong> 12 years of investment is not an obstacle to argue with.</li>
+              <li><strong>Reframe each capability:</strong>
+                <ul>
+                  <li><em>Distributed routing.</em> FVN provides distributed routing for VPCs. NSX-T's routing is more mature for complex topologies.</li>
+                  <li><em>Gateway services / stateful firewall.</em> FVN gateways provide NAT and basic firewall. For deep edge services, retain NSX-T-on-ESXi or insert third-party services via FVN service insertion.</li>
+                  <li><em>IDS/IPS at the edge.</em> Service insertion in FVN: insert a third-party IDS/IPS into the traffic flow.</li>
+                  <li><em>BGP / SD-WAN integration.</em> FVN supports BGP. SD-WAN integration depth varies by SD-WAN vendor.</li>
+                  <li><em>L2VPN to remote sites.</em> Not natively in FVN; this is a legitimate gap. Customers with L2VPN needs typically retain NSX-T or use SD-WAN-overlay alternatives.</li>
+                  <li><em>Third-party ecosystem.</em> NSX-T has more depth here. Service insertion bridges some of this; absolute parity is not yet achieved.</li>
+                </ul>
+              </li>
+              <li><strong>The honest reframe.</strong> "You don't have to walk away from NSX-T. NSX-T continues to run on Nutanix-on-ESXi, which means the cluster's HCI benefits don't require a network-architecture change. Flow Network Security is genuinely competitive for VM microsegmentation and is an option for new workloads."</li>
+              <li><strong>Concrete proposal.</strong> "Let me build a feature-by-feature mapping with you. We'll mark which NSX-T capabilities Flow matches, which it partially matches, which require service insertion, and which require keeping NSX-T."</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Claiming Flow has all NSX-T features.</li>
+              <li>Dismissing NSX-T as outdated.</li>
+              <li>Not acknowledging the L2VPN gap.</li>
+              <li>Missing the NSX-T-on-Nutanix-on-ESXi coexistence pattern.</li>
+              <li>Not proposing the feature-mapping exercise as a concrete next step.</li>
+            </ul>
+          </div>
+        </article>
+
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can translate vSphere networking vocabulary to AHV/OVS terminology fluently. vDS port group becomes Virtual Network, vSwitch becomes OVS bridge, NIC teaming becomes bond mode.</p>
+      <p>You know the OVS substrate: <code>br0</code> for VM data traffic, <code>br0.local</code> for management. Bonds with active-backup, balance-slb, balance-tcp, and LACP. VLAN configuration on virtual networks. IPAM as an optional per-virtual-network DHCP service.</p>
+      <p>You know Flow Network Security: distributed firewall, category-driven policy, stateful rules, OVS-level enforcement, and the operational pattern of "monitor first, then enforce" for production. You can build a three-tier microsegmentation policy in 90 seconds and demo it.</p>
+      <p>You know Flow Virtual Networking: VPC-style overlays, internal routing, NAT, BGP, service insertion. You know FVN is younger than NSX-T but increasingly capable.</p>
+      <p>You have the honest comparison to NSX-T: Flow Network Security is competitive for microsegmentation; FVN is behind on advanced routing, edge services, L2VPN, and third-party ecosystem. NSX-T-on-Nutanix-on-ESXi is the durable answer for customers with established NSX-T investment.</p>
+      <p>You know the licensing reality: Flow Network Security at NCI Ultimate (or via the Security Add-On for NCI Pro) is included; NSX-T microsegmentation is separately licensed. The economics matter and you can walk through them.</p>
+      <p>You are now ready for data protection and DR. Module 7 covers Protection Domains, Async/NearSync/Metro replication, Recovery Plans (Nutanix Disaster Recovery, formerly Leap), and the durable DR story that frequently decides enterprise deals.</p>
+
+      <hr/>
+
+      <section class="references">
+        <h2>References</h2>
+        <p>Authoritative sources verified during the technical review pass on this module. Flow licensing in particular is the most volatile area; reverify against the current Nutanix Cloud Platform software-options page before quoting tier-specific costs.</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/pdf/5a-book-of-ahv-architecture.pdf"><strong>Nutanix Bible — AHV Architecture (networking)</strong></a>. Authoritative source for OVS bridges (<code>br0</code>, <code>br0.local</code>), bond modes, default networking topology.</li>
+          <li><a href="https://www.nutanixbible.com/pdf/5c-book-of-ahv-administration.pdf"><strong>Nutanix Bible — AHV Administration</strong></a>. <code>manage_ovs</code> CLI reference, bond-mode configuration workflows.</li>
+          <li><a href="https://www.virtualramblings.com/define-and-differentiate-ahv-bond-modes/"><strong>AHV Bond Modes (Virtual Ramblings)</strong></a>. Independent walkthrough of active-backup, balance-slb, balance-tcp, and LACP semantics.</li>
+          <li><a href="https://next.nutanix.com/ahv-virtualization-27/changing-bonding-mode-in-ahv-from-active-backup-to-active-active-lacp-and-balance-tcp-43521"><strong>Changing AHV Bonding Mode to LACP / Balance-TCP (Nutanix Community)</strong></a>. Source for Nutanix's caution on LACP and the upstream-switch coordination requirement.</li>
+          <li><a href="https://www.nutanix.com/products/flow-network-security"><strong>Flow Network Security Product Page</strong></a>. Current product positioning.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options"><strong>Nutanix Cloud Platform Software Options</strong></a>. Authoritative source for Flow Network Security licensing: included in NCI Ultimate, or via the Security Add-On for NCI Pro (per-usable-TiB, bundles Data-at-Rest Encryption).</li>
+          <li><a href="https://www.nutanixbible.com/12a-book-of-network-services-flow-network-security.html"><strong>Nutanix Bible — Flow Network Security</strong></a>. Distributed enforcement at OVS, category-driven policy, stateful rules.</li>
+          <li><a href="https://www.nutanixbible.com/12c-book-of-network-services-flow-virtual-networking.html"><strong>Nutanix Bible — Flow Virtual Networking</strong></a>. VPC overlay architecture, NAT, BGP, service insertion.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Flow-Virtual-Networking-Guide-vpc_2024_2:Nutanix-Flow-Virtual-Networking-Guide-vpc_2024_2"><strong>Flow Virtual Networking Guide (PC 2024.2)</strong></a>. Current FVN product documentation.</li>
+          <li><a href="https://www.nutanix.dev/2023/08/31/exploring-bgp-routing-inside-nutanix-flow-virtual-networking-fvn-vpc/"><strong>Exploring BGP Routing in FVN (Nutanix.dev)</strong></a>. FVN BGP integration details.</li>
+          <li><a href="https://en.vmik.net/2026/03/whats-new-at-nutanix-university-15/"><strong>NCP-NS 7.5 Open for Scheduling (Nutanix University)</strong></a>. Confirms April 4, 2026 public exam launch.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2094-Flow:TN-2094-Flow"><strong>TN-2094 Flow Network Security Tech Note</strong></a>. Detailed Flow technical reference.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Previous:</strong> <a href="../05-dsf-storage/index.html">Module 5: DSF Deep Dive</a></li>
+          <li><strong>Next:</strong> Module 7: Data Protection and DR <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Glossary:</strong> Open vSwitch · Bridge · Bond · Virtual Network · VLAN · IPAM · Flow Network Security · Flow Virtual Networking · Microsegmentation · Service Insertion <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Networking Row · Microsegmentation Row · Network Overlay Row <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> #16 "What about NSX-T?" · #17 "Network performance vs my Cisco fabric" · #20 "We've already invested in microsegmentation" · #25 "Software-defined networking trust" <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Q-NET-01 through Q-NET-04, Q-SEC-01 (physical topology, NSX-T footprint, microsegmentation requirements, multi-tenancy / VPC, compliance) <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Competitive Matrix:</strong> Flow vs NSX-T feature comparison <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../05-dsf-storage/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 5: DSF Deep Dive (How Storage Actually Works)</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 7: Data Protection and DR (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>06-networking-flow</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m6:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram color palette + helpers
+    const C = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+      green: '#34d399', greenFill: 'rgba(52,211,153,0.12)',
+      purple: '#c084fc', purpleFill: 'rgba(192,132,252,0.12)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opt = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opt.anchor) t.setAttribute('text-anchor', opt.anchor);
+      t.setAttribute('font-family', opt.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opt.size || 12);
+      if (opt.weight) t.setAttribute('font-weight', opt.weight);
+      if (opt.spacing) t.setAttribute('letter-spacing', opt.spacing);
+      if (opt.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opt.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ===== Diagram: AHV Networking Stack =====
+    (function drawAhvStack() {
+      const svg = document.getElementById('diagram-ahv-stack-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'PHYSICAL NICs → BOND → br0 → VIRTUAL NETWORKS → VMs', { anchor: 'middle', size: 12, mono: true, spacing: '0.08em', weight: '600' });
+
+      // Top: VMs
+      const vms = [
+        { x: 110, name: 'VM-Web-01', tag: 'vlan.100' },
+        { x: 320, name: 'VM-Dev-01', tag: 'vlan.200' },
+        { x: 530, name: 'VM-DMZ-01', tag: 'vlan.50' },
+      ];
+      vms.forEach(v => {
+        svg.appendChild(rc.rectangle(v.x, 60, 150, 50, opts(C.vm, C.vmFill)));
+        txt(svg, v.x + 75, 84, v.name, { anchor: 'middle', size: 12, mono: true, weight: '700', fill: C.label });
+        txt(svg, v.x + 75, 100, v.tag, { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+      });
+
+      // Virtual Networks band (gold blocks)
+      const vns = [
+        { x: 60,  label: 'vlan.100', sub: 'Production · IPAM off' },
+        { x: 290, label: 'vlan.200', sub: 'Dev · IPAM on · 10.20.30.0/24' },
+        { x: 520, label: 'vlan.50',  sub: 'DMZ · IPAM off' },
+      ];
+      vns.forEach(v => {
+        svg.appendChild(rc.rectangle(v.x, 130, 220, 60, opts(C.vip, C.vipFill, 'cross-hatch')));
+        txt(svg, v.x + 110, 152, v.label, { anchor: 'middle', size: 13, weight: '700', mono: true, fill: C.vip });
+        txt(svg, v.x + 110, 174, v.sub, { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+      });
+      txt(svg, 870, 162, 'Virtual Networks', { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.vip, spacing: '0.10em' });
+
+      // br0 bridge
+      svg.appendChild(rc.rectangle(60, 220, 680, 50, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 400, 244, 'br0  ·  Open vSwitch data bridge', { anchor: 'middle', size: 14, mono: true, weight: '700', fill: C.fabric });
+      txt(svg, 400, 262, 'kernel-level switching · MAC learning · VLAN tagging · Flow rules attach here', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // br0.local management bridge to the right
+      svg.appendChild(rc.rectangle(770, 220, 180, 50, opts(C.cvm, C.cvmFill)));
+      txt(svg, 860, 244, 'br0.local', { anchor: 'middle', size: 13, mono: true, weight: '700', fill: '#fbb091' });
+      txt(svg, 860, 262, 'mgmt · CVM ↔ host', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Bond
+      svg.appendChild(rc.rectangle(60, 300, 680, 50, opts(C.net, C.netFill)));
+      txt(svg, 400, 324, 'bond0  ·  active-backup | balance-slb | balance-tcp | LACP', { anchor: 'middle', size: 13, mono: true, weight: '700', fill: C.label });
+      txt(svg, 400, 342, 'NIC aggregation: redundancy and (some modes) load balancing', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Physical NICs
+      const nics = [{ x: 200 }, { x: 320 }, { x: 440 }, { x: 560 }];
+      nics.forEach((n, i) => {
+        svg.appendChild(rc.rectangle(n.x, 380, 80, 30, opts(C.disk, C.diskFill)));
+        txt(svg, n.x + 40, 400, 'eth' + i, { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.label });
+      });
+      txt(svg, 70, 398, 'Physical NICs', { anchor: 'start', size: 11, mono: true, weight: '600', fill: C.label, spacing: '0.05em' });
+
+      // Connectors (subtle vertical lines)
+      const connector = (x1, y1, x2, y2) => svg.appendChild(rc.line(x1, y1, x2, y2, { stroke: C.fabric, strokeWidth: 0.8, roughness: 1.3, opacity: 0.45 }));
+      connector(170, 110, 170, 130);
+      connector(395, 110, 400, 130);
+      connector(605, 110, 630, 130);
+      connector(170, 190, 170, 220);
+      connector(400, 190, 400, 220);
+      connector(630, 190, 630, 220);
+      connector(400, 270, 400, 300);
+      connector(400, 350, 400, 380);
+
+      // Side annotation: Prism Central manages this
+      svg.appendChild(rc.rectangle(770, 130, 180, 60, opts(C.acro, C.acroFill)));
+      txt(svg, 860, 152, 'Prism Central', { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
+      txt(svg, 860, 174, 'configures stack', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      txt(svg, 500, 460, 'OVS is the kernel-level switch in AHV — same OVS used in OpenStack and many production platforms.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+      txt(svg, 500, 482, 'IPAM is OPTIONAL per virtual network. Use external corporate DHCP where it exists.',
+        { anchor: 'middle', size: 11, fill: C.label, italic: true, weight: '600' });
+    })();
+
+    // ===== Diagram: Flow Microsegmentation =====
+    (function drawFlowMicroseg() {
+      const svg = document.getElementById('diagram-flow-microseg-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'CATEGORY-DRIVEN POLICY · DISTRIBUTED ENFORCEMENT AT OVS', { anchor: 'middle', size: 12, mono: true, spacing: '0.08em', weight: '600' });
+
+      // Three tier columns: Web (left), App (center), DB (right)
+      const tiers = [
+        { x: 60,  color: C.purple, fill: C.purpleFill, label: 'Tier: Web', vms: ['VM-Web-01', 'VM-Web-02', 'VM-Web-03'], rule: 'in 443 from any\nout 8080 to App\ndefault: deny' },
+        { x: 380, color: C.compute, fill: C.computeFill, label: 'Tier: App', vms: ['VM-App-01', 'VM-App-02', 'VM-App-03'], rule: 'in 8080 from Web\nout 5432 to DB\ndefault: deny' },
+        { x: 700, color: C.vip, fill: C.vipFill, label: 'Tier: DB', vms: ['VM-DB-01', 'VM-DB-02'], rule: 'in 5432 from App\nout: deny\ndefault: deny' },
+      ];
+
+      tiers.forEach((t) => {
+        // Tier policy box (gold rule card on top)
+        svg.appendChild(rc.rectangle(t.x, 60, 240, 70, opts(C.vip, C.vipFill, 'cross-hatch')));
+        txt(svg, t.x + 120, 80, t.label.toUpperCase(), { anchor: 'middle', size: 12, mono: true, weight: '700', fill: C.vip, spacing: '0.10em' });
+        const lines = t.rule.split('\n');
+        lines.forEach((ln, i) => {
+          txt(svg, t.x + 120, 100 + i * 12, ln, { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+        });
+
+        // Tier VM column
+        svg.appendChild(rc.rectangle(t.x, 160, 240, 200, opts(t.color, t.fill)));
+        txt(svg, t.x + 120, 184, t.label, { anchor: 'middle', size: 13, weight: '700', mono: true, fill: t.color });
+        t.vms.forEach((vm, i) => {
+          svg.appendChild(rc.rectangle(t.x + 30, 200 + i * 50, 180, 36, opts(C.vm, C.vmFill)));
+          txt(svg, t.x + 120, 222 + i * 50, vm, { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.label });
+        });
+      });
+
+      // OVS substrate band
+      svg.appendChild(rc.rectangle(60, 400, 880, 50, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 500, 422, 'Open vSwitch  ·  br0  ·  flow rules enforce policy at each AHV host', { anchor: 'middle', size: 13, mono: true, weight: '700', fill: C.fabric });
+      txt(svg, 500, 440, 'no central firewall · enforcement is distributed', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Allow arrows (cyan / green) — Web -> App, App -> DB
+      svg.appendChild(rc.line(300, 270, 380, 270, { stroke: C.green, strokeWidth: 2, roughness: 1.3 }));
+      txt(svg, 340, 262, '8080 ✓', { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.green });
+
+      svg.appendChild(rc.line(620, 270, 700, 270, { stroke: C.green, strokeWidth: 2, roughness: 1.3 }));
+      txt(svg, 660, 262, '5432 ✓', { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.green });
+
+      // Deny: Web -> DB direct (red arc with X)
+      svg.appendChild(rc.line(300, 320, 700, 320, { stroke: C.ext, strokeWidth: 2, roughness: 1.6 }));
+      // X marker
+      svg.appendChild(rc.line(490, 310, 510, 330, { stroke: C.ext, strokeWidth: 2.4, roughness: 1.2 }));
+      svg.appendChild(rc.line(490, 330, 510, 310, { stroke: C.ext, strokeWidth: 2.4, roughness: 1.2 }));
+      txt(svg, 500, 348, 'Web → DB direct: DENY', { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.ext });
+
+      // Inbound arrow at top (443 from internet)
+      svg.appendChild(rc.line(180, 30, 180, 60, { stroke: C.green, strokeWidth: 1.6, roughness: 1.3 }));
+      txt(svg, 240, 50, '443 ✓ inbound', { anchor: 'start', size: 10, mono: true, fill: C.green });
+
+      txt(svg, 500, 480, 'Categories drive policy, not VLANs. Move a VM to another cluster: policy follows.',
+        { anchor: 'middle', size: 11, fill: C.label, italic: true, weight: '600' });
+      txt(svg, 500, 502, 'Compare to traditional ACL: configure switch ACLs, configure each switch port, hope nothing changes.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ===== Diagram: Flow Virtual Networking Topology =====
+    (function drawFvn() {
+      const svg = document.getElementById('diagram-fvn-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'FVN · MULTI-VPC OVERLAY · BGP TO CORPORATE · SERVICE INSERTION', { anchor: 'middle', size: 12, mono: true, spacing: '0.08em', weight: '600' });
+
+      // Top: Corporate network gateway
+      svg.appendChild(rc.rectangle(380, 50, 240, 60, opts(C.disk, C.diskFill)));
+      txt(svg, 500, 74, 'Corporate Network', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      txt(svg, 500, 94, 'physical · BGP peers', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // VPC Gateway (just below corporate)
+      svg.appendChild(rc.rectangle(380, 140, 240, 60, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 500, 162, 'VPC Gateway', { anchor: 'middle', size: 13, mono: true, weight: '700', fill: C.vip });
+      txt(svg, 500, 182, 'NAT  ·  BGP peering  ·  routing', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+
+      // Three VPCs
+      const vpcs = [
+        { x: 30,  label: 'VPC-Production', cidr: '10.10.0.0/16', color: C.compute, fill: C.computeFill },
+        { x: 360, label: 'VPC-Dev',         cidr: '10.20.0.0/16', color: C.compute, fill: C.computeFill },
+        { x: 690, label: 'VPC-Shared',      cidr: '10.30.0.0/16', color: C.compute, fill: C.computeFill },
+      ];
+      vpcs.forEach(v => {
+        svg.appendChild(rc.rectangle(v.x, 240, 280, 140, opts(v.color, v.fill)));
+        txt(svg, v.x + 140, 264, v.label, { anchor: 'middle', size: 13, mono: true, weight: '700', fill: v.color });
+        txt(svg, v.x + 140, 282, v.cidr, { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+        // 3 mini VMs
+        for (let i = 0; i < 3; i++) {
+          svg.appendChild(rc.rectangle(v.x + 22 + i * 84, 304, 70, 56, opts(C.vm, C.vmFill)));
+          txt(svg, v.x + 22 + i * 84 + 35, 326, 'VM', { anchor: 'middle', size: 9, fill: C.label });
+          txt(svg, v.x + 22 + i * 84 + 35, 346, 'subnet', { anchor: 'middle', size: 8, fill: C.ink, italic: true });
+        }
+      });
+
+      // VPC Gateway -> each VPC
+      vpcs.forEach(v => {
+        svg.appendChild(rc.line(500, 200, v.x + 140, 240, { stroke: C.vip, strokeWidth: 0.9, roughness: 1.3, opacity: 0.6 }));
+      });
+      // Corporate -> Gateway
+      svg.appendChild(rc.line(500, 110, 500, 140, { stroke: C.disk, strokeWidth: 1.4, roughness: 1.3 }));
+
+      // Inter-VPC routing rules (between Production and Shared, between Dev and Shared, denied between Production and Dev)
+      svg.appendChild(rc.line(310, 310, 690, 310, { stroke: C.green, strokeWidth: 1.4, roughness: 1.4 }));
+      txt(svg, 500, 305, 'Prod ↔ Shared · ALLOW', { anchor: 'middle', size: 10, mono: true, weight: '700', fill: C.green });
+
+      svg.appendChild(rc.line(640, 340, 690, 340, { stroke: C.green, strokeWidth: 1.4, roughness: 1.4 }));
+      txt(svg, 500, 335, 'Dev ↔ Shared · ALLOW', { anchor: 'middle', size: 10, mono: true, weight: '700', fill: C.green });
+
+      svg.appendChild(rc.line(310, 370, 360, 370, { stroke: C.ext, strokeWidth: 1.4, roughness: 1.4 }));
+      txt(svg, 335, 386, 'Prod ↔ Dev · DENY', { anchor: 'middle', size: 10, mono: true, weight: '700', fill: C.ext });
+
+      // Service insertion on the corporate-to-VPC path
+      svg.appendChild(rc.rectangle(680, 60, 270, 60, opts(C.acro, C.acroFill)));
+      txt(svg, 815, 80, 'Service Insertion', { anchor: 'middle', size: 12, mono: true, weight: '700', fill: '#fbb091' });
+      txt(svg, 815, 100, '3rd-party Palo Alto VM-Series', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+      svg.appendChild(rc.line(620, 90, 680, 90, { stroke: C.acro, strokeWidth: 0.9, roughness: 1.3, opacity: 0.7, strokeDasharray: '4 4' }));
+
+      txt(svg, 500, 430, 'VPCs are isolated by default. Routing rules enable controlled inter-VPC communication.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+      txt(svg, 500, 452, 'Service insertion lets you chain third-party security or load-balancing into VPC traffic.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+      txt(svg, 500, 478, 'Mental model: very similar to AWS VPCs. Includes BGP integration with the physical network.',
+        { anchor: 'middle', size: 11, fill: C.label, italic: true, weight: '600' });
+    })();
+  </script>
+</body>
+</html>
