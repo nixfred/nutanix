@@ -109,18 +109,49 @@
       padding: 0 32px 96px;
       width: 100%;
     }
+    /* Full-bleed hero that dissolves into bg-base on three edges */
     .module-hero {
-      margin: 32px 0 28px;
-      border-radius: 14px;
+      position: relative;
+      margin: -16px calc(50% - 50vw) 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--bg-surface);
-      aspect-ratio: 16 / 9;
-      max-height: 420px;
+      isolation: isolate;
     }
-    .module-hero img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .module-hero img {
+      width: 100%;
+      height: clamp(360px, 56vh, 600px);
+      display: block;
+      object-fit: cover;
+      object-position: center 55%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10, 22, 40, 0)    0%,
+          rgba(10, 22, 40, 0)    50%,
+          rgba(10, 22, 40, 0.65) 80%,
+          var(--bg-base)         100%),
+        linear-gradient(to right,
+          var(--bg-base)         0%,
+          rgba(10, 22, 40, 0)    7%,
+          rgba(10, 22, 40, 0)    93%,
+          var(--bg-base)         100%);
+    }
 
-    .module-title-block { margin: 0 0 24px; }
+    /* Lift the eyebrow + headline into the lower fade band of the image */
+    .module-title-block {
+      position: relative;
+      z-index: 2;
+      margin: -110px 0 24px;
+    }
+    h1.module-title { text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
     .module-eyebrow {
       font-family: var(--font-mono);
       font-size: 13px;
@@ -585,6 +616,8 @@
       h1.module-title { font-size: 32px; }
       article.body h2 { font-size: 24px; }
       .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(260px, 44vh, 380px); }
+      .module-title-block { margin-top: -64px; }
     }
 
     /* Reduced motion */
