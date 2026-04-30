@@ -14,7 +14,7 @@ key_terms:
   - libvirt
   - Acropolis (the service)
   - Live Migration
-  - ADS (Acropolis Distributed Scheduling)
+  - ADS (Acropolis Dynamic Scheduling)
   - NGT (Nutanix Guest Tools)
   - Nutanix Move
   - Open vSwitch (OVS)
@@ -142,7 +142,7 @@ This means three things:
 
 ### The Cycle, Frame Two: AHV as the Hypervisor Without a Tax
 
-In the ESXi world, you pay for the hypervisor (now subscription-only post-Broadcom) and you pay for vCenter (bundled into the same subscription, but it is its own deployment). On a 100-VM customer, vSphere Foundation pricing is now in the range of $350 to $500 per core per year, with a 16-core minimum per CPU. For a typical 4-node cluster with 64 cores total per node (256 cores cluster-wide), that lands at roughly $90,000 to $128,000 per year just in hypervisor licensing. Plus vCenter (bundled but not free in any meaningful sense). Plus VMware support add-ons.
+In the ESXi world, you pay for the hypervisor (now subscription-only post-Broadcom) and you pay for vCenter (bundled into the same subscription, but it is its own deployment). Broadcom-era pricing depends heavily on which SKU. **vSphere Foundation** (vSphere + vCenter + HA / DRS / vMotion) is roughly **$190 per core per year MSRP** as of 2026 (partner quotes often land at $195+). **VMware Cloud Foundation (VCF)**, the higher-tier SDDC stack including vSAN, NSX, and Aria, is roughly **$350 per core per year** (down from the $700 announced at the start of the Broadcom transition). Both SKUs require a **16-core minimum per CPU**, and Broadcom has a **72-core minimum order** for new subscriptions. For a typical 4-node cluster with 64 cores per node (256 cores cluster-wide), vSphere Foundation lands at roughly $48,000 per year and VCF lands at roughly $90,000 per year, before add-ons, support uplift, or discount. Customers on the original $700/core VCF tier are paying close to $180,000 a year on the same cluster. Always confirm the customer's specific SKU before quoting numbers.
 
 AHV's hypervisor license is bundled into the AOS subscription. Functionally, the hypervisor is free. The customer pays for AOS, which they would pay for anyway if they buy Nutanix. The hypervisor cost line on the BOM goes to zero.
 
@@ -206,7 +206,7 @@ End to end this is on the order of 30-90 seconds, similar to vSphere HA. The key
 
 ### ADS: The DRS Equivalent
 
-ADS (Acropolis Distributed Scheduling) is the AHV equivalent of vSphere DRS. It periodically rebalances VMs across hosts to address resource pressure.
+ADS (Acropolis Dynamic Scheduling, sometimes written as the Acropolis Dynamic Scheduler) is the AHV equivalent of vSphere DRS. It periodically rebalances VMs across hosts to address resource pressure. The internal service that runs this is called Lazan; you will see the name in logs and `acli` output.
 
 ADS is genuinely simpler than DRS. DRS has decades of tuning for aggressive placement, pre-emptive load balancing, and granular policy options. ADS does the practical 80% of what DRS does with a fraction of the configuration surface. Specifically:
 
@@ -577,7 +577,7 @@ D) Nothing; AHV requires equivalent licensing
 
 **Answer:** C
 
-**Why this answer:** With vSphere Foundation (or equivalent) subscription pricing typically in the $400-$550 per core per year range as of 2026 (varies by tier and discounting), 128 cores at, say, $450/core = $57,600 per year. This is rough but in the right order of magnitude. The answer requires both knowing per-core pricing and doing the math.
+**Why this answer:** This question assumes the customer is on VCF (the higher tier with vSAN, NSX, and Aria) at roughly $350 per core per year as of 2026, with full support uplift and the 72-core order minimum already met. 128 cores × $350 = $44,800 per year, plus support uplift and any add-ons typically pushes the line item into the $50-70k range, which is answer C. Customers on **vSphere Foundation only** (the lower tier, ~$190 per core) would land closer to answer B. Customers still on the original $700/core VCF pricing would be closer to $90,000+. The point of the question is the order of magnitude and the doing-the-math discipline; the precise number depends on SKU and the SA should always confirm before quoting.
 
 **Why not the others:**
 - A) An order of magnitude too low. Per-core pricing makes any modern cluster's bill substantial.
@@ -737,6 +737,22 @@ You have the migration tool: Nutanix Move, free, change-tracked bulk copy with b
 You have twelve practice questions worth of AHV-specific discrimination: the technology, the comparison, the migration tool, the workload fit, and two NCX-style design defenses covering five-year financial planning under organizational constraint and architectural defense against an integration-focused customer architect. Those are real points on NCP-MCI and real practice for NCX-MCI.
 
 You are now ready for the management plane. AHV's control plane lives inside the cluster (Acropolis), but the user-facing experience lives in Prism Element and Prism Central. Module 4 makes that concrete.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. The licensing math is the most volatile section here; reverify against current Broadcom and Nutanix price lists before quoting numbers in front of a customer.
+
+- [Nutanix Bible — AHV Architecture](https://www.nutanixbible.com/5a-book-of-ahv-architecture.html). KVM/QEMU/libvirt/OVS lineage, Acropolis service description, ADS internals (Lazan service, 15-minute polling interval, 30-minute backoff after rebalance).
+- [Acropolis Dynamic Scheduling in AHV (AHV Admin Guide v6.8)](https://portal.nutanix.com/page/documents/details?targetId=AHV-Admin-Guide-v6_8:ahv-dynamic-scheduling-c.html). ADS authoritative reference; confirms the "Dynamic" expansion (not "Distributed").
+- [Nutanix Move Product Page](https://www.nutanix.com/products/move). Confirms supported sources (ESXi, Hyper-V, AWS, Azure, GCP) and that Move is free.
+- [Nutanix Move 5.5 Documentation](https://portal.nutanix.com/docs/Nutanix-Move-v5_5:top-hyperv-vm-migration-c.html). Hyper-V to AHV / NC2-on-AWS migration paths.
+- [Nutanix Bible — VM Migration Architecture](https://www.nutanixbible.com/21b-vm-migration-arch.html). Move's CBT-equivalent change-tracking, cutover semantics, downtime envelope.
+- [NCM Self-Service (formerly Calm)](https://www.nutanix.com/products/cloud-manager/self-service). Confirms the 2022 Calm-to-NCM-Self-Service rename. The curriculum keeps both names since "Calm" is still in widespread customer vocabulary.
+- [Nutanix Kubernetes Engine (formerly Karbon)](https://www.nutanixbible.com/18c-book-of-cloud-native-services-nutanix-kubernetes-engine.html). NKE is the current branding; note that starting with NKE 2.8 / Prism Central 2023.1.0.1 the user-facing label has shifted again to "Kubernetes Management" while the underlying product remains NKE.
+- [VCF Licensing Guide 2026 (Redress Compliance)](https://redresscompliance.com/vcf-licensing-guide-2026.html). VCF reduced to $350/core/year (was $700); 16-core CPU minimum; 72-core order minimum.
+- [vSphere Foundation vs Standard 2026 (VMware Made Simple)](https://vmwaremadesimple.com/articles/vsphere-foundation-vs-standard-2026.html). vSphere Foundation MSRP ~$190/core; partner quotes ~$195+. Confirms the SKU split used in the licensing math section.
 
 ---
 

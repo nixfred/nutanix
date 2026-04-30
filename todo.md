@@ -92,7 +92,27 @@ Modules:
     - CVM resource sizing table is labeled "AOS 7.5 generation" with specific vCPU/RAM numbers (8/32 minimum, 12/48 typical, 14-16/64+ heavy). The Nutanix Support Portal page for AOS 7.5 CVM specifications is gated; could not verify exact numbers from public sources. Historical defaults were 8 vCPU / 16 GB with 24 GB floor at AOS 5.0; the curriculum's higher numbers are plausible for AOS 7.5 with production features but should be cross-checked with portal access during Phase TR finalization.
     - Service list omits Medusa, the abstraction layer that fronts Cassandra. Pedagogically reasonable (treating Cassandra as "the metadata service" hides implementation detail), but worth flagging for Module 05 (DSF deep dive) consistency check; if Module 05 invokes Medusa by name the abstraction needs to be introduced here too.
   - No source-markdown corrections applied; module's technical claims hold.
-- [ ] 03-ahv-hypervisor.md
+- [x] 03-ahv-hypervisor.md — STATUS: findings-recorded, four corrections made, References section added
+  - Corrections applied:
+    - **ADS expansion fixed.** Curriculum had "ADS (Acropolis Distributed Scheduling)" in two places (front matter and the ADS section heading). Authoritative Nutanix sources (Nutanix Bible, AHV Admin Guide v6.8, BP-2029) call it **Acropolis Dynamic Scheduling** (or "Acropolis Dynamic Scheduler"). Fixed both. Added a sentence noting the internal service name is Lazan and that it appears in logs and `acli` output.
+    - **vSphere Foundation pricing rewritten.** The original text said "vSphere Foundation pricing is now in the range of $350 to $500 per core per year" which conflated vSphere Foundation MSRP (~$190/core) with VMware Cloud Foundation (~$350/core). Replaced with a SKU-aware paragraph: vSphere Foundation $190/core, VCF $350/core (down from $700), 16-core CPU minimum, 72-core order minimum. Recomputed the 256-core example correctly: $48k/yr (vSphere Foundation) or $90k/yr (VCF) before uplift.
+    - **Q7 explanation updated.** The math in the explanation no longer matches the answer choice C cleanly without the SKU clarification. Rewrote the explanation to specify VCF tier with support uplift gets you to the C range, and to call out that vSphere Foundation alone would land at answer B. Preserves the order-of-magnitude pedagogical intent.
+    - **Added 72-core minimum order note.** Broadcom's post-2025 minimum order constraint is a meaningful gotcha in customer pricing conversations and was missing.
+  - Confirmed:
+    - AHV is KVM-based with QEMU device emulator, libvirt management primitives, Open vSwitch networking, and Acropolis as the Nutanix-specific control plane.
+    - Acropolis runs as a service inside every CVM with master/follower election via Zeus/ZooKeeper.
+    - HA recovery time order of 30-90 seconds (in the same range as vSphere HA).
+    - ADS default polling interval 15 minutes; rebalance triggers 30-minute backoff (not in curriculum but consistent with curriculum's "evaluates persistent pressure, not transient spikes" framing).
+    - Nutanix Move is free, deployed as a VM, supports ESXi/Hyper-V/AWS/Azure/GCP/other-Nutanix as sources, performs change-tracked bulk copy + brief cutover.
+    - Move cutover downtime envelope (5-15 minutes per VM) accurate per Nutanix Move 5.5 docs and Bible.
+    - NGT capability list (time sync, IP detection, VirtIO drivers, VSS-aware Windows snapshots, FLR, self-service file restore) accurate.
+    - Calm renamed to NCM Self-Service in 2022; curriculum's dual naming is appropriate.
+    - NKE (Nutanix Kubernetes Engine) branding still current; the user-facing label is shifting to "Kubernetes Management" starting NKE 2.8 / PC 2023.1.0.1 but the curriculum's NKE reference remains accurate at the product level.
+    - FT (Fault Tolerance / lockstep CPU) gap on AHV confirmed.
+    - DSF-native snapshot semantics (instant, redirect-on-write, no consolidation) confirmed.
+  - Suspect (kept as-is):
+    - Acropolis status page on port 2030 — could not verify from public sources; likely correct (internal status pages on per-CVM ports are common in Nutanix services). Re-validate during Phase TR finalization.
+    - "ADS recommends or executes Live Migrations" — accurate; ADS can run in advisory or enforcing mode depending on cluster config. Curriculum doesn't distinguish; pedagogically OK.
 - [ ] 04-prism-management.md
 - [ ] 05-dsf-storage-deep-dive.md
 - [ ] 06-networking-flow.md
