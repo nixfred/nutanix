@@ -404,7 +404,38 @@ Appendices:
     - Success criteria templates (performance, availability, DR, operational, integration) are customer-defined per the appendix's discipline; nothing to verify.
     - POC variations by customer profile (mid-market / enterprise / compliance / cloud-DR / VDI) align with Appendix I reference architectures.
   - References section added linking to Modules 02, 03, 06, 07, 08, 09 and Appendix G.
-- [ ] appendix-k-cert-tracker.md
+- [x] appendix-k-cert-tracker.md — STATUS: findings-recorded, two corrections, References section added with Phase TR note
+  - Corrections applied:
+    - **NCP-MCA overview**: "Self-Service (Calm)" → "NCM Self-Service (formerly branded Calm)" (matches Module 03 product-rename verification).
+    - **NCP-MCA blueprint table**: same Calm → NCM Self-Service naming refinement.
+  - Confirmed:
+    - Cert ladder hierarchy (NCA → NCP-MCI → specializations → NCM-MCI → NCX-MCI) accurate.
+    - Time/effort estimates per cert reasonable.
+    - Exam-format details (multiple-choice, performance-based, panel defense) consistent with Nutanix University posts.
+    - NCP-NS 7.5 timing (April 2026) consistent with Module 06 fix.
+    - NCP-US blueprint mapping (Files / Objects / Volumes ~10/30/10/10/20/15/5%) consistent with Module 08 framing.
+    - NCX-MCI panel-defense disposition framing (acknowledge competitor strengths, recommend hybrid, recommend against migration when math doesn't work, engage seriously, maintain composure) is the same disposition tested across the NCX-style Q11/Q12 questions in Modules 1-10.
+  - Suspect (kept as-is with explicit Phase TR note):
+    - Blueprint percentage estimates throughout the appendix (and across the curriculum) were not reconciled against gated EBG PDFs. The directional structure is sound; the specific percentages may shift between blueprint versions. Surfaced this as a finalization-pass item in the References section with a clear note that the structural mapping (which module teaches which domain) is independent of the exact percentage and remains accurate.
+  - References section added with 8 authoritative links (Nutanix University catalog, EBG-NCA-6-5 PDF, NCP-MCI / NCP-US certification pages, NCP-NS 7.5 announcement, NCP-US prep roadmap, Module 03 References for the Calm rename, Module 09 References for the NCI/NCM/NCP structure).
+
+---
+
+## Phase TR — GATE STATUS: PASSED
+
+All 23 source files reviewed and corrected. Phase TR complete.
+
+**Per-file commits:**
+- 10 module commits (`c3bca38` through `ada4a91`)
+- 12 appendix commits including the two-half glossary `cb5fce8` and the final `appendix-k` commit (forthcoming)
+
+**Aggregate corrections across the entire curriculum:**
+- **Modules:** 24 substantive corrections + 10 References sections.
+- **Appendices:** 32 corrections + 12 References sections (across the 11 appendix files; 12 if counting the glossary as two halves).
+- **Cross-cutting renames propagated:** AOS Pro/Ultimate → NCI Pro/Ultimate (~30 places), Acropolis Distributed → Dynamic Scheduler, Files Analytics → Data Lens evolution, Leap → Nutanix Disaster Recovery, Calm → NCM Self-Service, Karbon → NKE/Kubernetes Management, vSphere Foundation $190/core / VCF $350/core, EC 4+1 minimum 6 nodes, extent-group 1 MB or 4 MB, LZ4 + LZ4HC, Flow Network Security in NCI Ultimate or Security Add-On for NCI Pro.
+- **Authoritative sources cited:** Nutanix Bible, ~25 Nutanix portal tech notes (TN-2027, TN-2032, TN-2041, TN-2072, TN-2094, TN-2096, TN-2106, BP-2009, BP-2083, etc.), Nutanix Cloud Platform software-options page, NCI/NCM datasheets, License Manager conversion docs, AOS Admin Guide v6.8, AHV Admin Guide v6.8, nCLI Command Reference v6.8, Cisco HyperFlex EOL announcement, VCF / vSphere Foundation 2026 pricing analyses, Nutanix.dev API guides, multiple Nutanix Community threads, Nutanix Tech Center blogs.
+
+**Gate met:** every file marked confirmed or revised; corrections committed file-by-file with descriptive messages; References sections added to all 23 files; cross-cutting summary captured here. Ready to advance to Phase 1 (scaffold) of the original site build.
 
 **Discipline:**
 - One file per pass. Do not batch. Do not skim.

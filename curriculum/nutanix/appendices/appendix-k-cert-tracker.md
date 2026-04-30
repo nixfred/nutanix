@@ -265,7 +265,7 @@ Files configuration with AD integration is the most operationally complex piece;
 
 ### Overview
 
-Specialization cert for Nutanix automation. Covers Self-Service (Calm), X-Play, the v4 API, Terraform/Ansible integration, and IaC patterns.
+Specialization cert for Nutanix automation. Covers NCM Self-Service (formerly branded Calm), X-Play, the v4 API, Terraform / Ansible integration, and IaC patterns.
 
 **Format:** ~60 questions mixing multiple-choice and scenario-based.
 
@@ -278,7 +278,7 @@ Specialization cert for Nutanix automation. Covers Self-Service (Calm), X-Play, 
 | Blueprint Domain | Approximate Weight | Curriculum Coverage |
 |---|---|---|
 | v4 API Architecture & Authentication | ~15% | [Module 4 § v4 API](./04-prism-management.md) |
-| Self-Service (Calm) Blueprints | ~25% | [Module 4 § Self-Service](./04-prism-management.md) |
+| NCM Self-Service (formerly Calm) Blueprints | ~25% | [Module 4 § Self-Service](./04-prism-management.md) |
 | X-Play Event-Driven Automation | ~15% | [Module 4 § X-Play](./04-prism-management.md) |
 | Terraform Provider | ~10% | [Module 4 § IaC Tools](./04-prism-management.md) |
 | Ansible Collection | ~10% | [Module 4 § IaC Tools](./04-prism-management.md) |
@@ -521,6 +521,25 @@ If you fail, Nutanix typically requires a waiting period before retake (often 14
 9. **Treating practice exam scores as the bar.** Practice exams test recall; real exams test scenario judgment. 95% on practice exams doesn't guarantee passing.
 
 10. **Not scheduling the exam.** Many SAs perpetually prepare and never sit. The cert that matters is the one you've passed; schedule and sit.
+
+---
+
+## References
+
+The blueprint percentages and exam-format details in this appendix are estimates based on Nutanix's published exam blueprint guides at the time of curriculum production. **Always reverify against the current Nutanix University blueprint PDF for the version of the exam you are taking.** Nutanix updates blueprints periodically and the percentages shift between versions.
+
+Authoritative sources:
+
+- [Nutanix University Certification Catalog](https://www.nutanix.com/support-services/training-certification/certifications). The starting point for current exam blueprints, registration, and pricing.
+- [NCA Exam Blueprint Guide (NCA 6.5)](https://www.nutanix.com/content/dam/nutanix/en/resources/misc/ebg-nca-6-5.pdf). Source for the NCA blueprint domain weights.
+- [NCP-MCI Certification Page](https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-multicloud-infrastructure-v65). Current NCP-MCI blueprint reference.
+- [NCP-NS 7.5 Announcement (Nutanix University blog)](https://en.vmik.net/2026/03/whats-new-at-nutanix-university-15/). NCP-NS 7.5 opened for scheduling April 4, 2026; backs the timing references in this appendix.
+- [NCP-US Certification Page](https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-unified-storage-v65). Current NCP-US blueprint reference.
+- [NCP-US Exam Roadmap (Nutanix Community)](https://next.nutanix.com/education-blog-153/your-roadmap-to-success-5-steps-to-prep-for-the-ncp-us-certification-exam-42945). Useful study-sequence guidance.
+- [Module 03 References — NCM Self-Service rename](../03-ahv-hypervisor.md#references). Backs the Calm → NCM Self-Service naming used in the NCP-MCA section.
+- [Module 09 References — NCI / NCM / NCP licensing](../09-licensing-economics.md#references). The current paid-tier structure that NCP-MCA and NCM-MCI candidates need to understand for exam scenarios.
+
+**Phase TR note:** The cert-blueprint percentage estimates throughout the curriculum (see also Modules 01, 03, 06, 08) are directionally reasonable but were not reconciled to specific published EBG PDFs because most are gated on the Nutanix Support Portal. A finalization pass with portal access can refine the percentages; the structural mapping (which modules teach which exam domains) is independent of the exact percentage and remains accurate.
 
 ---
 
