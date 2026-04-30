@@ -164,43 +164,11 @@
       margin: 0 0 32px;
     }
 
-    .hero .terminal { position: relative; z-index: 2; }
-
     @media (max-width: 720px) {
       .hero-image { margin-top: -16px; }
       .hero-image img { height: clamp(320px, 52vh, 460px); }
       .hero h1 { font-size: 40px; margin-top: -64px; }
     }
-
-    .terminal {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px 24px;
-      overflow-x: auto;
-      color: var(--text-secondary);
-    }
-    .terminal .prompt { color: var(--accent-cyan); user-select: none; }
-    .terminal .cmd { color: var(--text-primary); }
-    .terminal .out { color: var(--text-secondary); }
-    .terminal .out a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      border-bottom: 1px dotted var(--text-tertiary);
-    }
-    .terminal .out a:hover { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
-    .terminal .cursor {
-      display: inline-block;
-      width: 8px;
-      height: 1em;
-      background: var(--accent-cyan);
-      vertical-align: text-bottom;
-      animation: blink 1.05s steps(2) infinite;
-      margin-left: 2px;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
 
     section.who {
       margin: 56px 0;
@@ -351,16 +319,6 @@
         whiteboard-ready diagrams, honest comparisons against the incumbent stacks.
       </p>
 
-      <pre class="terminal" aria-label="Curriculum overview"><span class="prompt">$</span> <span class="cmd">cd /nix/nutanix</span>
-<span class="prompt">$</span> <span class="cmd">ls</span>
-<span class="out">01-hci-foundations/      06-networking-flow/      appendix-a-glossary/
-02-architecture/         07-data-protection/      appendix-b-comparison-matrix/
-03-ahv-hypervisor/       08-unified-storage/      appendix-c-scenarios/
-04-prism-management/     09-licensing-economics/  appendix-d-objections/
-05-dsf-storage/          10-migration-path/       appendix-e-discovery-questions/
-                                                  appendix-f-sizing-rules/
-                                                  appendix-g-cli-reference/</span>
-<span class="prompt">$</span><span class="cursor"></span></pre>
     </section>
 
     <section class="who">
