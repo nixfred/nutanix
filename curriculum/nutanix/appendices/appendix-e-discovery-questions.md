@@ -736,6 +736,20 @@ Discovery is a continuous process, not a one-time intake. The discovery you do i
 
 ---
 
+## References
+
+This appendix is engagement methodology (questions to ask, what to listen for, what to do with the answers); it intentionally avoids restating technical specifications. The technical content underlying the questions (RPO/RTO definitions, NSX-T footprint, SRM customization, NCI/NCM tiers, Files/Objects use cases) is sourced and verified in the per-module References sections:
+
+- [Module 4 References — Aria footprint, identity, automation](../04-prism-management.md#references). Backs the Q-MGMT and Q-AUT question domains.
+- [Module 5 References — IOPS/latency profile, capacity, RF/EC](../05-dsf-storage-deep-dive.md#references). Backs Q-STOR-01 through Q-STOR-05.
+- [Module 6 References — NSX-T, microsegmentation, VPC](../06-networking-flow.md#references). Backs Q-NET-02 through Q-NET-04.
+- [Module 7 References — RPO/RTO, SRM, DR test cadence](../07-data-protection.md#references). Backs Q-DR-01 through Q-DR-05.
+- [Module 8 References — Files / Objects / Volumes inventories](../08-unified-storage.md#references). Backs Q-STOR-06 through Q-STOR-09.
+- [Module 9 References — Run-rate, decision-makers, refresh timing](../09-licensing-economics.md#references). Backs Q-ECON and Q-GEN-03 / Q-GEN-04.
+- [Module 10 References — Migration discovery, dependency mapping](../10-migration-path.md#references). Backs Q-MIG-01 through Q-MIG-06.
+
+---
+
 ## Cross-References
 
 - **Modules:** Each question links to the module where the topic is taught in depth.

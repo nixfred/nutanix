@@ -320,7 +320,10 @@ Appendices:
     - Array-based-replication coexistence framing accurate.
     - Test-failover description accurate (consistent with Module 07).
   - References section added linking back to the per-module References sections that source the technical specifics (Modules 03, 06, 07, 09, Appendix B).
-- [ ] appendix-e-discovery-questions.md
+- [x] appendix-e-discovery-questions.md — STATUS: findings-recorded, no corrections needed, References section added
+  - Confirmed: Appendix E is pure engagement methodology (questions to ask, what to listen for, what to do with answers across Q-GEN, Q-WL, Q-MGMT, Q-AUT, Q-STOR, Q-NET, Q-SEC, Q-DR, Q-MIG, Q-ECON families). It deliberately avoids restating technical specifications.
+  - Scanned for known error patterns (AOS Pro/Ultimate, NCM Starter packaging, Distributed Scheduler, Files Analytics-only, Flow-on-NCM-Pro, /api/nutanix/v4 prefix, extent-group 4 MB, zstd, Karbon, nutanix.ncp): zero matches.
+  - References section added linking each question family to its underlying module's References section so readers can trace any answer back to authoritative sources.
 - [ ] appendix-f-sizing-rules.md
 - [ ] appendix-g-cli-reference.md
 - [ ] appendix-h-competitive-matrix.md
