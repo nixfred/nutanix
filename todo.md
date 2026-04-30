@@ -375,7 +375,25 @@ Appendices:
     - Ceph / SDS-on-commodity positioning honest; matches the "operational complexity vs licensing savings" trade-off framing in Module 09.
     - Status quo / "do nothing" framing accurate.
   - References section added linking to Cisco's official HyperFlex EOL announcement, Futurum's industry analysis, and the Appendix B / Module 09 / Module 06 References sections that source the feature-and-pricing tables behind the positioning playbooks.
-- [ ] appendix-i-reference-architectures.md
+- [x] appendix-i-reference-architectures.md — STATUS: findings-recorded, eight licensing-related corrections, References section added
+  - Corrections applied:
+    - **Small reference architecture**: AOS Pro → NCI Pro (formerly AOS Pro), with explicit Security Add-On for Flow Network Security framing. Reworded the design rationale to make the NCM (management) vs NCI-side Flow licensing distinction explicit so the architecture doesn't propagate the Module 06 error.
+    - **Small reference variations**: "AOS Ultimate for NearSync" → "NCI Ultimate (formerly AOS Ultimate) for NearSync; also bundles Flow."
+    - **Medium reference architecture**: AOS Pro/Ultimate → NCI Pro/Ultimate naming, plus Flow-bundling note in NCI Ultimate.
+    - **Large reference architecture**: AOS Pro/Ultimate → NCI Pro/Ultimate naming, plus standardize-on-NCI-Ultimate framing for large enterprises (Flow bundled, simpler licensing posture).
+    - **VDI reference**: AOS Pro → NCI Pro with Security Add-On framing for VDI-tier microsegmentation.
+    - **Hybrid Nutanix + NC2**: AOS Pro → NCI Pro on both sides; clarified Flow / NearSync upgrade path.
+    - **ROBO Fleet**: AOS Pro → NCI Pro on edge; central tier conditioning on Flow / NearSync needs.
+    - **Greenfield**: AOS Pro → NCI Pro with Security Add-On framing for Flow.
+    - **Compliance-Heavy**: AOS Ultimate → NCI Ultimate with explicit "bundles NearSync, Metro, Flow Network Security, Data-at-Rest Encryption" framing.
+  - Confirmed:
+    - The eight reference architectures (Small / Medium / Large / VDI / Hybrid+NC2 / ROBO / Greenfield / Compliance) align with sizing rules in Appendix F.
+    - Network topology recommendations consistent with Module 06.
+    - Multi-cluster blast-radius framing for large enterprise consistent with Module 02.
+    - WORM Objects mention in Compliance-Heavy aligns with the corrected Module 08 WORM details.
+    - DR replication-mode mapping (Async / NearSync / Metro) per workload tier consistent with Module 07.
+    - The mixed-hypervisor reality (AHV plus ESXi-on-Nutanix subset for NSX-T-deep / SRM-deep workloads) consistent with Module 03's hybrid-steady-state framing.
+  - References section added linking to Modules 05, 06, 07, 08, 09 References plus Appendices B and F.
 - [ ] appendix-j-poc-playbook.md
 - [ ] appendix-k-cert-tracker.md
 

@@ -86,12 +86,12 @@ Mid-market, ~150-300 employees in IT-relevant roles, single primary datacenter, 
 ### Software Stack
 
 - **Hypervisor:** AHV (default) or ESXi-on-Nutanix (if customer is mid-VMware-migration)
-- **AOS:** Pro tier
-- **NCM:** Pro tier (provides Intelligent Operations and Flow Network Security)
+- **NCI:** Pro tier (formerly AOS Pro). Add the **Security Add-On for NCI Pro** if Flow Network Security microsegmentation is in scope (per usable TiB; bundles Data-at-Rest Encryption); otherwise, upgrade to NCI Ultimate where Flow is bundled.
+- **NCM:** Pro tier (Intelligent Operations: capacity analytics, anomaly detection, runway analysis)
 - **Files:** sized for existing file workloads (typically 20-50 TB)
 - **Objects:** sized for backup target consolidation (typically 30-80 TB)
 - **Volumes:** as needed for any iSCSI consumers
-- **Flow Network Security:** included with NCM Pro; baseline microsegmentation policies
+- **Flow Network Security:** licensed via the Security Add-On for NCI Pro (or NCI Ultimate); baseline microsegmentation policies
 
 ### DR Approach
 
@@ -106,7 +106,7 @@ Calibrated for the BlueAlly mid-market sweet spot. Captures the consolidation st
 
 8-node primary provides N+1 redundancy with margin during rebuild; supports growth to ~200 VMs comfortably; allows 150-VM workload to run with healthy headroom.
 
-NCM Pro tier is the practical sweet spot: includes Intelligent Operations (capacity analytics) and Flow Network Security (microsegmentation), which most mid-market customers want. NCM Ultimate is overkill unless the customer specifically needs Self-Service or X-Play depth.
+NCM Pro tier is the practical sweet spot for management features: it includes Intelligent Operations (capacity analytics, anomaly detection, runway analysis), which most mid-market customers want. NCM Ultimate is overkill unless the customer specifically needs Self-Service or X-Play depth. **Flow Network Security is separately licensed**: it ships with NCI Ultimate or as a Security Add-On to NCI Pro (per usable TiB; bundles Data-at-Rest Encryption). Don't conflate the NCM management tiers with the NCI-side Flow licensing — that confusion bites in customer pricing conversations.
 
 ### Trade-offs Accepted
 
@@ -118,7 +118,7 @@ NCM Pro tier is the practical sweet spot: includes Intelligent Operations (capac
 ### Variations
 
 - **If customer is heavily Linux/Containers:** add Kubernetes-on-Nutanix consideration; cluster shape unchanged
-- **If customer wants higher RPO:** upgrade to AOS Ultimate for NearSync on Tier-1 workloads
+- **If customer wants higher RPO:** upgrade to NCI Ultimate (formerly AOS Ultimate) for NearSync on Tier-1 workloads. NCI Ultimate also bundles Flow Network Security, which removes the Security Add-On per-TiB cost.
 - **If customer is starting smaller (50-100 VMs):** scale down to 4-5 node primary
 
 ### Cross-References
@@ -174,8 +174,8 @@ Larger mid-market or smaller enterprise, ~500-1,000 employees in IT-relevant rol
 ### Software Stack
 
 - **Hypervisor:** AHV with possible ESXi-on-Nutanix subset
-- **AOS:** Pro tier (Ultimate for tier-1 workloads needing NearSync)
-- **NCM:** Pro tier (Ultimate if Self-Service / X-Play needed)
+- **NCI:** Pro tier for general workloads (NCI Ultimate for tier-1 workloads needing NearSync; NCI Ultimate also bundles Flow Network Security at no incremental per-TiB cost)
+- **NCM:** Pro tier (Intelligent Operations); Ultimate if Self-Service / X-Play depth is needed
 - **Files:** dedicated File Server for user shares + application file storage; 50-150 TB
 - **Objects:** dedicated Object Store for backup targets and on-prem analytics; 100-200 TB
 - **Volumes:** as needed
@@ -263,7 +263,7 @@ Enterprise customer, 2,000+ employees in IT-relevant roles, multiple datacenters
 ### Software Stack
 
 - **Hypervisor:** mixed AHV + ESXi-on-Nutanix; AHV for new workloads; ESXi for NSX-T-deep / SRM-deep
-- **AOS:** Pro for general; Ultimate for tier-1 with NearSync requirements
+- **NCI:** Pro for general workloads; **Ultimate** for tier-1 (NearSync, Metro Availability, bundled Flow Network Security). Many large enterprises standardize on NCI Ultimate cluster-wide for the simpler licensing posture and the Flow bundling.
 - **NCM:** Ultimate (Self-Service blueprints, X-Play, Cost Governance)
 - **Prism Central:** scale-out (3 VMs) for HA and >10K VM management
 - **Files:** multiple File Servers for tenant or workload separation
@@ -353,11 +353,11 @@ VDI-centric deployment for healthcare, financial services, education, or contact
 ### Software Stack
 
 - **Hypervisor:** AHV (Citrix CVAD has good AHV support)
-- **AOS:** Pro tier
-- **NCM:** Pro tier
+- **NCI:** Pro tier (formerly AOS Pro). Add Security Add-On for Flow if VDI-tier microsegmentation is in scope, or upgrade to NCI Ultimate for the bundled Flow + DARE.
+- **NCM:** Pro tier (Intelligent Operations)
 - **Files:** dedicated File Server for persistent profile storage if not using broker-managed profile management
 - **Volumes:** as needed for VDI infrastructure components
-- **Flow Network Security:** category-based microsegmentation isolating VDI tier from back-end services
+- **Flow Network Security:** category-based microsegmentation isolating VDI tier from back-end services (licensed via NCI Ultimate or Security Add-On for NCI Pro)
 
 ### DR Approach
 
@@ -423,7 +423,7 @@ Customer with on-prem Nutanix and cloud-extended capabilities via NC2. Use cases
 ### Software Stack
 
 - **Same software stack on both sides** (this is NC2's value: same platform on-prem and cloud)
-- **AOS:** Pro on both
+- **NCI:** Pro tier on both (Ultimate if NearSync to NC2 is in scope or if Flow microsegmentation is needed cluster-wide without the Security Add-On)
 - **NCM:** Pro or Ultimate; Prism Central manages both clusters as one fleet
 - **Files / Objects:** can run in either location depending on workload locality
 
@@ -495,7 +495,7 @@ Customer with a primary datacenter plus many distributed sites (retail stores, b
 ### Software Stack
 
 - **Hypervisor:** AHV everywhere
-- **AOS:** Pro on edge sites; Pro or Ultimate on central based on workload
+- **NCI:** Pro on edge sites (formerly AOS Pro); NCI Pro or Ultimate on central based on workload and whether Flow Network Security or NearSync are needed centrally
 - **Prism Central at central datacenter:** manages all sites as one fleet
 - **Categories:** `Site: Store-001` through `Site: Store-NNN` for fleet-wide policy
 - **Async replication:** critical data from each site to central
@@ -570,12 +570,12 @@ Newly-funded company, no existing infrastructure, hybrid-cloud-native developmen
 ### Software Stack
 
 - **Hypervisor:** AHV
-- **AOS:** Pro
+- **NCI:** Pro tier (formerly AOS Pro). Add Security Add-On if Flow Network Security is needed for greenfield-tier microsegmentation; otherwise upgrade to NCI Ultimate as scale justifies.
 - **NCM:** Pro (Ultimate optional based on growth)
 - **Files:** sized for application file storage and development shares (smaller than enterprise scale)
 - **Objects:** for steady-state object workloads on-prem complementing cloud S3
 - **Volumes:** as needed
-- **Flow Network Security:** baseline microsegmentation
+- **Flow Network Security:** baseline microsegmentation (licensed via NCI Ultimate or Security Add-On for NCI Pro)
 
 ### DR Approach
 
@@ -656,7 +656,7 @@ Financial services, healthcare provider, or government contractor. Compliance is
 ### Software Stack
 
 - **Hypervisor:** AHV
-- **AOS:** Ultimate (for advanced security features and NearSync where required)
+- **NCI:** Ultimate (formerly AOS Ultimate) — bundles NearSync, Metro, Flow Network Security, Data-at-Rest Encryption capabilities; the right tier for compliance environments
 - **NCM:** Ultimate (Self-Service with approval workflows, X-Play for compliance-driven automation)
 - **Files:** with anti-ransomware enabled; SMB encryption mandatory
 - **Objects:** WORM-enabled buckets for archives
@@ -745,6 +745,20 @@ WORM Objects buckets are the durable answer for regulatory archives; the multi-y
 4. **Forcing a customer into the wrong reference.** If the customer profile genuinely doesn't match any of the eight, design from first principles.
 5. **Neglecting variations.** Each reference has variations for common deviations; use them rather than re-inventing.
 6. **Underestimating compliance complexity.** Compliance-heavy customers genuinely need the Compliance-Heavy reference; don't try to make a Medium architecture work.
+
+---
+
+## References
+
+The reference architectures consume technical specifications and licensing structure verified in the modules and earlier appendices. Highlights:
+
+- [Module 09 References](../09-licensing-economics.md#references). NCI Pro / Ultimate (replaced AOS Pro / Ultimate), NCM Pro / Ultimate, NCP bundles, the Security Add-On for NCI Pro that bundles Flow Network Security and Data-at-Rest Encryption (per usable TiB).
+- [Module 06 References](../06-networking-flow.md#references). Flow Network Security licensing (NCI Ultimate or Security Add-On for NCI Pro). Bond modes; LACP cautions.
+- [Module 07 References](../07-data-protection.md#references). Async / NearSync / Metro Availability characteristics; Recovery Plans (Nutanix Disaster Recovery / formerly Leap); Witness VM specs.
+- [Module 05 References](../05-dsf-storage-deep-dive.md#references). RF / EC math used in cluster sizing; EC 4+1 needs ≥ 6 nodes.
+- [Module 08 References](../08-unified-storage.md#references). Files (FSVM count), Objects (WORM, S3 Object Lock semantics), Volumes.
+- [Appendix B References](./appendix-b-comparison-matrix.md#references). HyperFlex EOL dates and Cisco-Nutanix partnership product (relevant to ROBO and Cisco-mature accounts).
+- [Appendix F References](./appendix-f-sizing-rules.md#references). Per-tier Prism Central VM specs and X-Small PC tier.
 
 ---
 
