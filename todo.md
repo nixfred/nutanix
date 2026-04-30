@@ -257,8 +257,24 @@ Modules:
 **Total: 24 substantive corrections + 10 References sections added across 10 modules.** Twelve appendices remain.
 
 Appendices:
-- [ ] appendix-a-glossary.md
-- [ ] appendix-a-glossary-nz.md (resolve duplicate; pick canonical or merge)
+- [x] appendix-a-glossary.md (A-M) — STATUS: findings-recorded, eight corrections + new entry, References section added
+  - Phase 0 duplicate question resolved: `appendix-a-glossary.md` covers A-M and `appendix-a-glossary-nz.md` covers N-Z. They are companion halves, not duplicates. Front matter and intros confirm the split. No merge needed; the file pair is intentional.
+  - Corrections applied:
+    - **ADS heading: "Distributed Scheduler" → "Dynamic Scheduling"** (matches Module 03). Added Lazan internal-service-name note and 15-minute polling default.
+    - **AOS / AOS Pro / AOS Ultimate**: rewritten to reflect the NCI rename. AOS entry now points to NCI; AOS Pro and AOS Ultimate entries marked as legacy with redirects to NCI Pro / NCI Ultimate (matches Module 09).
+    - **Anti-ransomware**: tied to Data Lens with the 65,000+ signature library detail (matches Module 08).
+    - **Compression (DSF)**: corrected algorithm pair from "LZ4 + zstd" to "LZ4 + LZ4HC" with selectivity detail (matches Module 05).
+    - **Extent Group**: corrected from fixed "4 MB" to "1 MB or 4 MB depending on dedup" (matches Module 05).
+    - **Files Analytics**: surfaced the Data Lens product evolution (matches Module 08).
+    - **Flow Network Security**: corrected licensing from "NCM Pro typically" to "NCI Ultimate or Security Add-On for NCI Pro" (matches Module 06).
+  - Added: **Data Lens** entry (new in glossary; tied to Files Analytics evolution and Module 08 corrections).
+- [x] appendix-a-glossary-nz.md (N-Z) — STATUS: findings-recorded, four corrections + three new entries, References section added
+  - Corrections applied:
+    - **NCM**: rewrote to clarify NCM is paid-and-separate-from-NCI, NCM Starter is not bundled with PC (matches Modules 04, 09).
+    - **Recovery Plan (Leap)**: heading expanded to "Recovery Plan (Nutanix Disaster Recovery / formerly Leap)" with the rename history (matches Module 07).
+    - **Witness VM**: added the authoritative spec (2 vCPU / 6 GB / 25 GB / ≤500 ms / not on AWS or Azure) from BP-2083 (matches Module 02).
+    - **v4 API**: corrected URL pattern, added v4 deprecation Q4 2026 note, fixed Ansible collection name to `nutanix.ansible`, flagged Pulumi as community not official (matches Modules 04, 06).
+  - Added entries: **NCI**, **NCI Pro**, **NCI Ultimate**, **NCP** (Nutanix Cloud Platform bundles). These four entries make the new licensing structure searchable in the glossary.
 - [ ] appendix-b-comparison-matrix.md
 - [ ] appendix-c-scenarios.md
 - [ ] appendix-d-objections.md

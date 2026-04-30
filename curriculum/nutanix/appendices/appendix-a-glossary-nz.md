@@ -30,12 +30,40 @@ The cluster's built-in health-check tool. Runs automated checks across hardware,
 *Module 2 (Architecture).*
 *See also:* [LCM](#lcm-life-cycle-manager), [Foundation](#foundation).
 
+### NCI (Nutanix Cloud Infrastructure)
+
+The current platform-licensing SKU. Replaces the legacy AOS Pro / AOS Ultimate naming. Tiers: **NCI Pro** (foundational; AHV, DSF, Prism Element, Async replication, baseline features) and **NCI Ultimate** (adds NearSync, Metro Availability, Flow Network Security, advanced data services). A separate **NCI-Compute (NCI-C)** SKU exists for compute-only clusters that don't need DSF storage features. Per-core subscription. AHV is included at every tier. NCI requires AOS 6.1.1 (LTS 6.5+) / Prism Central 2022.4+ / NCC 4.5.0+.
+
+*Module 9 (Licensing).*
+*See also:* [NCI Pro](#nci-pro), [NCI Ultimate](#nci-ultimate), [NCM](#ncm-nutanix-cloud-manager), [NCP](#ncp-nutanix-cloud-platform).
+
+### NCI Pro
+
+Foundational NCI tier. Includes AHV, DSF, Prism Element, baseline replication (Async), basic snapshots, network features, baseline security. The right tier for most customers. Per-core subscription. Successor to the legacy "AOS Pro" SKU.
+
+*Module 9 (Licensing).*
+*See also:* [NCI](#nci-nutanix-cloud-infrastructure), [NCI Ultimate](#nci-ultimate).
+
+### NCI Ultimate
+
+Higher NCI tier adding NearSync replication, Metro Availability, Flow Network Security (also available as Security Add-On to NCI Pro), advanced storage features, additional security capabilities. For workloads needing advanced replication, microsegmentation, or compliance features. Successor to the legacy "AOS Ultimate" SKU.
+
+*Module 9 (Licensing).*
+*See also:* [NCI](#nci-nutanix-cloud-infrastructure), [NCI Pro](#nci-pro), [NearSync](#nearsync), [Metro Availability](#metro-availability), [Flow Network Security](appendix-a-glossary.md#flow-network-security).
+
 ### NCM (Nutanix Cloud Manager)
 
-The umbrella name for advanced multi-cluster management features that sit on top of AOS in Prism Central. Tier structure: Starter (with PC, baseline), Pro (Intelligent Operations / capacity analytics), Ultimate (Self-Service / X-Play / cost governance). Tier contents shift between releases.
+The umbrella name for advanced multi-cluster management features that sit on top of NCI in Prism Central. **NCM is licensed separately from NCI**; do not assume "NCM Starter is bundled with Prism Central" — basic Prism Central is included with NCI, and NCM tiers are paid add-ons. Tier structure: **NCM Starter** (paid; basic Intelligent Operations, low-code automation), **NCM Pro** (deeper Intelligent Operations: anomaly detection, what-if planning, runway analysis), **NCM Ultimate** (Self-Service / X-Play / cost governance). Tier contents shift between releases.
 
 *Module 4 (Prism), Module 9 (Licensing).*
-*See also:* [Prism Central](#prism-central), [Intelligent Operations](#intelligent-operations), [Self-Service](#self-service-formerly-calm).
+*See also:* [NCI](#nci-nutanix-cloud-infrastructure), [NCP](#ncp-nutanix-cloud-platform), [Prism Central](#prism-central), [Intelligent Operations](appendix-a-glossary.md#intelligent-operations), [Self-Service](#self-service-formerly-calm).
+
+### NCP (Nutanix Cloud Platform)
+
+Bundle SKUs that combine NCI and NCM tiers at matching levels: **NCP Starter** (NCI Pro + NCM Pro), **NCP Pro** (NCI Ultimate + NCM Pro), **NCP Ultimate** (NCI Ultimate + NCM Ultimate). For customers who want everything in one SKU rather than buying NCI and NCM separately.
+
+*Module 9 (Licensing).*
+*See also:* [NCI](#nci-nutanix-cloud-infrastructure), [NCM](#ncm-nutanix-cloud-manager).
 
 ### NearSync
 
@@ -217,9 +245,9 @@ Modern protection construct in Prism Central. Category-driven membership (auto-e
 
 ## R
 
-### Recovery Plan (Leap)
+### Recovery Plan (Nutanix Disaster Recovery / formerly Leap)
 
-The Nutanix DR orchestration product in Prism Central. Defines what VMs are protected (via category match), startup order (groups), network mapping, IP remapping, pre/post checks, test failover capability. The SRM functional equivalent on Nutanix. Available with appropriate NCM tier licensing.
+The runbook construct inside **Nutanix Disaster Recovery** (the current product name; formerly branded **Leap**). Lives in Prism Central. Defines what VMs are protected (via category match), startup order (groups), network mapping, IP remapping, pre/post checks, and test failover capability. The SRM functional equivalent on Nutanix. "Leap" still appears in older docs and customer vocabulary; the product was renamed but the runbook construct kept the "Recovery Plan" name.
 
 *Module 7 (Data Protection).*
 *See also:* [SRM](#srm-site-recovery-manager), [Protection Policy](#protection-policy), [Async Replication](#async-replication).
@@ -350,7 +378,7 @@ Contractual provision in multi-year subscriptions allowing customers to add core
 
 ### v4 API
 
-The unified Nutanix REST API. JSON-based. Single base URL, single authentication, consistent schema across compute, storage, networking, automation. Supports PowerShell module, Python SDK, Terraform provider, Ansible collection, Pulumi provider. The automation foundation; first-class through every Nutanix feature.
+The unified Nutanix REST API. JSON-based. URL pattern `https://<pc-or-pe-ip>:9440/api/<namespace>/<version>/<path>` (e.g., `/api/vmm/v4.0/ahv/config/vms`). Single authentication, consistent schema across compute, storage, networking, automation. GA shipped with Prism Central 2024.3 / AOS 7.0. Officially supports a PowerShell module, Python SDK (`ntnx-<namespace>-py-client` per namespace), Terraform provider (`nutanix/nutanix`), and Ansible collection (`nutanix.ansible`). A community-maintained Pulumi provider exists but is not officially supported by Nutanix. Earlier API versions (v0.8, v1, v2, v3) are deprecating starting Q4 2026.
 
 *Module 4 (Prism).*
 *See also:* [Prism Central](#prism-central), [X-Play](#x-play).
@@ -417,9 +445,9 @@ VMware subscription tier including vSphere and vSAN. The level below VCF (which 
 
 ### Witness VM
 
-Small VM at a third site that provides quorum during partition events for Metro Availability deployments. When the two metro sites lose connectivity, the witness arbitrates which site continues operation. Critical for Metro deployments; design for resilience.
+Small VM at a third failure domain that provides quorum during partition events for Metro Availability and two-node ROBO cluster deployments. **Minimum spec: 2 vCPU, 6 GB RAM, 25 GB disk.** Network latency between cluster and Witness should be ≤ 500 ms. Witness VMs **cannot run on AWS or Azure cloud platforms**. When the protected sites lose connectivity, the Witness arbitrates which site continues operation.
 
-*Module 7 (Data Protection).*
+*Module 2 (Architecture), Module 7 (Data Protection).*
 *See also:* [Metro Availability](#metro-availability).
 
 ### WORM (Write Once Read Many)
@@ -454,6 +482,19 @@ The cluster-consensus service in DSF. Uses Apache Zookeeper underneath. Maintain
 ---
 
 [← Back to A-M](./appendix-a-glossary.md)
+
+---
+
+## References
+
+See the [A-M file's References section](./appendix-a-glossary.md#references) for the cross-cutting authorities (Nutanix Bible, Cloud Platform software-options page, TN-series tech notes, Nutanix.dev). Specific to entries in this half:
+
+- [Nutanix Cloud Infrastructure (NCI) Datasheet](https://www.nutanix.com/library/datasheets/nci). NCI Pro / Ultimate tier comparison; backs the AOS-to-NCI rename throughout this glossary.
+- [Nutanix Cloud Manager (NCM) Datasheet](https://www.nutanix.com/library/datasheets/ncm). NCM tier structure and what is NOT bundled with NCI.
+- [License Manager Conversion Requirements (Nutanix Portal)](https://portal.nutanix.com/page/documents/details?targetId=License-Manager:lmg-licmgr-pnp-licensing-requirements-r.html). AOS Pro → NCI Pro conversion path and version requirements.
+- [Nutanix Move Product Page](https://www.nutanix.com/products/move). Move source/target paths.
+- [Nutanix v4 API User Guide](https://www.nutanix.dev/nutanix-api-user-guide/). v4 URL pattern and namespace structure backing the v4 API entry.
+- [Witness VM Requirements (BP-2083 ROBO)](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:witness-requirements.html). Authoritative Witness VM specs (2 vCPU / 6 GB / 25 GB / ≤500 ms / not on AWS or Azure).
 
 ---
 

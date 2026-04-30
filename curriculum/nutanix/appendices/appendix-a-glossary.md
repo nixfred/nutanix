@@ -28,9 +28,9 @@ The service stack on AHV that handles VM lifecycle: create, clone, migrate, snap
 *Module 3 (AHV).*
 *See also:* [AHV](#ahv), [Live Migration](#live-migration), [HA](#ha-high-availability), [ADS](#ads-acropolis-distributed-scheduler).
 
-### ADS (Acropolis Distributed Scheduler)
+### ADS (Acropolis Dynamic Scheduling)
 
-The AHV equivalent of VMware DRS. Continuously monitors cluster load and rebalances VMs across hosts. Runs automatically; admin-tunable thresholds. Triggered by CPU contention, memory pressure, or storage hotspots.
+The AHV equivalent of VMware DRS. Continuously monitors cluster load and rebalances VMs across hosts. Default polling interval 15 minutes (with a 30-minute backoff after a rebalance). Runs automatically; admin-tunable thresholds. Triggered by CPU contention, memory pressure, or storage hotspots. The internal service that runs ADS is named **Lazan**; you will see the name in logs and `acli` output. (Older docs and the curriculum's earlier draft used "Distributed Scheduler"; the authoritative name is "Dynamic Scheduling.")
 
 *Module 3 (AHV).*
 *See also:* [Acropolis](#acropolis), [Live Migration](#live-migration).
@@ -44,31 +44,25 @@ Nutanix's KVM-based hypervisor. Included with AOS at no additional licensing cos
 
 ### Anti-ransomware
 
-Files-integrated capability that detects suspicious write patterns (mass encryption, mass rename, suspicious extension changes) in real time. Alerts and optionally blocks. Snapshot creation at detection time preserves the pre-attack state. One layer in a broader anti-ransomware strategy.
+Real-time ransomware detection capability in Nutanix Files (via on-cluster Files Analytics) and the broader Data Lens product. Detects suspicious write patterns (mass encryption, mass rename, suspicious extension changes) using a 65,000+ signature library plus behavior-based anomaly detection. Alerts, optionally blocks, and snapshots the pre-attack state. One layer in a broader anti-ransomware strategy (complement with endpoint protection, network segmentation, backup hygiene).
 
 *Module 8 (Unified Storage).*
-*See also:* [Files Analytics](#files-analytics), [Nutanix Files](#nutanix-files).
+*See also:* [Files Analytics](#files-analytics), [Data Lens](#data-lens), [Nutanix Files](#nutanix-files).
 
 ### AOS (Acropolis Operating System)
 
-The Nutanix platform's core software stack: AHV + DSF + Prism Element. Licensed via per-core subscription. Includes AHV at no extra fee. Tier structure: AOS Pro (foundational), AOS Ultimate (adds NearSync, Metro, advanced features). Tier contents shift between AOS versions; verify against current pricing guide.
+The Nutanix platform's core software stack: AHV + DSF + Prism Element. The AOS *software* is unchanged; the *licensing SKU name* AOS has been replaced by **NCI (Nutanix Cloud Infrastructure)**. Legacy AOS Pro / AOS Ultimate licenses are no longer available for new sale or renewal; existing AOS customers are being converted to NCI Pro / NCI Ultimate. Per-core subscription. AHV is included at every tier at no extra fee.
 
 *Module 9 (Licensing).*
-*See also:* [AOS Pro](#aos-pro), [AOS Ultimate](#aos-ultimate), [DSF](#dsf-distributed-storage-fabric).
+*See also:* [NCI](#nci-nutanix-cloud-infrastructure), [NCI Pro](#nci-pro), [NCI Ultimate](#nci-ultimate), [DSF](#dsf-distributed-storage-fabric).
 
 ### AOS Pro
 
-Foundational AOS subscription tier. Includes AHV, DSF, Prism Element, baseline replication (Async), basic snapshots, network features, baseline security. The right tier for most customers. Per-core subscription pricing.
-
-*Module 9 (Licensing).*
-*See also:* [AOS Ultimate](#aos-ultimate).
+**Legacy** subscription tier name. Replaced by **NCI Pro**; no longer available for new sale or renewal. See [NCI Pro](#nci-pro).
 
 ### AOS Ultimate
 
-Higher AOS subscription tier adding NearSync replication, Metro Availability, advanced storage features, and additional security capabilities. For workloads needing advanced replication or compliance features. Verify specific feature inclusion against current pricing guide.
-
-*Module 9 (Licensing).*
-*See also:* [AOS Pro](#aos-pro), [NearSync](#nearsync), [Metro Availability](#metro-availability).
+**Legacy** subscription tier name. Replaced by **NCI Ultimate**; no longer available for new sale or renewal. See [NCI Ultimate](#nci-ultimate).
 
 ### Application affinity group
 
@@ -157,7 +151,7 @@ The IP address that Prism Element listens on. Floats between CVMs for HA. Custom
 
 ### Compression (DSF)
 
-Inline compression applied during OpLog drain to Extent Store. Default algorithm LZ4 (fast, modest ratios); zstd available for higher ratios at higher CPU. Real-world ratios for mixed enterprise workloads: 1.5-2.5x. Configured per Storage Container. Quote ranges, not marketing peaks.
+Inline compression applied during OpLog drain to Extent Store using **LZ4** (fast, modest ratios, latency-friendly). Cold-data and post-process compression uses **LZ4HC** (higher compression at higher CPU cost). Inline compression is selective: applies to sequential streams and large I/Os (>64K) to avoid impacting random write performance. Real-world ratios for mixed enterprise workloads: 1.5-2.5x. Configured per Storage Container. Quote ranges, not marketing peaks.
 
 *Module 5 (DSF).*
 *See also:* [DSF](#dsf-distributed-storage-fabric), [OpLog](#oplog), [Storage Container](#storage-container).
@@ -200,6 +194,13 @@ The Nutanix-managed VM that runs on every node, hosting the storage services (St
 ---
 
 ## D
+
+### Data Lens
+
+Nutanix's cloud-based (and, with v2.0 GA in 2026, fully on-premises including air-gapped) data governance and ransomware-detection service for unified storage. Evolved from on-cluster Files Analytics into a broader product covering Files, Objects, and (increasingly) other unified-storage targets. Carries a 65,000+ ransomware signature library plus behavior-based anomaly detection. Detect-and-block flow watches for encrypt-at-write, mass-rename, and suspicious-extension patterns.
+
+*Module 8 (Unified Storage).*
+*See also:* [Files Analytics](#files-analytics), [Anti-ransomware](#anti-ransomware), [Nutanix Files](#nutanix-files).
 
 ### Data Services IP
 
@@ -263,7 +264,7 @@ The 1 MB metadata unit in DSF. Each extent has a Cassandra metadata record indic
 
 ### Extent Group
 
-The 4 MB physical allocation unit on disk in DSF. Contains multiple extents. The unit Stargate writes to the Extent Store. Compression and erasure coding operate at this level.
+The physical allocation unit on disk in DSF holding extents. **1 MB on non-deduplicated containers; 4 MB on deduplicated containers.** The unit Stargate writes to the Extent Store. Compression and erasure coding operate at this level.
 
 *Module 5 (DSF).*
 *See also:* [Extent](#extent), [Extent Store](#extent-store).
@@ -288,17 +289,17 @@ The logical SMB/NFS service in Nutanix Files. Implemented as a cluster of FSVMs 
 
 ### Files Analytics
 
-Built-in analytics service in Nutanix Files. Provides file aging, top users by capacity and I/O, file type breakdown, anomaly detection (anti-ransomware foundation), permission auditing. The 3-minute customer demo that often unlocks tiering decisions.
+The on-cluster analytics service that ships inside Nutanix Files. Provides file aging, top users by capacity and I/O, file type breakdown, anomaly detection (anti-ransomware foundation), permission auditing. The 3-minute customer demo that often unlocks tiering decisions. The broader Nutanix product that evolved from Files Analytics is **Data Lens** (cloud-based or, with v2.0 GA in 2026, fully on-prem); the two coexist but Data Lens has the wider scope.
 
 *Module 8 (Unified Storage).*
-*See also:* [Nutanix Files](#nutanix-files), [Anti-ransomware](#anti-ransomware).
+*See also:* [Data Lens](#data-lens), [Nutanix Files](#nutanix-files), [Anti-ransomware](#anti-ransomware).
 
 ### Flow Network Security
 
-Nutanix's distributed firewall and microsegmentation product. Category-driven policy (not IP-based). Stateful rules. Distributed enforcement at OVS flow-rule level on each AHV host. Included with NCM Pro typically. Functional comparison to NSX-T's distributed firewall.
+Nutanix's distributed firewall and microsegmentation product. Category-driven policy (not IP-based). Stateful rules. Distributed enforcement at OVS flow-rule level on each AHV host. Licensed via **NCI Ultimate** or via the **Security Add-On for NCI Pro** (per usable TiB; bundles Flow microsegmentation with Data-at-Rest Encryption). Not an NCM tier feature. Functional comparison to NSX-T's distributed firewall.
 
 *Module 6 (Networking).*
-*See also:* [Microsegmentation](#microsegmentation), [Categories](#categories), [NSX-T](#nsx-t), [Flow Virtual Networking](#flow-virtual-networking-fvn).
+*See also:* [Microsegmentation](#microsegmentation), [Categories](#categories), [NSX-T](#nsx-t), [Flow Virtual Networking](#flow-virtual-networking-fvn), [NCI Ultimate](#nci-ultimate).
 
 ### Flow Virtual Networking (FVN)
 
@@ -465,6 +466,17 @@ The capability to run multiple isolated tenants on shared infrastructure. In Pri
 *Letters N through Z continue in the second half of this glossary.*
 
 [Continue to N-Z →](./appendix-a-glossary-nz.md)
+
+---
+
+## References
+
+The glossary entries are derived from and verified against the per-module References sections in each curriculum module; see those for primary sources (Nutanix Bible, portal tech notes, product datasheets, Nutanix.dev, etc.). The most cross-cutting authorities used in this glossary:
+
+- [Nutanix Bible](https://www.nutanixbible.com/). The single most useful Nutanix-architecture reference; cited from nearly every glossary entry.
+- [Nutanix Cloud Platform Software Options](https://www.nutanix.com/products/cloud-platform/software-options). Authoritative source for the NCI / NCM / NCP licensing structure that replaced AOS Pro / Ultimate.
+- [Nutanix Portal Tech Notes (TN series)](https://portal.nutanix.com/page/documents/solutions/list). TN-2027 (data protection), TN-2032 (data efficiency), TN-2041 (Files architecture), TN-2106 (Objects), TN-2094 (Flow) are referenced from many glossary entries.
+- [Nutanix Developer Portal](https://www.nutanix.dev/). v4 API reference, SDKs, automation tooling.
 
 ---
 
