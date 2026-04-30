@@ -324,7 +324,24 @@ Appendices:
   - Confirmed: Appendix E is pure engagement methodology (questions to ask, what to listen for, what to do with answers across Q-GEN, Q-WL, Q-MGMT, Q-AUT, Q-STOR, Q-NET, Q-SEC, Q-DR, Q-MIG, Q-ECON families). It deliberately avoids restating technical specifications.
   - Scanned for known error patterns (AOS Pro/Ultimate, NCM Starter packaging, Distributed Scheduler, Files Analytics-only, Flow-on-NCM-Pro, /api/nutanix/v4 prefix, extent-group 4 MB, zstd, Karbon, nutanix.ncp): zero matches.
   - References section added linking each question family to its underlying module's References section so readers can trace any answer back to authoritative sources.
-- [ ] appendix-f-sizing-rules.md
+- [x] appendix-f-sizing-rules.md — STATUS: findings-recorded, two corrections made, References section added
+  - Corrections applied:
+    - **EC-X 4+1 minimum cluster size**: "requires 5+ nodes minimum" corrected to "stripe technically requires 5 (4+1) but Nutanix's recommended minimum is 6 nodes for rebuild headroom" (matches Module 05 fix per TN-2032).
+    - **Prism Central sizing tiers**: rewrote the PC sizing table to reflect (a) the X-Small tier (5 clusters / 50 hosts / 500 VMs), which the curriculum was missing, and (b) the actual public-source vCPU / RAM / disk numbers (X-Small 4 vCPU / 18 GB / 100 GB; Small 6 vCPU / 26 GB / 500 GB; 3-VM scale-out 6 vCPU / 28 GB per VM / 500 GB per VM). The curriculum's earlier numbers (4/16, 8/32, 8/32×3) didn't match the Nutanix community resource-requirements thread or the X-Small tech blog. Added an explicit "exceeding documented limits is unsupported" warning per the Prism Central upgrade-limitations doc.
+  - Confirmed:
+    - Cluster minimum / sweet-spot / max framing accurate.
+    - CVM tax table (8/32, 12/48, 16/64) consistent with Module 02.
+    - RF / EC capacity overhead math accurate.
+    - Compression ranges (1.5-2.5×) and dedup ranges (workload-specific) accurate.
+    - Link-speed recommendations (10/25/100 GbE) accurate.
+    - Bond mode selection guidance accurate.
+    - Replication bandwidth estimation methodology accurate.
+    - VDI density rules (50-200 sessions/node by profile) reasonable rules-of-thumb.
+    - Database sizing guidance reasonable.
+    - FSVM count "minimum 3" is the typical default; small-cluster single-FSVM exception flagged in the References pointer back to Module 08.
+    - Object Service VM minimum 3 confirmed.
+  - Suspect (kept as-is):
+    - "Per LUN: up to 64 TB practical" — Nutanix Volumes per-LUN limits evolve; couldn't quickly verify the 64 TB number against current docs. Curriculum already adds "verify against current Nutanix limits at design time" caveat. Acceptable.
 - [ ] appendix-g-cli-reference.md
 - [ ] appendix-h-competitive-matrix.md
 - [ ] appendix-i-reference-architectures.md

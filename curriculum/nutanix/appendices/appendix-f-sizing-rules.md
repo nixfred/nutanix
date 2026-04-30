@@ -66,7 +66,7 @@ The discipline at a glance:
 
 **RF3:** Two simultaneous failures tolerated. Cluster needs N+2 minimum. Rebuild can survive one more failure during the window.
 
-**EC-X 4+1:** One node failure tolerated; requires 5+ nodes minimum.
+**EC-X 4+1:** One node failure tolerated. The stripe technically requires 5 nodes (4 data + 1 parity), but Nutanix's recommended minimum is **6 nodes** so the cluster has rebuild headroom after a node loss. EC can be enabled on 4-node clusters with smaller stripes, but the optimal 4+1 stripe needs 6+ nodes per TN-2032.
 
 **EC-X 4+2:** Two failures tolerated; requires 7+ nodes minimum.
 
@@ -431,27 +431,33 @@ For DR planning, estimate WAN bandwidth needed for replication:
 
 ### Single PC vs Scale-Out
 
-**Single PC VM:**
+**X-Small PC VM** (introduced for smaller environments):
 
-- Suitable for up to ~10,000 VMs across managed clusters
-- Single VM, simpler operations
+- Suitable for up to **5 clusters, 50 hosts, 500 VMs**
+- Lowest footprint option; appropriate for ROBO, edge, and small-environment central management
+- Strict scale ceiling: exceeding the X-Small limits results in an unsupported configuration
+
+**Single PC VM (Small / Standard):**
+
+- Suitable for typical mid-market through enterprise deployments
+- Single VM; simpler operations
 - Single point of failure for management plane (clusters continue running if PC is down)
 
 **Scale-out PC (3 VMs):**
 
-- Required for >10,000 VMs or production-grade PC HA
+- Required for the largest deployments and production-grade PC HA
 - Distributed across hosts for HA
-- Recommended for enterprise deployments
+- Recommended for enterprise deployments at scale
 
-**PC VM sizing:**
+**PC VM resource specs (verify against the current Prism Central sizing guide; numbers evolve):**
 
-| PC Mode | VM Specs | VM Count Managed |
-|---|---|---|
-| Small | 4 vCPU, 16 GB | Up to ~2,500 |
-| Standard | 8 vCPU, 32 GB | Up to ~10,000 |
-| Large (scale-out) | 8 vCPU, 32 GB × 3 | 10,000+ |
+| PC Mode | vCPU | RAM | Storage |
+|---|---|---|---|
+| X-Small | 4 | 18 GB | 100 GB |
+| Small | 6 | 26 GB | 500 GB |
+| Large (3-VM scale-out) | 6 per VM (× 3) | 28 GB per VM (× 3) | 500 GB per VM |
 
-**For final sizing:** verify against current Nutanix PC sizing guidelines at design time; recommendations evolve.
+**For final sizing:** verify against the current Nutanix Prism Central sizing guide at design time; the size tiers and their VM-count ceilings shift between PC versions, and exceeding the documented limits results in an unsupported configuration.
 
 ---
 
@@ -530,6 +536,21 @@ The rules in this appendix accelerate the conversation; Sizer produces the numbe
 8. **Trusting customer's "typical" without validation.** Their typical is often a peak; their peak is often catastrophic. Measure during POC.
 9. **Forgetting that Files, Objects, Volumes consume the same DSF capacity.** Size the cluster for total demand, not per-service.
 10. **Skipping PC sizing.** Prism Central is part of the design, not an afterthought.
+
+---
+
+## References
+
+The sizing rules in this appendix are heuristics for early conversations; the authoritative source is Nutanix Sizer for binding sizing, and the public sources below for tier-by-tier specifics:
+
+- [Module 02 References — CVM resource sizing](../02-nutanix-architecture.md#references). Backs the CVM tax table.
+- [Module 05 References — RF / EC / compression / dedup math](../05-dsf-storage-deep-dive.md#references). Backs the storage-sizing section. Note: TN-2032 confirms the EC 4+1 recommended minimum of 6 nodes (the curriculum's earlier 5-node claim was wrong and is now corrected).
+- [Module 06 References — Bond modes, link-speed recommendations](../06-networking-flow.md#references). Backs the network-sizing section, including Nutanix's official caution on LACP coordination.
+- [Module 07 References — Async / NearSync / Metro replication, change-rate planning](../07-data-protection.md#references). Backs the replication-bandwidth section.
+- [Module 08 References — Files, Objects, Volumes sizing constraints](../08-unified-storage.md#references). Backs the FSVM count guidance (note the single-FSVM exception for small clusters per TN-2041).
+- [Resource Requirements for Prism Central (Nutanix Community)](https://next.nutanix.com/intelligent-operations-26/resource-requirements-for-prism-central-38237). Authoritative current PC vCPU / RAM / disk per tier.
+- [Introducing X-Small Prism Central (Nutanix Tech Center)](https://www.nutanix.com/tech-center/blog/introducing-x-small-prism-central-a-low-footprint-option-for-smaller-environments). X-Small PC ceiling: 5 clusters / 50 hosts / 500 VMs.
+- [Limitations of Prism Central Deployment (Nutanix Portal v7.3)](https://portal.nutanix.com/page/documents/details?targetId=Prism-Central-Guide-vpc_7_3:upg-pc-upgrade-limitations-c.html). Strict-ceiling-equals-unsupported framing.
 
 ---
 
