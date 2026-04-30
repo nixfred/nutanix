@@ -84,39 +84,79 @@
     }
 
     .hero {
+      position: relative;
       margin-bottom: 56px;
     }
 
+    /* Full-bleed image that breaks out of .page width and dissolves into bg-base */
+    .hero-image {
+      position: relative;
+      margin: -32px calc(50% - 50vw) 0;   /* lift up under the brand header, bleed to viewport edges */
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .hero-image img {
+      display: block;
+      width: 100%;
+      height: clamp(440px, 64vh, 720px);
+      object-fit: cover;
+      object-position: center 58%;
+    }
+    /* Fade the image edges into the page background:
+       - strong bottom fade so headline sits cleanly on bg-base
+       - soft side fades so the bleed never shows a hard edge against the page column */
+    .hero-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10, 22, 40, 0)    0%,
+          rgba(10, 22, 40, 0)    45%,
+          rgba(10, 22, 40, 0.65) 80%,
+          var(--bg-base)         100%),
+        linear-gradient(to right,
+          var(--bg-base)         0%,
+          rgba(10, 22, 40, 0)    7%,
+          rgba(10, 22, 40, 0)    93%,
+          var(--bg-base)         100%);
+    }
+
+    /* Pull the headline up so it sits inside the lower fade band of the image,
+       making the wordmark visually anchor the composition rather than float above it. */
     .hero h1 {
+      position: relative;
+      z-index: 2;
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 48px;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-      margin: 0 0 16px;
+      font-size: 56px;
+      line-height: 1.05;
+      letter-spacing: -0.028em;
+      margin: -120px 0 16px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
     }
     .hero h1 .nix { color: var(--accent-cyan); }
 
     .hero .subtitle {
+      position: relative;
+      z-index: 2;
       font-size: 19px;
       color: var(--text-secondary);
       max-width: 65ch;
       margin: 0 0 32px;
     }
 
-    .hero-image {
-      margin: 0 0 40px;
-      padding: 0;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      background: var(--bg-surface);
-    }
-    .hero-image img {
-      display: block;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
+    .hero .terminal { position: relative; z-index: 2; }
+
+    @media (max-width: 720px) {
+      .hero-image { margin-top: -16px; }
+      .hero-image img { height: clamp(320px, 52vh, 460px); }
+      .hero h1 { font-size: 40px; margin-top: -64px; }
     }
 
     .terminal {
