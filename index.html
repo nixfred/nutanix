@@ -52,7 +52,7 @@
 
     .page {
       flex: 1;
-      max-width: 880px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 64px 32px 48px;
       width: 100%;
@@ -190,11 +190,17 @@
     }
     .module-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 980px) {
+      .module-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    }
+    @media (max-width: 420px) {
+      .module-grid { grid-template-columns: 1fr; }
     }
     .module-card {
-      padding: 16px 20px;
+      padding: 14px 14px;
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -243,7 +249,7 @@
     section.status a:hover { text-decoration: underline; }
 
     footer {
-      max-width: 880px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 32px 32px 48px;
       width: 100%;
