@@ -309,7 +309,17 @@ Appendices:
     - Cisco UCS-based Nutanix migration path in Scenario 4 aligns with the OEM partnership product (Cisco Compute Hyperconverged with Nutanix) surfaced in Appendix B.
     - Greenfield hardware sourcing recommendations (HCIR / OEM / NX) in Scenario 9 consistent with Module 09.
   - References section added linking back to the per-module References sections that source the technical specifics.
-- [ ] appendix-d-objections.md
+- [x] appendix-d-objections.md — STATUS: findings-recorded, two corrections made, References section added
+  - Corrections applied:
+    - **Objection #16 (NSX-T)**: Flow Network Security licensing claim "included licensing in NCM Pro" → "licensed via NCI Ultimate or as a Security Add-On for NCI Pro (per usable TiB; bundles Data-at-Rest Encryption)" (matches Module 06 Flow licensing fix).
+    - **Objection #29 (SRM)**: "Recovery Plans (Leap)" → "Recovery Plans (the runbook construct inside Nutanix Disaster Recovery, formerly branded Leap)" + replaced vague "bundled with appropriate NCM tier" with the accurate breakdown (Async with NCI baseline, NearSync/Metro with NCI Ultimate, Recovery Plans included with Nutanix Disaster Recovery in Prism Central).
+  - Confirmed:
+    - The objection-handling appendix is mostly engagement scripts (response language, what NOT to say, see-also pointers). The technical claims it does make are consistent with the modules where they're sourced.
+    - HyperFlex past-experience reference (#1) consistent with Appendix B's authoritative EOL framing.
+    - Aria-vs-NCM coexistence framing (#10) consistent with Module 04's accurate parallel-running pattern.
+    - Array-based-replication coexistence framing accurate.
+    - Test-failover description accurate (consistent with Module 07).
+  - References section added linking back to the per-module References sections that source the technical specifics (Modules 03, 06, 07, 09, Appendix B).
 - [ ] appendix-e-discovery-questions.md
 - [ ] appendix-f-sizing-rules.md
 - [ ] appendix-g-cli-reference.md

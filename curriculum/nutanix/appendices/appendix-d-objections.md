@@ -425,7 +425,7 @@ The responses are starting points. Internalize the language; adapt to the custom
 
 **Strong response:**
 
-> *"NSX-T continues to work on Nutanix-on-ESXi. You don't have to migrate. For new AHV workloads, Flow Network Security provides VM-tier microsegmentation that's competitive with NSX-T's distributed firewall, with included licensing in NCM Pro. For your established NSX-T deployments, keep them. The platforms coexist. Let me understand your specific NSX-T use cases and we can decide where Flow fits and where NSX-T should remain."*
+> *"NSX-T continues to work on Nutanix-on-ESXi. You don't have to migrate. For new AHV workloads, Flow Network Security provides VM-tier microsegmentation that's competitive with NSX-T's distributed firewall, licensed via NCI Ultimate or as a Security Add-On for NCI Pro (per usable TiB; bundles Data-at-Rest Encryption). For your established NSX-T deployments, keep them. The platforms coexist. Let me understand your specific NSX-T use cases and we can decide where Flow fits and where NSX-T should remain."*
 
 **Why this works:** Names the coexistence pattern, doesn't push migration, offers workload-specific evaluation.
 
@@ -499,7 +499,7 @@ The responses are starting points. Internalize the language; adapt to the custom
 
 **Strong response:**
 
-> *"SRM continues to work on Nutanix-on-ESXi. You don't have to migrate. For AHV workloads, Recovery Plans (Leap) provides orchestrated DR with VM startup order, network mapping, IP remapping, test failover. It's not as feature-rich as SRM at the deepest customization level, but it handles typical enterprise DR cleanly and is bundled with appropriate NCM tier. The pattern most customers find: keep SRM for the workloads it orchestrates well, use Recovery Plans for new AHV workloads. Coexist for the foreseeable future."*
+> *"SRM continues to work on Nutanix-on-ESXi. You don't have to migrate. For AHV workloads, Recovery Plans (the runbook construct inside Nutanix Disaster Recovery, formerly branded Leap) provides orchestrated DR with VM startup order, network mapping, IP remapping, test failover. It's not as feature-rich as SRM at the deepest customization level, but it handles typical enterprise DR cleanly. Replication itself rides on the platform: Async ships with NCI baseline, NearSync and Metro Availability are NCI Ultimate features, Recovery Plans is included with Nutanix Disaster Recovery in Prism Central. The pattern most customers find: keep SRM for the workloads it orchestrates well, use Recovery Plans for new AHV workloads. Coexist for the foreseeable future."*
 
 **Why this works:** Names the coexistence pattern, honest about feature differences, doesn't push migration.
 
@@ -877,6 +877,18 @@ The responses are starting points. Internalize the language; adapt to the custom
 3. Adapt the responses based on what worked. The handbook is a starting point; your version of it grows with experience.
 
 The objections handbook is a living document. As you encounter customer objections that aren't here, add them. As your responses improve through customer feedback, refine them.
+
+---
+
+## References
+
+The objection responses in this appendix lean on technical claims sourced and verified in the per-module References sections. The responses that touch the most-volatile material (Broadcom pricing, Flow licensing, Leap rename, NCI/NCM tiers) cite the same authorities used in those modules:
+
+- [Module 03 References — Broadcom-era VMware pricing](../03-ahv-hypervisor.md#references). vSphere Foundation $190/core, VCF $350/core, 16-core CPU min, 72-core order min.
+- [Module 06 References — Flow Network Security licensing](../06-networking-flow.md#references). NCI Ultimate or Security Add-On for NCI Pro (per usable TiB).
+- [Module 07 References — Nutanix Disaster Recovery (formerly Leap)](../07-data-protection.md#references). Recovery Plans architecture and the rename history.
+- [Module 09 References — NCI / NCM / NCP licensing](../09-licensing-economics.md#references). The current paid-tier structure that replaced AOS Pro / Ultimate.
+- [Appendix B — HyperFlex EOL dates](./appendix-b-comparison-matrix.md#references). Used in the past-bad-HCI-experience response.
 
 ---
 
