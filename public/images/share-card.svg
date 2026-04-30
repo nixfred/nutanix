@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice" role="img" aria-label="NutaNIX, a field guide for BlueAlly Solutions Architects.">
+  <defs>
+    <radialGradient id="bg" cx="55%" cy="40%" r="78%">
+      <stop offset="0%" stop-color="#15294a"/>
+      <stop offset="65%" stop-color="#0c1c36"/>
+      <stop offset="100%" stop-color="#070f20"/>
+    </radialGradient>
+
+    <linearGradient id="ftop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d6aa6"/>
+      <stop offset="100%" stop-color="#27497a"/>
+    </linearGradient>
+    <linearGradient id="fleft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f3a66"/>
+      <stop offset="100%" stop-color="#142a4d"/>
+    </linearGradient>
+    <linearGradient id="fright" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="100%" stop-color="#091a33"/>
+    </linearGradient>
+
+    <linearGradient id="ftopHi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5fa3e8"/>
+      <stop offset="100%" stop-color="#357abf"/>
+    </linearGradient>
+    <linearGradient id="fleftHi" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#2b5288"/>
+      <stop offset="100%" stop-color="#1a3866"/>
+    </linearGradient>
+    <linearGradient id="frightHi" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#15325c"/>
+      <stop offset="100%" stop-color="#0d2244"/>
+    </linearGradient>
+
+    <radialGradient id="dot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9ce8ff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#00d4ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+
+    <pattern id="grid" width="64" height="36.95" patternUnits="userSpaceOnUse">
+      <path d="M 0 18.475 L 32 0 L 64 18.475 L 32 36.95 Z" fill="none" stroke="#2a4d7a" stroke-width="0.5" opacity="0.32"/>
+    </pattern>
+
+    <symbol id="node" overflow="visible">
+      <polygon points="0,-42 63,-7 0,28 -63,-7" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.9" stroke-opacity="0.55"/>
+      <polygon points="-63,-7 0,28 0,100 -63,65"  fill="url(#fleft)"  stroke="#1f3a66" stroke-width="0.9"/>
+      <polygon points="63,-7 0,28 0,100 63,65"   fill="url(#fright)" stroke="#1f3a66" stroke-width="0.9"/>
+      <line x1="-63" y1="14" x2="0" y2="49"  stroke="#4a9eff" stroke-width="0.5" opacity="0.35"/>
+      <line x1="0" y1="49"   x2="63" y2="14" stroke="#4a9eff" stroke-width="0.5" opacity="0.35"/>
+      <circle cx="0" cy="-7" r="1.8" fill="#00d4ff"/>
+    </symbol>
+
+    <symbol id="nodeHi" overflow="visible">
+      <polygon points="0,-42 63,-7 0,28 -63,-7" fill="url(#ftopHi)" stroke="#00d4ff" stroke-width="1" stroke-opacity="0.7"/>
+      <polygon points="-63,-7 0,28 0,100 -63,65"  fill="url(#fleftHi)"  stroke="#2a4d7a" stroke-width="0.9"/>
+      <polygon points="63,-7 0,28 0,100 63,65"   fill="url(#frightHi)" stroke="#2a4d7a" stroke-width="0.9"/>
+      <line x1="-63" y1="14" x2="0" y2="49"  stroke="#00d4ff" stroke-width="0.6" opacity="0.5"/>
+      <line x1="0" y1="49"   x2="63" y2="14" stroke="#00d4ff" stroke-width="0.6" opacity="0.5"/>
+      <circle cx="0" cy="-7" r="2.6" fill="#00d4ff"/>
+      <circle cx="0" cy="-7" r="6"   fill="url(#dot)" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <!-- bg -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.55"/>
+
+  <!-- soft cyan vignette behind cluster cubes -->
+  <ellipse cx="940" cy="345" rx="240" ry="160" fill="#00d4ff" opacity="0.10" filter="url(#softGlow)"/>
+
+  <!-- compact 3x2 isometric cluster on the right -->
+  <!-- iso anchors: cx=940, cy=290; stride dx=144, dy=84 -->
+  <g>
+    <g stroke="#00d4ff" stroke-opacity="0.30" stroke-width="0.9" fill="none">
+      <line x1="796"  y1="297" x2="940"  y2="297"/>
+      <line x1="940"  y1="297" x2="1084" y2="297"/>
+      <line x1="868"  y1="381" x2="1012" y2="381"/>
+      <line x1="724"  y1="381" x2="868"  y2="381"/>
+      <line x1="1012" y1="381" x2="1156" y2="381"/>
+      <line x1="796"  y1="297" x2="724"  y2="381"/>
+      <line x1="940"  y1="297" x2="868"  y2="381"/>
+      <line x1="1084" y1="297" x2="1012" y2="381"/>
+      <line x1="940"  y1="297" x2="1012" y2="381"/>
+      <line x1="1084" y1="297" x2="1156" y2="381"/>
+      <line x1="796"  y1="297" x2="868"  y2="381"/>
+    </g>
+    <use href="#node"   x="796"  y="304"/>
+    <use href="#nodeHi" x="940"  y="304"/>
+    <use href="#node"   x="1084" y="304"/>
+    <use href="#node"   x="724"  y="388"/>
+    <use href="#node"   x="868"  y="388"/>
+    <use href="#nodeHi" x="1012" y="388"/>
+    <use href="#node"   x="1156" y="388"/>
+  </g>
+
+  <!-- left content block -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace">
+    <text x="64" y="86" font-size="18" letter-spacing="0.04em" fill="#a8b8d4">
+      <tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix
+    </text>
+  </g>
+
+  <!-- wordmark -->
+  <g font-family="Inter, system-ui, sans-serif">
+    <text x="64" y="298" font-size="160" font-weight="700" letter-spacing="-0.035em" fill="#e8f0ff">
+      Nuta<tspan fill="#00d4ff">NIX</tspan>
+    </text>
+
+    <text x="68" y="358" font-size="28" font-weight="500" letter-spacing="-0.005em" fill="#a8b8d4">
+      A Field Guide for BlueAlly Solutions Architects
+    </text>
+  </g>
+
+  <!-- Tagline strip -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="16" fill="#6b7a9a" letter-spacing="0.06em">
+    <text x="64" y="478">10 modules</text>
+    <text x="200" y="478" fill="#6b7a9a">·</text>
+    <text x="220" y="478">cert prep</text>
+    <text x="340" y="478" fill="#6b7a9a">·</text>
+    <text x="360" y="478">whiteboard diagrams</text>
+    <text x="568" y="478" fill="#6b7a9a">·</text>
+    <text x="588" y="478">honest comparisons</text>
+  </g>
+
+  <!-- Cert ladder line -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6b7a9a" letter-spacing="0.10em">
+    <text x="64" y="528" fill="#a8b8d4" font-weight="600">CERT LADDER</text>
+    <text x="208" y="528">NCA · NCP-MCI · NCP-NS · NCP-US · NCP-MCA · NCM-MCI · NCX-MCI</text>
+  </g>
+
+  <!-- Author / source attribution at bottom -->
+  <g font-family="Inter, system-ui, sans-serif" font-size="14" fill="#6b7a9a">
+    <text x="64" y="582">Written by Fred Nix</text>
+    <text x="216" y="582" fill="#6b7a9a">·</text>
+    <text x="232" y="582">nixfred.com<tspan fill="#00d4ff">/</tspan>nutanix</text>
+  </g>
+
+  <!-- bottom scanline -->
+  <rect x="0" y="608" width="1200" height="1" fill="#00d4ff" opacity="0.18"/>
+  <rect x="0" y="612" width="1200" height="1" fill="#00d4ff" opacity="0.08"/>
+</svg>
