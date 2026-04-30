@@ -147,7 +147,7 @@ For each objective, define what "success" means:
 
 SCOPE INCLUDED
 - Hardware: <specifics>
-- Software stack: <AOS tier, NCM tier, Files/Objects/Volumes if in scope>
+- Software stack: <NCI tier (Pro / Ultimate; formerly AOS Pro / Ultimate), NCM tier (Starter / Pro / Ultimate), Security Add-On for NCI Pro if Flow microsegmentation in scope, Files / Objects / Volumes if in scope>
 - Workloads to test: <specific list>
 - Integrations to validate: <specific list>
 
@@ -330,7 +330,7 @@ The following demo scripts are starting points. Adapt to the specific customer e
 
 **Procedure:**
 
-1. Note the cluster's current state via `ncli cluster get-domain-fault-tolerance-status`
+1. Note the cluster's current state via `ncli cluster get-domain-fault-tolerance-status type=node` (the `type=` parameter is required in current AOS)
 2. Simulate a node loss (in a POC environment, this might be done by powering off a node)
 3. Verify VMs on the failed node restart on surviving nodes (HA event)
 4. Observe rebuild starting (Curator reconstructing the failed node's data on remaining nodes)
@@ -641,6 +641,20 @@ The credibility move: tell the customer when a POC isn't the right next step. Re
 - Tests include boot storm, login storm, sustained-load, profile-storage validation
 - Citrix or Horizon team participates
 - Final report includes performance graphs from representative load
+
+---
+
+## References
+
+This appendix is POC engagement methodology (qualification, scoping, demo scripts, success criteria, final-report structure). The technical content underlying the demos is sourced and verified in the per-module References sections plus Appendix G:
+
+- [Module 02 References](../02-nutanix-architecture.md#references). Foundation deployment, NCC commands used in Demo 1.
+- [Module 03 References](../03-ahv-hypervisor.md#references). Live Migration semantics, Move tool used in Demo 2 and Demo 6.
+- [Module 06 References](../06-networking-flow.md#references). Flow Network Security used in Demo 7 (NCI Ultimate or Security Add-On for NCI Pro).
+- [Module 07 References](../07-data-protection.md#references). Recovery Plans and replication used in Demo 4.
+- [Module 08 References](../08-unified-storage.md#references). Files and Objects used in Demos 8 and 9.
+- [Module 09 References](../09-licensing-economics.md#references). NCI / NCM / NCP tier structure for the POC scoping document.
+- [Appendix G References](./appendix-g-cli-reference.md#references). CLI command syntax (ncli, acli, ncc) used across demo procedures, including the corrected `ncli cluster get-domain-fault-tolerance-status type=node` syntax.
 
 ---
 

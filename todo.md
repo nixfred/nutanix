@@ -394,7 +394,16 @@ Appendices:
     - DR replication-mode mapping (Async / NearSync / Metro) per workload tier consistent with Module 07.
     - The mixed-hypervisor reality (AHV plus ESXi-on-Nutanix subset for NSX-T-deep / SRM-deep workloads) consistent with Module 03's hybrid-steady-state framing.
   - References section added linking to Modules 05, 06, 07, 08, 09 References plus Appendices B and F.
-- [ ] appendix-j-poc-playbook.md
+- [x] appendix-j-poc-playbook.md — STATUS: findings-recorded, two corrections, References section added
+  - Corrections applied:
+    - **POC Scoping Document template**: "AOS tier, NCM tier" → "NCI tier (Pro / Ultimate; formerly AOS Pro / Ultimate), NCM tier (Starter / Pro / Ultimate), Security Add-On for NCI Pro if Flow microsegmentation in scope" — gives the SA filling out the template the right vocabulary up front.
+    - **Demo 5 (Failure Tolerance) `ncli` command**: added the required `type=node` parameter to the fault-tolerance command (matches Appendix G correction).
+  - Confirmed:
+    - The 10-demo POC scripts (cluster deployment, live migration, snapshot/restore, replication/failover, failure tolerance, Move migration, Flow microsegmentation, Files, Objects backup target, operational workflows) align with module-level capability descriptions.
+    - 30-day POC cadence is engagement methodology, not a technical spec; reasonable.
+    - Success criteria templates (performance, availability, DR, operational, integration) are customer-defined per the appendix's discipline; nothing to verify.
+    - POC variations by customer profile (mid-market / enterprise / compliance / cloud-DR / VDI) align with Appendix I reference architectures.
+  - References section added linking to Modules 02, 03, 06, 07, 08, 09 and Appendix G.
 - [ ] appendix-k-cert-tracker.md
 
 **Discipline:**
