@@ -536,6 +536,18 @@
       <p>That third item should provoke a question: <em>if the CVM and my user VMs are both running on the same hypervisor, doesn't the CVM steal my CPU and RAM?</em></p>
       <p>Yes. Nutanix reserves cores and RAM for the CVM. On a typical 2026 node this is 8 to 12 vCPUs and 32 to 48 GB of RAM, scaling with feature set (more is required when you enable deduplication, capacity tiers, or NCM Intelligent Operations on-cluster). This is one of the genuine costs of the architecture and you should know about it before you read about it on Reddit. We will spend an entire section on this honestly. It deserves it.</p>
 
+      <h3 id="diagram-node-anatomy">Diagram: Anatomy of a Nutanix Node</h3>
+
+      <figure class="diagram" id="nutanix-node-anatomy">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-node-anatomy-svg" viewBox="0 0 1000 480" role="img" aria-label="Layered anatomy of a single Nutanix node from physical hardware up through the hypervisor, with the Controller VM and User VMs running side-by-side on top of the hypervisor."></svg>
+        <figcaption>What lives on a single Nutanix node, from physical hardware up. The CVM is the architectural inversion: a virtual machine that owns the disks below it.</figcaption>
+      </figure>
+
       <hr/>
 
       <h3 id="cvm-argument">The CVM Is the Whole Argument</h3>
@@ -589,6 +601,17 @@
         <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
         <p>Stargate, Cassandra, Curator, Zeus, Pithos, Acropolis show up explicitly on NCP-MCI and especially NCM-MCI (which is lab-based and forces you to actually troubleshoot). The most common exam question pattern: identify which service is responsible for a given function. <strong>Cheat sheet:</strong> Data path = Stargate. Metadata = Cassandra. Background scrub/rebalance = Curator. Cluster config/quorum = Zeus. vDisk config = Pithos. AHV VM lifecycle = Acropolis. The trap: distractors will swap Cassandra and Pithos (both involve metadata-ish things) or Curator and Stargate (both involve data movement). Anchor each to its specific responsibility.</p>
       </aside>
+
+      <h3 id="diagram-cvm-services">Diagram: CVM Services Architecture</h3>
+
+      <figure class="diagram" id="cvm-services-architecture">
+        <div class="badges">
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-cvm-services-svg" viewBox="0 0 1000 460" role="img" aria-label="Inside one CVM: a 2x3 grid of cooperating services — Stargate, Cassandra, Curator, Zeus, Pithos, and Acropolis — sitting on a Linux base layer with NCC and ncli/acli endpoints. Connections to peer CVMs and to local disks are shown."></svg>
+        <figcaption>Inside one CVM. These services run on every CVM in the cluster and coordinate with their peers via the network.</figcaption>
+      </figure>
 
       <hr/>
 
@@ -1134,6 +1157,151 @@ ncc health_checks run_all</pre></li>
         revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
       }
     });
+
+    // ===== Shared diagram helpers =====
+    const _C2 = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+    };
+    const _opts2 = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const _SVGNS2 = 'http://www.w3.org/2000/svg';
+    function _txt2(svg, x, y, text, opts = {}) {
+      const t = document.createElementNS(_SVGNS2, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opts.anchor) t.setAttribute('text-anchor', opts.anchor);
+      t.setAttribute('font-family', opts.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opts.size || 12);
+      if (opts.weight) t.setAttribute('font-weight', opts.weight);
+      if (opts.spacing) t.setAttribute('letter-spacing', opts.spacing);
+      if (opts.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opts.fill || _C2.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ===== Diagram: Anatomy of a Nutanix Node =====
+    (function drawNodeAnatomy() {
+      const svg = document.getElementById('diagram-node-anatomy-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      _txt2(svg, 500, 28, 'ANATOMY OF A SINGLE NUTANIX NODE', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600' });
+
+      const x = 100, w = 800;
+      // Physical hardware (bottom)
+      svg.appendChild(rc.rectangle(x, 410, w, 50, _opts2(_C2.disk, _C2.diskFill, 'cross-hatch')));
+      _txt2(svg, x + w/2, 432, 'Physical Server', { anchor: 'middle', size: 13, weight: '700', fill: _C2.label });
+      _txt2(svg, x + w/2, 450, 'CPU · RAM · NICs · NVMe + SSD', { anchor: 'middle', size: 11, fill: _C2.ink });
+
+      // Hypervisor band
+      svg.appendChild(rc.rectangle(x, 320, w, 60, _opts2(_C2.compute, _C2.computeFill)));
+      _txt2(svg, x + w/2, 345, 'Hypervisor', { anchor: 'middle', size: 13, weight: '700', fill: _C2.label });
+      _txt2(svg, x + w/2, 365, 'AHV  ·  ESXi  ·  Hyper-V', { anchor: 'middle', size: 11, fill: _C2.ink });
+
+      // CVM (left, larger) + User VMs (right) on top of hypervisor
+      const cvmW = 320, vmW = 440, gap = 40;
+      const cvmX = x + 20, vmX = cvmX + cvmW + gap;
+      svg.appendChild(rc.rectangle(cvmX, 110, cvmW, 180, _opts2(_C2.cvm, _C2.cvmFill)));
+      _txt2(svg, cvmX + cvmW/2, 138, 'Controller VM (CVM)', { anchor: 'middle', size: 14, weight: '700', fill: '#fbb091' });
+      // service abbreviations inside CVM
+      const services = ['Stargate', 'Cassandra', 'Curator', 'Zeus', 'Pithos', 'Acropolis'];
+      services.forEach((s, i) => {
+        const col = i % 3, row = Math.floor(i / 3);
+        const sx = cvmX + 16 + col * 100;
+        const sy = 168 + row * 50;
+        svg.appendChild(rc.rectangle(sx, sy, 88, 36, { stroke: _C2.acro, strokeWidth: 0.8, roughness: 1.2, fill: _C2.acroFill, fillStyle: 'hachure', fillWeight: 0.7, hachureGap: 5 }));
+        _txt2(svg, sx + 44, sy + 22, s, { anchor: 'middle', size: 10, mono: true, fill: '#fbb091', weight: '600' });
+      });
+
+      svg.appendChild(rc.rectangle(vmX, 110, vmW, 180, _opts2(_C2.vm, _C2.vmFill)));
+      _txt2(svg, vmX + vmW/2, 138, 'User VMs', { anchor: 'middle', size: 13, weight: '700', fill: _C2.label });
+      // VM rectangles
+      ['VM-01', 'VM-02', 'VM-03'].forEach((v, i) => {
+        const vx = vmX + 30 + i * 130;
+        svg.appendChild(rc.rectangle(vx, 168, 110, 90, _opts2(_C2.vm, _C2.vmFill)));
+        _txt2(svg, vx + 55, 218, v, { anchor: 'middle', size: 11, mono: true, fill: _C2.ink });
+      });
+
+      // Connectors
+      svg.appendChild(rc.line(cvmX + cvmW/2, 290, cvmX + cvmW/2, 320, { stroke: _C2.cvm, strokeWidth: 1, roughness: 1.4, opacity: 0.7 }));
+      svg.appendChild(rc.line(vmX + vmW/2, 290, vmX + vmW/2, 320, { stroke: _C2.vm, strokeWidth: 1, roughness: 1.4, opacity: 0.7 }));
+
+      // Annotations
+      _txt2(svg, x + w/2, 90, 'The CVM owns storage. The hypervisor never talks to disks directly.',
+        { anchor: 'middle', size: 11, fill: _C2.ink, italic: true });
+    })();
+
+    // ===== Diagram: CVM Services Architecture =====
+    (function drawCvmServices() {
+      const svg = document.getElementById('diagram-cvm-services-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      _txt2(svg, 500, 28, 'INSIDE ONE CVM', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600' });
+
+      // Outer CVM container (dashed feel via rough)
+      const cx = 200, cy = 70, cw = 600, ch = 290;
+      svg.appendChild(rc.rectangle(cx, cy, cw, ch,
+        { stroke: _C2.cvm, strokeWidth: 1.6, roughness: 1.6, fill: _C2.cvmFill, fillStyle: 'hachure', fillWeight: 0.7, hachureGap: 8 }));
+      _txt2(svg, cx + cw/2, cy + 26, 'Controller VM (CVM)', { anchor: 'middle', size: 14, weight: '700', fill: '#fbb091' });
+
+      // 2x3 grid of service boxes
+      const svcs = [
+        { name: 'Stargate', sub: 'Data path · I/O processing' },
+        { name: 'Cassandra', sub: 'Distributed metadata store' },
+        { name: 'Curator', sub: 'Background scrub · Rebalance · ILM' },
+        { name: 'Zeus', sub: 'Cluster config · Quorum' },
+        { name: 'Pithos', sub: 'vDisk config manager' },
+        { name: 'Acropolis', sub: 'AHV VM lifecycle (AHV only)' },
+      ];
+      const sw = 180, sh = 78, sgap = 12;
+      svcs.forEach((s, i) => {
+        const col = i % 3, row = Math.floor(i / 3);
+        const sx = cx + 12 + col * (sw + sgap);
+        const sy = cy + 50 + row * (sh + sgap);
+        svg.appendChild(rc.rectangle(sx, sy, sw, sh,
+          { stroke: _C2.acro, strokeWidth: 1.2, roughness: 1.3, fill: _C2.acroFill, fillStyle: 'hachure', fillWeight: 1.0, hachureGap: 5 }));
+        _txt2(svg, sx + sw/2, sy + 30, s.name, { anchor: 'middle', size: 13, weight: '700', fill: '#fbb091' });
+        _txt2(svg, sx + sw/2, sy + 52, s.sub, { anchor: 'middle', size: 9, fill: _C2.ink, italic: true });
+      });
+
+      // Bottom band
+      svg.appendChild(rc.rectangle(cx + 12, cy + ch - 36, cw - 24, 26,
+        { stroke: _C2.net, strokeWidth: 1, roughness: 1.3, fill: _C2.netFill, fillStyle: 'hachure', fillWeight: 0.8, hachureGap: 5 }));
+      _txt2(svg, cx + cw/2, cy + ch - 20, 'CVM OS (Linux)  ·  NCC  ·  ncli / acli endpoints',
+        { anchor: 'middle', size: 11, mono: true, fill: _C2.label });
+
+      // Side connectors
+      // To other CVMs (left arrow out)
+      svg.appendChild(rc.line(cx, cy + ch/2, 80, cy + ch/2, { stroke: _C2.fabric, strokeWidth: 1.2, roughness: 1.3, opacity: 0.85 }));
+      svg.appendChild(rc.line(80, cy + ch/2, 90, cy + ch/2 - 6, { stroke: _C2.fabric, strokeWidth: 1.2, roughness: 1 }));
+      svg.appendChild(rc.line(80, cy + ch/2, 90, cy + ch/2 + 6, { stroke: _C2.fabric, strokeWidth: 1.2, roughness: 1 }));
+      _txt2(svg, 90, cy + ch/2 - 14, 'Other CVMs', { anchor: 'start', size: 10, mono: true, fill: _C2.fabric, weight: '600' });
+      _txt2(svg, 90, cy + ch/2 + 22, 'Cassandra ring', { anchor: 'start', size: 9, mono: true, fill: _C2.ink, italic: true });
+      _txt2(svg, 90, cy + ch/2 + 36, 'Stargate I/O', { anchor: 'start', size: 9, mono: true, fill: _C2.ink, italic: true });
+
+      // To local disks (right arrow out, downward)
+      svg.appendChild(rc.line(cx + cw, cy + ch/2, 920, cy + ch/2, { stroke: _C2.disk, strokeWidth: 1.2, roughness: 1.3, opacity: 0.85 }));
+      svg.appendChild(rc.line(920, cy + ch/2, 910, cy + ch/2 - 6, { stroke: _C2.disk, strokeWidth: 1.2, roughness: 1 }));
+      svg.appendChild(rc.line(920, cy + ch/2, 910, cy + ch/2 + 6, { stroke: _C2.disk, strokeWidth: 1.2, roughness: 1 }));
+      _txt2(svg, 920, cy + ch/2 - 14, 'Local disks', { anchor: 'end', size: 10, mono: true, fill: _C2.label, weight: '600' });
+      _txt2(svg, 920, cy + ch/2 + 22, 'Pass-through', { anchor: 'end', size: 9, mono: true, fill: _C2.ink, italic: true });
+
+      // Hypervisor (above CVM)
+      _txt2(svg, 500, 410, 'Hypervisor presents storage  ·  NFS / iSCSI / direct',
+        { anchor: 'middle', size: 11, mono: true, fill: _C2.ink, italic: true });
+    })();
 
     // Diagram: cluster-topology (4-node Nutanix cluster)
     (function drawClusterTopology() {

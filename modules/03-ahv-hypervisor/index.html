@@ -312,6 +312,18 @@
         <p>No external management appliance is the durable architectural advantage. You do not maintain, patch, license, or protect a vCenter. You do not have a vCenter outage that disables vMotion. You do not have a vCenter that needs its own DR plan.</p>
       </aside>
 
+      <h3 id="diagram-ahv-vs-esxi-stack">Diagram: AHV Stack vs ESXi Stack</h3>
+
+      <figure class="diagram" id="ahv-vs-esxi-stack">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-ahv-vs-esxi-stack-svg" viewBox="0 0 1000 540" role="img" aria-label="Side-by-side stack comparison: ESXi-on-Nutanix on the left with vCenter as an external dependency, and AHV on the right with Acropolis in-cluster and no external management appliance."></svg>
+        <figcaption>Same hardware, two hypervisor stacks. Note where the management plane lives in each.</figcaption>
+      </figure>
+
       <hr/>
 
       <h3 id="broadcom-math">The Cycle, Frame Two: AHV as the Hypervisor Without a Tax</h3>
@@ -383,6 +395,17 @@
         <div class="label">Different</div>
         <p>ADS is less aggressive and less configurable than DRS. For most customers this is operationally a benefit (less micromanagement). For density-obsessed customers it can feel like a regression. Know your customer.</p>
       </aside>
+
+      <h3 id="diagram-acropolis-control-plane">Diagram: Acropolis Control Plane</h3>
+
+      <figure class="diagram" id="acropolis-control-plane">
+        <div class="badges">
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-acropolis-control-plane-svg" viewBox="0 0 1000 460" role="img" aria-label="Four CVMs across a cluster, each running an Acropolis instance. One Acropolis is elected master with heavy outline; the other three are followers. Zeus consensus links all four CVMs."></svg>
+        <figcaption>Where Acropolis lives, who is master, what it controls, and how it survives a CVM loss.</figcaption>
+      </figure>
 
       <hr/>
 
@@ -462,6 +485,17 @@
         <div class="label">From the SA chair</div>
         <p>The mixed-hypervisor option is your strongest opening positioning for any VMware shop right now. <em>"You don't have to switch hypervisors to start. Run ESXi on Nutanix, get the HCI benefits today, and decide on AHV later, on your terms. Most customers stay on ESXi for the first 12-18 months. After that, the licensing math usually decides for them."</em> Memorize that. It defuses the hypervisor objection in three sentences.</p>
       </aside>
+
+      <h3 id="diagram-mixed-hypervisor-cluster">Diagram: Mixed-Hypervisor Cluster Topology</h3>
+
+      <figure class="diagram" id="mixed-hypervisor-cluster">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-mixed-hypervisor-cluster-svg" viewBox="0 0 1000 500" role="img" aria-label="A single Prism Central instance managing both an ESXi-on-Nutanix cluster (with vCenter as external dependency) and an AHV cluster (with Acropolis in-cluster). A Nutanix Move arrow runs between the two clusters."></svg>
+        <figcaption>A single Prism Central managing both an ESXi-on-Nutanix cluster and an AHV cluster. This is the most common 2026 deal pattern.</figcaption>
+      </figure>
 
       <hr/>
 
@@ -779,7 +813,9 @@
     <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>03-ahv-hypervisor</span>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
   <script>
+    // Practice question interactivity
     document.querySelectorAll('.question').forEach((q) => {
       const correct = q.dataset.correct;
       const choices = q.querySelectorAll('.choice');
@@ -807,6 +843,212 @@
         revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
       }
     });
+
+    // ---------- Diagram color palette + helpers ----------
+    const C = {
+      ink: '#a8b8d4',
+      label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opts = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opts.anchor) t.setAttribute('text-anchor', opts.anchor);
+      t.setAttribute('font-family', opts.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opts.size || 12);
+      if (opts.weight) t.setAttribute('font-weight', opts.weight);
+      if (opts.spacing) t.setAttribute('letter-spacing', opts.spacing);
+      if (opts.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opts.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ---------- Diagram: AHV vs ESXi stack ----------
+    (function drawAhvVsEsxi() {
+      const svg = document.getElementById('diagram-ahv-vs-esxi-stack-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 250, 30, 'ESXi-on-Nutanix', { anchor: 'middle', size: 14, weight: '700', fill: C.label });
+      txt(svg, 750, 30, 'AHV', { anchor: 'middle', size: 14, weight: '700', fill: C.label });
+      txt(svg, 500, 30, 'vs', { anchor: 'middle', size: 13, fill: C.ink, italic: true });
+
+      // Left stack: ESXi
+      const lx = 80, lw = 340;
+      // physical
+      svg.appendChild(rc.rectangle(lx, 460, lw, 36, opts(C.disk, C.diskFill, 'cross-hatch')));
+      txt(svg, lx + lw/2, 482, 'Physical hardware', { anchor: 'middle', size: 12, fill: C.ink });
+      // ESXi
+      svg.appendChild(rc.rectangle(lx, 410, lw, 40, opts(C.compute, C.computeFill)));
+      txt(svg, lx + lw/2, 434, 'ESXi (VMkernel)', { anchor: 'middle', size: 13, weight: '600', fill: C.label });
+      // CVM + VMs side by side
+      svg.appendChild(rc.rectangle(lx, 320, 150, 80, opts(C.cvm, C.cvmFill)));
+      txt(svg, lx + 75, 365, 'CVM', { anchor: 'middle', size: 14, weight: '700', fill: '#fbb091' });
+      svg.appendChild(rc.rectangle(lx + 165, 320, 175, 80, opts(C.vm, C.vmFill)));
+      txt(svg, lx + 165 + 175/2, 365, 'User VMs', { anchor: 'middle', size: 12, fill: C.ink });
+      // External vCenter
+      svg.appendChild(rc.rectangle(lx + 50, 100, 240, 70, opts(C.ext, C.extFill, 'zigzag')));
+      txt(svg, lx + 170, 130, 'vCenter Server', { anchor: 'middle', size: 13, weight: '700', fill: '#fca5a5' });
+      txt(svg, lx + 170, 152, 'External · required for HA / DRS / vMotion', { anchor: 'middle', size: 11, fill: C.ink });
+      // arrow from vCenter to ESXi
+      svg.appendChild(rc.line(lx + 170, 172, lx + 170, 410, { stroke: C.ext, strokeWidth: 1.2, roughness: 1.4, opacity: 0.75 }));
+
+      // Right stack: AHV
+      const rx = 580, rw = 340;
+      svg.appendChild(rc.rectangle(rx, 460, rw, 36, opts(C.disk, C.diskFill, 'cross-hatch')));
+      txt(svg, rx + rw/2, 482, 'Physical hardware', { anchor: 'middle', size: 12, fill: C.ink });
+      svg.appendChild(rc.rectangle(rx, 410, rw, 40, opts(C.compute, C.computeFill)));
+      txt(svg, rx + rw/2, 434, 'AHV (KVM + QEMU + libvirt + OVS)', { anchor: 'middle', size: 12, weight: '600', fill: C.label });
+      // CVM with Acropolis sub-label + VMs
+      svg.appendChild(rc.rectangle(rx, 320, 180, 80, opts(C.cvm, C.cvmFill)));
+      txt(svg, rx + 90, 348, 'CVM', { anchor: 'middle', size: 14, weight: '700', fill: '#fbb091' });
+      txt(svg, rx + 90, 370, 'Acropolis (master)', { anchor: 'middle', size: 11, fill: '#d97c4a', italic: true });
+      txt(svg, rx + 90, 386, 'VM lifecycle · HA · ADS', { anchor: 'middle', size: 10, fill: C.ink });
+      svg.appendChild(rc.rectangle(rx + 195, 320, 145, 80, opts(C.vm, C.vmFill)));
+      txt(svg, rx + 195 + 145/2, 365, 'User VMs', { anchor: 'middle', size: 12, fill: C.ink });
+      // Prism Element label up top, in-cluster
+      svg.appendChild(rc.rectangle(rx + 70, 100, 200, 70, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, rx + 170, 128, 'Prism Element', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      txt(svg, rx + 170, 152, 'In-cluster · no separate appliance', { anchor: 'middle', size: 11, fill: C.ink });
+      svg.appendChild(rc.line(rx + 170, 172, rx + 170, 320, { stroke: C.fabric, strokeWidth: 1, roughness: 1.4, opacity: 0.6 }));
+
+      txt(svg, 500, 230, 'Same workload, two operating models.', { anchor: 'middle', size: 12, fill: C.ink, italic: true });
+    })();
+
+    // ---------- Diagram: Acropolis control plane ----------
+    (function drawAcropolisControlPlane() {
+      const svg = document.getElementById('diagram-acropolis-control-plane-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 28, 'ACROPOLIS DISTRIBUTED CONTROL PLANE', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600', fill: C.ink });
+
+      // 4 CVM boxes
+      const baseY = 200, cvmW = 160, cvmH = 200;
+      const positions = [80, 280, 480, 680];
+      const masterIdx = 1; // second CVM is master
+
+      // Top horizontal bar: control plane
+      svg.appendChild(rc.rectangle(60, 80, 800, 30, opts(C.acro, C.acroFill, 'cross-hatch')));
+      txt(svg, 460, 100, 'Master + Followers · Zeus consensus', { anchor: 'middle', size: 12, fill: C.label, weight: '600' });
+
+      positions.forEach((x, i) => {
+        // CVM container
+        svg.appendChild(rc.rectangle(x, baseY, cvmW, cvmH, opts(C.cvm, C.cvmFill)));
+        txt(svg, x + cvmW/2, baseY + 22, 'CVM', { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
+        // Standard services (small abbreviation row)
+        txt(svg, x + cvmW/2, baseY + 42, 'Stargate · Cassandra', { anchor: 'middle', size: 9, mono: true, fill: C.ink });
+        txt(svg, x + cvmW/2, baseY + 56, 'Curator · Zeus · Pithos', { anchor: 'middle', size: 9, mono: true, fill: C.ink });
+        // Acropolis box inside, master heavily outlined
+        const acroY = baseY + 80, acroH = 80;
+        const isMaster = i === masterIdx;
+        svg.appendChild(rc.rectangle(x + 14, acroY, cvmW - 28, acroH,
+          { stroke: isMaster ? C.fabric : C.acro,
+            strokeWidth: isMaster ? 2.2 : 1,
+            roughness: 1.3, fill: C.acroFill, fillStyle: 'hachure',
+            fillWeight: 1.0, hachureGap: 5 }));
+        txt(svg, x + cvmW/2, acroY + 32, 'Acropolis', { anchor: 'middle', size: 13, weight: '700', fill: isMaster ? C.fabric : '#d97c4a' });
+        txt(svg, x + cvmW/2, acroY + 52, isMaster ? 'MASTER' : 'follower',
+          { anchor: 'middle', size: 10, mono: true, weight: '700', spacing: '0.10em',
+            fill: isMaster ? C.fabric : C.ink });
+        // CVM label
+        txt(svg, x + cvmW/2, baseY + cvmH + 18, 'CVM ' + (i+1), { anchor: 'middle', size: 11, mono: true, spacing: '0.06em', fill: C.ink });
+
+        // Vertical connector to top bar
+        svg.appendChild(rc.line(x + cvmW/2, baseY, x + cvmW/2, 110,
+          { stroke: isMaster ? C.fabric : C.acro, strokeWidth: isMaster ? 1.4 : 0.9, roughness: 1.3, opacity: 0.85 }));
+      });
+
+      // Side action arrows into master
+      const masterX = positions[masterIdx] + cvmW/2;
+      txt(svg, 500, 150, 'Create VM · Power On · Live Migrate · HA Restart', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+      svg.appendChild(rc.line(500, 158, masterX, baseY + 80,
+        { stroke: C.fabric, strokeWidth: 1, roughness: 1.4, opacity: 0.6 }));
+
+      txt(svg, 500, 440, 'If the master CVM is lost, a follower is elected master in <30 s.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ---------- Diagram: Mixed-hypervisor cluster topology ----------
+    (function drawMixedHypervisor() {
+      const svg = document.getElementById('diagram-mixed-hypervisor-cluster-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      // Prism Central at top center
+      svg.appendChild(rc.rectangle(360, 30, 280, 56, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 500, 56, 'Prism Central', { anchor: 'middle', size: 14, weight: '700', fill: C.label });
+      txt(svg, 500, 76, 'Single management plane', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+
+      // Two cluster blocks side by side
+      // Cluster A: ESXi on Nutanix
+      const ax = 60, aw = 380, ay = 200, ah = 240;
+      svg.appendChild(rc.rectangle(ax, ay, aw, ah, opts(C.compute, C.computeFill)));
+      txt(svg, ax + aw/2, ay - 10, 'Cluster A · ESXi on Nutanix', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      // Inside: 4 nodes, AHV/CVM/VMs (here ESXi/CVM/VMs)
+      for (let i = 0; i < 4; i++) {
+        const nx = ax + 16 + i * 88;
+        svg.appendChild(rc.rectangle(nx, ay + 16, 78, 30, opts(C.compute, C.computeFill)));
+        txt(svg, nx + 39, ay + 36, 'ESXi', { anchor: 'middle', size: 10, fill: C.label, weight: '600' });
+        svg.appendChild(rc.rectangle(nx, ay + 50, 78, 36, opts(C.cvm, C.cvmFill)));
+        txt(svg, nx + 39, ay + 72, 'CVM', { anchor: 'middle', size: 10, fill: '#fbb091', weight: '700' });
+        svg.appendChild(rc.rectangle(nx, ay + 90, 78, 50, opts(C.vm, C.vmFill)));
+        txt(svg, nx + 39, ay + 118, 'VMs', { anchor: 'middle', size: 10, fill: C.ink });
+      }
+      // External vCenter for cluster A
+      svg.appendChild(rc.rectangle(ax + aw/2 - 80, ay + 165, 160, 56,
+        { stroke: C.ext, strokeWidth: 1.4, roughness: 1.4, fill: C.extFill, fillStyle: 'zigzag', fillWeight: 1.2, hachureGap: 5 }));
+      txt(svg, ax + aw/2, ay + 187, 'vCenter Server', { anchor: 'middle', size: 12, weight: '700', fill: '#fca5a5' });
+      txt(svg, ax + aw/2, ay + 207, 'External dependency', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Cluster B: AHV
+      const bx = 560, bw = 380, by_ = 200, bh = 240;
+      svg.appendChild(rc.rectangle(bx, by_, bw, bh, opts(C.compute, C.computeFill)));
+      txt(svg, bx + bw/2, by_ - 10, 'Cluster B · AHV', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      for (let i = 0; i < 4; i++) {
+        const nx = bx + 16 + i * 88;
+        svg.appendChild(rc.rectangle(nx, by_ + 16, 78, 30, opts(C.compute, C.computeFill)));
+        txt(svg, nx + 39, by_ + 36, 'AHV', { anchor: 'middle', size: 10, fill: C.label, weight: '600' });
+        svg.appendChild(rc.rectangle(nx, by_ + 50, 78, 36, opts(C.cvm, C.cvmFill)));
+        txt(svg, nx + 39, by_ + 68, 'CVM', { anchor: 'middle', size: 10, fill: '#fbb091', weight: '700' });
+        txt(svg, nx + 39, by_ + 80, 'Acropolis', { anchor: 'middle', size: 7, fill: '#d97c4a', italic: true });
+        svg.appendChild(rc.rectangle(nx, by_ + 90, 78, 50, opts(C.vm, C.vmFill)));
+        txt(svg, nx + 39, by_ + 118, 'VMs', { anchor: 'middle', size: 10, fill: C.ink });
+      }
+      // No external dependency note
+      txt(svg, bx + bw/2, by_ + 192, 'No external dependency · Acropolis in-cluster',
+        { anchor: 'middle', size: 11, fill: '#d97c4a', italic: true });
+
+      // PC connectors down to both
+      svg.appendChild(rc.line(440, 86, ax + aw/2, ay, { stroke: C.vip, strokeWidth: 1.2, roughness: 1.4, opacity: 0.75 }));
+      svg.appendChild(rc.line(560, 86, bx + bw/2, by_, { stroke: C.vip, strokeWidth: 1.2, roughness: 1.4, opacity: 0.75 }));
+
+      // Move arrow between clusters
+      svg.appendChild(rc.line(ax + aw, 320, bx, 320, { stroke: C.acro, strokeWidth: 1.4, roughness: 1.4, opacity: 0.85 }));
+      // arrow head
+      svg.appendChild(rc.line(bx, 320, bx - 12, 314, { stroke: C.acro, strokeWidth: 1.4, roughness: 1.0 }));
+      svg.appendChild(rc.line(bx, 320, bx - 12, 326, { stroke: C.acro, strokeWidth: 1.4, roughness: 1.0 }));
+      txt(svg, (ax + aw + bx) / 2, 308, 'Nutanix Move', { anchor: 'middle', size: 11, fill: '#d97c4a', weight: '700' });
+      txt(svg, (ax + aw + bx) / 2, 336, '(VM-by-VM cutover)', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      txt(svg, 500, 478, 'Both clusters are Nutanix. One pays VMware; one does not.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
   </script>
 </body>
 </html>
