@@ -269,6 +269,43 @@
     section.status a { color: var(--accent-cyan); text-decoration: none; }
     section.status a:hover { text-decoration: underline; }
 
+    /* Closing image: sits between .page and footer.
+       Full-bleed; fades into bg-base on TOP (handoff from page content)
+       and on BOTTOM (handoff to footer text). */
+    .footer-image {
+      position: relative;
+      width: 100%;
+      margin-top: 32px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .footer-image picture { display: block; }
+    .footer-image img {
+      display: block;
+      width: 100%;
+      height: clamp(360px, 50vh, 560px);
+      object-fit: cover;
+      object-position: center 60%;
+    }
+    .footer-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          var(--bg-base)         0%,
+          rgba(10, 22, 40, 0.65) 18%,
+          rgba(10, 22, 40, 0)    50%,
+          rgba(10, 22, 40, 0)    78%,
+          var(--bg-base)         100%),
+        linear-gradient(to right,
+          var(--bg-base)         0%,
+          rgba(10, 22, 40, 0)    7%,
+          rgba(10, 22, 40, 0)    93%,
+          var(--bg-base)         100%);
+    }
+
     footer {
       max-width: 1040px;
       margin: 0 auto;
@@ -294,6 +331,7 @@
       .hero h1 { font-size: 36px; }
       .page { padding: 40px 20px 32px; }
       footer { padding: 24px 20px 32px; }
+      .footer-image img { height: clamp(220px, 38vh, 360px); }
     }
   </style>
 </head>
@@ -338,7 +376,7 @@
         <a class="module-card" href="modules/02-nutanix-architecture/index.html"><span class="num">02</span><span class="title">Nutanix Architecture</span><span class="lede">CVM, Stargate, Cassandra, Curator.</span></a>
         <a class="module-card" href="modules/03-ahv-hypervisor/index.html"><span class="num">03</span><span class="title">AHV Hypervisor</span><span class="lede">The hypervisor most engineers underestimate.</span></a>
         <a class="module-card" href="modules/04-prism-management/index.html"><span class="num">04</span><span class="title">Prism Management</span><span class="lede">Element vs Central, what each is for.</span></a>
-        <div class="module-card disabled"><span class="num">05</span><span class="title">DSF Storage Deep Dive</span><span class="lede">The data path, tiering, locality.</span></div>
+        <a class="module-card" href="modules/05-dsf-storage/index.html"><span class="num">05</span><span class="title">DSF Storage Deep Dive</span><span class="lede">The data path, tiering, locality.</span></a>
         <div class="module-card disabled"><span class="num">06</span><span class="title">Networking and Flow</span><span class="lede">Microsegmentation without the theater.</span></div>
         <div class="module-card disabled"><span class="num">07</span><span class="title">Data Protection</span><span class="lede">Snapshots, NearSync, Metro, Leap.</span></div>
         <div class="module-card disabled"><span class="num">08</span><span class="title">Unified Storage</span><span class="lede">Files, Objects, Volumes.</span></div>
@@ -353,6 +391,14 @@
       <p>Source and the curriculum markdown: <a href="https://github.com/nixfred/nutanix">github.com/nixfred/nutanix</a></p>
     </section>
   </div>
+
+  <section class="footer-image" aria-label="A wireframe horizon scattered with isometric cluster cubes receding into deep navy, suggesting the curriculum stretches ahead.">
+    <picture>
+      <source type="image/avif" srcset="public/images/footer-home.avif" />
+      <source type="image/webp" srcset="public/images/footer-home.webp" />
+      <img src="public/images/footer-home.webp" width="1600" height="900" loading="lazy" decoding="async" alt="" />
+    </picture>
+  </section>
 
   <footer>
     <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
