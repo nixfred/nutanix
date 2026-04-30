@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Isometric overhead view of a Prism Central management hub at the top center connected by cyan and gold arcs to four smaller cluster groups below — the multi-cluster Prism management hierarchy.">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#15294a"/>
+      <stop offset="65%" stop-color="#0c1c36"/>
+      <stop offset="100%" stop-color="#070f20"/>
+    </radialGradient>
+
+    <linearGradient id="ftop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d6aa6"/>
+      <stop offset="100%" stop-color="#27497a"/>
+    </linearGradient>
+    <linearGradient id="fleft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f3a66"/>
+      <stop offset="100%" stop-color="#142a4d"/>
+    </linearGradient>
+    <linearGradient id="fright" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="100%" stop-color="#091a33"/>
+    </linearGradient>
+
+    <!-- Prism Central hub: gold-tinted to set it apart -->
+    <linearGradient id="pcTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#a87515"/>
+    </linearGradient>
+    <linearGradient id="pcLeft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#a87515"/>
+      <stop offset="100%" stop-color="#6b4a08"/>
+    </linearGradient>
+    <linearGradient id="pcRight" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7c5610"/>
+      <stop offset="100%" stop-color="#4a3306"/>
+    </linearGradient>
+
+    <radialGradient id="dot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9ce8ff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#00d4ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldDot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff3c0" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#fbbf24" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+    <filter id="bigGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14"/>
+    </filter>
+
+    <pattern id="grid" width="80" height="46.188" patternUnits="userSpaceOnUse">
+      <path d="M 0 23.094 L 40 0 L 80 23.094 L 40 46.188 Z" fill="none" stroke="#2a4d7a" stroke-width="0.5" opacity="0.32"/>
+    </pattern>
+
+    <!-- Small cluster: 4 cubes in a 2x2 footprint -->
+    <symbol id="smallcluster" overflow="visible">
+      <!-- back-left -->
+      <g transform="translate(-58 -30)">
+        <polygon points="0,-22 33,-3 0,16 -33,-3" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+        <polygon points="-33,-3 0,16 0,52 -33,33" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="33,-3 0,16 0,52 33,33" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+      <!-- back-right -->
+      <g transform="translate(58 -30)">
+        <polygon points="0,-22 33,-3 0,16 -33,-3" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+        <polygon points="-33,-3 0,16 0,52 -33,33" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="33,-3 0,16 0,52 33,33" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+      <!-- front-left -->
+      <g transform="translate(-58 30)">
+        <polygon points="0,-22 33,-3 0,16 -33,-3" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+        <polygon points="-33,-3 0,16 0,52 -33,33" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="33,-3 0,16 0,52 33,33" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+      <!-- front-right -->
+      <g transform="translate(58 30)">
+        <polygon points="0,-22 33,-3 0,16 -33,-3" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+        <polygon points="-33,-3 0,16 0,52 -33,33" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="33,-3 0,16 0,52 33,33" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+      <!-- intra-cluster mesh -->
+      <g stroke="#00d4ff" stroke-opacity="0.30" stroke-width="0.7" fill="none">
+        <line x1="-58" y1="-33" x2="58" y2="-33"/>
+        <line x1="-58" y1="27" x2="58" y2="27"/>
+        <line x1="-58" y1="-33" x2="-58" y2="27"/>
+        <line x1="58" y1="-33" x2="58" y2="27"/>
+        <line x1="-58" y1="-33" x2="58" y2="27"/>
+        <line x1="58" y1="-33" x2="-58" y2="27"/>
+      </g>
+    </symbol>
+  </defs>
+
+  <!-- background -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.5"/>
+
+  <!-- big gold/cyan glow behind the PC hub -->
+  <ellipse cx="800" cy="270" rx="380" ry="180" fill="#fbbf24" opacity="0.05" filter="url(#bigGlow)"/>
+  <ellipse cx="800" cy="280" rx="280" ry="120" fill="#00d4ff" opacity="0.05" filter="url(#bigGlow)"/>
+
+  <!--
+    PRISM CENTRAL hub at top center.
+    Drawn as a larger isometric "command" cube with gold accents and a halo.
+  -->
+  <g transform="translate(800 260)">
+    <!-- halo ring -->
+    <ellipse cx="0" cy="68" rx="190" ry="42" fill="none" stroke="#fbbf24" stroke-width="0.8" stroke-opacity="0.35" stroke-dasharray="4 6"/>
+    <!-- main cube faces -->
+    <polygon points="0,-58 95,-7 0,42 -95,-7" fill="url(#pcTop)" stroke="#fbbf24" stroke-width="1.4" stroke-opacity="0.85"/>
+    <polygon points="-95,-7 0,42 0,98 -95,49" fill="url(#pcLeft)" stroke="#a87515" stroke-width="1"/>
+    <polygon points="95,-7 0,42 0,98 95,49" fill="url(#pcRight)" stroke="#a87515" stroke-width="1"/>
+    <!-- inner detail lines -->
+    <line x1="-95" y1="20" x2="0" y2="71" stroke="#fbbf24" stroke-width="0.6" opacity="0.45"/>
+    <line x1="0" y1="71" x2="95" y2="20" stroke="#fbbf24" stroke-width="0.6" opacity="0.45"/>
+    <!-- glowing apex -->
+    <circle cx="0" cy="-12" r="3.5" fill="#fbbf24"/>
+    <circle cx="0" cy="-12" r="9" fill="url(#goldDot)" opacity="0.95"/>
+    <!-- legend -->
+    <text x="0" y="-78" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="700" letter-spacing="0.04em" fill="#fbbf24">PRISM CENTRAL</text>
+    <text x="0" y="-60" text-anchor="middle" font-family="ui-monospace, JetBrains Mono, Menlo, monospace" font-size="11" fill="#a8b8d4">multi-cluster · categories · projects · NCM</text>
+  </g>
+
+  <!--
+    FOUR PE CLUSTERS arranged in a flat row below.
+    Each is a 2x2 small-cluster group. Alternating with one labeled ESXi-on-Nutanix
+    to show the mixed-hypervisor managed reality.
+  -->
+  <!-- cluster A -->
+  <g transform="translate(280 600)">
+    <use href="#smallcluster"/>
+    <text x="0" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#e8f0ff">Cluster A · AHV</text>
+    <text x="0" y="120" text-anchor="middle" font-family="ui-monospace, JetBrains Mono, monospace" font-size="11" fill="#6b7a9a">PE :9440</text>
+  </g>
+  <!-- cluster B -->
+  <g transform="translate(640 600)">
+    <use href="#smallcluster"/>
+    <text x="0" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#e8f0ff">Cluster B · AHV</text>
+    <text x="0" y="120" text-anchor="middle" font-family="ui-monospace, JetBrains Mono, monospace" font-size="11" fill="#6b7a9a">PE :9440</text>
+  </g>
+  <!-- cluster C (ESXi-on-Nutanix to show mixed) -->
+  <g transform="translate(960 600)">
+    <use href="#smallcluster"/>
+    <text x="0" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#e8f0ff">Cluster C · ESXi</text>
+    <text x="0" y="120" text-anchor="middle" font-family="ui-monospace, JetBrains Mono, monospace" font-size="11" fill="#6b7a9a">PE :9440  ·  on Nutanix</text>
+  </g>
+  <!-- cluster D -->
+  <g transform="translate(1320 600)">
+    <use href="#smallcluster"/>
+    <text x="0" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#e8f0ff">Cluster D · AHV</text>
+    <text x="0" y="120" text-anchor="middle" font-family="ui-monospace, JetBrains Mono, monospace" font-size="11" fill="#6b7a9a">PE :9440</text>
+  </g>
+
+  <!-- registration arcs from PC down to each cluster -->
+  <g fill="none" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 6">
+    <path d="M 760 350 Q 540 470 290 580"/>
+    <path d="M 780 360 Q 700 480 640 580"/>
+    <path d="M 820 360 Q 880 480 960 580"/>
+    <path d="M 840 350 Q 1080 470 1330 580"/>
+  </g>
+  <!-- secondary cyan shimmer arcs to indicate active mgmt traffic -->
+  <g fill="none" stroke="#00d4ff" stroke-width="0.8" stroke-opacity="0.35">
+    <path d="M 760 348 Q 540 468 290 578"/>
+    <path d="M 820 358 Q 880 478 960 578"/>
+  </g>
+
+  <!-- Foreground accent: subtle scanlines at bottom -->
+  <rect x="0" y="858" width="1600" height="1" fill="#00d4ff" opacity="0.18"/>
+  <rect x="0" y="862" width="1600" height="1" fill="#00d4ff" opacity="0.08"/>
+
+  <!-- Mono path treatment, top-left -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6b7a9a">
+    <text x="48" y="56" letter-spacing="0.04em"><tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix<tspan fill="#a8b8d4">/04-prism-management</tspan></text>
+  </g>
+
+  <!-- Module label, bottom-left -->
+  <g font-family="Inter, system-ui, sans-serif" fill="#a8b8d4">
+    <text x="48" y="816" font-size="13" letter-spacing="0.18em" font-weight="600" fill="#6b7a9a">MODULE 04</text>
+    <text x="48" y="852" font-size="34" font-weight="700" letter-spacing="-0.02em" fill="#e8f0ff">Prism: Element and Central</text>
+  </g>
+</svg>

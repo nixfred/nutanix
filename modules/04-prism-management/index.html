@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 4: Prism (Element and Central)</title>
+  <meta name="description" content="Prism Element vs Prism Central, the categories model that drives policy, X-Play and the v4 REST API, NCM tier structure, and twelve practice questions." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Module 4: Prism (Element and Central)" />
+  <meta property="og:description" content="The management plane: PE, PC, categories, X-Play, v4 API, NCM tiers." />
+  <meta property="og:image" content="../../public/images/hero-04-prism-management.svg" />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    /* ============= FULL-BLEED HERO =============
+       The hero image breaks out of main's centered column, fills viewport
+       width, and dissolves into bg-base via mask gradients. The module title
+       block sits inside the lower fade band of the image so the wordmark
+       visually anchors the composition. */
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;   /* break to viewport edges, lift up under brand bar */
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    /* Title block sits over the lower fade band */
+    .module-title-block {
+      position: relative;
+      z-index: 2;
+      margin: -180px 0 32px;
+    }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85); font-variant-numeric: tabular-nums;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+    figure.diagram .badge.wb { color: var(--success); background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.40); }
+    figure.diagram .badge.cert { color: var(--warning); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.40); }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption { margin-top: 16px; color: var(--text-secondary); font-size: 14px; font-style: italic; max-width: 70ch; }
+
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.tf .choices { flex-direction: row; }
+    .question.tf .choice { flex: 1; justify-content: center; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">04 · Prism Management</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-04-prism-management.svg" alt="Isometric overhead view of a Prism Central management hub at the top center connected by cyan and gold arcs to four smaller cluster groups below — the multi-cluster Prism management hierarchy." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/04-prism-management</div>
+      <h1 class="module-title">Module 4: Prism (Element and Central)</h1>
+      <div class="meta-row">
+        <span class="chip read">~33 min read</span>
+        <span class="chip cert">NCA ~28%</span>
+        <span class="chip cert">NCP-MCI ~22%</span>
+        <span class="chip cert">NCM-MCI ~12%</span>
+        <span class="chip cert">NCP-MCA ~40%</span>
+      </div>
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~28%) · NCP-MCI (~22%) · NCM-MCI (~12%) · NCP-MCA (~40%)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #6, #10, #11, #22 · Discovery Q-MGMT-01 through Q-MGMT-03, Q-AUT-01</span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Module 01 (HCI Foundations)</li>
+            <li>Module 02 (Nutanix Architecture)</li>
+            <li>Module 03 (AHV)</li>
+            <li>vCenter operational experience</li>
+            <li>Working CE cluster from prior modules</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">Prism Element (PE)</span>
+            <span class="term-chip">Prism Central (PC)</span>
+            <span class="term-chip">NCM (Nutanix Cloud Manager)</span>
+            <span class="term-chip">Categories</span>
+            <span class="term-chip">Projects</span>
+            <span class="term-chip">X-Play</span>
+            <span class="term-chip">NCM Self-Service (formerly Calm)</span>
+            <span class="term-chip">Intelligent Operations</span>
+            <span class="term-chip">v4 REST API</span>
+            <span class="term-chip">Cluster Virtual IP</span>
+            <span class="term-chip">SAML / AD integration</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Distinguish Prism Element from Prism Central in 30 seconds, with the right examples.</strong> This is the most-confused pair of names in the Nutanix vocabulary. NCA tests this directly. Customer confusion on the call costs you credibility.</li>
+        <li><strong>Map Prism to the VMware management stack precisely.</strong> Prism is closer to vCenter plus Aria Operations plus Aria Automation plus vSphere Lifecycle Manager, in one product, with one upgrade cadence.</li>
+        <li><strong>Pass roughly 28% of NCA and 22% of NCP-MCI.</strong> The NCA is a Prism-navigation exam in many ways. NCP-MCA is heavier: 40% of that exam is automation built on Prism Central.</li>
+        <li><strong>Demonstrate the categories model and explain why it is more powerful than vSphere tags.</strong> Customers who understand them think about policy differently.</li>
+        <li><strong>Walk a customer through the v4 REST API and X-Play playbook automation.</strong> Demo a one-line curl call and a three-step playbook in five minutes total.</li>
+        <li><strong>Make the honest licensing case for NCM features.</strong> Some Prism functionality is included with NCI baseline; some sits behind NCM tiers. Knowing what is bundled and what is added is sales-critical.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>You manage VMware infrastructure through a stack of products that has accumulated over two decades:</p>
+      <ul>
+        <li><strong>vCenter Server</strong> for VM lifecycle, host management, HA and DRS configuration, distributed switches.</li>
+        <li><strong>vSphere Lifecycle Manager</strong> (formerly Update Manager) for ESXi and firmware updates.</li>
+        <li><strong>Aria Operations</strong> (formerly vRealize Operations) for capacity analytics, performance monitoring, right-sizing.</li>
+        <li><strong>Aria Automation</strong> (formerly vRealize Automation) for self-service catalogs, blueprints, workflow automation.</li>
+        <li><strong>Aria Operations for Logs</strong> (formerly vRealize Log Insight) for log aggregation.</li>
+        <li><strong>PowerCLI</strong> for scripted operations and automation.</li>
+      </ul>
+      <p>That is roughly six products from a single vendor, each with its own UI, API surface, upgrade cadence, version compatibility matrix, and licensing model. It works. Decades of muscle memory exist around it. It is also a lot of products to manage.</p>
+      <p>Prism takes the responsibilities of vCenter, Aria Operations, Aria Automation, vSphere Lifecycle Manager, and Aria Operations for Logs (in part) and unifies them into one product with two deployment forms.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The first time a VMware admin asks "is this another vCenter?", the right answer is: <em>"No. Prism is closer to vCenter plus Aria Operations plus Aria Automation plus Lifecycle Manager, in one product, with one upgrade cadence. The pieces you currently glue together are integrated by default."</em> The admin's mental model shifts from "I have to learn another vCenter" to "I get to consolidate five products into one."</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="prism-element">Prism Element: The Per-Cluster Management UI</h3>
+      <p><strong>Prism Element</strong> is the management interface for a single Nutanix cluster. It runs inside the cluster's CVMs (no separate appliance to deploy). You access it at the Cluster Virtual IP (VIP) on port 9440 over HTTPS.</p>
+      <p>What Prism Element does:</p>
+      <ul>
+        <li>VM lifecycle (create, clone, migrate, snapshot, delete, configure)</li>
+        <li>Host and node management</li>
+        <li>Storage container and storage pool management</li>
+        <li>Networking configuration on AHV (bridges, VLANs, virtual networks)</li>
+        <li>Cluster-level monitoring (capacity, performance, alerts)</li>
+        <li>Local user and role management</li>
+        <li>LCM (Life Cycle Manager) for upgrades</li>
+        <li>Health and NCC integration</li>
+      </ul>
+      <p>If you only have one Nutanix cluster, you can run on Prism Element alone. Many small and ROBO deployments do exactly this. There is no requirement to deploy Prism Central if you have a single cluster.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>Prism Element is roughly the per-cluster UX of vCenter at the cluster level. The major difference: Prism Element is in-cluster. There is no separate vCenter Server Appliance to maintain.</p>
+      </aside>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA</span></div>
+        <p>Prism Element navigation is the single largest topic on the NCA exam. Login screen, dashboard layout, the menu structure (VM, Storage, Network, Hardware, Data Protection, Analysis, Alerts, Tasks). Spend lab time clicking around Prism Element. The exam will ask you "where do you go to do X?" and the answer is always a specific menu path.</p>
+      </aside>
+
+      <h3 id="prism-central">Prism Central: The Multi-Cluster Pane</h3>
+      <p><strong>Prism Central</strong> is a separately-deployed VM (or scale-out set of VMs) that provides multi-cluster management. You deploy it once for your environment, register multiple Nutanix clusters to it, and manage them all from one UI.</p>
+      <p>What Prism Central adds beyond Prism Element:</p>
+      <ul>
+        <li><strong>Multi-cluster visibility.</strong> One pane for many clusters across many sites.</li>
+        <li><strong>Categories.</strong> A tagging system that drives policies across clusters.</li>
+        <li><strong>Projects and multi-tenancy.</strong> Logical containers for VMs, users, and quotas.</li>
+        <li><strong>NCM Self-Service</strong> (formerly Calm). Application blueprint automation.</li>
+        <li><strong>X-Play.</strong> Event-driven automation playbooks.</li>
+        <li><strong>Intelligent Operations.</strong> AIOps capacity and anomaly analytics.</li>
+        <li><strong>Recovery Plans</strong> (Nutanix Disaster Recovery, formerly Leap). Cross-site DR orchestration. (Module 7 goes deep.)</li>
+        <li><strong>Reporting and dashboards</strong> beyond per-cluster Prism Element.</li>
+        <li><strong>NKE management.</strong> Kubernetes cluster lifecycle.</li>
+      </ul>
+      <p>Prism Central comes in multiple sizing tiers: an X-Small option (5 clusters / 50 hosts / 500 VMs), Small for typical mid-market, and a 3-VM scale-out for larger environments. The exact thresholds shift between PC versions; check the current Prism Central sizing guide.</p>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Prism Central is a deployed VM, like vCenter. This is the one piece of Nutanix's management plane that does require a separate deployment. The honest framing: <em>"Prism Element is in-cluster and requires no separate deployment. Prism Central is a separately-deployed VM, similar to vCenter, used for multi-cluster management. If you have one cluster, you don't need Prism Central. If you have many clusters, you deploy one Prism Central VM and register them all."</em></p>
+      </aside>
+
+      <h3 id="diagram-prism-hierarchy">Diagram: Prism Element vs Prism Central Hierarchy</h3>
+      <figure class="diagram" id="prism-hierarchy">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-prism-hierarchy-svg" viewBox="0 0 1000 500" role="img" aria-label="Prism Central at the top, registered to multiple Prism Element clusters below. PE comes free with each cluster; PC is a separate VM deployment."></svg>
+        <figcaption>Prism Element lives in every Nutanix cluster automatically. Prism Central is a separately-deployed multi-cluster pane.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="cycle-2">The Cycle, Frame Two: Prism as the Aria Suite, Pre-Integrated</h3>
+      <p>In the VMware world, you might run vCenter for lifecycle, Aria Operations for capacity, Aria Automation for self-service, Aria Operations for Logs for log aggregation, vSphere Lifecycle Manager for upgrades, and PowerCLI for everything else.</p>
+      <p>In Prism Central with the appropriate NCM tier, you have:</p>
+      <ul>
+        <li>VM lifecycle and HA: Prism Central native</li>
+        <li>Capacity analytics: NCM Intelligent Operations</li>
+        <li>Self-service blueprints: NCM Self-Service (formerly Calm)</li>
+        <li>Log aggregation: integration with Splunk, Elastic, or syslog forwarding (Prism is not primarily a log-management tool)</li>
+        <li>Upgrades: LCM, deeply integrated</li>
+        <li>Automation: X-Play playbooks plus the v4 REST API</li>
+      </ul>
+      <p>Five products consolidate to one product (with NCM tier add-ons for the analytics and self-service features). The licensing model is different from buying Aria components separately. The integration story is genuinely simpler.</p>
+
+      <h3 id="cycle-3">The Cycle, Frame Three: Prism as the API-First Management Product</h3>
+      <p>The vSphere ecosystem accumulated APIs across two decades: vSphere SOAP, vSphere REST, vSAN APIs, NSX APIs, Aria APIs, PowerCLI, and various REST gateways. Tying them together is real work.</p>
+      <p>Prism was built API-first. The <strong>v4 REST API</strong> is unified across compute, storage, networking, and automation. One token, one base URL pattern, one consistent JSON schema. PowerShell, Python, Terraform (Nutanix provider), and Ansible (Nutanix collection) all sit on top of this API.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCP-MCA</span></div>
+        <p>NCP-MCA goes deep on automation: v4 API, X-Play, NCM Self-Service blueprints. NCP-MCI tests baseline API knowledge: that v4 is the current Nutanix REST API, that it is documented at developer.nutanix.com, that PowerShell modules and Terraform providers exist. Trap distractor: "Nutanix has separate APIs for compute, storage, and networking" (false; v4 is unified).</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="categories">Categories: The Tagging System That Drives Policy</h3>
+      <p>Categories are the most underappreciated feature in Prism Central. They are also the most exam-relevant feature for NCP-MCI and a foundational feature for NCP-MCA.</p>
+      <p>A category is a key-value pair. Examples:</p>
+      <ul>
+        <li><code>Environment: Production</code></li>
+        <li><code>Environment: Development</code></li>
+        <li><code>OwnerTeam: Finance</code></li>
+        <li><code>Compliance: PCI</code></li>
+        <li><code>BackupTier: Gold</code></li>
+      </ul>
+      <p>You define the category keys in Prism Central, then assign values to VMs (and to other entities). Categories are the basis for:</p>
+      <ul>
+        <li><strong>Protection policies.</strong> "All VMs with <code>Environment: Production</code> get RF3 plus async DR with 1-hour RPO."</li>
+        <li><strong>Backup policies.</strong> "All VMs with <code>BackupTier: Gold</code> get hourly snapshots retained 30 days."</li>
+        <li><strong>Affinity rules.</strong> "VMs with <code>App: AppA-Web</code> keep affinity with VMs with <code>App: AppA-DB</code>."</li>
+        <li><strong>Microsegmentation rules in Flow.</strong> Module 6 goes deep.</li>
+        <li><strong>Reporting filters.</strong> "Show me capacity utilization for <code>OwnerTeam: Finance</code>."</li>
+        <li><strong>Quotas in Projects.</strong> "Project <code>FinanceApps</code> can use up to 200 vCPUs and 800 GB RAM."</li>
+      </ul>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>vSphere has tags. vSphere tags assign metadata to objects and can be used in filters and some advanced rules.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Categories are more powerful than vSphere tags in two specific ways. <strong>First</strong>, categories drive <em>policy enforcement</em>, not just metadata. A vSphere tag does not automatically enforce a backup policy on a VM. A Nutanix category does. <strong>Second</strong>, categories are first-class in the v4 API. Customers who learn this pattern run dramatically less manual policy configuration.</p>
+      </aside>
+
+      <h3 id="diagram-categories">Diagram: The Categories Model</h3>
+      <figure class="diagram" id="categories-model">
+        <div class="badges">
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCP-MCA</span>
+        </div>
+        <svg id="diagram-categories-model-svg" viewBox="0 0 1000 500" role="img" aria-label="Categories assigned to VMs become routing keys for backup, DR, microsegmentation, quota, and reporting policies."></svg>
+        <figcaption>Categories assigned to VMs become the routing keys for backup, DR, microsegmentation, and reporting policies.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="x-play">X-Play: Event-Driven Automation Playbooks</h3>
+      <p>X-Play is Prism Central's event-driven automation engine. A playbook has two parts:</p>
+      <ol>
+        <li><strong>Trigger.</strong> An event (alert raised, threshold crossed, VM created with a specific category) or a schedule.</li>
+        <li><strong>Actions.</strong> A sequence of steps that execute when the trigger fires (send a Slack notification, create a ServiceNow ticket, run a REST API call, take a snapshot, run an Ansible playbook).</li>
+      </ol>
+      <p>Common X-Play patterns:</p>
+      <ul>
+        <li>"When CPU on any production VM exceeds 90% for 10 minutes, post to #platform-alerts in Slack."</li>
+        <li>"When a new VM is created with <code>Compliance: PCI</code>, automatically apply the PCI protection policy and notify the security team."</li>
+        <li>"Every Friday at 6pm, take an application-consistent snapshot of all VMs with <code>BackupTier: Gold</code>."</li>
+      </ul>
+      <p>X-Play is included with NCM Ultimate (typically). For customers without that tier, X-Play is not available; they would build similar automation against the v4 API directly.</p>
+
+      <hr/>
+
+      <h3 id="ncm-tiers">NCM (Nutanix Cloud Manager): The Tier Question</h3>
+      <p>This is where licensing gets specific. Pay attention.</p>
+      <p>The Nutanix licensing model has two parallel axes. <strong>NCI (Nutanix Cloud Infrastructure)</strong> licenses the platform itself: AOS, AHV, the cluster, basic Prism Element and Prism Central management. NCI ships in Pro and Ultimate tiers. <strong>NCM (Nutanix Cloud Manager)</strong> licenses the advanced management capabilities on top of Prism Central: Intelligent Operations, Self-Service, X-Play, cost governance. NCM also ships in Starter, Pro, and Ultimate tiers and is <strong>a separate paid SKU from NCI</strong> (do not confuse "NCM Starter" with "included for free"). For convenience, Nutanix also sells <strong>NCP (Nutanix Cloud Platform)</strong> bundles that combine NCI and NCM at matching tiers.</p>
+      <p>What is included with <strong>basic NCI / Prism Central</strong> (no NCM at all): multi-cluster Prism Central management, Categories, Projects, baseline reporting and dashboards, RBAC, identity integration, the v4 REST API surface itself. This is the floor.</p>
+      <table>
+        <thead><tr><th>Capability</th><th>Where It Lives</th></tr></thead>
+        <tbody>
+          <tr><td>Per-cluster Prism Element</td><td>Included with NCI</td></tr>
+          <tr><td>Multi-cluster Prism Central, Categories, Projects</td><td>Included with NCI</td></tr>
+          <tr><td>Baseline reporting, RBAC, v4 API</td><td>Included with NCI</td></tr>
+          <tr><td>Intelligent Operations basics</td><td>NCM Starter</td></tr>
+          <tr><td>Anomaly detection, what-if, runway</td><td>NCM Pro</td></tr>
+          <tr><td>Self-Service blueprints (Calm)</td><td>NCM Ultimate</td></tr>
+          <tr><td>X-Play playbooks</td><td>NCM Ultimate (typically)</td></tr>
+          <tr><td>Cost governance</td><td>NCM Ultimate</td></tr>
+          <tr><td>Flow Network Security</td><td>NCI Ultimate, or Security Add-On for NCI Pro (per usable TiB)</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Always check the current licensing matrix before quoting a customer.</strong> This is one area where Nutanix product packaging changes more often than the platform underneath.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI · NCP-MCA</span></div>
+        <p>Cert exams test which features are baseline NCI vs which require NCM Pro or Ultimate. Memorize the broad mapping above. Trap distractor: "Self-Service is included with Prism Central" (false; it requires NCM Ultimate). Trap distractor: "Flow Network Security ships with NCM Pro" (false; it ships with NCI Ultimate or Security Add-On for NCI Pro).</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="rbac">RBAC, Projects, and Multi-Tenancy</h3>
+      <p>Prism Central supports role-based access control (RBAC) at multiple levels:</p>
+      <ul>
+        <li><strong>Built-in roles.</strong> Super Admin, Cluster Admin, Cluster Viewer, User Admin, etc.</li>
+        <li><strong>Custom roles.</strong> Define your own role with specific permissions.</li>
+        <li><strong>Projects.</strong> A logical grouping of VMs, networks, images, and quotas. Users are assigned to projects with specific roles.</li>
+        <li><strong>Identity sources.</strong> Local users, Active Directory (LDAP), SAML 2.0 (for SSO with providers like Azure AD / Entra ID, Okta, Ping Identity).</li>
+      </ul>
+      <p>Projects are particularly useful for separating environments (Dev / Test / Prod) with quota enforcement, multi-tenancy, and developer-self-service patterns.</p>
+
+      <h3 id="diagram-pc-multi-cluster">Diagram: Prism Central Multi-Cluster Architecture</h3>
+      <figure class="diagram" id="prism-central-multi-cluster">
+        <div class="badges">
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-pc-multi-cluster-svg" viewBox="0 0 1000 540" role="img" aria-label="A scale-out three-VM Prism Central deployment managing multiple Nutanix clusters across sites, with Projects, Categories, Identity, and external integration panels."></svg>
+        <figcaption>A real-world Prism Central deployment managing multiple clusters across sites, with mixed hypervisors, projects, and integrated identity.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="v4-api">v4 REST API: The Automation Foundation</h3>
+      <p>The v4 REST API is the unified Nutanix API. Every Prism action has an API equivalent. URL pattern: <code>https://&lt;pc-or-pe-ip&gt;:9440/api/&lt;namespace&gt;/&lt;version&gt;/&lt;path&gt;</code>.</p>
+      <pre>
+# v4 URL pattern: /api/&lt;namespace&gt;/&lt;version&gt;/&lt;path&gt;
+
+# List all VMs (GET) on the VMM namespace
+curl -k -u admin:password \
+  https://&lt;pc-ip&gt;:9440/api/vmm/v4.0/ahv/config/vms
+
+# Create a VM (POST)
+curl -k -u admin:password \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d @vm-spec.json \
+  https://&lt;pc-ip&gt;:9440/api/vmm/v4.0/ahv/config/vms
+
+# Get cluster information (GET) from the ClusterMgmt namespace
+curl -k -u admin:password \
+  https://&lt;pc-ip&gt;:9440/api/clustermgmt/v4.0/config/clusters
+</pre>
+      <p>The full API is documented at <code>developers.nutanix.com</code>. Nutanix also publishes:</p>
+      <ul>
+        <li><strong>PowerShell module</strong> (official Nutanix PowerShell SDK)</li>
+        <li><strong>Python SDK</strong> (<code>ntnx-clustermgmt-py-client</code>, <code>ntnx-vmm-py-client</code>, etc.)</li>
+        <li><strong>Terraform provider</strong> (<code>nutanix/nutanix</code>)</li>
+        <li><strong>Ansible collection</strong> (<code>nutanix.ansible</code>)</li>
+      </ul>
+      <p>For a BlueAlly SA conversation: lead with the language the customer's team already uses. PowerShell for Windows-shop automation teams. Python for DevOps teams. Terraform for infrastructure-as-code teams. Ansible for config-management teams. The v4 API supports all of them.</p>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Deploy Prism Central and Explore</h2>
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">~2.5 hours</span></div>
+        <p>Deploy Prism Central, register your CE cluster to it, exercise categories, and get hands-on time with X-Play and the v4 API.</p>
+      </aside>
+      <ol>
+        <li><strong>Download the Prism Central deployment files</strong> from your CE-registered MyNutanix account.</li>
+        <li><strong>Deploy Prism Central</strong> from Prism Element via the "Deploy Prism Central" wizard.</li>
+        <li><strong>Register your CE cluster to Prism Central</strong> via Settings &gt; Prism Central Registration.</li>
+        <li><strong>Log into Prism Central</strong> at <code>https://&lt;pc-ip&gt;:9440</code>.</li>
+        <li><strong>Create categories.</strong> Settings &gt; Categories &gt; New Category. Define <code>Environment: Production / Development / Test</code> and <code>BackupTier: Gold / Silver / Bronze</code>.</li>
+        <li><strong>Assign categories to your lab VMs.</strong> Assign <code>Environment: Development</code> and <code>BackupTier: Bronze</code>.</li>
+        <li><strong>Filter the VM list by category.</strong></li>
+        <li><strong>Try X-Play (if available on your CE PC).</strong> Build a simple alert-to-webhook playbook.</li>
+        <li><strong>Hit the v4 API directly:</strong> <code>curl -k -u admin:&lt;pw&gt; https://&lt;pc-ip&gt;:9440/api/vmm/v4.0/ahv/config/vms</code>. Inspect the JSON.</li>
+      </ol>
+
+      <hr/>
+
+      <section class="practice">
+        <h2 id="practice">Practice Questions</h2>
+        <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions.</p>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCA</span></div>
+          <p class="qprompt">What is the relationship between Prism Element and Prism Central?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Prism Element manages multiple Prism Central instances</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Prism Element is the per-cluster management UI included with every Nutanix cluster; Prism Central is a separately-deployed VM that provides multi-cluster management across many Prism Element clusters</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Prism Element and Prism Central are different names for the same product</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Prism Element is the AHV-only management UI; Prism Central is the ESXi-only management UI</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Prism Element runs in-cluster (on the CVMs) and manages a single cluster. Prism Central is a separately-deployed VM that provides multi-cluster aggregation, advanced features (Categories, NCM Self-Service, X-Play, NCM analytics), and serves as the centralized management plane for many clusters.</p>
+            <h4 class="trap">The trap</h4>
+            <p>The names are confusingly similar. Memorize: <strong>Element = per-cluster, in-cluster, included. Central = multi-cluster, separate VM, deployed.</strong></p>
+          </div>
+        </article>
+
+        <article class="question tf" data-correct="B">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">True or false: Prism Central is required for any Nutanix deployment.</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>True</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>False</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why False</h4>
+            <p>Prism Element runs automatically in every cluster and provides full management of that cluster. If you have a single Nutanix cluster, you can run on Prism Element alone with no need to deploy Prism Central.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCP-MCI · NCP-MCA</span></div>
+          <p class="qprompt">Which of the following is a defining characteristic of Nutanix Categories that distinguishes them from vSphere Tags?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Categories are only available on AHV clusters; vSphere Tags work on ESXi</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Categories drive policy enforcement (backup, DR, microsegmentation, quotas), not just metadata labeling</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Categories require a separate licensing fee</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Categories and vSphere Tags are functionally identical</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Categories are first-class policy keys. Backup policies, DR plans, Flow microsegmentation rules, and quota enforcement all route on categories. vSphere Tags are primarily metadata.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCA · NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">Which of the following features is NOT included in NCI baseline (without NCM tier licensing)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Multi-cluster management</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Categories and Projects</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Self-Service application blueprints (formerly Calm)</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Basic VM lifecycle and reporting</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>NCM Self-Service / Calm requires NCM Ultimate. It is not part of baseline NCI / Prism Central.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCP-MCI · NCP-MCA</span></div>
+          <p class="qprompt">What is X-Play?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A monitoring tool that replaces Aria Operations for Logs</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>An event-driven automation engine in Prism Central that uses triggers and action sequences to automate operational responses</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A backup product separate from Nutanix Files</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>The internal name for the Prism Element user interface</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>X-Play is Prism Central's playbook automation engine. Playbooks have triggers (alerts, events, schedules) and actions (send notifications, run API calls, take snapshots, run external scripts).</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">A BlueAlly customer has 8 Nutanix clusters across three sites and wants centralized management, capacity analytics, and automated backup policies driven by VM metadata. Which deployment approach is correct?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Use Prism Element on each cluster individually; centralization is not possible</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Deploy Prism Central, register all clusters, license NCM Pro for analytics, and use Categories to drive backup policies</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Deploy 8 separate Prism Central instances, one per cluster</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Deploy vCenter to manage the Nutanix clusters</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Canonical multi-cluster deployment pattern. One Prism Central, all clusters registered, NCM Pro for analytics, Categories driving backup policies declaratively.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="A">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">NCP-MCA · sales-relevant</span></div>
+          <p class="qprompt">A customer's automation team wants to integrate VM provisioning into their existing Terraform-based infrastructure-as-code workflow. What do you recommend?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Use the Nutanix Terraform provider (<code>nutanix/nutanix</code>) declaratively, alongside their existing Terraform code</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Custom PowerCLI scripts for VM provisioning</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>vCenter's REST API to provision VMs on the Nutanix cluster</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Terraform is not supported on Nutanix; consider a different automation tool</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why A</h4>
+            <p>Nutanix publishes a first-class Terraform provider. The customer's existing Terraform pattern extends naturally to Nutanix infrastructure: VMs, networks, categories, projects, all declaratively managed via standard <code>.tf</code> files.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A Nutanix admin says: "I have a beautiful Aria Operations dashboard and 5 years of vROps history. I'm not throwing that away." What is the strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"Aria Operations is outdated; you should switch immediately."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"You don't have to throw it away. Aria can continue to monitor your existing VMware infrastructure. For your new Nutanix clusters, NCM Intelligent Operations gives you Nutanix-native analytics. Many customers run them in parallel during transition. Some keep Aria for cross-vendor analytics indefinitely."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"NCM Intelligent Operations does everything Aria does, just better."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"We can't help you if you insist on Aria."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Respects the customer's investment, acknowledges that Aria has value (especially for cross-vendor analytics), and offers a parallel-running pattern that derisks the transition.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCP-MCA · NCP-MCI</span></div>
+          <p class="qprompt">Which of the following correctly describes the Nutanix v4 REST API?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Separate APIs for compute, storage, and networking that must be invoked in different sessions</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A unified, JSON-based REST API that exposes compute, storage, networking, and management functionality through one consistent interface, accessible at <code>https://&lt;pc-or-pe-ip&gt;:9440/api/&lt;namespace&gt;/&lt;version&gt;/...</code></span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>An XML-based SOAP API equivalent to vSphere's</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A proprietary binary protocol requiring a special client library</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>The v4 API is unified across the platform with consistent JSON payloads, single-token authentication, and one base URL. URL pattern is <code>/api/&lt;namespace&gt;/&lt;version&gt;/&lt;path&gt;</code> — namespaces include vmm, clustermgmt, iam, etc.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">A customer's identity team requires SSO via Azure AD (Microsoft Entra ID) for all infrastructure consoles. Can Prism Central support this?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>No, Prism Central only supports local user authentication</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Yes, Prism Central supports SAML 2.0 integration with identity providers including Azure AD / Entra ID, Okta, Ping Identity, and others</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Only via a custom plugin developed by Nutanix Professional Services</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Only for Prism Central deployments running on AHV (not ESXi-on-Nutanix)</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Prism Central supports SAML 2.0 for SSO with major identity providers. AD via LDAP is also supported. Hypervisor-agnostic.</p>
+          </div>
+        </article>
+
+        <article class="question ncx">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep</span></div>
+          <p class="qprompt"><em>(NCX-style design question)</em> Walk through your recommendation. Cover topology, tier selection, automation migration path, and identity/integration approach.</p>
+          <div class="scenario">
+            <p>A customer is consolidating from a legacy three-tier VMware estate (12 ESXi hosts, 3 separate vCenters in three datacenters, separate Aria Operations and Aria Automation deployments per site, custom PowerCLI scripts, ServiceNow CMDB integration via Aria connectors) to a 4-cluster Nutanix deployment. Design the Prism Central deployment, identify the licensing tier, and propose how to migrate existing automation and ServiceNow integration.</p>
+          </div>
+          <textarea placeholder="Topology, NCM tier, Categories design, Projects design, automation migration, ServiceNow integration, identity, what you still need to know..."></textarea>
+          <button class="reveal-btn">Show strong-answer framework</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>PC topology:</strong> one Prism Central deployment, scale-out (3-VM) sized for the cluster count and VM count. Place PC on the primary datacenter cluster with Recovery Plans (Module 7) protecting it for DR.</li>
+              <li><strong>NCM tier:</strong> NCM Pro at minimum (gives Intelligent Operations to replace Aria Operations functionality). NCM Ultimate if heavy investment in Aria Automation blueprints (Self-Service / Calm replaces them).</li>
+              <li><strong>Categories design:</strong> identify the policy axes (Environment: Prod/Dev/Test, OwnerTeam, BackupTier, Compliance flags). Document the schema upfront.</li>
+              <li><strong>Projects:</strong> per business unit or per environment, with quotas.</li>
+              <li><strong>Automation migration:</strong> PowerCLI cluster-aware portions rewritten in PowerShell with Nutanix module or Terraform with Nutanix provider. Aria Automation blueprints rebuilt as Self-Service blueprints. X-Play playbooks for operational automation.</li>
+              <li><strong>ServiceNow integration:</strong> v4 API + X-Play webhooks. Replicate the existing Aria-to-ServiceNow patterns. Validate CMDB updates. Plan parallel running.</li>
+              <li><strong>Identity:</strong> confirm AD or SAML setup. Configure PC early. Map roles to AD groups.</li>
+              <li><strong>Open questions:</strong> Aria Automation blueprint inventory, PowerCLI complexity, ServiceNow integration depth, DR for PC itself, compliance requirements.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="question ncx">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep</span></div>
+          <p class="qprompt"><em>(NCX-style architectural defense)</em> Respond to the architect's challenge below.</p>
+          <div class="scenario">
+            <blockquote>"Single-vendor lock-in is the real cost here. I have Aria today because I can use it for VMware and for KVM-based environments and for cross-cloud analytics. If I commit to Prism for management, I am committing to Nutanix for everything below. What happens when I want to expand to another vendor? Or when Nutanix gets acquired and the management story shifts? Aria's value is partly that it does not lock me in."</blockquote>
+          </div>
+          <textarea placeholder="Acknowledge lock-in concern is real. Reframe the comparison. Address each architectural argument. Address acquisition risk. Reframe to durable framing. Concrete next step."></textarea>
+          <button class="reveal-btn">Show strong-answer framework</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the lock-in concern is real.</strong> Single-vendor management is a real architectural cost.</li>
+              <li><strong>Reframe:</strong> the customer is currently locked into VMware for the hypervisor and locked into Aria for management. Aria's cross-vendor scope helps with management but does not help with hypervisor lock-in. The lock-in question is "where do I want to lock in," not "lock-in vs no lock-in."</li>
+              <li><strong>Cross-vendor analytics:</strong> if genuinely high-value (heavy mixed-vendor environment, FinOps practice), Aria may be the right choice for that analytics function. Many large customers run Aria on top of Nutanix infrastructure: Aria for cross-vendor analytics, Prism for Nutanix-native operations.</li>
+              <li><strong>Acquisition concern:</strong> Nutanix has been independent and public since 2016. Standard risk-management answer applies: contract terms, data portability commitments, exit-strategy planning.</li>
+              <li><strong>Concrete next step:</strong> <em>"Lock-in is a real architectural decision. Let's walk through your specific multi-vendor ambitions and decide what level of management abstraction you actually need. Some customers run both: Aria for cross-vendor reporting, Prism for Nutanix operations."</em></li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can now distinguish Prism Element from Prism Central in 30 seconds. Element is per-cluster, in-cluster, included with NCI. Central is multi-cluster, separately deployed, with advanced features and tiered licensing.</p>
+      <p>You know the categories model precisely: key-value pairs that drive backup policies, DR plans, microsegmentation rules, quotas, and reporting. You can explain why categories are more than tags.</p>
+      <p>You know the licensing model: NCI for the platform, NCM tiers for advanced management, NCP bundles combining the two. You know what's included with NCI baseline (Prism, Categories, Projects, RBAC, v4 API) and what requires paid NCM tiers.</p>
+      <p>You can demo X-Play in 90 seconds and the v4 REST API in five minutes. You know the language ecosystem (PowerShell, Python, Terraform, Ansible) and can match the customer's existing tooling.</p>
+      <p>You are now ready for the storage layer. Module 5 goes deep on DSF.</p>
+
+      <section class="references">
+        <h2>References</h2>
+        <p>Authoritative sources verified during the technical review pass on this module. NCM tier names and packaging are the most volatile area in the curriculum; reverify before quoting.</p>
+        <ul>
+          <li><a href="https://www.nutanix.dev/nutanix-api-user-guide/">Nutanix v4 API User Guide</a>. v4 URL pattern <code>/api/&lt;namespace&gt;/&lt;version&gt;/&lt;path&gt;</code>; the canonical reference for the curl examples in this module.</li>
+          <li><a href="https://developers.nutanix.com/api-reference?namespace=vmm&version=v4.0.b1">Nutanix v4 API Reference</a>. Live VMM, ClusterMgmt, and IAM namespace browsers.</li>
+          <li><a href="https://www.nutanix.dev/nutanix-rest-api-migration-guide/">v3 → v4 REST API Migration Guide</a>. v0.8 / v1 / v2 / v3 are deprecating starting Q4 2026.</li>
+          <li><a href="https://www.nutanix.com/library/datasheets/ncm">NCM Datasheet</a>. Tier-by-tier feature mapping for Starter, Pro, Ultimate.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options">Nutanix Cloud Platform Software Options</a>. NCI vs NCM split and the NCP bundle structure.</li>
+          <li><a href="https://www.nutanix.com/tech-center/blog/introducing-x-small-prism-central-a-low-footprint-option-for-smaller-environments">Introducing X-Small Prism Central</a>. PC sizing tiers including X-Small (5 clusters, 50 hosts, 500 VMs).</li>
+          <li><a href="https://github.com/nutanix/terraform-provider-nutanix">Nutanix Terraform Provider on GitHub</a>. Latest is v2.4.2 as of 2026.</li>
+          <li><a href="https://www.nutanix.dev/2024/12/15/getting-started-with-the-nutanix-ansible-module/">Nutanix Ansible Collection (<code>nutanix.ansible</code>)</a>. Authoritative source for the collection name.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Previous:</strong> <a href="../03-ahv-hypervisor/index.html">Module 3: AHV (The Hypervisor Question)</a></li>
+          <li><strong>Next:</strong> Module 5: DSF Deep Dive <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Glossary:</strong> Prism Element · Prism Central · Categories · Projects · X-Play · NCM Self-Service · Intelligent Operations · v4 API · NCM <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Management Plane Row · Automation Row · Identity Row <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> #6 "Why isn't this just vCenter?" · #10 "What about my Aria investment?" · #11 "Single-vendor lock-in" · #22 "Our team standardized on PowerCLI" <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../03-ahv-hypervisor/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 3: AHV (The Hypervisor Question)</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 5: DSF Deep Dive (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>04-prism-management</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m4:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram color palette + helpers (shared across the three diagrams)
+    const C = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+      purple: '#c084fc', purpleFill: 'rgba(192,132,252,0.12)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opt = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opt.anchor) t.setAttribute('text-anchor', opt.anchor);
+      t.setAttribute('font-family', opt.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opt.size || 12);
+      if (opt.weight) t.setAttribute('font-weight', opt.weight);
+      if (opt.spacing) t.setAttribute('letter-spacing', opt.spacing);
+      if (opt.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opt.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ===== Diagram: Prism Element vs Prism Central Hierarchy =====
+    (function drawPrismHierarchy() {
+      const svg = document.getElementById('diagram-prism-hierarchy-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'PRISM CENTRAL  ·  ONE PC, MANY PEs', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600' });
+
+      // PC at top
+      svg.appendChild(rc.rectangle(330, 60, 340, 70, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 500, 88, 'Prism Central (PC)', { anchor: 'middle', size: 14, weight: '700', fill: C.label });
+      txt(svg, 500, 110, 'Multi-cluster · Categories · Projects · NCM · X-Play', { anchor: 'middle', size: 11, fill: C.ink });
+      txt(svg, 500, 124, 'Self-Service · Reporting', { anchor: 'middle', size: 11, fill: C.ink });
+
+      // 3 cluster blocks
+      const clusters = [
+        { x: 60,  label: 'Cluster A · AHV', sub: 'PE :9440 · full lifecycle' },
+        { x: 380, label: 'Cluster B · AHV', sub: 'PE :9440 · full lifecycle' },
+        { x: 700, label: 'Cluster C · ESXi-on-Nutanix', sub: 'PE :9440 · vCenter still required' },
+      ];
+      clusters.forEach((c) => {
+        const cy = 250, cw = 240, ch = 200;
+        svg.appendChild(rc.rectangle(c.x, cy, cw, ch, opts(C.compute, C.computeFill)));
+        txt(svg, c.x + cw/2, cy + 24, c.label, { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+        // 4 mini-nodes
+        for (let i = 0; i < 4; i++) {
+          const nx = c.x + 16 + i * 54;
+          svg.appendChild(rc.rectangle(nx, cy + 50, 46, 30, opts(C.compute, C.computeFill)));
+          txt(svg, nx + 23, cy + 70, 'AHV', { anchor: 'middle', size: 9, fill: C.label });
+          svg.appendChild(rc.rectangle(nx, cy + 84, 46, 22, opts(C.cvm, C.cvmFill)));
+          txt(svg, nx + 23, cy + 100, 'CVM', { anchor: 'middle', size: 9, fill: '#fbb091', weight: '700' });
+        }
+        // PE box
+        svg.appendChild(rc.rectangle(c.x + 60, cy + 130, 120, 36, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+        txt(svg, c.x + 120, cy + 152, 'Prism Element', { anchor: 'middle', size: 11, fill: C.label, weight: '700' });
+        txt(svg, c.x + cw/2, cy + 184, c.sub, { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+        // PC -> PE connector
+        svg.appendChild(rc.line(500, 130, c.x + cw/2, cy, { stroke: C.vip, strokeWidth: 1.2, roughness: 1.4, opacity: 0.7 }));
+      });
+
+      txt(svg, 500, 480, 'PE comes free with the cluster. PC is a separate VM you deploy.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ===== Diagram: Categories Model =====
+    (function drawCategoriesModel() {
+      const svg = document.getElementById('diagram-categories-model-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'CATEGORIES → POLICIES → ENFORCEMENT', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600' });
+
+      // VMs (left)
+      txt(svg, 130, 70, 'VMs', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      const vms = [
+        { y: 100, label: 'VM-Web-01', tags: 'Env:Prod · Tier:Web · Team:Finance' },
+        { y: 170, label: 'VM-App-02', tags: 'Env:Prod · Tier:App · Team:Finance' },
+        { y: 240, label: 'VM-DB-03',  tags: 'Env:Prod · Tier:DB · Compliance:PCI' },
+        { y: 310, label: 'VM-Dev-04', tags: 'Env:Dev · Tier:Web · Team:HR' },
+      ];
+      vms.forEach(v => {
+        svg.appendChild(rc.rectangle(40, v.y, 200, 50, opts(C.vm, C.vmFill)));
+        txt(svg, 140, v.y + 20, v.label, { anchor: 'middle', size: 12, weight: '700', mono: true, fill: C.label });
+        txt(svg, 140, v.y + 38, v.tags, { anchor: 'middle', size: 9, fill: C.ink, italic: true });
+      });
+
+      // Categories hub (center)
+      svg.appendChild(rc.rectangle(360, 130, 270, 240, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 495, 158, 'CATEGORIES', { anchor: 'middle', size: 13, weight: '700', fill: C.vip, spacing: '0.08em' });
+      const keys = ['Environment', 'Tier', 'OwnerTeam', 'BackupTier', 'Compliance'];
+      keys.forEach((k, i) => {
+        txt(svg, 495, 192 + i * 32, k, { anchor: 'middle', size: 12, mono: true, fill: C.label });
+      });
+
+      // Policies (right)
+      txt(svg, 870, 70, 'POLICIES', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      const policies = [
+        { y: 100, label: 'Protection Policy', sub: 'Prod = RF3 + async DR' },
+        { y: 170, label: 'Backup Policy',     sub: 'Gold = hourly snapshots' },
+        { y: 240, label: 'Flow Rule',         sub: 'Web → App on 8080' },
+        { y: 310, label: 'Quota Policy',      sub: 'Finance = 200 vCPU' },
+        { y: 380, label: 'Report Filter',     sub: 'Finance team capacity' },
+      ];
+      policies.forEach(p => {
+        svg.appendChild(rc.rectangle(750, p.y, 220, 56, opts(C.acro, C.acroFill)));
+        txt(svg, 860, p.y + 22, p.label, { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
+        txt(svg, 860, p.y + 42, p.sub, { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+      });
+
+      // VMs -> Categories arrows
+      vms.forEach(v => {
+        svg.appendChild(rc.line(240, v.y + 25, 360, 250, { stroke: C.vip, strokeWidth: 0.8, roughness: 1.3, opacity: 0.55 }));
+      });
+      // Categories -> Policies arrows
+      policies.forEach(p => {
+        svg.appendChild(rc.line(630, 250, 750, p.y + 28, { stroke: C.acro, strokeWidth: 0.8, roughness: 1.3, opacity: 0.55 }));
+      });
+
+      txt(svg, 500, 460, 'Tagging is the policy enrollment moment. vSphere tags are metadata; categories are intent.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ===== Diagram: Prism Central Multi-Cluster Architecture =====
+    (function drawPcMultiCluster() {
+      const svg = document.getElementById('diagram-pc-multi-cluster-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'PRISM CENTRAL · ENTERPRISE TOPOLOGY', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600' });
+
+      // PC scale-out (3 VMs visualised as stacked) at top center
+      svg.appendChild(rc.rectangle(380, 50, 240, 80, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 500, 78, 'Prism Central (3-VM scale-out)', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      txt(svg, 500, 100, 'multi-cluster · HA · 10K+ VMs', { anchor: 'middle', size: 11, fill: C.ink });
+      // Three VM ticks inside
+      for (let i = 0; i < 3; i++) {
+        svg.appendChild(rc.rectangle(396 + i * 70, 110, 56, 12, { stroke: C.vip, strokeWidth: 0.8, roughness: 1.3, fill: C.vipFill, fillStyle: 'hachure', fillWeight: 0.7, hachureGap: 4 }));
+      }
+
+      // 4 cluster blocks at the bottom
+      const clusters = [
+        { x: 30,  label: 'Atlanta-Prod' },
+        { x: 270, label: 'Atlanta-DR' },
+        { x: 510, label: 'Charlotte-Prod' },
+        { x: 750, label: 'ROBO-Site-A' },
+      ];
+      clusters.forEach((c) => {
+        const cy = 350, cw = 220, ch = 110;
+        svg.appendChild(rc.rectangle(c.x, cy, cw, ch, opts(C.compute, C.computeFill)));
+        txt(svg, c.x + cw/2, cy + 22, c.label, { anchor: 'middle', size: 11, weight: '700', mono: true, fill: C.label, spacing: '0.06em' });
+        // 4 mini node ticks
+        for (let i = 0; i < 4; i++) {
+          svg.appendChild(rc.rectangle(c.x + 14 + i * 50, cy + 36, 42, 60, opts(C.compute, C.computeFill)));
+          txt(svg, c.x + 14 + i * 50 + 21, cy + 60, 'AHV', { anchor: 'middle', size: 8, fill: C.label });
+          txt(svg, c.x + 14 + i * 50 + 21, cy + 80, 'CVM', { anchor: 'middle', size: 8, fill: '#fbb091', weight: '700' });
+        }
+        // connector to PC
+        svg.appendChild(rc.line(500, 130, c.x + cw/2, cy, { stroke: C.vip, strokeWidth: 0.9, roughness: 1.4, opacity: 0.6 }));
+      });
+
+      // Side panels: Projects, Categories, Identity, Integrations
+      const panels = [
+        { x: 30,  y: 200, label: 'PROJECTS', items: ['Finance', 'HR', 'DevTeam', 'Production'] },
+        { x: 270, y: 200, label: 'CATEGORIES', items: ['Environment', 'OwnerTeam', 'BackupTier'] },
+        { x: 510, y: 200, label: 'IDENTITY', items: ['LDAP / AD', 'SAML / Okta', 'Local'] },
+        { x: 750, y: 200, label: 'INTEGRATIONS', items: ['ServiceNow', 'Slack', 'Splunk'] },
+      ];
+      panels.forEach(p => {
+        svg.appendChild(rc.rectangle(p.x, p.y, 220, 130, opts(C.acro, C.acroFill)));
+        txt(svg, p.x + 110, p.y + 22, p.label, { anchor: 'middle', size: 11, mono: true, weight: '700', spacing: '0.10em', fill: '#fbb091' });
+        p.items.forEach((item, i) => {
+          txt(svg, p.x + 110, p.y + 50 + i * 20, item, { anchor: 'middle', size: 11, fill: C.ink });
+        });
+      });
+
+      txt(svg, 500, 510, 'One PC, multiple clusters, multiple sites. Projects scope users + quotas + categories.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+  </script>
+</body>
+</html>
