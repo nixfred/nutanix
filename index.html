@@ -67,7 +67,7 @@
       flex: 1;
       max-width: 1040px;
       margin: 0 auto;
-      padding: 64px 32px 48px;
+      padding: 64px 32px 0;
       width: 100%;
     }
 
@@ -199,7 +199,7 @@
     section.who li strong { color: var(--text-primary); font-weight: 600; }
 
     section.modules {
-      margin: 56px 0;
+      margin: 56px 0 0;
     }
     section.modules h2 {
       font-size: 14px;
@@ -250,32 +250,13 @@
       margin-top: 4px;
     }
 
-    section.status {
-      margin: 56px 0 32px;
-      padding: 24px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-    }
-    section.status h2 {
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-tertiary);
-      font-weight: 600;
-      margin: 0 0 12px;
-    }
-    section.status p { margin: 0 0 8px; color: var(--text-secondary); }
-    section.status a { color: var(--accent-cyan); text-decoration: none; }
-    section.status a:hover { text-decoration: underline; }
-
     /* Closing image: sits between .page and footer.
        Full-bleed; fades into bg-base on TOP (handoff from page content)
        and on BOTTOM (handoff to footer text). */
     .footer-image {
       position: relative;
       width: 100%;
-      margin-top: 32px;
+      margin-top: 0;
       overflow: hidden;
       isolation: isolate;
     }
@@ -329,7 +310,7 @@
 
     @media (max-width: 640px) {
       .hero h1 { font-size: 36px; }
-      .page { padding: 40px 20px 32px; }
+      .page { padding: 40px 20px 0; }
       footer { padding: 24px 20px 32px; }
       .footer-image img { height: clamp(220px, 38vh, 360px); }
     }
@@ -385,9 +366,6 @@
       </div>
     </section>
 
-    <section class="status">
-      <h2>Site under construction</h2>
-    </section>
   </div>
 
   <section class="footer-image" aria-label="A wireframe horizon scattered with isometric cluster cubes receding into deep navy, suggesting the curriculum stretches ahead.">
