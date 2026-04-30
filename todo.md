@@ -193,7 +193,25 @@ Modules:
   - Suspect (kept as-is):
     - "Recovery Plans bundled with Nutanix Cloud Manager (varies by tier)" in the SRM comparison table — the licensing is actually NCI-tier-driven (basic Async with NCI; advanced DR features tied to NCI Pro/Ultimate). Worth a future copy pass to align with the corrected NCM/NCI terminology established in Modules 04 and 06.
     - Quarterly test failover cadence is a recommendation, not a Nutanix-mandated number. Pedagogically OK.
-- [ ] 08-unified-storage.md
+- [x] 08-unified-storage.md — STATUS: findings-recorded, four corrections made, References section added
+  - Corrections applied:
+    - **FSVM minimum count clarified.** Curriculum said "Three FSVMs per File Server is the typical minimum for HA and scale-out." Per TN-2041, **single-FSVM File Servers are supported for small clusters** (one- and two-node Nutanix clusters, or AOS 5.10.1+ small-environment scenarios). Updated to call out the exception while preserving "three FSVMs is typical for HA + distributed shares."
+    - **Files Analytics → Data Lens product evolution surfaced.** Curriculum framed analytics entirely as "Files Analytics." The current Nutanix product is **Data Lens** (cloud-based and, with v2.0 GA in 2026, fully on-premises including air-gapped). Files Analytics persists as the on-cluster service but Data Lens is the broader unified-storage governance / ransomware-detection product. Updated three places: the Files capabilities bullet, the analytics section heading and intro, and the anti-ransomware section to mention the 65,000+ ransomware signature library Data Lens carries.
+    - **Objects WORM detail added.** Curriculum had a one-liner on WORM. Per TN-2106 and the Nutanix Community WORM blog, WORM uses the S3 Object Lock specification with specific semantics worth knowing: 24-hour grace period after enabling, retention can be extended but never reduced, versioning auto-enabled and cannot be suspended on a WORM bucket. Added all of this for NCP-US and customer-compliance conversations.
+    - **Anti-ransomware tied to Data Lens.** Curriculum's anti-ransomware section was framed as a Files-only feature. Updated to reflect that Data Lens is the broader product driving ransomware detection across Files (and increasingly across Unified Storage).
+  - Confirmed:
+    - File Server is the logical SMB/NFS service; FSVMs are the dedicated VMs implementing it; data lives on DSF.
+    - SMB 2.x / 3.x and NFS v3 / v4 with Kerberos and AD integration confirmed.
+    - Multi-protocol shares (SMB and NFS on the same data with ACL translation) confirmed.
+    - Self-Service Restore via Windows "Previous Versions" tab confirmed.
+    - Nutanix Objects: S3-compatible API, buckets, versioning, WORM (S3 Object Lock), lifecycle policies, replication to other Objects deployments or AWS S3.
+    - Object Service VMs as the implementation of Objects (architecture parallel to FSVMs for Files).
+    - Nutanix Volumes: iSCSI block storage, Volume Groups as the management unit, multi-pathing via multiple portal IPs.
+    - Veeam, Commvault, Rubrik, Cohesity, HYCU all support S3-compatible storage as backup targets.
+    - NCP-US covers Files, Objects, Volumes (curriculum's ~80% claim is plausible for this module's coverage of NCP-US blueprint).
+  - Suspect (kept as-is):
+    - "Distributed shares only available on three or more FSVMs" — TN-2041 confirms this; curriculum's three-FSVM-typical framing aligns once the single-FSVM exception is noted (now done).
+    - `afs` CLI command for Files-specific operations — could not verify exact command name from public sources; flag for portal cross-check.
 - [ ] 09-licensing-economics.md
 - [ ] 10-migration-path.md
 

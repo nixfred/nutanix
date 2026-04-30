@@ -86,7 +86,7 @@ This is consolidation at the storage tier. It is the same operational argument t
 **Nutanix Files** is a scale-out file storage service that runs on top of a Nutanix cluster. It provides SMB shares (for Windows clients and applications) and NFS exports (for Linux clients and applications). The architecture:
 
 - A **File Server** is a logical SMB/NFS service. You can have multiple File Servers per cluster (e.g., one for Production, one for Engineering, one for VDI profiles).
-- Each File Server is implemented as a cluster of **FSVMs** (File Server VMs). FSVMs are dedicated VMs that run the file-services stack on top of Nutanix. Three FSVMs per File Server is the typical minimum for HA and scale-out.
+- Each File Server is implemented as a cluster of **FSVMs** (File Server VMs). FSVMs are dedicated VMs that run the file-services stack on top of Nutanix. **Three FSVMs per File Server is the typical deployment for HA and scale-out.** Smaller deployments support **single-FSVM File Servers** (intended for one- and two-node Nutanix clusters or AOS 5.10.1+ small-environment scenarios), but a single FSVM gives up the HA-across-FSVMs property and limits horizontal scale. Distributed shares and exports require three or more FSVMs.
 - FSVMs distribute the file-services workload across the underlying cluster. Adding FSVMs scales capacity and performance horizontally.
 - File data sits on DSF with all of DSF's properties: RF, compression, deduplication, snapshots, replication.
 
@@ -97,7 +97,7 @@ This is consolidation at the storage tier. It is the same operational argument t
 - **Multi-protocol shares** (SMB and NFS on the same data, with appropriate ACL translation).
 - **Snapshots** at the File Server, share, or path level. Native to DSF; instant; no I/O penalty.
 - **Self-Service Restore (SSR).** End users can restore deleted files from snapshot via the Windows "Previous Versions" tab, without involving IT.
-- **Files Analytics.** Built-in analytics on file usage, access patterns, hot/cold data identification, anomaly detection (a file pattern looks like ransomware). Comes with the Files product.
+- **Files Analytics / Data Lens.** Analytics on file usage, access patterns, hot/cold data identification, and ransomware-pattern anomaly detection. The on-cluster product is named Files Analytics; the broader Nutanix product is **Data Lens**, a unified-storage analytics and ransomware-detection service that evolved from Files Analytics. Data Lens v2.0 (GA 2026) supports fully on-premises deployment, including air-gapped and dark-site environments.
 - **Anti-ransomware.** Real-time pattern detection on writes; alerts and (optionally) blocks suspicious activity. This has matured significantly in recent AOS releases.
 - **Replication** to another Nutanix cluster (DR for file data).
 - **Quotas** at the share or directory level.
@@ -154,9 +154,9 @@ This is consolidation at the storage tier. It is the same operational argument t
 
 ---
 
-### Files Analytics: A Real Differentiator
+### Files Analytics and Data Lens: A Real Differentiator
 
-Most filers have analytics. **Files Analytics** is genuinely good. It runs as a small integrated service within Files and provides:
+Most filers have analytics. **Files Analytics** (the on-cluster service inside Files) and **Data Lens** (the broader cloud-based and on-prem unified-storage governance product that evolved from Files Analytics) are genuinely good. The pair provides:
 
 - **File-system aging.** What percentage of data hasn't been accessed in 12+ months? (Often surprising and budget-relevant.)
 - **Top users by capacity.** Who owns the largest file footprints?
@@ -171,7 +171,7 @@ Most filers have analytics. **Files Analytics** is genuinely good. It runs as a 
 
 ### Anti-Ransomware: The Security Story for Files
 
-Files includes real-time ransomware detection that watches file write patterns. Encrypted-at-write patterns, mass-rename patterns, and suspicious extension changes trigger:
+Files (with Files Analytics on-cluster) and **Data Lens** (the broader cloud-or-on-prem governance product) include real-time ransomware detection that watches file write patterns. Data Lens ships with a constantly-growing library of known ransomware signatures (65,000+ as of 2026) plus behavior-based anomaly detection. The detection-and-block flow watches for encrypt-at-write patterns, mass-rename patterns, and suspicious extension changes, and can trigger:
 
 - Alerts (immediate notification to administrators).
 - Optional blocking (refusing the suspicious writes, preventing further damage).
@@ -188,7 +188,7 @@ For customers concerned about ransomware (which by 2026 is essentially every cus
 - **S3 API compatibility.** Standard S3 endpoints, signatures, requests. Most S3-compatible tools work without modification.
 - **Buckets** as the unit of organization, with access policies, IAM-style users, and versioning.
 - **Object versioning.** Multiple versions of an object retained per bucket configuration.
-- **WORM (Write Once Read Many).** Compliance-driven immutability. Useful for regulatory archives and some backup retention scenarios.
+- **WORM (Write Once Read Many).** Compliance-driven immutability via the S3 Object Lock specification. Once a bucket is marked WORM, there is a 24-hour grace period for testing; after that, no objects within the bucket (or the bucket itself) can be deleted until the date specified by the WORM policy. The retention period can be **extended but never reduced**. WORM buckets have versioning auto-enabled (versioning cannot be suspended on a WORM bucket). Useful for regulatory archives and some backup retention scenarios.
 - **Lifecycle policies.** Auto-tier or auto-delete objects based on age.
 - **Replication** to other Nutanix Objects deployments or to AWS S3.
 - **Multi-tenancy.** Separate object stores for different tenants, each with their own users and policies.
@@ -763,6 +763,23 @@ You have the consolidation economics: typical mid-market deployments save 30-50%
 You have twelve practice questions worth of unified-storage discrimination, including two NCX-style design defenses (multi-tier storage consolidation with cost projection, and the architectural defense against a 12-year NetApp specialist).
 
 You are now ready for licensing. Module 9 covers Nutanix licensing, NCM tiers, AOS subscription models, hardware vs software pricing, and the financial conversation that frequently decides deals. After all the technical depth, this is the dimension that gets things signed.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. Files Analytics is in the middle of being absorbed into the broader Data Lens product; reverify product naming against the current Nutanix portal before quoting in customer proposals.
+
+- [Nutanix Bible — Files](https://www.nutanixbible.com/11b-book-of-storage-services-files.html). Authoritative architecture reference for File Servers, FSVMs, multi-protocol shares, distributed shares.
+- [Nutanix Files Architecture (TN-2041)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2041-Nutanix-Files:tn-nutanix-files-architecture.html). Tech note covering FSVM minimum count, single-FSVM exception for small clusters, and protocol support (SMB 2/3, NFS v3/v4).
+- [Nutanix Bible — Objects](https://www.nutanixbible.com/11c-book-of-storage-services-objects.html). Object Service architecture, S3 API surface.
+- [Nutanix Objects Buckets (TN-2106)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2106-Nutanix-Objects:nutanix-objects-buckets.html). Bucket configuration, WORM (S3 Object Lock), versioning semantics including auto-enabled versioning on WORM buckets and the 24-hour grace period.
+- [Maintaining Compliance with WORM for Nutanix Objects](https://next.nutanix.com/community-blog-154/maintaining-compliance-with-worm-for-nutanix-objects-33239). WORM operational details (extend-but-never-reduce, grace period).
+- [Objects 3.2 Bucket Policy Configuration](https://portal.nutanix.com/page/documents/details?targetId=Objects-v3_2:v32-buckets-configuration-c.html). Current bucket-policy reference.
+- [Nutanix Data Lens Product Page](https://www.nutanix.com/products/data-lens). Cloud-based and on-prem unified-storage analytics and ransomware-detection product that evolved from Files Analytics.
+- [Data Lens v2.0 GA Announcement (Nutanix Blog)](https://www.nutanix.com/blog/defend-your-data-proactively-with-nutanix-data-lens). Confirms 2026 GA of fully on-prem Data Lens including air-gapped support.
+- [NCP-US Certification Page](https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-unified-storage-v65). Authoritative source for the NCP-US blueprint covering Files, Objects, and Volumes.
+- [NCP-US Exam Roadmap (Nutanix Community)](https://next.nutanix.com/education-blog-153/your-roadmap-to-success-5-steps-to-prep-for-the-ncp-us-certification-exam-42945). Preparation guidance for the specialty cert.
 
 ---
 
