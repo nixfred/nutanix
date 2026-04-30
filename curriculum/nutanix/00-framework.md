@@ -313,6 +313,14 @@ Avoid all of these. When something is genuinely a tradeoff, name it. When AHV is
 
 ## 11. Site Build Instructions for Claude Code
 
+> **Note (2026-04-30):** The design recommendations in this section are **superseded by `CLAUDE.md`** in the repo root, which is the current authoritative build spec for the website. This section is preserved as a record of the original framework's intent. Where the two differ, follow CLAUDE.md:
+> - **Color palette:** CLAUDE.md mandates **dark mode** (deep navy `#0a1628` background, electric-cyan accent `#00d4ff`). The warm off-white palette below is historical.
+> - **Typography:** CLAUDE.md uses **Inter** for display/body and **JetBrains Mono** for code. The Fraunces / Source Serif 4 recommendations below are historical.
+> - **Stack:** CLAUDE.md specifies **Astro + MDX + Tailwind + TypeScript strict** with content collections and Zod schemas. The "single self-contained index.html" recommendation below was an early one-file sketch.
+> - **Interactive features:** CLAUDE.md keeps the spirit of the search, practice-question, and bookmark features; the implementation details (Lunr/FlexSearch, localStorage) are mostly preserved.
+>
+> The Diagram, Practice Question, and Callout conventions in **Sections 4-9 above** remain authoritative and are followed by every module in the curriculum.
+
 When rendering these markdown files into a website:
 
 **Output:** Single self-contained `index.html` (split if file size demands it). External runtime: Google Fonts, rough.js from CDN. No backend.
@@ -377,3 +385,14 @@ When a BlueAlly SA finishes the last scenario in Appendix C and closes the tab, 
 > *I could now sit across from a Nutanix SE, or, more importantly, across from a customer's VMware admin, and ask the right questions. I could now defend, on technical merit, whether their environment should move. I now know what they would lose, what they would gain, and what they would have to relearn. Nobody softened anything for me. And I've passed NCA, I'm halfway through NCP-MCI prep, and I've got a discovery question library and an objection handler ready before the next call.*
 
 That is the bar. Build to it.
+
+---
+
+## References
+
+This file is the curriculum's meta-spec; the technical content it describes is sourced and verified in the per-module References sections.
+
+- [`CLAUDE.md`](../../CLAUDE.md) (repo root). Authoritative build spec for the website. Supersedes Section 11 of this framework where they conflict (dark-mode palette, Astro/Tailwind stack, Inter + JetBrains Mono typography).
+- [Patrick Winston, "How to Speak"](https://www.youtube.com/watch?v=Unzc731iCUY). MIT lecture; the source of the cycle / fence-building / four-mental-frames pedagogy referenced throughout this framework.
+- Per-module References sections (Modules 01-10): the technical authorities (Nutanix Bible, portal tech notes, Cloud Platform software-options page, NCI / NCM datasheets, etc.) that back the curriculum's specific claims.
+- Per-appendix References sections (A-M, N-Z, B, C, D, E, F, G, H, I, J, K): the same technical authorities specific to each appendix's domain.

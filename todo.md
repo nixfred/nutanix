@@ -15,7 +15,36 @@
 
 ---
 
-## Phase 0 — Pre-flight: resolve open questions
+## Phase 0 — Decisions Pinned (2026-04-30)
+
+After completing Phase TR plus the holding page + Module 1 page + homepage hero shipping, the Phase 0 open questions resolve as follows. This block is the durable record so future sessions don't relitigate.
+
+**Build path: Option C — hybrid for now.**
+
+The original todo.md recommended an Astro + content collections scaffold (Phase 1). Reality has diverged: a hand-rendered Module 1 page (`modules/01-hci-foundations/index.html`, ~88 KB) and a static homepage shipped, both working live at nixfred.com/nutanix. Going Astro now would mean ripping out working pages for marginal benefit during a high-iteration period.
+
+**Decision:** Stay on the static-HTML path through Modules 02-10 + appendices. Match the Module 1 conventions (`<head>` with the established CSS custom properties, hero `<figure>` linking a per-module `public/images/hero-NN-*.svg` in the same isometric-cluster vocabulary as `hero-01-hci-foundations.svg`, rough.js diagrams, practice-question reveal interaction). **Revisit Astro when** any of these triggers fire:
+- A second curriculum track is on the roadmap (multi-track was a key Astro motivation).
+- Cross-file navigation, search, or cert rollups become painful to maintain by hand.
+- More than ~5 modules are shipped and the manual sidebar/prev-next maintenance starts costing real time.
+
+The CLAUDE.md spec keeps describing the Astro target as the eventual home; at the trigger above, do the migration in a single focused phase rather than incrementally.
+
+**Other Phase 0 questions resolved:**
+
+- **Glossary duplicate (Phase TR resolved):** `appendix-a-glossary.md` (A-M) and `appendix-a-glossary-nz.md` (N-Z) are companion halves, not duplicates. Both ship as written.
+- **Appendix routing (CLAUDE.md):** Appendices live at `/[track]/appendices/[slug]` per CLAUDE.md's repository structure. Decided.
+- **Source-of-truth layout (Astro-specific):** Sync vs symlink is moot under Option C — the static-HTML pages are authored directly under `modules/` and `public/`; the markdown source under `curriculum/nutanix/` remains the human-editing surface. Revisit on Astro migration.
+- **BlueAlly brand colors:** Using the CLAUDE.md defaults (`--bg-base: #0a1628`; `--accent-cyan: #00d4ff`) for now. They look right on the deployed site and match the BlueAlly brand-family. Pinning these as the working palette. Skip the blueally.com fetch unless brand drift forces a reset.
+- **Hero image strategy:** Programmatic SVG, hand-crafted in the established isometric-cluster vocabulary (per-module heroes) and the topographic-map vocabulary (homepage). No AI-image-generation API in play. SVGs live under `public/images/`. Decided.
+- **Missing appendices h-k (Phase TR resolved):** All eleven appendices exist (a through k). CLAUDE.md updated.
+- **Scratch PDFs:** Moved to `_drafts/`, gitignored. Resolved at repo init.
+
+**Gate (Phase 0 + Phase TR combined): PASSED.** Every open question has a recorded decision; every curriculum file is reviewed and corrected; the static-HTML build path is the chosen direction; the deployed site is live with working homepage and Module 1.
+
+---
+
+## Phase 0 — Pre-flight: resolve open questions (historical record)
 
 **Goal:** clear blockers that affect schema and routing before any code is written. Fixing these later is expensive.
 
@@ -54,7 +83,11 @@
 **Files to review (23 total):**
 
 Modules:
-- [ ] 00-framework.md (meta-spec; check pedagogy claims, blueprint % numbers, callout taxonomy)
+- [x] 00-framework.md — STATUS: findings-recorded, "superseded by CLAUDE.md" note added to Section 11, References section added
+  - Section 11 ("Site Build Instructions for Claude Code") was written before the dark-mode + Astro + Inter/JetBrains-Mono choices in CLAUDE.md crystallized; it specified a warm off-white palette, Fraunces / Source Serif 4 typography, and a single-file index.html. Added an explicit "superseded by CLAUDE.md" note at the top of Section 11 calling out each conflict (palette, typography, stack) and pointing readers to CLAUDE.md for the current spec. Sections 4-9 (Module structure, Diagram spec, Practice Question structure, Callout conventions) remain authoritative since modules across the curriculum follow them.
+  - Section 5's module + appendix inventory verified accurate (10 modules + 11 appendices a-k, with the glossary split across two files for A-M and N-Z).
+  - Section 6's required-diagrams list aligns with what each module ships.
+  - References section added linking CLAUDE.md, the Winston "How to Speak" lecture, and the per-module / per-appendix References sections that source the curriculum's specific technical claims.
 - [x] 01-hci-foundations.md — STATUS: findings-recorded, one correction made, References section added
   - Confirmed:
     - Prism Element URL pattern `https://<cluster-IP>:9440` and port 9440. Source: Nutanix portal docs, multiple community references.
@@ -453,7 +486,51 @@ All 23 source files reviewed and corrected. Phase TR complete.
 
 ---
 
-## Phase 1 — Scaffold: Astro + content collections + schemas
+## Phase 1' — Static-HTML Build of the Remaining Modules and Appendices (active path under Option C)
+
+**Goal:** ship Modules 02-10 plus all appendices as static HTML pages following the Module 1 pattern. End state: every curriculum page is reachable from `nixfred.com/nutanix/<slug>` with consistent chrome, hero, navigation, and practice-question interaction.
+
+**Tasks (per module, repeat for 02-10):**
+
+- [ ] Create `modules/<slug>/index.html` mirroring the Module 1 structure (header chrome, hero figure, body sections rendered from the source markdown's structure, callout styling for the 5 callout types, rough.js diagrams, practice-question reveal interaction).
+- [ ] Create `public/images/hero-<NN>-<slug>.svg` in the established isometric-cluster vocabulary used by `hero-01-hci-foundations.svg`. Vary the cluster shape, highlights, and labels per module's topic; same color/grid/symbol library so the heroes feel like a set.
+- [ ] Wire prev/next navigation to neighbour modules; update homepage `module-card` links to point to the rendered pages as they ship.
+- [ ] Update `index.html` "modules under construction" status copy as more modules go live.
+- [ ] Smoke-test each page on the live URL after deploy: hero loads, body renders, practice-question reveal works, prev/next links resolve.
+
+**Tasks (per appendix, repeat for a through k):**
+
+- [ ] Create `appendices/<slug>/index.html` mirroring the Module 1 chrome with appendix-appropriate body rendering (glossary-entry list for A; comparison tables for B; objection cards for D; etc.).
+- [ ] Per-appendix hero is optional (lighter visual weight is appropriate for reference material) but on-brand if used.
+
+**Tasks (cross-cutting):**
+
+- [ ] Build a minimal `scripts/check-links.sh` (bash + curl) that visits every page on the deployed site and reports any 404s. Run after each batch of pages ships.
+- [ ] Once a few modules are done, decide whether to factor the shared `<head>` chrome into a build-time `include` (a small bash template) or keep duplicating per page. Either is fine at this scale; don't pre-optimize.
+
+**Acceptance gate:**
+- [ ] Every module 01-10 has a rendered HTML page on the live site.
+- [ ] Every appendix a-k has a rendered HTML page on the live site.
+- [ ] Homepage's module grid links to all 10 modules; cards no longer have `.disabled` styling on shipped modules.
+- [ ] Cross-references between modules and appendices resolve (no 404 on internal links).
+- [ ] Lighthouse Performance ≥ 90 and Accessibility = 100 on a representative module page.
+
+**Commit cadence:** one commit per module (or per pair of related modules), one commit per appendix (or batch of small appendices). Mirror the Module 1 commit message structure.
+
+---
+
+## Phase 2 — Astro Migration (deferred; trigger-driven)
+
+**Trigger conditions** (any one fires the migration):
+- A second curriculum track is on the roadmap.
+- Cross-file navigation, search, or cert rollups become painful to maintain by hand.
+- More than ~5 modules are shipped and the manual sidebar / prev-next maintenance starts costing real time.
+
+When a trigger fires, execute the original `Phase 1 — Scaffold` plan below as a single focused phase. The static-HTML pages migrate into Astro content collections; the established hero SVGs and CSS variables port over; the deployed-site URL pattern stays stable.
+
+---
+
+## Phase 1 — Scaffold: Astro + content collections + schemas (DEFERRED — see Phase 2 above for the trigger-driven re-activation)
 
 **Goal:** bare-bones Astro site builds and runs. Content collections defined with strict Zod schemas. No UI, no styling, no real pages. The skeleton.
 

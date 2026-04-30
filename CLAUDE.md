@@ -302,6 +302,8 @@ If time permits, add per-paragraph bookmarking and notes. Stored in `localStorag
 
 ## Implementation Approach
 
+> **Pinned decision (2026-04-30):** the active build path is **static HTML, hand-rendered per page**, not Astro. This is "Option C — hybrid" from the Phase 0 decision in `todo.md`. The Astro plan below is the deferred target; it activates only when one of the trigger conditions fires (second track, manual-nav pain, ≥5 modules shipped). Until a trigger fires, follow the Module 1 page (`modules/01-hci-foundations/index.html`) as the structural template for the remaining modules and appendices: shared CSS custom properties, per-module hero SVG under `public/images/hero-NN-*.svg` in the isometric-cluster vocabulary, rough.js diagrams, practice-question reveal interaction, prev/next navigation. The Astro plan below is preserved as the eventual home of the curriculum once scale justifies the migration.
+
 You have flexibility on framework choice. Recommended:
 
 - **Astro** is the best-in-class static site generator with first-class markdown support, partial hydration for interactive components (the practice-question UI), built-in syntax highlighting, easy GitHub Pages deployment. Use `bun` as the package manager (Fred prefers Bun over npm/yarn).
