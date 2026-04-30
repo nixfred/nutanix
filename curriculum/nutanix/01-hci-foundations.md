@@ -239,7 +239,7 @@ You cannot teach a VMware admin Nutanix from a slide deck. Same goes for you. Bu
 
 **Path A, Nested on VMware Workstation or ESXi** (recommended for first-time setup)
 1. Download CE 2.1 from `nutanix.com/products/community-edition` (requires free MyNutanix account)
-2. Provision a VM: 4 vCPU minimum, 32 GB RAM minimum, expose hardware-assisted virtualization, VMXNET3 NIC, vSwitch promiscuous + MAC changes + forged transmits all enabled
+2. Provision a VM: 4 vCPU, 32 GB RAM recommended (the documented absolute minimum is 16 GB, but CE running Prism Central is realistically a 32 GB+ workload). Expose hardware-assisted virtualization, VMXNET3 NIC, vSwitch promiscuous + MAC changes + forged transmits all enabled
 3. Add disks: 1× 32GB (boot), 1× 200GB SSD-backed (hot tier), 1× 500GB (cold tier)
 4. Boot from the CE ISO. Walk through the installer.
 5. After install, connect to Prism Element on `https://<cluster-IP>:9440`

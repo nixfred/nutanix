@@ -37,6 +37,80 @@
 
 ---
 
+## Phase TR — Technical Review of the Curriculum (runs before Phase 1)
+
+**Goal:** every technical claim in the curriculum holds up against authoritative sources as of April 2026. The site rests on this. Wrong facts here compound everywhere.
+
+**Method:** read each file with a fine tooth comb playing the role of a senior Nutanix engineer. For every claim about Nutanix architecture, product names, version numbers, default credentials, port numbers, exam blueprints, performance numbers, sizing rules, CLI syntax, partner-stack names (VMware, Pure, NetApp, HPE, Cisco), and competitive comparisons, verify against an authoritative source (Nutanix portal docs, Nutanix Bible, Nutanix University blueprints, vendor sites, RFCs, etc.). Record findings inline in this todo.md per file.
+
+**Per-file findings format:**
+```
+- [ ] NN-name.md — STATUS: pending | in-review | findings-recorded | revised | confirmed
+  - Confirmed: ...
+  - Suspect: ... (claim, source consulted, recommended revision)
+  - Wrong: ... (claim, evidence, required fix)
+```
+
+**Files to review (23 total):**
+
+Modules:
+- [ ] 00-framework.md (meta-spec; check pedagogy claims, blueprint % numbers, callout taxonomy)
+- [x] 01-hci-foundations.md — STATUS: findings-recorded, one correction made
+  - Confirmed:
+    - Prism Element URL pattern `https://<cluster-IP>:9440` and port 9440. Source: Nutanix portal docs, multiple community references.
+    - Default first-login credentials `admin` / `nutanix/4u` for Prism Element (must be changed on first login). Source: Nutanix Prism 6.7 web-console docs, ervik.as/nutanix-default-credentials. Still current as of AOS 7.x.
+    - CE 2.1 is the current Community Edition release. Source: portal.nutanix.com `Nutanix-Community-Edition-Getting-Started-v2_1`.
+    - AOS 7.5 is current as of April 2026 (7.5.1.1 supported through Dec 31 2027). Source: endoflife.date/nutanix-aos, eosl.date.
+    - Nutanix v4 REST API is GA (released with PC 2024.3 / AOS 7.0), so the curriculum's "Nutanix v4 REST" reference is correct. Source: nutanix.com/blog/announcing-the-v4-api-and-sdk-general-availability.
+    - "NC2 (Nutanix on AWS bare metal)" naming matches official "Nutanix Cloud Clusters (NC2) on AWS." Source: nutanix.com/products/nutanix-cloud-clusters/aws.
+    - 2-node ROBO Nutanix offering exists (real product line).
+  - Corrections applied:
+    - Lab Path A: changed "32 GB RAM minimum" to "32 GB RAM recommended (16 GB is the documented absolute minimum, but CE with Prism Central is realistically 32 GB+)." The portal docs list 16 GB as minimum; 32 GB was the curriculum's practical recommendation mislabeled as the "minimum."
+  - Suspect (kept as-is, flagged for cross-file pass):
+    - "AOS 7.5 + all-NVMe routinely delivers sub-millisecond latency for OLTP" — directional claim, no citation. Curriculum already advises the SA to bring concrete benchmark data, so framing is acceptable. Re-evaluate against the Module 05 storage-deep-dive treatment of latency claims.
+    - Cert blueprint estimates "NCA ~12% / NCP-MCI ~5% / NCM-MCI ~2%" for HCI fundamentals are plausible but unsourced. Real fix belongs in 00-framework.md and appendix-k-cert-tracker.md once the official current Nutanix blueprint PDFs are pulled and reconciled. Flag for the framework pass.
+    - "50-70% reduction in infrastructure operational hours" already self-flagged in the curriculum text ("verify against your own customer base before quoting specific percentages"). Acceptable as-is.
+    - "Position Nutanix Files / Mine for backup" — Files (file storage) and Mine (backup-integration platform) are different products; the slash reads ambiguous but not technically wrong. Optional clarity edit on a future copy pass.
+- [ ] 02-nutanix-architecture.md
+- [ ] 03-ahv-hypervisor.md
+- [ ] 04-prism-management.md
+- [ ] 05-dsf-storage-deep-dive.md
+- [ ] 06-networking-flow.md
+- [ ] 07-data-protection.md
+- [ ] 08-unified-storage.md
+- [ ] 09-licensing-economics.md
+- [ ] 10-migration-path.md
+
+Appendices:
+- [ ] appendix-a-glossary.md
+- [ ] appendix-a-glossary-nz.md (resolve duplicate; pick canonical or merge)
+- [ ] appendix-b-comparison-matrix.md
+- [ ] appendix-c-scenarios.md
+- [ ] appendix-d-objections.md
+- [ ] appendix-e-discovery-questions.md
+- [ ] appendix-f-sizing-rules.md
+- [ ] appendix-g-cli-reference.md
+- [ ] appendix-h-competitive-matrix.md
+- [ ] appendix-i-reference-architectures.md
+- [ ] appendix-j-poc-playbook.md
+- [ ] appendix-k-cert-tracker.md
+
+**Discipline:**
+- One file per pass. Do not batch. Do not skim.
+- Each pass produces a commit with the findings recorded in this todo.md and any required corrections to the source markdown.
+- Web research for every version number, product name, port, credential, and blueprint percentage. Do not trust pre-2026 memory; the Nutanix product line moves fast.
+- Findings get the same epistemic discipline as commits: cite the source URL, quote the relevant claim, propose the revision.
+- A file is **confirmed** only when every technical claim has been checked or the residual unchecked claims are explicitly listed.
+
+**Gate (whole phase):**
+- [ ] Every file marked confirmed or revised.
+- [ ] Source markdown updated where the curriculum was wrong, with a single commit per module/appendix capturing the changes plus rationale.
+- [ ] A summary at the end of this phase listing the categories of corrections made (e.g., "AOS version drift in 4 modules", "default-cred changes in 2 modules", "blueprint percentages adjusted to current NCA blueprint").
+
+**Commit style for this phase:** `review: <file> technical pass; <N> findings recorded; <M> corrections made` with a body listing the specific changes.
+
+---
+
 ## Phase 1 — Scaffold: Astro + content collections + schemas
 
 **Goal:** bare-bones Astro site builds and runs. Content collections defined with strict Zod schemas. No UI, no styling, no real pages. The skeleton.
