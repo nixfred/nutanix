@@ -1,0 +1,356 @@
+# todo.md — Phased Build Plan
+
+> **Read first:** `CLAUDE.md`. This file is the execution plan; CLAUDE.md is the spec. Do not skip phases. Do not one-shot. Stop at every gate and confirm with Fred before advancing.
+
+---
+
+## How to Use This File
+
+- Phases run in order. A phase begins only after the previous phase's **Gate** is signed off.
+- Each phase has: **Goal**, **Tasks**, **Acceptance Gate**, **Commit message**.
+- The Acceptance Gate is a binary check. If any item fails, the phase is not done.
+- Mark tasks complete by changing `- [ ]` to `- [x]`. Keep this file in git.
+- If a task reveals that CLAUDE.md is wrong, update CLAUDE.md first, then continue.
+- The **Extensibility Test** (add a file, it appears) is re-run at Phase 4, Phase 7, and Phase 13. It is the load-bearing property of this build.
+
+---
+
+## Phase 0 — Pre-flight: resolve open questions
+
+**Goal:** clear blockers that affect schema and routing before any code is written. Fixing these later is expensive.
+
+**Tasks:**
+
+- [ ] Resolve the duplicate glossary file. `appendix-a-glossary.md` and `appendix-a-glossary-nz.md` both exist. Decide: which is canonical, what the `-nz` variant is for, whether both ship.
+- [ ] Confirm appendix routing under the track. Decision: appendices live at `/nutanix/appendices/<slug>` (per-track, scales to multiple tracks). Document this in CLAUDE.md if not already.
+- [ ] Decide source-of-truth layout for markdown. Recommendation: author files live in `/curriculum/nutanix/`, get copied (not symlinked) into `src/content/tracks/nutanix/` by a build script. Symlinks break on Windows and confuse Astro's content loader. Confirm with Fred.
+- [ ] Confirm BlueAlly brand colors. Fetch `https://blueally.com` once; record extracted hex values, or fall back to defaults in CLAUDE.md if fetch fails. Pin them.
+- [ ] Confirm hero-image strategy: AI generation (which provider? Replicate / Fal / DALL-E) or programmatic SVG. AI is faster to iterate; SVG is zero-cost and deterministic. Default to AI with caching, but get explicit confirmation.
+- [ ] Confirm the missing appendices (h, i, j, k). They are referenced in CLAUDE.md as "coming." Are they in scope for v1, or v1 ships with a–g and they land later?
+- [ ] Confirm the two PDFs (`03-ahv-hypervisor.pdf`, `04-prism-management.pdf`) at the project root are scratch and can be ignored or moved to `/_drafts/`.
+
+**Gate:**
+- [ ] Each open question has a recorded decision in this file or in CLAUDE.md.
+- [ ] No follow-up question requires speculation in later phases.
+
+**Commit:** `chore: phase 0 pre-flight decisions recorded; spec gaps closed`
+
+---
+
+## Phase 1 — Scaffold: Astro + content collections + schemas
+
+**Goal:** bare-bones Astro site builds and runs. Content collections defined with strict Zod schemas. No UI, no styling, no real pages. The skeleton.
+
+**Tasks:**
+
+- [ ] `bun init`, install Astro, MDX integration, Tailwind, TypeScript strict.
+- [ ] `astro.config.mjs` with `base: '/nutanix'`, `site: 'https://nixfred.com'`, MDX integration, Tailwind integration.
+- [ ] `tsconfig.json` with strict mode and path aliases (`@/lib`, `@/components`, `@/content`).
+- [ ] `tailwind.config.ts` configured with the CSS custom properties from CLAUDE.md (color tokens, typography stack, fonts).
+- [ ] Move the curriculum markdown into `/curriculum/nutanix/` (do not modify the files; just relocate).
+- [ ] Write a `scripts/sync-curriculum.ts` that copies `/curriculum/<track>/*.md` into `src/content/tracks/<track>/` on `prebuild` and on `dev` start. Idempotent.
+- [ ] Create `src/content/config.ts` with Zod schemas for: `track` (the `_track.yaml`), `module`, `appendix`. Use `.strict()` so unknown keys fail the build.
+- [ ] Create `_track.yaml` for the Nutanix track with values from CLAUDE.md.
+- [ ] Run `astro sync` and `bun run build`. Build must succeed. No real pages yet; just the collection sync.
+- [ ] Write `scripts/verify-frontmatter.ts` that loads every collection entry and reports schema violations with line numbers. Wire into `prebuild`.
+- [ ] Set up `.github/workflows/deploy.yml` with the build steps from CLAUDE.md. Do not enable Pages yet.
+
+**Gate:**
+- [ ] `bun run dev` starts without errors.
+- [ ] `bun run build` succeeds with zero warnings.
+- [ ] `verify-frontmatter` passes against all 10 modules and all available appendices.
+- [ ] Adding an unknown key to a module's front matter fails the build with a clear error message (test this manually).
+
+**Commit:** `feat: phase 1 scaffold; astro + content collections + strict zod schemas`
+
+---
+
+## Phase 2 — Parser layer: callouts, diagrams, questions
+
+**Goal:** a tested parsing layer that extracts every structured element from module markdown into typed objects. No UI yet. This is the foundation everything renders against.
+
+**Tasks:**
+
+- [ ] Create `src/test/fixtures/` with one minimal sample of each: callout (5 types), diagram block, MCQ practice question, NCX-style practice question. Hand-authored, deliberately small.
+- [ ] Install a lightweight test runner (`vitest` or Astro's built-in test setup).
+- [ ] `src/lib/parseCallouts.ts`: detects `> [!FAMILIAR]` etc. blocks and returns `{ type, body }`. Tests against fixtures.
+- [ ] `src/lib/parseDiagram.ts`: extracts diagram blocks (id, type, caption, exam_relevance, whiteboard_ready, elements, connections, annotations, why-this-diagram). Returns typed object. Tests against fixtures.
+- [ ] `src/lib/parseQuestions.ts`: extracts MCQ and NCX-style questions with their structured answer parts. Tests against fixtures.
+- [ ] `src/lib/glossaryIndex.ts`: builds a `Map<term, { definition, slug }>` from the glossary appendix. Tests.
+- [ ] Run all parsers across the real curriculum. Record the count of callouts, diagrams, questions, glossary terms in a build log. This is your baseline.
+- [ ] Add cross-reference validation to `scripts/verify-links.ts`: every `diagrams:` entry in front matter must have a matching diagram block in body and vice versa; every `prerequisites:` slug must resolve; every `cert_coverage:` exam ID must be in the track's `cert_ladder`.
+
+**Gate:**
+- [ ] All parsers have tests; tests pass.
+- [ ] Running parsers on the real curriculum produces zero errors and the expected element counts (10 modules × 12 questions = 120 MCQ + NCX entries; ~31 diagrams; 5 callout types present).
+- [ ] `verify-links` runs clean across the real curriculum.
+
+**Commit:** `feat: phase 2 parser layer; callouts, diagrams, questions, glossary index, link verification`
+
+---
+
+## Phase 3 — Core components: callout, diagram, question, glossary term
+
+**Goal:** the renderable pieces of a module page exist as components, styled to spec, demo-able in isolation.
+
+**Tasks:**
+
+- [ ] `Callout.astro`: renders all 5 types with the translucent backgrounds from CLAUDE.md.
+- [ ] `Diagram.tsx`: renders parsed diagram object. Use rough.js. Lazy-render on scroll (IntersectionObserver). Whiteboard-ready badge if flag set. Cert relevance badges. Accessible figcaption.
+- [ ] `PracticeQuestion.tsx`: MCQ variant with reveal-answer, green/red feedback, expanded "why this answer / why not the others / the trap." NCX variant with text area + "show strong answer." LocalStorage with version key.
+- [ ] `GlossaryTerm.tsx`: hover/tap popover. Debounced. Wraps first occurrence per page only (avoid noise).
+- [ ] `Wordmark.astro`: NutaNIX with cyan NIX. No animation.
+- [ ] `PathTreatment.astro`: `/nix/nutanix` mono treatment.
+- [ ] Build a `/_dev/components` page (only in dev) that renders one of each component with sample data. This is your visual regression surface for the rest of the build.
+
+**Gate:**
+- [ ] Visit `/_dev/components` in dev. Every component renders correctly, matches spec colors, is keyboard-navigable.
+- [ ] PracticeQuestion state survives page reload (localStorage works).
+- [ ] Diagram does not render until scrolled into view (verify in devtools).
+- [ ] GlossaryTerm popover does not appear on body text outside a `<dfn>` wrapper.
+
+**Commit:** `feat: phase 3 core components; callout, diagram, question, glossary term, brand chrome`
+
+---
+
+## Phase 4 — Routing + nav builder + first end-to-end module page
+
+**Goal:** one module page renders end-to-end at `/nutanix/<module>`. The sidebar is generated from `src/lib/nav.ts`. The Extensibility Test passes for the first time.
+
+**Tasks:**
+
+- [ ] `src/lib/nav.ts`: pure function from collections to nav tree. Sorts by `order`. Filters `status: archived`. Computes prev/next.
+- [ ] `src/lib/links.ts`: resolves relative `.md` links by consulting collections.
+- [ ] `src/pages/[track]/[module].astro`: dynamic route. Loads the module entry, renders MDX with custom components (Callout, Diagram, PracticeQuestion, GlossaryTerm). Pulls the sidebar from `nav.ts`.
+- [ ] `src/components/Sidebar.astro`: renders the nav tree. Active-section highlighting on scroll. Collapsible groups.
+- [ ] `src/components/PrevNext.astro`: derived from nav tree, rendered in module footer.
+- [ ] `src/pages/[track]/index.astro`: track landing page. Lists modules from the nav tree, plus a hero with the wordmark and path treatment.
+- [ ] `src/pages/index.astro`: homepage. Lists all tracks (currently just Nutanix) with cards from `_track.yaml`.
+
+**Extensibility Test (run now):**
+- [ ] Add `src/content/tracks/nutanix/99-zzz-test.md` with valid front matter (`order: 999`, `status: published`, body says "test"). Run `bun run dev`. Module appears in sidebar at the bottom, in prev/next on module 10, and is reachable at `/nutanix/zzz-test`. Delete the file, confirm it disappears. **If this fails, do not proceed.**
+
+**Gate:**
+- [ ] Module 5 (DSF) renders end-to-end with all callouts, all diagrams, all 12 questions.
+- [ ] Sidebar is generated from `nav.ts`; no hardcoded module list anywhere.
+- [ ] Cross-references in module bodies resolve to clean URLs (no `.md` links).
+- [ ] Extensibility Test passes.
+- [ ] Lighthouse on a single module page: Performance ≥ 85 (will tighten later), Accessibility ≥ 95.
+
+**Commit:** `feat: phase 4 dynamic routes + nav builder + first e2e module page; extensibility verified`
+
+---
+
+## Phase 5 — All modules + appendices + cross-references
+
+**Goal:** every module renders. Every appendix renders. Every cross-reference resolves. Site is content-complete.
+
+**Tasks:**
+
+- [ ] Verify modules 01–10 all render without warnings.
+- [ ] `src/pages/[track]/appendices/[slug].astro`: dynamic route for appendices.
+- [ ] Sidebar groups: "Modules" and "Appendices" within each track.
+- [ ] Run `verify-links` across all rendered pages. Zero broken links.
+- [ ] Glossary term wrapping in body text: build the matcher, apply only to first occurrence per page, wire into the MDX render pipeline.
+
+**Gate:**
+- [ ] All 10 modules + all 7 appendices render with zero console errors.
+- [ ] Every cross-reference in the curriculum resolves.
+- [ ] Glossary popover triggers on hover for at least 5 randomly-selected terms.
+- [ ] Sidebar reflects the full module + appendix list, generated from nav.ts.
+
+**Commit:** `feat: phase 5 full content render; all modules, appendices, glossary popovers, cross-refs resolved`
+
+---
+
+## Phase 6 — Search
+
+**Goal:** Cmd-K search palette over all modules and appendices. Faceted by track. Index built at build time.
+
+**Tasks:**
+
+- [ ] `src/lib/search.ts`: walks collections, builds FlexSearch index per track plus a global index.
+- [ ] `SearchPalette.tsx`: Cmd-K trigger, results grouped by section (modules / appendices), keyboard navigable, default-scoped to current track with a "search all tracks" toggle.
+- [ ] Index ships as a JSON asset, loaded on first Cmd-K open (not on initial page load).
+- [ ] Highlight matched terms in result snippets.
+
+**Gate:**
+- [ ] Cmd-K opens the palette; query "NearSync" returns results from Module 7.
+- [ ] Closing the palette does not break scroll position.
+- [ ] Mobile: a search button in the header opens the same palette.
+
+**Commit:** `feat: phase 6 search; flexsearch index, cmd-k palette, track-scoped`
+
+---
+
+## Phase 7 — Practice mode + cert tracker
+
+**Goal:** `/practice` aggregates all 120 MCQs with filters and a Random-20 quiz. `/certs` shows progress per exam.
+
+**Tasks:**
+
+- [ ] `src/pages/practice.astro`: aggregates questions across modules. Filters by cert, module, type, status. Random 20 generator. Time-per-question tracking. Final summary screen.
+- [ ] `src/pages/certs.astro`: card per exam, derived from `_track.yaml.cert_ladder`. Coverage from front matter. User performance from localStorage.
+- [ ] Both pages are derived from collections; new modules adding cert_coverage data flow in automatically.
+
+**Extensibility Test (re-run):**
+- [ ] Add a temporary 11th module with `cert_coverage: { NCA: 5 }`. Confirm `/practice` and `/certs` reflect it without code changes.
+
+**Gate:**
+- [ ] `/practice` filters work end-to-end. Random 20 produces a varied set across runs.
+- [ ] `/certs` shows accurate coverage percentages.
+- [ ] LocalStorage state for question attempts persists across page navigation.
+
+**Commit:** `feat: phase 7 practice mode + cert tracker; both derived from collections`
+
+---
+
+## Phase 8 — Brand chrome polish + 404 + footer
+
+**Goal:** the site looks finished. Wordmark, path treatment, 404, footer attribution all in place.
+
+**Tasks:**
+
+- [ ] Header: sticky, contains wordmark + track switcher + search button.
+- [ ] Homepage hero: large path treatment (`/nix/nutanix`), subtitle, optional cursor blink.
+- [ ] Footer on every page: "Written by Fred Nix · Built for BlueAlly Solutions Architects · Source on GitHub."
+- [ ] `404.astro`: terminal-style miss with `cd: no such file or directory`, recovery links.
+- [ ] Browser tab title format: `NutaNIX · Module 5: DSF Deep Dive`.
+- [ ] Open Graph + Twitter card images for share previews.
+
+**Gate:**
+- [ ] Visit `/nutanix/does-not-exist`; the 404 renders correctly with the terminal aesthetic.
+- [ ] Tab title updates correctly across navigation.
+- [ ] No em-dashes, no emoji in chrome (grep the build output to verify).
+
+**Commit:** `feat: phase 8 brand chrome; wordmark, path, 404, footer, og images`
+
+---
+
+## Phase 9 — Hero images
+
+**Goal:** every module, every appendix, the homepage have on-brand hero images.
+
+**Tasks:**
+
+- [ ] `scripts/generate-heroes.ts`: takes `_track.yaml.hero_prompt` plus per-module topic, calls AI image API, caches result in `public/images/heroes/<track>/<slug>.webp`.
+- [ ] Run for all 10 modules + 7 appendices + homepage.
+- [ ] Manual review of every output. Regenerate on-brand misses.
+- [ ] `HeroImage.astro`: lazy-loaded, AVIF with WebP fallback, max 120KB target.
+- [ ] Document the prompt strategy in `scripts/generate-heroes.ts` so re-generation is reproducible.
+
+**Gate:**
+- [ ] Every page has a hero. Every hero is on-brand.
+- [ ] Page weight per module ≤ 500KB excluding hero. Hero ≤ 150KB.
+
+**Commit:** `feat: phase 9 hero images; generated, cached, on-brand for all pages`
+
+---
+
+## Phase 10 — Print/PDF stylesheet
+
+**Goal:** "Print this module" produces a clean PDF.
+
+**Tasks:**
+
+- [ ] Print stylesheet: hide sidebar, header, search, hero. Expand all practice-question answers. Replace rough.js canvases with cached SVG snapshots or hide them with a "see online" note.
+- [ ] "Print this module" link in module footer triggers `window.print()`.
+
+**Gate:**
+- [ ] Cmd-P on Module 5 produces a readable PDF with all content and no UI chrome.
+
+**Commit:** `feat: phase 10 print stylesheet; modules export to clean pdf`
+
+---
+
+## Phase 11 — Performance + accessibility audit
+
+**Goal:** Lighthouse Performance ≥ 95, Accessibility = 100. JS-disabled readability verified.
+
+**Tasks:**
+
+- [ ] Run Lighthouse on homepage, one module, `/practice`, `/certs`. Record scores.
+- [ ] Fix any image-size, render-blocking, or unused-JS issues.
+- [ ] Verify focus states on every interactive element. Real focus rings, not browser defaults.
+- [ ] Verify keyboard navigation: tab through a full module page, including practice questions.
+- [ ] Disable JS in devtools. Visit a module. Content must still be readable. Sidebar/search/practice are allowed to be non-functional.
+- [ ] Add ARIA labels where needed (search palette, callouts, diagram figures).
+
+**Gate:**
+- [ ] Lighthouse Performance ≥ 95 on all four target pages.
+- [ ] Lighthouse Accessibility = 100 on all four.
+- [ ] Module content readable with JS disabled.
+
+**Commit:** `chore: phase 11 perf + a11y audit; lighthouse 95/100, js-disabled readable`
+
+---
+
+## Phase 12 — Deploy
+
+**Goal:** site live at `nixfred.com/nutanix`.
+
+**Tasks:**
+
+- [ ] Create the GitHub repo `nixfred/nutanix` (public). Confirm with Fred before pushing.
+- [ ] Push the project to `main`.
+- [ ] Enable GitHub Pages: Settings → Pages → Source: GitHub Actions.
+- [ ] Push triggers deploy. Verify the action succeeds.
+- [ ] Visit `https://nixfred.com/nutanix`. Click through every module. Hit Cmd-K. Submit a practice question.
+- [ ] Test on mobile (real device, not just devtools emulation).
+- [ ] Test on a flight scenario: load the site once, then put the browser offline. Cached pages should still render.
+
+**Gate:**
+- [ ] Site is live and functional at `nixfred.com/nutanix`.
+- [ ] Mobile works.
+- [ ] No console errors in production.
+
+**Commit:** `chore: phase 12 deploy; live at nixfred.com/nutanix`
+
+---
+
+## Phase 13 — Validate the zero-touch property end-to-end
+
+**Goal:** prove that the extensibility design holds in production, not just in dev.
+
+**Tasks:**
+
+- [ ] Add a throwaway second track: `src/content/tracks/_test/_track.yaml` plus one tiny module `_test/01-hello.md` with valid front matter.
+- [ ] Run `bun run dev`. Confirm the new track shows on the homepage, has its own sidebar group, has its own search scope, has prev/next within itself.
+- [ ] Build and deploy. Confirm same on production.
+- [ ] Delete the throwaway track. Confirm it disappears cleanly.
+- [ ] Document the "how to add a track" and "how to add a module" recipes in `README.md`.
+
+**Gate:**
+- [ ] The Extensibility Test passes against the live production site.
+- [ ] README documents the recipes; a newcomer can add a module without reading any other file.
+
+**Commit:** `chore: phase 13 extensibility validated end-to-end; recipes documented`
+
+---
+
+## Phase 14 (optional, Phase 2 of build) — Bookmarks + notes
+
+**Goal:** per-paragraph bookmarks and notes in localStorage. CLAUDE.md flags this as optional. Skip if Phase 13 has shipped and Fred is satisfied.
+
+**Tasks:**
+
+- [ ] Bookmark icon per paragraph (visible on hover).
+- [ ] `/bookmarks` page lists saved bookmarks.
+- [ ] Notes input on each bookmark.
+- [ ] Export-to-markdown for the bookmarks list.
+
+**Gate:**
+- [ ] Bookmarks survive page reload and navigation.
+
+**Commit:** `feat: phase 14 bookmarks + notes (optional v2 feature)`
+
+---
+
+## Risk Register (kept honest as we go)
+
+- **Schema drift over time.** Mitigated by Zod strict + CI verify-frontmatter. Re-check at Phase 13.
+- **Glossary popover noise.** First-occurrence-only rule must hold. Re-verify at Phase 5.
+- **rough.js print failure.** Addressed in Phase 10. Don't forget the SVG snapshot fallback.
+- **Search index size growth across tracks.** Per-track indexes load on demand from Phase 6 forward. Re-measure at Phase 13 with the test track.
+- **Hero image budget creep.** Hard 150KB ceiling per hero. Audit at Phase 9 and Phase 11.
+- **Hardcoded "Nutanix" strings sneaking into chrome.** Track-aware components only. Grep at Phase 13.

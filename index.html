@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · A Field Guide for BlueAlly Solutions Architects</title>
+  <meta name="description" content="A learning and reference site built from a complete 10-module Nutanix curriculum. Cert prep, customer-conversation language, whiteboard-ready diagrams. Built for working Solutions Architects." />
+  <meta name="color-scheme" content="dark" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <meta property="og:title" content="NutaNIX · A Field Guide for BlueAlly Solutions Architects" />
+  <meta property="og:description" content="Cert prep, customer-conversation language, whiteboard-ready diagrams. Built for working Solutions Architects." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nixfred.com/nutanix" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628;
+      --bg-surface: #102747;
+      --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff;
+      --text-secondary: #a8b8d4;
+      --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff;
+      --accent-cyan: #00d4ff;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      flex: 1;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 64px 32px 48px;
+      width: 100%;
+    }
+
+    header.brand {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 28px;
+      color: var(--text-primary);
+    }
+    .wordmark-nix { color: var(--accent-cyan); }
+
+    .header-meta {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .hero {
+      margin-bottom: 56px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 48px;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin: 0 0 16px;
+    }
+    .hero h1 .nix { color: var(--accent-cyan); }
+
+    .hero .subtitle {
+      font-size: 19px;
+      color: var(--text-secondary);
+      max-width: 65ch;
+      margin: 0 0 32px;
+    }
+
+    .terminal {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      color: var(--text-secondary);
+    }
+    .terminal .prompt { color: var(--accent-cyan); user-select: none; }
+    .terminal .cmd { color: var(--text-primary); }
+    .terminal .out { color: var(--text-secondary); }
+    .terminal .out a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--text-tertiary);
+    }
+    .terminal .out a:hover { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+    .terminal .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: var(--accent-cyan);
+      vertical-align: text-bottom;
+      animation: blink 1.05s steps(2) infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    section.who {
+      margin: 56px 0;
+    }
+    section.who h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    section.who ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    section.who li {
+      padding: 16px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+    }
+    section.who li strong { color: var(--text-primary); font-weight: 600; }
+
+    section.modules {
+      margin: 56px 0;
+    }
+    section.modules h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .module-card {
+      padding: 16px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .module-card .num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.04em;
+    }
+    .module-card .title {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 4px;
+    }
+    .module-card .lede {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    section.status {
+      margin: 56px 0 32px;
+      padding: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    section.status h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin: 0 0 12px;
+    }
+    section.status p { margin: 0 0 8px; color: var(--text-secondary); }
+    section.status a { color: var(--accent-cyan); text-decoration: none; }
+    section.status a:hover { text-decoration: underline; }
+
+    footer {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 32px 48px;
+      width: 100%;
+      border-top: 1px solid var(--border);
+      color: var(--text-tertiary);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer a { color: var(--text-secondary); text-decoration: none; }
+    footer a:hover { color: var(--accent-cyan); }
+    footer .path {
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+    }
+    footer .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 36px; }
+      .page { padding: 40px 20px 32px; }
+      footer { padding: 24px 20px 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="brand">
+      <span class="wordmark">Nuta<span class="wordmark-nix">NIX</span></span>
+      <span class="header-meta">/nix/nutanix</span>
+    </header>
+
+    <section class="hero">
+      <h1>A field guide<br />to <span class="nix">Nutanix</span>.</h1>
+      <p class="subtitle">
+        Written for the people who have to explain it. Cert prep, customer-conversation language,
+        whiteboard-ready diagrams, honest comparisons against the incumbent stacks.
+      </p>
+
+      <pre class="terminal" aria-label="Curriculum overview"><span class="prompt">$</span> <span class="cmd">cd /nix/nutanix</span>
+<span class="prompt">$</span> <span class="cmd">ls</span>
+<span class="out">01-hci-foundations/      06-networking-flow/      appendix-a-glossary/
+02-architecture/         07-data-protection/      appendix-b-comparison-matrix/
+03-ahv-hypervisor/       08-unified-storage/      appendix-c-scenarios/
+04-prism-management/     09-licensing-economics/  appendix-d-objections/
+05-dsf-storage/          10-migration-path/       appendix-e-discovery-questions/
+                                                  appendix-f-sizing-rules/
+                                                  appendix-g-cli-reference/</span>
+<span class="prompt">$</span><span class="cursor"></span></pre>
+    </section>
+
+    <section class="who">
+      <h2>Who this is for</h2>
+      <ul>
+        <li><strong>You came from VMware</strong> and you need the translation layer, not a 101.</li>
+        <li><strong>You have 30 seconds</strong> between meetings and you need the answer fast.</li>
+        <li><strong>You have two hours</strong> on a Saturday and you are studying for NCP-MCI.</li>
+        <li><strong>You will be sitting across</strong> from a competing architect next week and you need real comparisons.</li>
+      </ul>
+    </section>
+
+    <section class="modules">
+      <h2>Ten modules</h2>
+      <div class="module-grid">
+        <div class="module-card"><span class="num">01</span><span class="title">HCI Foundations</span><span class="lede">Why hyperconverged, what it replaces.</span></div>
+        <div class="module-card"><span class="num">02</span><span class="title">Nutanix Architecture</span><span class="lede">CVM, Stargate, Cassandra, Curator.</span></div>
+        <div class="module-card"><span class="num">03</span><span class="title">AHV Hypervisor</span><span class="lede">The hypervisor most engineers underestimate.</span></div>
+        <div class="module-card"><span class="num">04</span><span class="title">Prism Management</span><span class="lede">Element vs Central, what each is for.</span></div>
+        <div class="module-card"><span class="num">05</span><span class="title">DSF Storage Deep Dive</span><span class="lede">The data path, tiering, locality.</span></div>
+        <div class="module-card"><span class="num">06</span><span class="title">Networking and Flow</span><span class="lede">Microsegmentation without the theater.</span></div>
+        <div class="module-card"><span class="num">07</span><span class="title">Data Protection</span><span class="lede">Snapshots, NearSync, Metro, Leap.</span></div>
+        <div class="module-card"><span class="num">08</span><span class="title">Unified Storage</span><span class="lede">Files, Objects, Volumes.</span></div>
+        <div class="module-card"><span class="num">09</span><span class="title">Licensing and Economics</span><span class="lede">The conversation customers want to have.</span></div>
+        <div class="module-card"><span class="num">10</span><span class="title">Migration Path</span><span class="lede">Move, design tradeoffs, what goes wrong.</span></div>
+      </div>
+    </section>
+
+    <section class="status">
+      <h2>Site under construction</h2>
+      <p>The full site is being built in phases. This holding page goes up first so the URL works.</p>
+      <p>Source and the curriculum markdown: <a href="https://github.com/nixfred/nutanix">github.com/nixfred/nutanix</a></p>
+    </section>
+  </div>
+
+  <footer>
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix</span>
+  </footer>
+</body>
+</html>
