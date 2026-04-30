@@ -97,13 +97,14 @@ ncli storage-container list
 
 Output shows each container's name, ID, RF, compression state, dedup state, and capacity.
 
-**Show storage utilization:**
+**Show fault tolerance status:**
 
 ```bash
-ncli cluster get-domain-fault-tolerance-status
+ncli cluster get-domain-fault-tolerance-status type=node
+ncli cluster get-domain-fault-tolerance-status type=rackable_unit
 ```
 
-Reports cluster-wide fault tolerance and capacity headroom.
+Reports cluster-wide fault tolerance per component (STATIC_CONFIGURATION, ERASURE_CODE_STRIP_SIZE, METADATA, ZOOKEEPER, EXTENT_GROUPS, OPLOG). The `type=` parameter is required: use `node` for node-level FT, `rackable_unit` for block-level FT. (Older docs sometimes show this command without `type=`; current AOS requires the parameter.)
 
 **List hosts:**
 
@@ -116,10 +117,10 @@ Returns host IDs, names, hypervisor, status, CPU and memory totals.
 **Run a health check:**
 
 ```bash
-ncli health-check run-all
+ncc health_checks run_all
 ```
 
-Equivalent to NCC's full check; can take several minutes on large clusters.
+NCC is the canonical tool for cluster health checks (covered in detail below). The `ncli` surface used to expose a thin health-check passthrough but the canonical command is the `ncc` form. Run from any CVM; can take several minutes on large clusters.
 
 **Check replication state:**
 
@@ -502,14 +503,14 @@ cluster status
 
 ```bash
 # CVM-level latency observations
-ncli cluster get-domain-fault-tolerance-status
+ncli cluster get-domain-fault-tolerance-status type=node
 ncli storage-pool list
 
-# Stargate stats
-allssh "links http://0:2009/h/stargate"
+# Stargate vdisk_stats page (per-node I/O metrics)
+allssh "links http://127.0.0.1:2009"
 ```
 
-The Stargate 2009 page exposes per-node I/O metrics; hot-spotted nodes show up here. The pattern is also visible in Prism Element and Prism Central performance views.
+The Stargate **2009** page (the `vdisk_stats` page) exposes per-node I/O metrics including per-vDisk latency histograms, randomness, I/O sizes, and working-set details; hot-spotted nodes show up here. By default the page is locked down to the local CVM via iptables and is not reachable cross-subnet, which is why the recipe uses the `links` text browser from inside the CVM. The same data is also visible in Prism Element and Prism Central performance views.
 
 ### "Which VMs are running on which host?"
 
@@ -527,7 +528,7 @@ acli host.list_vms <host-name>
 ### "What's the rebuild status after a failure?"
 
 ```bash
-ncli cluster get-domain-fault-tolerance-status
+ncli cluster get-domain-fault-tolerance-status type=node
 ncli storage-pool list
 ```
 
@@ -596,6 +597,20 @@ Output is a tarball under `/home/nutanix/data/log_collector/` typically. Upload 
 4. **Editing OVS directly when `manage_ovs` exists.** Direct OVS edits can break Nutanix's expected configuration.
 5. **Treating CLI as the primary management surface.** Prism is the customer-facing path; CLI is for break-fix, scripting, and verification.
 6. **Skipping `--help`.** Syntax evolves; the running version is the authority.
+
+---
+
+## References
+
+CLI syntax evolves between AOS versions; the official command-reference docs are the authoritative source for the running version.
+
+- [AOS 6.8 nCLI Command Reference (portal)](https://portal.nutanix.com/page/documents/details?targetId=Command-Ref-AOS-v6_8:man-ncli-c.html). Authoritative ncli reference; backs the cluster, host, storage-container, and protection-domain command sets.
+- [Nutanix Bible — CLI Reference](https://www.nutanixbible.com/19b-cli.html). Independent walkthrough of the cluster, ncli, ncc, and acli surfaces.
+- [Nutanix Bible — AOS Administration](https://www.nutanixbible.com/4f-book-of-aos-administration.html). Covers the Stargate 2009 page, vdisk_stats access patterns, and other internal status pages.
+- [Nutanix Stargate 2009 / 2010 Pages (community walkthrough)](https://thenextbist.wordpress.com/2014/03/05/nutanix-20092010-pages-unavailable/). Background on the access patterns and the iptables / cross-subnet restrictions.
+- [Advanced Storage Performance Monitoring with Nutanix (Josh Odgers)](https://www.joshodgers.com/2015/06/25/advanced-storage-performance-monitoring-with-nutanix/). The 2009 vdisk_stats page in operational use.
+- [Required Ports for Admin Access and Tools](https://next.nutanix.com/how-it-works-22/required-ports-for-admin-access-and-tools-33173). Cluster-port reference for the management surfaces.
+- [Nutanix Move Product Page](https://www.nutanix.com/products/move). Move CLI and REST API as the automation surface.
 
 ---
 

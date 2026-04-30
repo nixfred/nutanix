@@ -342,7 +342,26 @@ Appendices:
     - Object Service VM minimum 3 confirmed.
   - Suspect (kept as-is):
     - "Per LUN: up to 64 TB practical" — Nutanix Volumes per-LUN limits evolve; couldn't quickly verify the 64 TB number against current docs. Curriculum already adds "verify against current Nutanix limits at design time" caveat. Acceptable.
-- [ ] appendix-g-cli-reference.md
+- [x] appendix-g-cli-reference.md — STATUS: findings-recorded, four corrections made, References section added
+  - Corrections applied:
+    - **`ncli cluster get-domain-fault-tolerance-status` requires `type=` parameter** (`type=node` for node-level FT, `type=rackable_unit` for block-level). Curriculum had the command without the parameter; current AOS requires it. Fixed in three places (main listing + two diagnostic recipes). Added a note about the per-component output (STATIC_CONFIGURATION, ERASURE_CODE_STRIP_SIZE, METADATA, ZOOKEEPER, EXTENT_GROUPS, OPLOG).
+    - **`ncli health-check run-all` replaced with `ncc health_checks run_all`** as the canonical syntax. The ncli surface used to expose a thin passthrough to NCC, but the canonical command is the `ncc` form covered in detail later in the appendix.
+    - **Stargate URL recipe corrected**: `links http://0:2009/h/stargate` → `links http://127.0.0.1:2009`. The 2009 page is the vdisk_stats page and is locked down by iptables to the local CVM (not cross-subnet), which is why the `links` text browser is run from inside the CVM. Added the iptables-restriction context.
+    - **Page name**: clarified the 2009 page is the **vdisk_stats** page with histogram-style per-vDisk metrics, matching the public Nutanix Bible AOS Administration chapter.
+  - Confirmed:
+    - SSH connection patterns for CVM (`nutanix` user) and AHV host (`root` user) accurate.
+    - `allssh` and `hostssh` cluster-wide command wrappers confirmed.
+    - `ncli` object types (cluster, host, storage-container, storage-pool, network, protection-domain, data-services-vip, vm) consistent with portal command reference.
+    - `acli` VM, storage, and network command syntax accurate.
+    - `acli` dotted-method syntax (`vm.list`, `storage_container.create`, `net.add_dhcp_pool`) confirmed.
+    - NCC categories (hardware_checks, network_checks, cluster_checks, data_protection_checks, system_checks, metadata_checks) accurate.
+    - `ovs-vsctl`, `ovs-ofctl`, `ovs-appctl` syntax accurate.
+    - `manage_ovs` wrapper usage accurate (Module 06 already verified bond modes).
+    - Move CLI command shape (move version / status / env list / plan list / plan start / plan cutover) reasonable; verified against Move product positioning in Module 03 review.
+    - `cluster status` for service-state-per-CVM, `upgrade_status` for component versions accurate.
+    - `ncc log_collector run_all` for support log bundles accurate.
+  - Suspect (kept as-is):
+    - Move log file path `/opt/xtract-vm/logs/` — Move's history includes the legacy "Xtract" branding; the path persists in some Move versions. Acceptable as-is.
 - [ ] appendix-h-competitive-matrix.md
 - [ ] appendix-i-reference-architectures.md
 - [ ] appendix-j-poc-playbook.md
