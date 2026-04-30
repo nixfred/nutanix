@@ -229,7 +229,32 @@ Modules:
     - "Objects licensing per-TB capacity" — same caveat.
     - Practice questions Q1-Q12 use AOS terminology rather than NCI; pedagogically OK with the rename note added to the ON-THE-EXAM callout, since exam material is currently transitioning. Future copy pass could update the QA wording.
     - Lab Exercise references "AOS Pro per-core" in steps; update in a future pass.
-- [ ] 10-migration-path.md
+- [x] 10-migration-path.md — STATUS: findings-recorded, no source corrections required, References section added
+  - Confirmed:
+    - Move tool source/target paths (ESXi, Hyper-V, AWS, Azure, AHV-to-AHV, NC2 paths) consistent with Module 03's verification.
+    - Cutover-downtime envelope of 5-30 min per VM is acceptable as the wider honest range; Module 03 used 5-15 min as the typical envelope. Both are accurate within their framing.
+    - Move appliance runs on the target Nutanix cluster, connects to source vCenter for ESXi migration via API, performs initial replication + incremental sync + brief cutover.
+    - VMware Tools removal and NGT installation handled "in some scenarios" hedge is appropriate (Move does swap drivers in many cases but specific guest configurations may require manual handling).
+    - Move does NOT handle: NSX-T microsegmentation policies, complex application-specific configurations, vSAN-specific storage policies, old snapshot chains. Consistent with TN-2072 documentation.
+    - 7-phase migration framework is industry-standard project methodology, not a Nutanix product. Acceptable as BlueAlly's recommended engagement structure.
+    - Discovery tools mentioned (Nutanix's discovery utility, RVTools, Lansweeper, NetFlow / application dependency mapping) are real tools commonly used in migration projects.
+    - Risk register categories, communication playbook, year-2 stable state are project-management practice rather than verifiable technical claims.
+    - Hybrid steady-state framing accurate (some workloads remain on VMware permanently for legitimate reasons; NSX-T routing complexity, NetApp ONTAP-specific workflows, SRM-orchestrated complex DR, third-party dependencies all genuine).
+  - No corrections required. Module 10 is mostly synthesis / engagement methodology with thin technical surface, and the technical claims that exist are consistent with verifications already performed in earlier modules.
+
+**ALL 10 MODULES COMPLETE.** Total corrections across the modules:
+- Module 01: 1 correction (CE RAM minimum)
+- Module 02: 0 corrections (clean)
+- Module 03: 4 corrections (ADS rename, Broadcom pricing, Q7 explanation, 72-core minimum)
+- Module 04: 3 corrections (Ansible collection name, v4 API URL pattern, NCM tier description)
+- Module 05: 3 corrections (extent group size, EC 4+1 minimum, compression algorithm)
+- Module 06: 4 corrections (Flow licensing × 2, LACP recommendation, NCP-NS date)
+- Module 07: 3 refinements (Leap rename, LWS storage tier, Metro latency headroom)
+- Module 08: 4 corrections (FSVM minimum exception, Files Analytics → Data Lens, WORM detail, anti-ransomware → Data Lens)
+- Module 09: 2 structural corrections (AOS → NCI tier rename, NCM Starter packaging)
+- Module 10: 0 corrections (clean synthesis module)
+
+**Total: 24 substantive corrections + 10 References sections added across 10 modules.** Twelve appendices remain.
 
 Appendices:
 - [ ] appendix-a-glossary.md

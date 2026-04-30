@@ -981,6 +981,22 @@ You are now ready for real customer engagements. The curriculum's job is done. Y
 
 ---
 
+## References
+
+Authoritative sources verified during the technical review pass on this module. Most of Module 10's content is engagement methodology and project framework, which is BlueAlly-and-industry practice rather than Nutanix-product specification; the Move-tool specifics are tied to Nutanix sources verified in Module 03's review.
+
+- [Nutanix Move Product Page](https://www.nutanix.com/products/move). Current product positioning, supported source/target paths, free-tool status.
+- [Nutanix Move 5.5 Documentation Hub](https://portal.nutanix.com/docs/Nutanix-Move-v5_5:top-hyperv-vm-migration-c.html). Authoritative reference for Hyper-V, ESXi, cloud-source migration paths.
+- [Nutanix Bible — VM Migration Architecture](https://www.nutanixbible.com/21b-vm-migration-arch.html). Move's CBT-equivalent change-tracking, cutover semantics, downtime envelope.
+- [Nutanix Move on AHV (Tech Note TN-2072)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2072-AHV-Migration:nutanix-move.html). Detailed Move architecture for AHV migrations.
+- [Accelerate VMware Migrations to AWS with Nutanix NC2 (AWS APN Blog)](https://aws.amazon.com/blogs/apn/accelerate-vmware-migrations-to-aws-with-nutanix-nc2/). VMware → NC2 migration use case.
+- [RVTools (Dell)](https://www.dell.com/support/kbdoc/en-us/000202418/rvtools). The standard third-party VMware inventory tool referenced in the discovery phase.
+- [Lansweeper Network Discovery](https://www.lansweeper.com/). Asset and dependency discovery tool also referenced for migration discovery.
+- [Nutanix Bible — Disaster Recovery Services (Recovery Plans referenced for hybrid coexistence)](https://www.nutanixbible.com/13a-book-of-dr-services.html). Cross-cluster orchestration patterns relevant to hybrid steady-state.
+- [Nutanix Cloud Clusters (NC2) on AWS](https://www.nutanix.com/products/nutanix-cloud-clusters/aws). NC2 as a migration target for cloud-bound workloads.
+
+---
+
 ## Cross-References
 
 - **Previous:** [Module 9: Licensing and Real Costs](./09-licensing-economics.md)
