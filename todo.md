@@ -133,7 +133,28 @@ Modules:
     - PC lab specs "vCPU: 6, RAM: 26 GB" do not match either current public source (small instance is documented as 4 vCPU / 18 GB; 3-VM scale-out is 6 vCPU / 28 GB per VM). Curriculum's numbers may be a mid-version data point or an aggregate; flagged for portal cross-check during Phase TR finalization.
     - PowerShell module names `Nutanix.Prism.Common`, `Nutanix.Prism.PS.Module` could not be confirmed from public sources; the official PowerShell SDK lives at github.com/nutanix/nutanix-powershell-sdk. Flag for cross-check.
     - "Pulumi provider" mentioned; current Pulumi support for Nutanix appears to be community-maintained, not official Nutanix. Worth a clarifying note in a future copy pass.
-- [ ] 05-dsf-storage-deep-dive.md
+- [x] 05-dsf-storage-deep-dive.md — STATUS: findings-recorded, three corrections made, References section added
+  - Corrections applied:
+    - **Extent Group size is 1 MB or 4 MB, not just 4 MB.** Curriculum claimed "Extent Group: a 4 MB physical allocation unit." Per the Nutanix Bible and the Polar Clouds DSF walkthrough, an extent group is **1 MB on non-deduplicated containers** and **4 MB on deduplicated containers**. Updated the hierarchy definition and the related ON-THE-EXAM callout.
+    - **EC 4+1 minimum cluster size is 6 nodes, not 5.** Curriculum's EC table and the rf-vs-ec-comparison diagram both said "Min cluster: 5 nodes" for 4+1. Per Nutanix's TN-2032 erasure-coding solution brief, the optimal 4+1 stripe is supported on clusters of ≥ 6 nodes (the math is 5 nodes for the stripe + 1 for rebuild headroom). Updated the table, added an explanatory paragraph, and updated the diagram annotation.
+    - **Compression algorithm is LZ4 + LZ4HC, not LZ4 + zstd.** Curriculum claimed "LZ4 by default with optional zstd for higher ratios at higher CPU cost." Per the Nutanix Bible AOS Storage chapter and the TN-2032 compression brief, DSF uses **LZ4 for inline compression** (latency-critical path) and **LZ4HC for cold-data / post-process compression** (better ratio at higher CPU). Zstd is not used in standard DSF. Rewrote the algorithm paragraph and added the inline-selectivity detail (>64K sequential streams only).
+  - Confirmed:
+    - Storage hierarchy Pool → Container → vDisk → Extent → Extent Group is accurate.
+    - Extent (logical) is 1 MB; Cassandra tracks each extent's physical location.
+    - OpLog is persistent, on local hot tier (NVMe/SSD), serves as write buffer; writes acknowledged after local + remote OpLog persist (RF2 = 1 remote, RF3 = 2 remote); Extent Store drain is asynchronous.
+    - Stargate write characterizer routes random/bursty writes to OpLog and sustained sequential writes directly to Extent Store. Curriculum has this correctly.
+    - Content Cache is in CVM RAM. Confirmed.
+    - Cassandra metadata replication is 3 copies by default (configurable up to 5). Curriculum doesn't quantify this but the architectural framing is correct.
+    - RF2 = 50% effective, RF3 = 33% effective. Confirmed.
+    - EC 4+2 minimum cluster size is 7 nodes. Confirmed (curriculum was correct on this row).
+    - Curator handles re-replication, EC conversion, ILM, capacity reclamation, rebalancing. Confirmed.
+    - Curator runs full scans every 6-24 hours and partial scans more frequently. Order-of-magnitude correct per Nutanix Bible.
+    - Storage-only nodes contribute capacity to the pool but minimal compute. Confirmed.
+    - LZ4HC mention adds value: cold-tier data benefits from the higher-compression variant.
+  - Suspect (kept as-is):
+    - Capacity reservation "10-15%" is a planning rule of thumb. Real reservations vary with cluster size and configuration; the curriculum's range is reasonable but not precisely sourced.
+    - "Bigger clusters rebuild faster (more nodes share the work)" — directionally true; specific time estimates are workload-dependent.
+    - The DSF-internal "Cassandra" terminology versus the customer-workload "Cassandra-on-Nutanix" reference (BP-2007) could trip a careful reader; pedagogically OK as the curriculum is clear that DSF's Cassandra is the metadata service.
 - [ ] 06-networking-flow.md
 - [ ] 07-data-protection.md
 - [ ] 08-unified-storage.md

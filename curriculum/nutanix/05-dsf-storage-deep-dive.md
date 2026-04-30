@@ -108,10 +108,10 @@ Before tracing any I/O, you need the vocabulary. DSF uses a specific hierarchy:
 
 4. **Extent.** A contiguous range of bytes within a vDisk, typically 1 MB. Extents are the unit of metadata in Cassandra. Each extent has a metadata record indicating where it is physically stored.
 
-5. **Extent Group.** A 4 MB physical allocation unit on disk. Extent Groups contain multiple extents and are the unit of writing to the Extent Store. Multiple extents from one or more vDisks may share an Extent Group.
+5. **Extent Group.** The physical allocation unit on disk that holds extents. An Extent Group is **1 MB on non-deduplicated containers** and **4 MB on deduplicated containers**. Extent Groups are the unit of writing to the Extent Store. Multiple extents from one or more vDisks may share an Extent Group.
 
 > [!ON-THE-EXAM] **NCA · NCP-MCI · NCM-MCI**
-> The hierarchy is testable in multiple forms. Common question patterns: which level is the policy boundary (Storage Container)? What is an Extent (1 MB metadata unit)? What is an Extent Group (4 MB physical allocation unit)? Trap distractor: questions that swap "extent" and "extent group" definitions, or that imply the Storage Pool is the policy boundary (it is not; the Container is). Memorize the hierarchy in order: **Pool → Container → vDisk → Extent → Extent Group.**
+> The hierarchy is testable in multiple forms. Common question patterns: which level is the policy boundary (Storage Container)? What is an Extent (1 MB metadata unit)? What is an Extent Group (1 MB on non-dedup containers; 4 MB on dedup-enabled containers)? Trap distractor: questions that swap "extent" and "extent group" definitions, or that imply the Storage Pool is the policy boundary (it is not; the Container is). Memorize the hierarchy in order: **Pool → Container → vDisk → Extent → Extent Group.**
 
 > [!FAMILIAR]
 > The hierarchy maps roughly onto traditional array concepts. Storage Pool is analogous to an array's aggregate or storage pool. Storage Container is analogous to a LUN or volume that carries policy attributes (block size, deduplication, compression). vDisk is analogous to a virtual disk file (`.vmdk`) backed by the volume. The mapping is not exact, but if you understand SAN concepts, the DSF hierarchy will feel familiar after a short orientation.
@@ -319,8 +319,10 @@ DSF's implementation is called **EC-X.** It is configurable per Storage Containe
 
 | Configuration | Stripe (data + parity) | Capacity overhead | Failure tolerance | Minimum cluster size |
 |---|---|---|---|---|
-| EC equivalent of RF2 | 4+1 (4 data, 1 parity) | 25% (vs RF2's 100%) | 1 node | 5 nodes |
+| EC equivalent of RF2 | 4+1 (4 data, 1 parity) | 25% (vs RF2's 100%) | 1 node | 6 nodes (4 for the stripe + 1 parity + 1 for rebuild headroom) |
 | EC equivalent of RF3 | 4+2 (4 data, 2 parity) | 50% (vs RF3's 200%) | 2 nodes | 7 nodes |
+
+EC can technically be enabled on a 4-node cluster (4 data, 0 parity is degenerate; small stripes are supported), but Nutanix's recommended optimal stripe sizes (4+1, 4+2) need at least 6 and 7 nodes respectively for proper data distribution and rebuild headroom.
 
 The capacity savings are substantial. Going from RF2 to EC 4+1 reduces capacity overhead from 100% (50% effective) to 25% (75% effective). On a 200 TB raw cluster, that is the difference between 100 TB usable and 150 TB usable: a 50% increase in effective capacity, with the same failure tolerance.
 
@@ -378,7 +380,7 @@ EC is a powerful capacity tool for the right workloads. Misapplied to write-heav
 - Capacity used: 1.25 GB for 1 GB of data
 - Overhead label: "25% overhead (80% effective)"
 - Failure tolerance label: "1 node loss"
-- Note: "Min cluster: 5 nodes"
+- Note: "Min cluster: 6 nodes (Nutanix-recommended for the 4+1 stripe)"
 
 **Panel 4: EC 4+2**
 - 8 nodes shown
@@ -406,7 +408,7 @@ DSF supports compression at the Storage Container level. It happens during the O
 - **Inline compression.** Applied during drain. The default in modern AOS for most workloads.
 - **Post-process compression.** Applied later by Curator on data that wasn't compressed during drain. Older AOS versions defaulted to this; current AOS uses inline as default.
 
-**Compression algorithm.** DSF uses LZ4 by default (fast, modest ratios) with optional zstd for higher ratios at higher CPU cost. The actual ratio depends on data type: text, logs, and OS images compress 2-3x; already-compressed data (encrypted, JPEG, video) compresses minimally.
+**Compression algorithms.** DSF uses **LZ4** for inline compression on incoming writes (fast, modest ratios, suitable for the latency-critical path). For cold data that has aged onto the cold tier or that Curator processes post-hoc, DSF uses **LZ4HC** (high-compression LZ4), which trades CPU for tighter ratios. The actual ratio depends on data type: text, logs, and OS images compress 2-3x; already-compressed data (encrypted, JPEG, video) compresses minimally. Inline compression is selective: it applies to sequential streams and large I/Os (>64K) to avoid impacting random write performance.
 
 **Real-world ratios:** Mixed enterprise workloads typically achieve 1.5x to 2.5x compression ratios on DSF. Marketing numbers of 4-6x reflect best-case scenarios. Plan capacity using 2x for general workloads, 1.2x for already-compressed data, and let actual performance guide adjustment.
 
@@ -959,6 +961,23 @@ You can do capacity planning math: raw, RF, reservation, compression, dedup, eff
 You have twelve practice questions worth of storage discrimination: OpLog vs Content Cache, hierarchy navigation, RF mechanics, EC tradeoffs, capacity calculation, failure recovery, Curator role, storage-only nodes, and two NCX-style design defenses (workload-aware container design, and the architectural defense against a senior incumbent storage architect).
 
 You are now ready for networking. Module 6 takes the same depth treatment to AHV networking, Open vSwitch, virtual switches, VLANs, bridges, and Flow microsegmentation. The shape of the network matters; for some customers, it is the dimension that decides the deal.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. The DSF data path, EC stripe configurations, and compression-algorithm details are heavily tested on NCP-MCI and NCM-MCI; cite these when defending architecture in front of a senior storage admin.
+
+- [Nutanix Bible — AOS Storage (DSF)](https://www.nutanixbible.com/4c-book-of-aos-storage.html). Authoritative source for the storage hierarchy (Pool → Container → vDisk → Extent → Extent Group), data path (Stargate, OpLog, Extent Store, Content Cache), Cassandra metadata replication (default 3 copies, configurable up to 5), and compression algorithm details (LZ4 inline + LZ4HC for cold data).
+- [Nutanix Bible — Polar Clouds DSF Concepts Walkthrough](https://polarclouds.co.uk/nutanix-storage-concepts/). Independent walkthrough of the storage hierarchy with the 1 MB / 4 MB extent group sizing distinction (1 MB on non-dedup containers, 4 MB on dedup-enabled).
+- [Nutanix Erasure Coding Solution Brief (TN-2032)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2032-Data-Efficiency:erasure-coding.html). Authoritative source for EC-X stripe configurations, minimum cluster sizes (4+1 needs ≥ 6 nodes recommended; 4+2 needs ≥ 7 nodes), capacity overhead math.
+- [Nutanix Erasure Coding Reference (TN-2002)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2002-Erasure-Coding:TN-2002-Erasure-Coding). Original erasure coding tech note.
+- [Nutanix Compression Reference (TN-2032 Compression section)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2032-Data-Efficiency:compression.html). LZ4 inline + LZ4HC for cold data; inline compression selectivity (>64K and sequential streams only).
+- [Nutanix Compression FAQ (KB-17546)](https://portal.nutanix.com/kb/17546). Customer-facing FAQ on compression behavior.
+- [Sequential I/O and the OpLog vs Extent Store (Nutanix Community)](https://next.nutanix.com/how-it-works-22/sequential-i-o-and-the-oplog-versus-the-extent-store-39228). The Stargate write characterizer's routing decision (random → OpLog; sustained sequential → Extent Store directly).
+- [Cassandra on Nutanix (BP-2007)](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2007-Cassandra-on-Nutanix:BP-2007-Cassandra-on-Nutanix). Best-practices reference for Cassandra-on-Nutanix workloads (different from DSF's internal Cassandra metadata service, but useful context).
+- [Nutanix Core Performance Reference (TN-2096)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2096-Nutanix-Core-Performance:TN-2096-Nutanix-Core-Performance). I/O path and performance characterization.
+- [Nutanix Process Flashcards (Quizlet)](https://quizlet.com/503220778/nutanix-process-flash-cards/). Useful exam-prep summary of DSF concepts; not authoritative on its own but a fast cross-check for terminology.
 
 ---
 
