@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Isometric cross-section of a four-node Nutanix cluster: each node shows the hypervisor layer beneath the CVM and user VMs, with a distributed-storage-fabric mesh tying them together.">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#15294a"/>
+      <stop offset="65%" stop-color="#0c1c36"/>
+      <stop offset="100%" stop-color="#070f20"/>
+    </radialGradient>
+
+    <!-- Standard cube faces (hypervisor + disks layer) -->
+    <linearGradient id="ftop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d6aa6"/>
+      <stop offset="100%" stop-color="#27497a"/>
+    </linearGradient>
+    <linearGradient id="fleft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f3a66"/>
+      <stop offset="100%" stop-color="#142a4d"/>
+    </linearGradient>
+    <linearGradient id="fright" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="100%" stop-color="#091a33"/>
+    </linearGradient>
+
+    <!-- CVM band: rust/orange to mark the CVM layer -->
+    <linearGradient id="cvmLeft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#b04a26"/>
+      <stop offset="100%" stop-color="#7a3319"/>
+    </linearGradient>
+    <linearGradient id="cvmRight" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8c3b1d"/>
+      <stop offset="100%" stop-color="#5e2812"/>
+    </linearGradient>
+
+    <radialGradient id="dot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9ce8ff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#00d4ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+
+    <pattern id="grid" width="80" height="46.188" patternUnits="userSpaceOnUse">
+      <path d="M 0 23.094 L 40 0 L 80 23.094 L 40 46.188 Z" fill="none" stroke="#2a4d7a" stroke-width="0.5" opacity="0.32"/>
+    </pattern>
+
+    <!--
+      A full-architecture node, drawn larger than M1's cubes so the internal
+      layers are legible. Width 156, total height ~340. Layered top-to-bottom:
+        - top diamond (hypervisor surface label)
+        - hypervisor band (blue)
+        - CVM band (rust)
+        - user VMs band (light blue stripes via crosshatch implied by lines)
+        - disks band (deep navy)
+    -->
+    <symbol id="archnode" overflow="visible">
+      <!-- hypervisor band (top diamond + side faces) -->
+      <polygon points="0,-78 117,-15 0,48 -117,-15" fill="url(#ftop)" stroke="#4a9eff" stroke-width="1.2" stroke-opacity="0.6"/>
+      <!-- left + right faces, hypervisor band depth ~32 -->
+      <polygon points="-117,-15 0,48 0,80 -117,17" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1"/>
+      <polygon points="117,-15 0,48 0,80 117,17" fill="url(#fright)" stroke="#1f3a66" stroke-width="1"/>
+
+      <!-- CVM band (~40 tall, rust/orange) -->
+      <polygon points="-117,17 0,80 0,120 -117,57" fill="url(#cvmLeft)" stroke="#b04a26" stroke-width="1" stroke-opacity="0.6"/>
+      <polygon points="117,17 0,80 0,120 117,57" fill="url(#cvmRight)" stroke="#b04a26" stroke-width="1" stroke-opacity="0.6"/>
+      <!-- CVM top edge highlight -->
+      <polyline points="-117,17 0,80 117,17" fill="none" stroke="#00d4ff" stroke-width="0.7" opacity="0.45"/>
+
+      <!-- user VMs band (~36 tall, lighter mid-blue) -->
+      <polygon points="-117,57 0,120 0,156 -117,93" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1" opacity="0.85"/>
+      <polygon points="117,57 0,120 0,156 117,93" fill="url(#fright)" stroke="#1f3a66" stroke-width="1" opacity="0.85"/>
+      <!-- VM divider lines on left face -->
+      <line x1="-78" y1="78"  x2="-78" y2="114" stroke="#4a9eff" stroke-width="0.5" opacity="0.35"/>
+      <line x1="-39" y1="99"  x2="-39" y2="135" stroke="#4a9eff" stroke-width="0.5" opacity="0.35"/>
+      <line x1="39"  y1="99"  x2="39"  y2="135" stroke="#4a9eff" stroke-width="0.5" opacity="0.35"/>
+      <line x1="78"  y1="78"  x2="78"  y2="114" stroke="#4a9eff" stroke-width="0.5" opacity="0.35"/>
+
+      <!-- disks band (deepest, dark) -->
+      <polygon points="-117,93 0,156 0,196 -117,133" fill="url(#fright)" stroke="#0d2244" stroke-width="1"/>
+      <polygon points="117,93 0,156 0,196 117,133" fill="url(#fright)" stroke="#0d2244" stroke-width="1"/>
+      <!-- disk hash marks on each side face -->
+      <line x1="-100" y1="116" x2="-30"  y2="153" stroke="#4a9eff" stroke-width="0.6" opacity="0.30"/>
+      <line x1="-100" y1="128" x2="-30"  y2="165" stroke="#4a9eff" stroke-width="0.6" opacity="0.30"/>
+      <line x1="100"  y1="116" x2="30"   y2="153" stroke="#4a9eff" stroke-width="0.6" opacity="0.30"/>
+      <line x1="100"  y1="128" x2="30"   y2="165" stroke="#4a9eff" stroke-width="0.6" opacity="0.30"/>
+
+      <!-- accent dot at apex -->
+      <circle cx="0" cy="-15" r="2.6" fill="#00d4ff"/>
+      <circle cx="0" cy="-15" r="6" fill="url(#dot)" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <!-- background -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.5"/>
+
+  <!-- soft cyan vignette behind the cluster -->
+  <ellipse cx="800" cy="450" rx="540" ry="280" fill="#00d4ff" opacity="0.06" filter="url(#softGlow)"/>
+
+  <!-- DSF replication mesh (drawn first, behind nodes) -->
+  <g stroke="#00d4ff" stroke-opacity="0.32" stroke-width="1.1" fill="none">
+    <!-- horizontal pairs, top of cube anchor at (cx, cy-15) -->
+    <line x1="430"  y1="365" x2="780"  y2="365"/>
+    <line x1="780"  y1="365" x2="1130" y2="365"/>
+    <!-- bottom row -->
+    <line x1="430"  y1="565" x2="780"  y2="565"/>
+    <line x1="780"  y1="565" x2="1130" y2="565"/>
+    <!-- diagonals -->
+    <line x1="430"  y1="365" x2="780"  y2="565"/>
+    <line x1="780"  y1="365" x2="430"  y2="565"/>
+    <line x1="780"  y1="365" x2="1130" y2="565"/>
+    <line x1="1130" y1="365" x2="780"  y2="565"/>
+    <!-- vertical -->
+    <line x1="430"  y1="365" x2="430"  y2="565" stroke-opacity="0.18"/>
+    <line x1="780"  y1="365" x2="780"  y2="565" stroke-opacity="0.18"/>
+    <line x1="1130" y1="365" x2="1130" y2="565" stroke-opacity="0.18"/>
+  </g>
+
+  <!--
+    Cluster: 4 prominent nodes in a 3-2 staggered layout
+    (top row 3 across, bottom row offset). Wider cubes show the
+    internal architecture layers per Module 2's anatomy diagram.
+  -->
+  <use href="#archnode" x="430"  y="380"/>
+  <use href="#archnode" x="780"  y="380"/>
+  <use href="#archnode" x="1130" y="380"/>
+  <use href="#archnode" x="605"  y="580"/>
+  <use href="#archnode" x="955"  y="580"/>
+
+  <!-- Layer labels on the right side, faint -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="11" fill="#6b7a9a" letter-spacing="0.06em">
+    <line x1="1150" y1="375"  x2="1280" y2="375"  stroke="#3a6090" stroke-width="0.8" opacity="0.7"/>
+    <text x="1290" y="379">HYPERVISOR</text>
+    <line x1="1150" y1="437"  x2="1280" y2="437"  stroke="#b04a26" stroke-width="0.9" opacity="0.7"/>
+    <text x="1290" y="441" fill="#d97c4a">CVM</text>
+    <line x1="1150" y1="475"  x2="1280" y2="475"  stroke="#3a6090" stroke-width="0.8" opacity="0.7"/>
+    <text x="1290" y="479">USER VMs</text>
+    <line x1="1150" y1="513"  x2="1280" y2="513"  stroke="#3a6090" stroke-width="0.8" opacity="0.7"/>
+    <text x="1290" y="517">LOCAL DISKS</text>
+  </g>
+
+  <!-- Foreground accent: subtle scanlines at bottom -->
+  <rect x="0" y="858" width="1600" height="1" fill="#00d4ff" opacity="0.18"/>
+  <rect x="0" y="862" width="1600" height="1" fill="#00d4ff" opacity="0.08"/>
+
+  <!-- Mono path treatment, top-left -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6b7a9a">
+    <text x="48" y="56" letter-spacing="0.04em"><tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix<tspan fill="#a8b8d4">/02-nutanix-architecture</tspan></text>
+  </g>
+
+  <!-- Module label, bottom-left -->
+  <g font-family="Inter, system-ui, sans-serif" fill="#a8b8d4">
+    <text x="48" y="816" font-size="13" letter-spacing="0.18em" font-weight="600" fill="#6b7a9a">MODULE 02</text>
+    <text x="48" y="852" font-size="34" font-weight="700" letter-spacing="-0.02em" fill="#e8f0ff">The Nutanix Stack: Node, CVM, Cluster</text>
+  </g>
+</svg>

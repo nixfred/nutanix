@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 2: The Nutanix Stack (Node, CVM, Cluster)</title>
+  <meta name="description" content="The Nutanix architecture explained for VMware-trained Solutions Architects. Node, CVM, cluster. The CVM tax with numbers. Foundation, LCM, NCC. Twelve practice questions." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <meta property="og:title" content="NutaNIX · Module 2: The Nutanix Stack (Node, CVM, Cluster)" />
+  <meta property="og:description" content="Architecture deep dive: Node, CVM, Cluster, and the CVM tax with honest numbers." />
+  <meta property="og:image" content="../../public/images/hero-02-nutanix-architecture.svg" />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628;
+      --bg-surface: #102747;
+      --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff;
+      --text-secondary: #a8b8d4;
+      --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff;
+      --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "ss01", "cv11";
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px);
+      -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark {
+      font-family: var(--font-display); font-weight: 700;
+      letter-spacing: -0.02em; font-size: 22px;
+      color: var(--text-primary); text-decoration: none;
+    }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary);
+    }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    main {
+      flex: 1; max-width: 1200px; margin: 0 auto;
+      padding: 0 32px 96px; width: 100%;
+    }
+    .module-hero {
+      margin: 32px 0 28px;
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      aspect-ratio: 16 / 9; max-height: 420px;
+    }
+    .module-hero img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+    .module-title-block { margin: 0 0 24px; }
+    .module-eyebrow {
+      font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan);
+      letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    h1.module-title {
+      font-size: 44px; line-height: 1.08; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+    }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 8px 12px;
+      margin-bottom: 20px; align-items: center;
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--text-secondary); background: var(--bg-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em;
+      padding-right: 6px; border-right: 1px solid var(--border); margin-right: 4px;
+    }
+
+    .meta-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-bottom: 36px;
+    }
+    .meta-card {
+      padding: 12px 14px; background: var(--bg-surface);
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .meta-card .label {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px;
+    }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip {
+      font-family: var(--font-mono); font-size: 12px; padding: 3px 8px;
+      background: var(--bg-elevated); color: var(--text-secondary);
+      border-radius: 4px; border: 1px solid var(--border);
+    }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 {
+      font-size: 28px; line-height: 1.2; letter-spacing: -0.015em;
+      font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px;
+    }
+    article.body h3 {
+      font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em;
+      margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px;
+    }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code {
+      font-family: var(--font-mono); font-size: 0.92em;
+      background: var(--bg-surface); padding: 2px 6px;
+      border-radius: 4px; border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    article.body pre {
+      font-family: var(--font-mono); font-size: 13px; line-height: 1.5;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      color: var(--text-primary);
+    }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote {
+      margin: 16px 0; padding: 4px 0 4px 16px;
+      border-left: 2px solid var(--border); color: var(--text-secondary);
+      font-style: italic;
+    }
+    article.body table {
+      width: 100%; border-collapse: collapse; margin: 16px 0;
+      font-size: 14px; color: var(--text-primary);
+    }
+    article.body th, article.body td {
+      padding: 10px 12px; text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    article.body th {
+      font-family: var(--font-mono); font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary); font-weight: 600;
+      background: var(--bg-surface);
+    }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout {
+      margin: 24px 0; padding: 18px 22px;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg-surface); position: relative;
+    }
+    .callout .label {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .callout .label .badge {
+      font-family: var(--font-mono); font-size: 10px;
+      padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor;
+      color: var(--text-secondary); letter-spacing: 0.08em;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge {
+      font-family: var(--font-mono); font-size: 11px;
+      padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em;
+    }
+    figure.diagram .badge.wb {
+      color: var(--success); background: rgba(52,211,153,0.10);
+      border: 1px solid rgba(52,211,153,0.40);
+    }
+    figure.diagram .badge.cert {
+      color: var(--warning); background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.40);
+    }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption {
+      margin-top: 16px; color: var(--text-secondary);
+      font-size: 14px; font-style: italic; max-width: 70ch;
+    }
+
+    section.practice { margin-top: 64px; }
+    .question {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 22px; margin-bottom: 16px;
+    }
+    .question .qhead {
+      display: flex; gap: 12px; align-items: baseline;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .question .qnum {
+      font-family: var(--font-mono); font-size: 13px;
+      color: var(--accent-cyan); font-weight: 600;
+    }
+    .question .qrel {
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 12px 14px; background: var(--bg-elevated);
+      border: 1px solid var(--border); border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease;
+      text-align: left; width: 100%; font: inherit;
+      color: var(--text-primary); font-size: 15px; line-height: 1.5;
+    }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter {
+      font-family: var(--font-mono); font-weight: 600;
+      color: var(--text-tertiary); flex: 0 0 auto;
+    }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal {
+      display: none; margin-top: 12px; padding: 14px 16px;
+      background: var(--bg-base); border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 {
+      margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary); font-weight: 600;
+    }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+
+    .question.tf .choices { flex-direction: row; }
+    .question.tf .choice { flex: 1; justify-content: center; }
+
+    .question.ncx .scenario {
+      padding: 12px 14px; background: var(--bg-base);
+      border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan);
+      border-radius: 6px; margin-bottom: 16px;
+      color: var(--text-secondary); font-size: 15px;
+    }
+    .question.ncx .scenario blockquote {
+      margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border);
+      color: var(--text-primary); font-style: italic;
+    }
+    .question.ncx textarea {
+      display: block; width: 100%; min-height: 140px;
+      padding: 12px 14px; background: var(--bg-elevated);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text-primary); font: inherit; font-size: 14px;
+      line-height: 1.5; resize: vertical; margin-bottom: 12px;
+    }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn {
+      font: inherit; font-family: var(--font-mono); font-size: 13px;
+      letter-spacing: 0.04em; padding: 9px 14px;
+      background: transparent; color: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan); border-radius: 6px;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references {
+      margin-top: 64px; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs {
+      margin-top: 36px; padding: 20px 24px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .prev-next {
+      margin-top: 56px; display: flex; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .prev-next a {
+      flex: 1; min-width: 240px; padding: 16px 20px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text-primary); text-decoration: none;
+      transition: border-color 150ms ease;
+    }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir {
+      font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: var(--text-tertiary); margin-bottom: 6px;
+    }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+
+    footer.site {
+      max-width: 1200px; margin: 0 auto;
+      padding: 28px 32px 48px; width: 100%;
+      border-top: 1px solid var(--border);
+      color: var(--text-tertiary); font-size: 13px;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 32px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">02 · Nutanix Architecture</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="module-hero">
+      <img src="../../public/images/hero-02-nutanix-architecture.svg" alt="Isometric cross-section of a four-node Nutanix cluster: each node shows the hypervisor layer beneath the CVM and user VMs, with a distributed-storage-fabric mesh tying them together." />
+    </div>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/02-nutanix-architecture</div>
+      <h1 class="module-title">Module 2: The Nutanix Stack (Node, CVM, Cluster)</h1>
+
+      <div class="meta-row">
+        <span class="chip read">~32 min read</span>
+        <span class="chip cert">NCA ~22%</span>
+        <span class="chip cert">NCP-MCI ~18%</span>
+        <span class="chip cert">NCM-MCI ~10%</span>
+      </div>
+
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~22%) · NCP-MCI (~18%) · NCM-MCI (~10%)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #2, #3, #8, #18 · Discovery Q-ARCH-04, Q-CAP-01, Q-CAP-02</span>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Module 01 (HCI Foundations)</li>
+            <li>Familiarity with ESXi host architecture</li>
+            <li>Understanding of VMs and virtual hardware</li>
+            <li>Working CE lab (from Module 01)</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">Node</span>
+            <span class="term-chip">Block</span>
+            <span class="term-chip">Cluster</span>
+            <span class="term-chip">CVM (Controller VM)</span>
+            <span class="term-chip">DSF</span>
+            <span class="term-chip">Data locality</span>
+            <span class="term-chip">Stargate</span>
+            <span class="term-chip">Cassandra</span>
+            <span class="term-chip">Curator</span>
+            <span class="term-chip">Zeus</span>
+            <span class="term-chip">Pithos</span>
+            <span class="term-chip">Acropolis</span>
+            <span class="term-chip">Foundation</span>
+            <span class="term-chip">LCM</span>
+            <span class="term-chip">NCC</span>
+            <span class="term-chip">Cluster VIP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Draw a Nutanix deployment on a whiteboard, top to bottom, in 90 seconds.</strong> No prompting. The kind of drawing that wins customer credibility in the first 10 minutes of a meeting.</li>
+        <li><strong>Explain the Controller VM (CVM): what it is, why it's there, and what it costs.</strong> Use language a senior VMware admin will believe. The CVM is the single most important architectural decision in the entire product. It is also the most common technical objection you will hear. You need this cold.</li>
+        <li><strong>Pass roughly 22% of NCA and 18% of NCP-MCI.</strong> The architectural fundamentals (node, cluster, CVM, data locality, Foundation, LCM, NCC) show up across nearly every exam domain. Master this module and the rest of cert prep gets dramatically easier.</li>
+        <li><strong>Handle the four most common technical objections</strong> about Nutanix architecture: the CVM tax, the vSAN comparison, "what happens when the CVM fails," and "why can't I just put it on my existing servers." Each has a clean, honest, customer-credible answer. By the end of this module you will have all four.</li>
+      </ol>
+      <p>This is the bone structure of the platform. Everything in Modules 3 through 10 hangs off it. If Module 1 was the category, this is the product.</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>Picture an ESXi host. It is a physical server: a motherboard, two sockets, RAM, NICs, a couple of M.2 boot devices, and a place where it gets its storage from (an HBA pointing at a SAN, or in some cases, local disks for vSAN).</p>
+      <p>ESXi is the hypervisor. It runs on the metal. It schedules CPU, allocates memory, presents virtual hardware to VMs, and talks to whatever storage it has been given.</p>
+      <p>vCenter is somewhere else. It is software (a vCenter Server Appliance, or VCSA) that runs as a VM and aggregates many ESXi hosts into a cluster, exposing one management plane.</p>
+      <p>Hold that picture. We are about to change three things:</p>
+      <ol>
+        <li>The hypervisor might not be ESXi. It could be AHV, Nutanix's own KVM-based hypervisor (Module 3 goes deep on that).</li>
+        <li>There is a <em>second</em> VM running on every host whose job is to own storage. This is the <strong>CVM</strong>.</li>
+        <li>The "shared storage" the hypervisor sees is not a SAN. It is the local disks of every node in the cluster, presented as one logical pool by the CVMs cooperating with each other.</li>
+      </ol>
+      <p>That is Nutanix architecture in three sentences. The rest of this module unpacks it, builds the fence around it, and arms you to defend it.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The first time you explain Nutanix to a VMware admin in a customer meeting, lead with this exact framing. <em>"Three things change. You keep your hypervisor concept, but it might be a different hypervisor. Every node now runs an extra VM that owns storage. And your shared storage isn't a SAN anymore; it's the local disks of every node, pooled by software."</em> Three sentences. Watch their eyes. The third sentence is where the architecture clicks for them. That moment is when the meeting moves from skepticism to engagement.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="the-node">The Node</h3>
+      <p>A Nutanix node is a physical x86 server. That is it. It has CPUs, RAM, NICs, and disks. The disks are local: NVMe and SSD typically, sometimes with an HDD tier on older hardware (rare in 2026). The NICs are 10/25/100 GbE.</p>
+      <p>If you took the lid off a Nutanix node and compared it to an ESXi host, you would not see anything visually different. Same chassis, same components, same form factor. Nutanix sells appliances (the NX line, NX-3000, NX-8000, NX-9000 series), but the platform also runs on Dell (XC), HPE (DX), Cisco (UCS), Lenovo (HX), Supermicro, and others. Many customers run Nutanix on hardware they were already buying for VMware.</p>
+      <p>What makes the node a <em>Nutanix</em> node is the software stack that gets installed on it.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>Both exams test that you understand Nutanix runs on multiple OEM hardware platforms. Trap question pattern: "Nutanix software requires Nutanix-branded hardware." False. The answer is the platform is hardware-agnostic across qualified OEM SKUs (NX, XC, HX, DX, UCS C-Series, etc.). Memorize at least three OEM partners. The NX line is Nutanix's own appliance, but it is not a requirement.</p>
+      </aside>
+
+      <h3 id="whats-running">What's Running on a Single Node</h3>
+      <p>On a single Nutanix node, three things run:</p>
+      <ol>
+        <li><strong>A hypervisor.</strong> This is AHV (Nutanix's own, KVM-based) or ESXi or Hyper-V. The hypervisor sits directly on the metal.</li>
+        <li><strong>The Controller VM (CVM).</strong> This is a privileged virtual machine that runs on top of the hypervisor on every node, no exceptions. The CVM owns storage. This is the architectural lever.</li>
+        <li><strong>Your user VMs.</strong> Whatever workloads you actually care about. They run on the hypervisor alongside the CVM.</li>
+      </ol>
+      <p>That third item should provoke a question: <em>if the CVM and my user VMs are both running on the same hypervisor, doesn't the CVM steal my CPU and RAM?</em></p>
+      <p>Yes. Nutanix reserves cores and RAM for the CVM. On a typical 2026 node this is 8 to 12 vCPUs and 32 to 48 GB of RAM, scaling with feature set (more is required when you enable deduplication, capacity tiers, or NCM Intelligent Operations on-cluster). This is one of the genuine costs of the architecture and you should know about it before you read about it on Reddit. We will spend an entire section on this honestly. It deserves it.</p>
+
+      <hr/>
+
+      <h3 id="cvm-argument">The CVM Is the Whole Argument</h3>
+      <p>This is the section that, if you internalize it, makes everything else click.</p>
+      <p>The Controller VM is a Linux VM that runs on every Nutanix node. It is not optional. It is not configurable away. It is part of the platform. When a Nutanix node boots, the hypervisor comes up first, then the CVM auto-starts, then the cluster forms, then user VMs can run.</p>
+      <p>The CVM owns the local disks of its node. The hypervisor passes them through (via PCIe passthrough or controller passthrough or similar mechanisms, depending on hypervisor and configuration). From the hypervisor's point of view, those disks are not its problem. The CVM has them.</p>
+      <p>The CVMs across all nodes communicate over the network. Together, they implement the <strong>Distributed Storage Fabric (DSF)</strong>. Module 5 goes deep on DSF. For now, treat DSF as: <em>the software running inside the CVMs that takes all the local disks across all nodes and presents them as one logical storage pool.</em></p>
+      <p>When a user VM writes data, here is what happens:</p>
+      <ol>
+        <li>The user VM issues a write to its virtual disk (which the hypervisor presents as a block device).</li>
+        <li>The hypervisor sees the write going to what it thinks is shared storage. In AHV, this is presented over an internal interface; in ESXi, it shows up as an NFS datastore presented by the local CVM.</li>
+        <li>The write actually arrives at the CVM, on the same physical box as the user VM.</li>
+        <li>The CVM writes one copy locally, this is <strong>data locality</strong>, and one copy to a CVM on another node (this is <strong>replication</strong>, the basis of RF2).</li>
+        <li>Acknowledgment goes back up the chain.</li>
+      </ol>
+      <p>The user VM does not know any of this happened. To it, this is just disk I/O.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>The user VM experience is identical to vSphere. A Windows VM running on Nutanix sees the same C:\, the same NTFS filesystem, the same disk geometry it would see anywhere. None of the architectural complexity bleeds into the guest. VMware Tools-equivalent tooling (Nutanix Guest Tools, NGT) provides similar guest integration features.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>The "storage controller" is now a virtual machine. In a traditional array, the storage controller is dedicated hardware with its own CPU, memory, OS, and firmware. In Nutanix, that controller is a regular Linux VM running on the same hypervisor as your workloads. This is, simultaneously, the most clever and the most contested decision in the entire product. It is clever because it makes storage software portable, upgradeable, and software-defined. It is contested because that VM consumes resources that would otherwise be available for workloads. We address both honestly below.</p>
+      </aside>
+
+      <h3 id="cvm-frame-2">The Cycle, Frame Two: The CVM as a "Storage Controller in Software"</h3>
+      <p>Step back and look at this architecturally. In the three-tier world, your storage array has controllers. Those controllers are servers running storage software. They cost money, they consume rack units, they need their own power and cooling, they need their own firmware management, they have their own support contract.</p>
+      <p>Nutanix asked: what if instead of buying separate storage controller hardware, we just ran the controller as a VM on the same servers we already have? Same CPUs, same RAM, same chassis. We pay a tax (the CVM consumes resources), but we eliminate an entire class of hardware and an entire class of dedicated controller management.</p>
+      <p>That is the trade. It is a real trade. There are workloads where you would rather have dedicated controllers (we covered those in Module 1). For most workloads, the trade is favorable: the cost of the CVM is less than the cost of separate array hardware, and the operational simplification is substantial.</p>
+
+      <h3 id="cvm-frame-3">The Cycle, Frame Three: The CVM as the Boundary of the System</h3>
+      <p>Here is a third way to think about it, useful for troubleshooting. The CVM is the boundary between <em>your stuff</em> and <em>Nutanix's stuff</em>. Above the CVM, on each node, are your VMs and your hypervisor. Below the CVM, on each node, are the raw disks. Across the network, between CVMs, is the DSF.</p>
+      <p>When something goes wrong in storage, you do not go to a separate device. You SSH into a CVM. You run cluster commands. You look at logs in <code>/home/nutanix/data/logs/</code>. Storage troubleshooting all happens at the CVM level.</p>
+      <p>This is genuinely different from a SAN, where you would SSH into the array, into a fundamentally different operating system, with its own CLI and its own troubleshooting language. Here it is Linux. With NCC (Nutanix Cluster Check) commands and Nutanix-specific tools, but Linux underneath.</p>
+
+      <h3 id="cvm-frame-4">The Cycle, Frame Four: The CVM as a Distributed Storage Daemon Set</h3>
+      <p>For the technically-inclined customer, here is the cleanest framing. The CVM runs a set of cooperating Linux services. The important ones, by name:</p>
+      <ul>
+        <li><strong>Stargate.</strong> The data path. Every read and write hits Stargate. If Stargate on a node fails, that node's I/O is redirected to other CVMs.</li>
+        <li><strong>Cassandra.</strong> Distributed metadata store (a forked, optimized version of Apache Cassandra). Tracks where every block of every vDisk lives.</li>
+        <li><strong>Curator.</strong> The background scrubber. Runs periodic full and partial scans, rebalances data, handles deduplication/compression/tiering, drives ILM (information lifecycle management).</li>
+        <li><strong>Zeus.</strong> Cluster configuration and quorum management (built on Apache ZooKeeper). The cluster's source of truth for what nodes exist, what services are healthy, who is the master for various roles.</li>
+        <li><strong>Pithos.</strong> vDisk configuration manager. Tracks every vDisk's properties and where its replicas should live.</li>
+        <li><strong>Acropolis.</strong> When running AHV, this is the VM lifecycle / HA / scheduling service. (On ESXi, this responsibility stays with vCenter and ESXi.)</li>
+      </ul>
+      <p>You will see these names in NCC output, log files, and (occasionally) in customer-troubleshooting calls. You don't need to memorize implementation details. You do need to recognize the names and know what each does.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>Stargate, Cassandra, Curator, Zeus, Pithos, Acropolis show up explicitly on NCP-MCI and especially NCM-MCI (which is lab-based and forces you to actually troubleshoot). The most common exam question pattern: identify which service is responsible for a given function. <strong>Cheat sheet:</strong> Data path = Stargate. Metadata = Cassandra. Background scrub/rebalance = Curator. Cluster config/quorum = Zeus. vDisk config = Pithos. AHV VM lifecycle = Acropolis. The trap: distractors will swap Cassandra and Pithos (both involve metadata-ish things) or Curator and Stargate (both involve data movement). Anchor each to its specific responsibility.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="data-locality">Data Locality (The Concept That Matters Operationally)</h3>
+      <p>Nutanix marketing leans hard on the term "data locality." You should understand what it actually means and what it actually does, because it comes up on the exam, in customer conversations, and in real performance discussions.</p>
+      <p><strong>Definition:</strong> When a VM writes data, one copy of that data is written to the local disks of the node where the VM is running. The other copy (or two, for RF3) goes to other nodes for replication. As long as the VM stays on its node, future reads come from local disk, no network hop.</p>
+      <p><strong>Why this matters:</strong> Reading from local NVMe is faster than reading from a peer CVM over the network. Specifically: local NVMe reads are sub-100µs; network-traversed reads (even on 25/100GbE) add a few hundred microseconds. For most workloads this is invisible. For high-IOPS, low-latency workloads, it's measurable.</p>
+      <p><strong>When data locality matters less:</strong> When the cluster is balanced and reads are well cached, the network overhead for non-local reads is small. AOS extensively caches metadata and frequently-read blocks in CVM RAM (the Content Cache).</p>
+      <p><strong>What happens on vMotion / live migration:</strong> When a VM moves to a different node, its data does not immediately follow. The VM reads from the original node over the network until Curator (the background service) decides it's worth migrating the data to be local again. This happens automatically over time.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Data locality comes up in two places. <strong>First</strong>, when a customer asks "is local-only access really faster than my SAN's all-flash array?" The answer: for active reads of frequently-touched data, yes, local NVMe beats a SAN round trip. For everything else, the difference is small. <strong>Second</strong>, when a customer running a chatty cluster asks "what happens to performance when a VM moves?" The answer: a brief read penalty over the network, automatically resolved by background data migration. Don't oversell data locality. It's a real architectural advantage, not a magic performance multiplier.</p>
+      </aside>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>Data locality definitions show up on both. NCA tests recognition: "What is data locality?" NCP-MCI tests scenarios: "A VM is migrated from Node A to Node B. What happens to its data?" The correct answer is: data is read remotely from Node A initially, and migrated locally to Node B over time by background services. Trap distractors: "data is migrated immediately during vMotion" (false), or "data must be manually migrated using a CLI command" (false), or "the VM cannot be migrated until data is moved" (false).</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="cvm-tax">The CVM Tax: The Honest Section</h3>
+      <p>This is the section that every BlueAlly SA needs cold. The CVM consumes resources. Customers will ask. You answer with numbers, not adjectives.</p>
+      <p><strong>What the CVM consumes (typical defaults, AOS 7.5 generation):</strong></p>
+      <table>
+        <thead>
+          <tr><th>Resource</th><th>Minimum (basic features)</th><th>Typical (with dedup, EC, NCM-IO)</th><th>Heavy (large clusters)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>vCPU</td><td>8</td><td>12</td><td>14-16</td></tr>
+          <tr><td>RAM</td><td>32 GB</td><td>48 GB</td><td>64+ GB</td></tr>
+          <tr><td>Boot/system storage</td><td>~40 GB</td><td>~40 GB</td><td>~40 GB</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Aggregate cluster overhead:</strong> On a 4-node cluster with typical CVM sizing (12 vCPU / 48 GB), the CVMs collectively consume <strong>48 vCPUs and 192 GB of RAM</strong> that would otherwise be available for workloads. On a 16-node cluster, that's <strong>192 vCPUs and 768 GB</strong>.</p>
+      <p>That number sounds large. It is large. It is also smaller than the cost of dedicated storage controllers, dedicated array RAM, and dedicated array CPUs in an equivalent three-tier deployment, which the customer is currently paying for, just on different hardware.</p>
+      <p><strong>The honest framing for customers:</strong></p>
+      <blockquote><em>"The CVM does consume real CPU and RAM on every node. Roughly 12 vCPUs and 48 GB per node, depending on what features you enable. That's the cost of having the storage controller run as software on the same hardware. In exchange, you eliminate the array's controller hardware, controller licensing, controller-to-storage fabric, and a vendor relationship. For most workloads, the math works. For some workloads it does not, and we can talk about which is which."</em></blockquote>
+      <p>That answer wins more rooms than any feature comparison.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When a customer pushes back hard on the CVM tax, the failure mode is to defend by minimizing. Don't. The right move is to acknowledge it precisely (with numbers) and then reframe the comparison. <em>"You're not getting compute for free; you're paying for software-defined storage in CPU and RAM instead of in array hardware. Let's compare the total resource footprint, not just the workload-available footprint."</em> Most three-tier customers haven't done this math. When you walk them through it, the CVM tax goes from a deal-breaker to a side note. Honest numbers beat defensive talking points.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p><strong>vSAN does this too, but differently.</strong> VMware vSAN runs as a kernel module inside ESXi rather than as a VM. The resource consumption is real but harder to measure precisely (it shows up as ESXi overhead rather than as a discrete VM). The architectural debate between Nutanix's "storage as a VM" model and vSAN's "storage as a kernel module" model is genuine. VM-based isolation makes the CVM cleanly upgradeable, debuggable, and portable across hypervisors. Kernel-mode integration makes vSAN slightly leaner on resource overhead but couples it tightly to a specific hypervisor version. Neither approach is objectively better; they are real engineering tradeoffs. Have this answer ready when a vSAN-friendly customer asks.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="the-cluster">The Cluster</h3>
+      <p>A Nutanix <strong>cluster</strong> is a set of nodes (minimum three for production; one is allowed for Community Edition home-lab use only; two-node clusters exist for ROBO with a witness VM) running together as a single unit. The cluster is the smallest functional thing in Nutanix. You do not deploy a single Nutanix node and use it. You deploy a cluster.</p>
+      <p>A cluster has:</p>
+      <ul>
+        <li><strong>A shared identity.</strong> A cluster name, a Cluster Virtual IP (VIP), a Prism Element URL.</li>
+        <li><strong>A shared storage pool.</strong> The DSF, made from the union of all nodes' local disks.</li>
+        <li><strong>Shared cluster services.</strong> DNS, NTP, alerting, snapshot scheduling, NCC health checks.</li>
+        <li><strong>A consensus mechanism among the CVMs</strong> (Zeus / ZooKeeper) that keeps them coordinated. This is why you need three CVMs minimum for production: consensus protocols need an odd-numbered quorum.</li>
+      </ul>
+      <p>The cluster is what gets registered to Prism Central (Module 4). The cluster is what your VMs run on. The cluster is what you upgrade as a single unit (LCM, below).</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>Minimum cluster sizes are exam staples. Memorize: production minimum is 3 nodes. Two-node clusters exist for ROBO/edge but require a Witness VM (running elsewhere) for quorum. Single-node "clusters" are Community Edition only and not supported in production. The trap question: "What is the minimum cluster size?" The wrong-but-tempting answer is 2 (because two-node exists). The correct answer for general production is <strong>3</strong>. Two-node is a special case for ROBO with a separate witness.</p>
+      </aside>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>A vCenter cluster is conceptually similar. It groups hosts, presents shared resources, manages HA and DRS. The Nutanix cluster does the same, plus it owns its own storage pool, plus it does its own snapshots and DR.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>The cluster owns its storage. A vCenter cluster does not "own" the SAN; the SAN is a separate device that the vCenter cluster <em>consumes</em>. A Nutanix cluster <em>is</em> its storage. There is no external array to consume. This means a Nutanix cluster cannot be half-down in the way a vSphere cluster can be half-down (with the array still healthy). Nutanix cluster failures and storage failures are tightly correlated. Plan your fault tolerance with this in mind.</p>
+      </aside>
+
+      <h3 id="diagram-cluster-topology">Diagram: Cluster Topology</h3>
+
+      <figure class="diagram" id="cluster-topology">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-cluster-topology-svg" viewBox="0 0 1000 540" role="img" aria-label="Diagram of a four-node Nutanix cluster. Each node hosts a hypervisor, a CVM, and user VMs on top of local NVMe and SSD disks. A horizontal Distributed Storage Fabric bar spans the four nodes and a Cluster Virtual IP connects to the CVMs."></svg>
+        <figcaption>A 4-node Nutanix cluster. The DSF spans all four nodes; data is replicated between them; there is no external storage device.</figcaption>
+      </figure>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>This is your second whiteboard diagram for customer meetings. It pairs with the node-anatomy view above. Together they answer the two questions every VMware admin asks: "what's on a node?" and "how do nodes work together?"</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="the-block">The Block (Mostly Historical)</h3>
+      <p>A "block" in Nutanix vocabulary is a physical chassis that contains one to four nodes. Early Nutanix appliances (NX-3000 series) were 2U chassis with four nodes each, the whole chassis was a "block." The point was dense compute: four servers in 2U.</p>
+      <p>Modern Nutanix deployments often run on standard 1U or 2U servers from Dell, HPE, etc., where the chassis contains a single node. In these cases, "block" and "node" become the same thing, and the term loses much of its meaning.</p>
+      <p>You will still see "block awareness" referenced in fault-domain configuration: the cluster can be configured to ensure that data replicas land on nodes in <em>different</em> blocks, so that a chassis failure (rare but possible) does not cost you data. On modern hardware where one node equals one block, block awareness is automatic and uninteresting.</p>
+      <p><strong>You do not need to think about blocks much.</strong> Nodes and clusters are what matter. But know the term, because it will appear on the NCA exam.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA</span></div>
+        <p>The NCA may ask you to identify what a "block" is and what "block awareness" means. <strong>Block:</strong> a physical chassis containing 1-4 nodes. <strong>Block awareness:</strong> a fault-domain configuration that places data replicas on nodes in different blocks, protecting against a chassis-level failure. Trap distractor: "a block is a unit of storage." False. A block is hardware (the chassis), not a storage construct.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="operational-trio">Foundation, LCM, and NCC: The Operational Trio</h3>
+      <p>Three named tools you must know cold. They are how Nutanix gets deployed (Foundation), upgraded (LCM), and kept healthy (NCC). All three appear in the cert blueprints and all three come up in customer conversations about operational maturity.</p>
+
+      <h4 style="margin: 24px 0 8px; font-size: 17px; font-weight: 600;">Foundation, the deployment / imaging tool.</h4>
+      <p>Foundation is the bare-metal deployment tool. You point it at a set of nodes (powered on, with a baseboard management controller, IPMI/iDRAC/iLO, accessible) and it images them, installs the hypervisor, installs the CVM, and forms a cluster. This is the day-zero tool.</p>
+      <p>Foundation runs as either a standalone application (Foundation Standalone, runs on a laptop) or embedded in the AOS image (Foundation Central, runs on a Prism Central instance for fleet-scale deployment). For a single cluster deployment, Foundation Standalone is sufficient and what most field deployments use.</p>
+      <p><strong>Concrete:</strong> to image three new nodes into a 3-node cluster, you launch Foundation, give it the IPMI/iLO/iDRAC IPs of the nodes plus the desired cluster IPs, point it at the AOS and AHV images, and walk away for ~45-60 minutes. At the end you have a working cluster.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>Conceptually similar to vSphere Auto Deploy or PowerCLI host provisioning. Different in that it deploys a full HCI cluster, hypervisor + storage + management, from a single tool. There is no equivalent in legacy three-tier where you'd be using OEM imaging tools, vSphere installers, and array provisioning UIs separately.</p>
+      </aside>
+
+      <h4 style="margin: 24px 0 8px; font-size: 17px; font-weight: 600;">LCM, Life Cycle Manager. The day-two tool.</h4>
+      <p>LCM is one-click upgrade. You log into Prism Central (or Prism Element), navigate to LCM, and it scans the cluster for current versions of every upgradeable component: AOS, AHV, BIOS, BMC, NIC firmware, drive firmware, NCC, Foundation, Files, Objects, Volumes, NKE, NCM, and on. It then offers a coordinated, ordered upgrade that maintains cluster availability throughout.</p>
+      <p>This is genuinely a Nutanix strength. The customer comparison: in three-tier, you upgrade vCenter on its schedule, ESXi hosts on theirs, the array firmware on its schedule, the SAN switch on its schedule, the OS on each through Update Manager, usually with separate change windows, separate runbooks, separate vendor coordination. LCM collapses this into one workflow with dependencies handled.</p>
+      <p><strong>Limitations to know:</strong> LCM is opinionated. It will not let you upgrade to a combination of versions that hasn't been validated. This is generally a feature, not a bug, but it does mean "I want to upgrade AOS but stay on the older AHV" is sometimes constrained. Always check the LCM dashboard for current compatibility.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>One-click upgrade is the customer demo that converts skeptics. When you POC, schedule a 30-minute slot to walk through LCM on a working customer-style cluster (or your CE lab if no POC is available). Show the dependency-resolution UI. Show the rolling upgrade that doesn't take VMs down. This is the operational story Nutanix marketing leans on, and unlike most marketing, it actually delivers the goods. Don't tell, show.</p>
+      </aside>
+
+      <h4 style="margin: 24px 0 8px; font-size: 17px; font-weight: 600;">NCC, Nutanix Cluster Check. The health-check tool.</h4>
+      <p>NCC is a suite of health and diagnostic checks (currently several hundred individual checks). It runs on a schedule and can also be invoked on-demand. It catches issues across hardware health, cluster configuration, network, storage, replication, and feature-specific checks (e.g., NKE-specific or Files-specific checks).</p>
+      <p>Run from Prism, from the CVM CLI as <code>ncc health_checks run_all</code>, or specifically as <code>ncc health_checks &lt;category&gt; &lt;check_name&gt;</code>. Output is a report with PASS / WARN / FAIL / INFO per check.</p>
+      <p>In production, NCC runs daily by default and emails findings. In troubleshooting, you run it on-demand. In support cases, Nutanix will often ask you to attach NCC output to the ticket. In NCM-MCI exam labs, NCC is the first tool you reach for to diagnose a failing cluster.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI · NCM-MCI</span></div>
+        <p>NCC, LCM, and Foundation are tested across all three exams. Memorize the one-liners:</p>
+        <ul>
+          <li><strong>Foundation:</strong> day-zero deployment / imaging</li>
+          <li><strong>LCM:</strong> day-two upgrades (one-click)</li>
+          <li><strong>NCC:</strong> ongoing health checks / diagnostics</li>
+        </ul>
+        <p>Trap pattern: questions that swap their purposes. "Which tool is used to image new nodes?" Foundation. "Which tool is used to upgrade firmware?" LCM. "Which tool is used to run health checks?" NCC.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="cvm-fails">What Happens When the CVM Fails</h3>
+      <p>A real, common customer question. Here is the answer, with the right level of detail.</p>
+      <p><strong>On a single CVM failure (one node's CVM crashes or is upgrading):</strong></p>
+      <ol>
+        <li>The hypervisor on that node detects the loss of its local CVM.</li>
+        <li>AOS reroutes that node's I/O to a remote CVM (over the network). This is called <strong>autopath</strong> (or, in newer AOS, the I/O simply uses the standard cluster mechanisms, same outcome).</li>
+        <li>User VMs on that node continue running. Performance degrades slightly because their I/O now traverses the network instead of going local.</li>
+        <li>When the CVM recovers, I/O routes back to local.</li>
+      </ol>
+      <p><strong>On a node failure (the entire physical node, including its CVM, goes down):</strong></p>
+      <ol>
+        <li>AHV / Acropolis (or vSphere HA, if running ESXi) restarts the failed node's VMs on surviving nodes.</li>
+        <li>The cluster has lost one replica of any data that was uniquely on that node's disks. AOS / Curator immediately starts re-replicating from surviving copies to restore RF2 (or RF3). This is the cluster's self-healing.</li>
+        <li>The cluster runs at reduced redundancy until re-replication completes (minutes to hours, depending on cluster size and data volume).</li>
+      </ol>
+      <p><strong>On multiple simultaneous failures:</strong></p>
+      <ul>
+        <li>RF2 cluster, two simultaneous node losses: data loss is possible. (This is why RF3 exists.)</li>
+        <li>RF3 cluster, two simultaneous node losses: cluster survives, no data loss. Re-replication restores RF3.</li>
+        <li>Larger failure scenarios: see Module 7 on data protection.</li>
+      </ul>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>"What happens when the CVM fails?" is one of the top three architecture objections you will hear. The right answer, said calmly: <em>"A single CVM failure is a non-event. The hypervisor detects it, reroutes I/O to a peer CVM over the network for the duration of the outage, and your VMs keep running with slightly elevated latency. The cluster has full self-healing for node failures; we re-replicate data automatically. The CVM is a service, not a single point of failure, every node has one."</em> Practice that paragraph until it's automatic. It's worth memorizing word for word.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Stand Up a 3-Node CE Cluster</h2>
+
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">~4 hours · CE 2.1</span></div>
+        <p>Module 1 had you stand up a single node. Now upgrade your lab to a real cluster. Three nodes is the minimum production size and the correct lab target. You cannot pass NCM-MCI with a 1-node lab. You also cannot internalize cluster behavior, replication, failure handling, or LCM properly without three nodes.</p>
+      </aside>
+
+      <p><strong>Prerequisites:</strong> Either three physical machines OR a host capable of running three nested CE VMs (96+ GB RAM recommended for nested).</p>
+      <p><strong>Steps (nested approach, on VMware Workstation or ESXi):</strong></p>
+      <ol>
+        <li><strong>Provision three CE VMs.</strong> Each: 4 vCPU minimum, 32 GB RAM, expose hardware-assisted virtualization, VMXNET3 NIC, all promiscuous-mode-style settings enabled. Each VM gets its own boot disk + hot tier SSD-backed disk (200 GB minimum) + cold tier disk (500 GB minimum).</li>
+        <li><strong>Boot each from the CE ISO.</strong> Run the installer on each. Set the CVM IP, hypervisor IP, gateway, and netmask for each node. Critical: all three nodes must be on the same subnet (or at least L2-adjacent for the cluster to form).</li>
+        <li><strong>After install on all three, SSH into the first node's CVM</strong> as <code>nutanix</code> (default password <code>nutanix/4u</code>).</li>
+        <li><strong>Form the cluster:</strong>
+<pre>cluster -s &lt;node1_cvm_ip&gt;,&lt;node2_cvm_ip&gt;,&lt;node3_cvm_ip&gt; create</pre>
+This may take 5-15 minutes. Watch the output.</li>
+        <li><strong>Verify cluster health:</strong>
+<pre>cluster status
+ncli cluster info
+ncc health_checks run_all</pre></li>
+        <li><strong>Set the Cluster Virtual IP</strong> via Prism Element (or <code>ncli cluster set-external-ip-address external-ip-address=&lt;vip&gt;</code>).</li>
+        <li><strong>Connect to Prism Element</strong> at <code>https://&lt;vip&gt;:9440</code>. You should see all three nodes in the Hardware view. The Storage view should show one Storage Pool with the aggregated capacity from all three.</li>
+      </ol>
+
+      <p><strong>What to do once it's up:</strong></p>
+      <ul>
+        <li>Open the <strong>Hardware</strong> view in Prism. You should see three nodes and three CVMs.</li>
+        <li>Open <strong>Cluster Details</strong>. Note the AOS version, AHV version, and the Cluster VIP.</li>
+        <li>Open the <strong>Storage</strong> view. Find the default Storage Pool. Note that it is the union of all three nodes' disks.</li>
+        <li>Run <code>ncc health_checks run_all</code> from any CVM and read the output. Identify a few of the categories.</li>
+        <li>Reboot one of the CVMs (<code>sudo reboot</code> from inside the CVM). Watch what happens in Prism. Note the alerts, watch the cluster's automatic recovery.</li>
+        <li>Open <strong>LCM</strong>. Even if no upgrades are pending, click into LCM and look at the inventory it generates. This is what you'll demo to customers.</li>
+      </ul>
+
+      <p><strong>Optional stretch:</strong></p>
+      <ul>
+        <li>Power off a node entirely and watch the cluster's response. RF2 should kick in; you'll see a "data resiliency" alert. Power the node back on.</li>
+        <li>Use Foundation Standalone (download separately) to image a fourth node into a different cluster, just to see Foundation in action.</li>
+      </ul>
+
+      <hr/>
+
+      <section class="practice">
+        <h2 id="practice">Practice Questions</h2>
+        <p>Twelve questions. Six knowledge MCQ (NCA-style), four scenario MCQ (NCP-MCI-style), two open-ended NCX-MCI-style design questions.</p>
+
+        <!-- Q1 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which of the following best describes the Controller VM (CVM) in a Nutanix cluster?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>An optional management VM that can be deployed for clusters that need centralized monitoring</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A privileged Linux VM that runs on every node and owns local storage, presented as shared storage to the cluster</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A hypervisor that replaces ESXi when AHV is in use</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A vCenter equivalent that manages the cluster from a single location</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>The CVM is a per-node, mandatory, privileged Linux VM that owns the local disks and cooperates with peer CVMs over the network to present a single distributed storage pool.</p>
+            <h4>Why not the others</h4>
+            <ul><li>A) Wrong on two counts: the CVM is not optional, and its job is not management, it's storage.</li><li>C) The CVM and the hypervisor are different things. The CVM runs on top of the hypervisor.</li><li>D) Cluster-wide management is Prism (Module 4), not the CVM.</li></ul>
+            <h4 class="trap">The trap</h4>
+            <p>D conflates "centralized control plane" with "the CVM" because both feel like cluster-level abstractions. The CVM is per-node storage software; Prism is the cluster management plane. Different layers.</p>
+          </div>
+        </article>
+
+        <!-- Q2 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">A Nutanix cluster has three nodes, each configured with 12 vCPUs and 48 GB allocated to its CVM. What is the total CVM-reserved resource footprint for the cluster?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>12 vCPU and 48 GB RAM (the CVM is shared across the cluster)</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>36 vCPU and 144 GB RAM (each node reserves its own CVM resources)</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>24 vCPU and 96 GB RAM (one CVM is active, others passive)</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>0 vCPU and 0 GB RAM (the CVM consumes only excess capacity, not reserved)</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Every node runs its own CVM. CVM resources are reserved per-node. Three nodes × 12 vCPU × 48 GB = 36 vCPU and 144 GB total reserved across the cluster.</p>
+            <h4 class="trap">The trap</h4>
+            <p>A is a common misconception. New Nutanix learners hear "distributed storage software" and assume a single instance shared across the cluster. The architecture is the opposite: a coordinated set of per-node instances. Memorize: CVMs are per-node and reserved.</p>
+          </div>
+        </article>
+
+        <!-- Q3 -->
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCA</span></div>
+          <p class="qprompt">What is the minimum number of nodes required for a production Nutanix cluster?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>1</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>2</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>3</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>4</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>Three nodes is the production minimum. Driven by the consensus requirements of Zeus / ZooKeeper; an odd-numbered quorum is required and three is the smallest viable.</p>
+            <h4 class="trap">The trap</h4>
+            <p>B. Test-takers who have heard about ROBO two-node deployments may pick B, but two-node requires the Witness and is a special-case configuration. The unqualified answer for "minimum production cluster" is 3.</p>
+          </div>
+        </article>
+
+        <!-- Q4 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCP-MCI</span></div>
+          <p class="qprompt">A user VM is migrated (live) from Node A to Node B in a Nutanix cluster. What happens to the VM's data?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>The data is migrated synchronously during the live migration; the VM cannot start on Node B until all data is moved</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>The data remains on Node A; reads from the VM on Node B traverse the network until background services migrate the data over time</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>The data is duplicated to Node B during migration, leaving copies on both nodes permanently</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Data locality requires the VM to be migrated back to Node A for reads to be local again</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Live migration moves the VM, not its data. After migration, the VM on Node B reads from Node A's disks over the network. Curator (the background service) eventually migrates the data to be local to the VM's new node.</p>
+            <h4 class="trap">The trap</h4>
+            <p>A is intuitive ("of course the data has to move with the VM!") and wrong. Data locality is a <em>gradual optimization</em>, not a <em>prerequisite for migration</em>. The cluster is designed so that remote reads work fine; locality is the optimized state, not the only state.</p>
+          </div>
+        </article>
+
+        <!-- Q5 -->
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">Which CVM service is responsible for the data path, handling read and write I/O for user VMs?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Cassandra</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Curator</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Stargate</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Zeus</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>Stargate is the data path. Every user VM read and write is processed by Stargate. Cassandra = metadata, Curator = background scrub, Zeus = cluster config / quorum.</p>
+            <h4 class="trap">The trap</h4>
+            <p>Test-writers love to make Cassandra and Stargate distractors for each other because both deal with "data" in some sense. Anchor: <strong>Cassandra = metadata, Stargate = data.</strong></p>
+          </div>
+        </article>
+
+        <!-- Q6 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which Nutanix tool is used to perform a coordinated upgrade of AOS, AHV, and node firmware in a single workflow?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Foundation</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>LCM (Life Cycle Manager)</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>NCC (Nutanix Cluster Check)</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Prism Central</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>LCM is the day-two upgrade tool. It scans for current versions across AOS, AHV, BIOS, BMC, NIC firmware, drive firmware, then performs coordinated, ordered upgrades.</p>
+            <h4 class="trap">The trap</h4>
+            <p>D is technically adjacent (LCM runs within Prism Central), but the question asks which tool performs the upgrade workflow, which is LCM specifically. Read the question precisely.</p>
+          </div>
+        </article>
+
+        <!-- Q7 -->
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer's VMware administrator says: "The CVM tax sounds like it's eating 30% of every node. How can that possibly be more efficient than a dedicated array?" What is the strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"The CVM is much smaller than you think, it only uses idle resources."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"We have very efficient CVMs that don't impact your workloads."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"Yes, the CVM reserves real CPU and RAM, typically 12 vCPUs and 48 GB per node. In exchange, you eliminate the array's controller hardware, controller licensing, dedicated array RAM, and a separate vendor relationship. Let's compare total resource footprints rather than just workload-available footprints."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"vSAN does the same thing as a kernel module, so the comparison is moot."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>Acknowledge the tax with specific numbers. Reframe to total cost (including the resources the customer is currently paying for in their array). Invite a real comparison.</p>
+            <h4 class="trap">The trap</h4>
+            <p>A and B are the natural defensive responses. Practiced SAs resist the urge to defend and answer with numbers. The customer is testing whether you'll be honest.</p>
+          </div>
+        </article>
+
+        <!-- Q8 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">A Nutanix cluster has lost one node due to a hardware failure. The cluster is configured for RF2. What is the cluster's state?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>The cluster is offline until the failed node is replaced</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>The cluster is online and self-healing; user VMs from the failed node have been restarted on surviving nodes; data is being re-replicated to restore RF2</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>The cluster requires manual intervention to restart user VMs and re-replicate data</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>The cluster is in read-only mode until RF2 is restored</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Single-node failure with RF2 is a recoverable scenario. Hypervisor HA restarts the VMs on surviving nodes; AOS / Curator automatically re-replicates data to restore RF2. No manual intervention required for the basic recovery flow.</p>
+            <h4 class="trap">The trap</h4>
+            <p>C is plausible if you don't trust automation. The answer requires you to know that AOS is genuinely self-healing for single-node failures, which is the whole point of RF2.</p>
+          </div>
+        </article>
+
+        <!-- Q9 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which of the following describes "block awareness" in a Nutanix cluster?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>The ability of the cluster to track storage block utilization across nodes</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A fault-domain configuration that ensures data replicas are placed on nodes in different physical chassis (blocks)</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A diagnostic feature that reports on block-level I/O performance</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A cluster-wide feature flag that enables block-level deduplication</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>A "block" is a physical chassis containing one or more nodes. Block awareness ensures that if you have multiple nodes in the same chassis, replicas are placed in different chassis, protecting against a chassis-level failure.</p>
+            <h4 class="trap">The trap</h4>
+            <p>"Block" is used in two senses (storage block, hardware chassis). Test-writers exploit this. Block awareness is hardware. Storage blocks are different concepts.</p>
+          </div>
+        </article>
+
+        <!-- Q10 -->
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCM-MCI</span></div>
+          <p class="qprompt">You are troubleshooting a cluster where one CVM is reported by Prism as "down." What is the appropriate first diagnostic step?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Reboot the affected node's hypervisor</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Run <code>ncc health_checks run_all</code> from a working CVM and review the output</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Initiate a cluster-wide shutdown to reset the cluster state</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Replace the failed node's hardware</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>First step in any cluster issue is to gather diagnostic data. NCC is the canonical health-check tool; running the full suite gathers data across cluster, hardware, network, and storage layers. From there you can target specific issues.</p>
+            <h4 class="trap">The trap</h4>
+            <p>A and C are both "do something" answers. The discipline in operational troubleshooting is to gather data before taking action. NCM-MCI specifically tests this discipline.</p>
+          </div>
+        </article>
+
+        <!-- Q11 NCX -->
+        <article class="question ncx">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · open-ended</span></div>
+          <p class="qprompt"><em>(NCX-style design question)</em> Walk through your architectural reasoning, recommend a configuration, acknowledge tradeoffs, identify the questions you still need answered.</p>
+          <div class="scenario">
+            <p>A customer is sizing a new 12-node Nutanix cluster to consolidate three existing environments: a Tier-1 OLTP database (Microsoft SQL Server, 8 TB, latency-sensitive, mostly random reads with bursts of writes), a VDI deployment (800 desktops with persistent profiles, boot storms at 8am), and a general-purpose VM tier (~200 mixed VMs, file/print/web/internal apps). They are debating RF2 vs RF3 across the board, asking how to size CVMs, and asking whether to mix all three workloads in one cluster or split into multiple clusters.</p>
+          </div>
+          <textarea placeholder="Write your reasoning out loud. Cluster topology, RF per workload, CVM sizing, storage tiering, failure domain math, workload placement, open questions..."></textarea>
+          <button class="reveal-btn">Show strong-answer framework</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Cluster topology recommendation:</strong> at this scale, one cluster is the typical answer; the only strong reason to split is regulatory or operational isolation.</li>
+              <li><strong>RF decision per workload:</strong> RF2 is sufficient for VDI and general-purpose; many architects make the case for RF3 on the OLTP database for resilience during long Curator scans on large datasets. Some defend RF2 plus solid backup. Both are defensible. Naming the tradeoff explicitly is the point.</li>
+              <li><strong>CVM sizing:</strong> enabling deduplication (often valuable for VDI) and capacity tiering pushes the CVM toward 48-64 GB RAM and 12-16 vCPUs per node. Mixed-workload clusters typically size CVMs to the heavier configuration.</li>
+              <li><strong>Storage tiering:</strong> for Tier-1 OLTP plus VDI boot storms, all-NVMe is typically warranted. Discuss data locality implications; pin the OLTP VM via affinity if HA tolerance permits.</li>
+              <li><strong>Failure domain math:</strong> 12 nodes RF2 tolerates a single-node loss; usable capacity ~50% of raw before reservation/compression. RF3 drops usable to ~33%. State the cost.</li>
+              <li><strong>Open questions:</strong> backup strategy, RTO/RPO for the database, network topology, whether OLTP needs synchronous DR (Module 7), licensing model preference (NCI Pro vs Ultimate, Module 9), AHV vs ESXi.</li>
+            </ul>
+            <h4 class="trap">A weak answer misses</h4>
+            <ul>
+              <li>Recommending RF3 globally without acknowledging the 33% usable-capacity penalty.</li>
+              <li>Recommending all-NVMe without acknowledging cost.</li>
+              <li>Not asking about backup strategy.</li>
+              <li>Glossing over CVM sizing implications of feature enablement.</li>
+              <li>Not naming the workload affinity question for the OLTP VM.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Q12 NCX -->
+        <article class="question ncx">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · architectural defense</span></div>
+          <p class="qprompt"><em>(NCX-style architectural defense)</em> Respond to the architect's challenge below. He is technical and well-prepared. Address each technical claim. Give a fair comparison. Do not bash vSAN.</p>
+          <div class="scenario">
+            <blockquote>"Running storage as a VM means context-switching overhead between the hypervisor and the CVM, scheduling contention with workload VMs, network round-trips for things vSAN handles in-kernel, and a Linux OS attack surface I don't have with vSAN's kernel module. vSAN is more efficient by design. Why is the Nutanix CVM model defensible?"</blockquote>
+          </div>
+          <textarea placeholder="Acknowledge the kernel-mode advantage where it exists. Reframe with compensating advantages. Address each technical claim. Close with a meta-argument."></textarea>
+          <button class="reveal-btn">Show strong-answer framework</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the kernel-mode advantage where it exists.</strong> vSAN does avoid VM-to-hypervisor context switches for storage I/O. Real efficiency. Question is how much it matters at the workload's IOPS profile.</li>
+              <li><strong>Reframe.</strong> CVM-as-VM has compensating advantages: hypervisor-portable (Nutanix runs on ESXi, AHV, Hyper-V), independently upgradeable (AOS rolls forward without hypervisor coupling), explicit and observable resource isolation.</li>
+              <li><strong>Scheduling contention:</strong> CVM has reserved resources; the hypervisor enforces the reservation. The contention argument applies to <em>unreserved</em> resources, the same situation in any virtualized environment.</li>
+              <li><strong>Network round-trip:</strong> AOS uses data locality specifically to avoid the round-trip for hot data. For data not in local cache, both vSAN and Nutanix incur a network hop in different shapes.</li>
+              <li><strong>Linux attack surface:</strong> valid. The CVM is a Linux VM and you patch AOS. Nutanix patches via LCM with one click. vSAN's surface is the ESXi kernel, smaller target but no less serious patching cadence. Both vendors run security programs.</li>
+              <li><strong>Close with the meta-argument:</strong> "Both architectures have real engineering tradeoffs. The right answer depends on whether you want hypervisor portability and independent upgrade cadence (Nutanix) or single-stack VMware integration with kernel-level efficiency (vSAN). I'm not claiming one is universally better. Let's run a POC against your specific workloads."</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can now draw a Nutanix node and a Nutanix cluster on a whiteboard from memory. You can name what's running on a node — hypervisor, CVM, user VMs — and you can explain why the CVM exists, what it owns, and what it costs.</p>
+      <p>You have four different mental models for the CVM: the storage controller in software, the boundary of the system, the architectural inversion, and the Linux distributed storage daemon set. When a customer pushes on the architecture, you have a frame ready that fits the conversation.</p>
+      <p>You know the CVM tax with numbers (8-16 vCPU, 32-64 GB RAM per node, scaling with feature set) and you can defend it without flinching by reframing the comparison to total resource footprint.</p>
+      <p>You know the cluster minimum (three for production, two with witness for ROBO), the consensus reason it has to be at least three, and what happens on single-node failure (HA restart + automatic re-replication).</p>
+      <p>You know the operational trio: <strong>Foundation</strong> for day-zero, <strong>LCM</strong> for day-two upgrades, <strong>NCC</strong> for ongoing health.</p>
+      <p>You are now ready to look at the hypervisor question — AHV: what it is, what it does, what it lacks compared to ESXi, and when it's the right answer or the wrong one. That is Module 3.</p>
+
+      <section class="references">
+        <h2>References</h2>
+        <p>Authoritative sources verified during the technical review pass on this module. Cite these when defending the CVM tax or cluster-sizing decisions in front of a sharp customer.</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/2f-book-of-basics-cluster-components.html">Nutanix Bible — Cluster Components</a>. Authoritative service-by-service reference for Stargate, Cassandra, Curator, Zeus, Pithos, Medusa, Acropolis.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:BP-2083-ROBO-Deployment">Two-Node ROBO Best Practices (BP-2083)</a>. Two-node cluster topology and witness placement.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:witness-requirements.html">Witness VM Requirements</a>. 2 vCPU / 6 GB RAM / 25 GB disk minimum; ≤ 500 ms latency; not on AWS or Azure.</li>
+          <li><a href="https://www.nutanix.com/products/hardware-platforms">Nutanix Hardware Platforms — OEM Partners</a>. Authoritative list: Cisco, HPE, Lenovo, Fujitsu, Dell, plus NX and Supermicro.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Command-Ref-AOS-v6_8:man-ncli-c.html">AOS 6.8 nCLI Command Reference</a>. Authoritative source for <code>ncli cluster set-external-ip-address</code> and other cluster commands.</li>
+          <li><a href="https://www.nutanixbible.com/19b-cli.html">Nutanix Bible — CLI Reference</a>. <code>cluster -s &lt;ips&gt; create</code> syntax and related operations.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Previous:</strong> <a href="../01-hci-foundations/index.html">Module 1: HCI Foundations</a></li>
+          <li><strong>Next:</strong> Module 3: AHV (The Hypervisor Question) <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Glossary:</strong> CVM · DSF · Stargate · Cassandra · Curator · Foundation · LCM · NCC · Data Locality · Block · Cluster VIP <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Architecture / Storage Controller Row · Lifecycle Tooling Row <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> #2 "The CVM tax is too high" · #3 "What if a CVM fails?" · #8 "Why not just use vSAN?" · #18 "I'm worried about Linux VMs running my storage" <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../01-hci-foundations/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 1: HCI Foundations</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 3: AHV (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>02-nutanix-architecture</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m2:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram: cluster-topology (4-node Nutanix cluster)
+    (function drawClusterTopology() {
+      const svg = document.getElementById('diagram-cluster-topology-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      const C = {
+        ink: '#a8b8d4',
+        compute: '#4a9eff',
+        computeFill: 'rgba(74,158,255,0.10)',
+        cvm: '#b04a26',
+        cvmFill: 'rgba(176,74,38,0.18)',
+        vm: '#6b7a9a',
+        vmFill: 'rgba(107,122,154,0.10)',
+        disk: '#1f3a66',
+        diskFill: 'rgba(31,58,102,0.30)',
+        fabric: '#00d4ff',
+        fabricFill: 'rgba(0,212,255,0.08)',
+        vip: '#fbbf24',
+        vipFill: 'rgba(251,191,36,0.18)',
+      };
+      const opts = (color, fill, fillStyle = 'hachure') => ({
+        stroke: color, strokeWidth: 1.2, roughness: 1.4,
+        fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+      });
+
+      // Title
+      const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      title.setAttribute('x', 500); title.setAttribute('y', 32);
+      title.setAttribute('text-anchor', 'middle');
+      title.setAttribute('font-family', 'JetBrains Mono, ui-monospace, monospace');
+      title.setAttribute('font-size', '13'); title.setAttribute('letter-spacing', '0.10em');
+      title.setAttribute('fill', C.ink);
+      title.textContent = 'A 4-NODE NUTANIX CLUSTER';
+      svg.appendChild(title);
+
+      // Cluster Virtual IP at top
+      const vipX = 380, vipY = 56, vipW = 240, vipH = 36;
+      svg.appendChild(rc.rectangle(vipX, vipY, vipW, vipH, opts(C.vip, C.vipFill, 'cross-hatch')));
+      const vipLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      vipLbl.setAttribute('x', 500); vipLbl.setAttribute('y', vipY + 22);
+      vipLbl.setAttribute('text-anchor', 'middle');
+      vipLbl.setAttribute('font-family', 'Inter, system-ui, sans-serif');
+      vipLbl.setAttribute('font-size', '13'); vipLbl.setAttribute('fill', '#e8f0ff');
+      vipLbl.setAttribute('font-weight', '600');
+      vipLbl.textContent = 'Cluster Virtual IP (Prism / API)';
+      svg.appendChild(vipLbl);
+
+      // DSF horizontal bar
+      const dsfX = 60, dsfY = 130, dsfW = 880, dsfH = 36;
+      svg.appendChild(rc.rectangle(dsfX, dsfY, dsfW, dsfH, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      const dsfLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      dsfLbl.setAttribute('x', 500); dsfLbl.setAttribute('y', dsfY + 23);
+      dsfLbl.setAttribute('text-anchor', 'middle');
+      dsfLbl.setAttribute('font-family', 'Inter, system-ui, sans-serif');
+      dsfLbl.setAttribute('font-size', '13'); dsfLbl.setAttribute('fill', '#e8f0ff');
+      dsfLbl.setAttribute('font-weight', '600');
+      dsfLbl.textContent = 'Distributed Storage Fabric (one logical pool, RF2)';
+      svg.appendChild(dsfLbl);
+
+      // VIP -> DSF connector
+      svg.appendChild(rc.line(500, vipY + vipH, 500, dsfY, { stroke: C.vip, strokeWidth: 1, roughness: 1.5 }));
+
+      // Four nodes
+      const nodes = [
+        { x: 72,  label: 'Node 1' },
+        { x: 282, label: 'Node 2' },
+        { x: 492, label: 'Node 3' },
+        { x: 702, label: 'Node 4' },
+      ];
+      const nodeW = 196, nodeY = 200;
+
+      nodes.forEach((n, i) => {
+        const x = n.x;
+        // hypervisor band
+        svg.appendChild(rc.rectangle(x, nodeY, nodeW, 38, opts(C.compute, C.computeFill)));
+        const hLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        hLbl.setAttribute('x', x + nodeW/2); hLbl.setAttribute('y', nodeY + 24);
+        hLbl.setAttribute('text-anchor', 'middle');
+        hLbl.setAttribute('font-family', 'Inter, sans-serif'); hLbl.setAttribute('font-size', '12');
+        hLbl.setAttribute('fill', '#e8f0ff'); hLbl.setAttribute('font-weight', '600');
+        hLbl.textContent = 'AHV';
+        svg.appendChild(hLbl);
+
+        // CVM band
+        svg.appendChild(rc.rectangle(x, nodeY + 44, nodeW, 44, opts(C.cvm, C.cvmFill)));
+        const cLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        cLbl.setAttribute('x', x + nodeW/2); cLbl.setAttribute('y', nodeY + 71);
+        cLbl.setAttribute('text-anchor', 'middle');
+        cLbl.setAttribute('font-family', 'Inter, sans-serif'); cLbl.setAttribute('font-size', '13');
+        cLbl.setAttribute('fill', '#fbb091'); cLbl.setAttribute('font-weight', '700');
+        cLbl.textContent = 'CVM';
+        svg.appendChild(cLbl);
+
+        // user VMs band
+        svg.appendChild(rc.rectangle(x, nodeY + 94, nodeW, 60, opts(C.vm, C.vmFill)));
+        // VM divider lines
+        for (let k = 1; k < 4; k++) {
+          svg.appendChild(rc.line(x + k * (nodeW/4), nodeY + 94, x + k * (nodeW/4), nodeY + 154,
+            { stroke: C.vm, strokeWidth: 0.6, roughness: 1.0, opacity: 0.7 }));
+        }
+        const vLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        vLbl.setAttribute('x', x + nodeW/2); vLbl.setAttribute('y', nodeY + 128);
+        vLbl.setAttribute('text-anchor', 'middle');
+        vLbl.setAttribute('font-family', 'Inter, sans-serif'); vLbl.setAttribute('font-size', '11');
+        vLbl.setAttribute('fill', '#a8b8d4');
+        vLbl.textContent = 'User VMs';
+        svg.appendChild(vLbl);
+
+        // disks band
+        svg.appendChild(rc.rectangle(x, nodeY + 160, nodeW, 38, opts(C.disk, C.diskFill, 'cross-hatch')));
+        const dLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        dLbl.setAttribute('x', x + nodeW/2); dLbl.setAttribute('y', nodeY + 184);
+        dLbl.setAttribute('text-anchor', 'middle');
+        dLbl.setAttribute('font-family', 'Inter, sans-serif'); dLbl.setAttribute('font-size', '11');
+        dLbl.setAttribute('fill', '#a8b8d4');
+        dLbl.textContent = 'Local NVMe + SSD';
+        svg.appendChild(dLbl);
+
+        // node label (under disks)
+        const nLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        nLbl.setAttribute('x', x + nodeW/2); nLbl.setAttribute('y', nodeY + 218);
+        nLbl.setAttribute('text-anchor', 'middle');
+        nLbl.setAttribute('font-family', 'JetBrains Mono, monospace'); nLbl.setAttribute('font-size', '11');
+        nLbl.setAttribute('letter-spacing', '0.08em');
+        nLbl.setAttribute('fill', '#6b7a9a');
+        nLbl.textContent = n.label.toUpperCase();
+        svg.appendChild(nLbl);
+
+        // DSF -> CVM connectors
+        svg.appendChild(rc.line(x + nodeW/2, dsfY + dsfH, x + nodeW/2, nodeY + 44,
+          { stroke: C.fabric, strokeWidth: 0.9, roughness: 1.3, opacity: 0.85 }));
+
+        // CVM -> CVM replication arcs (between adjacent nodes)
+        if (i < nodes.length - 1) {
+          const y = nodeY + 66;
+          const x1 = x + nodeW;
+          const x2 = nodes[i+1].x;
+          const mid = (x1 + x2) / 2;
+          svg.appendChild(rc.line(x1, y, x2, y,
+            { stroke: C.cvm, strokeWidth: 1, roughness: 1.4, opacity: 0.7 }));
+          // small arrow tick
+          const tick = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          tick.setAttribute('x', mid); tick.setAttribute('y', y - 4);
+          tick.setAttribute('text-anchor', 'middle');
+          tick.setAttribute('font-family', 'JetBrains Mono, monospace');
+          tick.setAttribute('font-size', '9');
+          tick.setAttribute('fill', '#d97c4a');
+          tick.textContent = '⇄';
+          svg.appendChild(tick);
+        }
+      });
+
+      // Bottom annotation
+      const ann = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      ann.setAttribute('x', 500); ann.setAttribute('y', 480);
+      ann.setAttribute('text-anchor', 'middle');
+      ann.setAttribute('font-family', 'Inter, sans-serif'); ann.setAttribute('font-size', '12');
+      ann.setAttribute('fill', '#a8b8d4'); ann.setAttribute('font-style', 'italic');
+      ann.textContent = 'No external storage device. The cluster is the storage.';
+      svg.appendChild(ann);
+      const ann2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      ann2.setAttribute('x', 500); ann2.setAttribute('y', 502);
+      ann2.setAttribute('text-anchor', 'middle');
+      ann2.setAttribute('font-family', 'JetBrains Mono, monospace'); ann2.setAttribute('font-size', '11');
+      ann2.setAttribute('fill', '#6b7a9a'); ann2.setAttribute('letter-spacing', '0.06em');
+      ann2.textContent = 'RF2: every block has 2 copies on 2 different nodes';
+      svg.appendChild(ann2);
+    })();
+  </script>
+</body>
+</html>
