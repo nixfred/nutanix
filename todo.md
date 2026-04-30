@@ -113,7 +113,26 @@ Modules:
   - Suspect (kept as-is):
     - Acropolis status page on port 2030 — could not verify from public sources; likely correct (internal status pages on per-CVM ports are common in Nutanix services). Re-validate during Phase TR finalization.
     - "ADS recommends or executes Live Migrations" — accurate; ADS can run in advisory or enforcing mode depending on cluster config. Curriculum doesn't distinguish; pedagogically OK.
-- [ ] 04-prism-management.md
+- [x] 04-prism-management.md — STATUS: findings-recorded, three corrections made, References section added
+  - Corrections applied:
+    - **Ansible collection name fixed.** Curriculum had `nutanix.ncp` (not a real collection). Correct name is `nutanix.ansible` per the official Nutanix Ansible repo and Nutanix.dev docs. Fixed.
+    - **v4 API URL pattern fixed.** Curriculum's curl examples used `https://<pc-ip>:9440/api/nutanix/v4/<namespace>/<version>/<path>` with an extra `/nutanix/v4/` prefix. The actual pattern per the Nutanix v4 API User Guide is `/api/<namespace>/<version>/<path>`, e.g., `/api/vmm/v4.0/ahv/config/vms`. Rewrote the three curl examples and added a one-line URL-pattern comment so a reader sees the canonical shape.
+    - **NCM tier description rewritten.** Curriculum claimed "NCM Starter. Included with PC." That is wrong; NCM Starter is a paid SKU separate from NCI. Rewrote to clarify the NCI / NCM / NCP split: basic Prism Central (multi-cluster, Categories, Projects, RBAC, v4 API) is included with NCI; NCM tiers (Starter / Pro / Ultimate) are separate paid licenses; NCP bundles combine them. Updated the capability table to reflect what is actually included with NCI vs each NCM tier.
+  - Confirmed:
+    - Prism Element is per-cluster, in-cluster, included with NCI.
+    - Prism Central is a separately-deployed VM for multi-cluster management.
+    - PC has multiple sizing tiers including X-Small (5 clusters / 50 hosts / 500 VMs), Small, and scale-out 3-VM. Curriculum's "12,500 VMs / 100 clusters" small-tier number could not be confirmed from public sources; flagged for portal cross-check.
+    - Categories drive policy enforcement (backup, DR, microsegmentation, quotas) — not just metadata. The vSphere tags comparison is accurate.
+    - X-Play is event-driven automation tied to NCM Self-Service / Calm (not standalone). Pedagogical framing is consistent with current Nutanix product structure.
+    - SAML 2.0 SSO supported with Azure AD / Entra ID, Okta, Ping Identity. AD via LDAP also supported.
+    - v4 REST API URL pattern corrected; namespaces (VMM, ClusterMgmt, IAM, etc.) confirmed via developers.nutanix.com.
+    - Terraform provider `nutanix/nutanix` confirmed (latest v2.4.2 as of 2026).
+    - Python SDK packages namespaced as `ntnx-<namespace>-py-client` (e.g., `ntnx-vmm-py-client`, `ntnx-clustermgmt-py-client`) confirmed.
+    - v3 (and earlier) APIs deprecating starting Q4 2026 — worth surfacing in Module 04's "What Prism has that VMware doesn't" section in a future copy pass.
+  - Suspect (kept as-is):
+    - PC lab specs "vCPU: 6, RAM: 26 GB" do not match either current public source (small instance is documented as 4 vCPU / 18 GB; 3-VM scale-out is 6 vCPU / 28 GB per VM). Curriculum's numbers may be a mid-version data point or an aggregate; flagged for portal cross-check during Phase TR finalization.
+    - PowerShell module names `Nutanix.Prism.Common`, `Nutanix.Prism.PS.Module` could not be confirmed from public sources; the official PowerShell SDK lives at github.com/nutanix/nutanix-powershell-sdk. Flag for cross-check.
+    - "Pulumi provider" mentioned; current Pulumi support for Nutanix appears to be community-maintained, not official Nutanix. Worth a clarifying note in a future copy pass.
 - [ ] 05-dsf-storage-deep-dive.md
 - [ ] 06-networking-flow.md
 - [ ] 07-data-protection.md

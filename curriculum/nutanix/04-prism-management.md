@@ -295,19 +295,23 @@ X-Play is included with Prism Central's NCM Self-Service tier (formerly Calm). F
 
 This is where licensing gets specific. Pay attention.
 
-Some Prism Central features are included with the platform. Others sit behind **NCM (Nutanix Cloud Manager)** tiers. NCM is Nutanix's umbrella name for the advanced management capabilities. As of AOS 7.5 / PC 7.5, the relevant tiers are:
+The Nutanix licensing model has two parallel axes. **NCI (Nutanix Cloud Infrastructure)** licenses the platform itself: AOS, AHV, the cluster, basic Prism Element and Prism Central management. NCI ships in Starter, Pro, and Ultimate tiers. **NCM (Nutanix Cloud Manager)** licenses the advanced management capabilities on top of Prism Central: Intelligent Operations, Self-Service, X-Play, cost governance. NCM also ships in Starter, Pro, and Ultimate tiers and is **a separate paid SKU from NCI** (do not confuse "NCM Starter" with "included for free"). For convenience, Nutanix also sells **NCP (Nutanix Cloud Platform)** bundles that combine NCI and NCM at matching tiers (NCP Starter = NCI Pro + NCM Pro; NCP Pro = NCI Ultimate + NCM Pro; NCP Ultimate = NCI Ultimate + NCM Ultimate).
 
-- **NCM Starter.** Included with PC. Basic multi-cluster management, categories, projects, baseline reporting.
-- **NCM Pro.** Adds Intelligent Operations (capacity analytics, anomaly detection, what-if planning, runway analysis), some advanced reporting, more aggressive alert correlation.
-- **NCM Ultimate.** Adds Self-Service (Calm), X-Play playbooks, advanced governance, cost governance for hybrid/multi-cloud environments.
+As of AOS 7.5 / PC 7.5 the broad NCM tier mapping is:
 
-The exact tier names and contents shift between versions, and Nutanix has been simplifying the model. As of 2026 the broad shape is:
+- **NCM Starter.** Intelligent Operations basics (monitoring, planning, rightsizing), low-code automation, basic self-service. Paid; not bundled with NCI.
+- **NCM Pro.** Adds deeper Intelligent Operations (anomaly detection, what-if planning, runway analysis), advanced reporting, more aggressive alert correlation.
+- **NCM Ultimate.** Adds full Self-Service (Calm) blueprint catalog, X-Play playbook automation, advanced governance, and cost governance for hybrid / multi-cloud environments.
+
+What is included with **basic NCI / Prism Central** (no NCM at all): multi-cluster Prism Central management, Categories, Projects, baseline reporting and dashboards, RBAC, identity integration, the v4 REST API surface itself. This is the floor.
 
 | Capability | Where It Lives |
 |---|---|
-| Multi-cluster Prism management | Included (PC) |
-| Categories, projects | Included (PC) |
-| Capacity analytics, anomaly detection | NCM Pro |
+| Per-cluster Prism Element | Included with NCI |
+| Multi-cluster Prism Central, Categories, Projects | Included with NCI |
+| Baseline reporting, RBAC, v4 API | Included with NCI |
+| Intelligent Operations basics | NCM Starter |
+| Anomaly detection, what-if, runway | NCM Pro |
 | Self-Service blueprints (Calm) | NCM Ultimate |
 | X-Play playbooks | NCM Ultimate (typically) |
 | Cost governance | NCM Ultimate |
@@ -378,20 +382,22 @@ Projects are particularly useful for:
 The v4 REST API is the unified Nutanix API. Every Prism action has an API equivalent. Some examples for orientation:
 
 ```bash
-# List all VMs (GET)
+# v4 URL pattern: https://<pc-or-pe-ip>:9440/api/<namespace>/<version>/<path>
+
+# List all VMs (GET) on the VMM (Virtual Machine Management) namespace
 curl -k -u admin:password \
-  https://<pc-ip>:9440/api/nutanix/v4/vmm/v4.0/ahv/config/vms
+  https://<pc-ip>:9440/api/vmm/v4.0/ahv/config/vms
 
 # Create a VM (POST)
 curl -k -u admin:password \
   -X POST \
   -H "Content-Type: application/json" \
   -d @vm-spec.json \
-  https://<pc-ip>:9440/api/nutanix/v4/vmm/v4.0/ahv/config/vms
+  https://<pc-ip>:9440/api/vmm/v4.0/ahv/config/vms
 
-# Get cluster information (GET)
+# Get cluster information (GET) from the ClusterMgmt namespace
 curl -k -u admin:password \
-  https://<pc-ip>:9440/api/nutanix/v4/clustermgmt/v4.0/config/clusters
+  https://<pc-ip>:9440/api/clustermgmt/v4.0/config/clusters
 ```
 
 The full API is documented at `developer.nutanix.com`. Nutanix also publishes:
@@ -399,7 +405,7 @@ The full API is documented at `developer.nutanix.com`. Nutanix also publishes:
 - **PowerShell module** (`Nutanix.Prism.Common`, `Nutanix.Prism.PS.Module`)
 - **Python SDK** (`ntnx-clustermgmt-py-client`, etc.)
 - **Terraform provider** (`nutanix/nutanix`)
-- **Ansible collection** (`nutanix.ncp`)
+- **Ansible collection** (`nutanix.ansible`)
 - **Pulumi provider**
 
 For a BlueAlly SA conversation: lead with the language the customer's team already uses. PowerShell for Windows-shop automation teams. Python for DevOps teams. Terraform for infrastructure-as-code teams. Ansible for config-management teams. The v4 API supports all of them.
@@ -782,6 +788,23 @@ You have the parallel-running pattern for customers with Aria investment: keep A
 You have twelve practice questions worth of management-plane discrimination: PE-vs-PC, categories vs tags, NCM tier mapping, automation tooling, identity integration, and two NCX-style design defenses covering enterprise consolidation strategy and the lock-in architectural argument.
 
 You are now ready for the storage layer. Module 5 goes deep on DSF: how data actually moves through the cluster, how RF works in practice, how erasure coding changes the math, what tiering and compression do for capacity, and how to talk about it all in front of a storage architect who has been engineering arrays for two decades.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. NCM tier names, packaging, and feature gating are the single most volatile area in the entire curriculum; reverify against the current Nutanix licensing matrix before quoting specifics to a customer.
+
+- [Nutanix v4 API User Guide](https://www.nutanix.dev/nutanix-api-user-guide/). v4 URL pattern `/api/<namespace>/<version>/<path>`; the canonical reference for the curl examples in this module.
+- [Nutanix v4 API Reference (developers.nutanix.com)](https://developers.nutanix.com/api-reference?namespace=vmm&version=v4.0.b1). Live VMM, ClusterMgmt, and IAM namespace browsers.
+- [Nutanix v4 REST API Migration Guide](https://www.nutanix.dev/nutanix-rest-api-migration-guide/). v3 → v4 migration path; v0.8 / v1 / v2 / v3 are deprecating starting Q4 2026, so all new automation should target v4.
+- [Nutanix Cloud Manager (NCM) Datasheet](https://www.nutanix.com/library/datasheets/ncm). Tier-by-tier feature mapping for Starter, Pro, Ultimate.
+- [Nutanix Cloud Platform Software Options](https://www.nutanix.com/products/cloud-platform/software-options). NCI vs NCM split and the NCP bundle structure (NCP Starter / Pro / Ultimate).
+- [Introducing X-Small Prism Central](https://www.nutanix.com/tech-center/blog/introducing-x-small-prism-central-a-low-footprint-option-for-smaller-environments). PC sizing tiers including the X-Small option (5 clusters, 50 hosts, 500 VMs).
+- [Resource requirements for Prism Central (Nutanix Community)](https://next.nutanix.com/intelligent-operations-26/resource-requirements-for-prism-central-38237). Per-tier vCPU, RAM, and disk minimums for PC small / large / scale-out.
+- [Nutanix Terraform Provider on GitHub](https://github.com/nutanix/terraform-provider-nutanix). Official provider source. Latest is v2.4.2 as of 2026.
+- [Nutanix Ansible Collection (`nutanix.ansible`)](https://www.nutanix.dev/2024/12/15/getting-started-with-the-nutanix-ansible-module/). Authoritative source for the official Ansible collection name; the curriculum's earlier reference to `nutanix.ncp` was incorrect and has been corrected.
+- [NCM Self-Service v4 IAM API Key Authentication](https://www.nutanix.dev/2025/07/11/ncm-self-service-and-v4-iam-api-key-authentication/). Authentication patterns for v4 (Basic auth + API keys via IAM).
 
 ---
 
