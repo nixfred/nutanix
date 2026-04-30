@@ -155,7 +155,26 @@ Modules:
     - Capacity reservation "10-15%" is a planning rule of thumb. Real reservations vary with cluster size and configuration; the curriculum's range is reasonable but not precisely sourced.
     - "Bigger clusters rebuild faster (more nodes share the work)" — directionally true; specific time estimates are workload-dependent.
     - The DSF-internal "Cassandra" terminology versus the customer-workload "Cassandra-on-Nutanix" reference (BP-2007) could trip a careful reader; pedagogically OK as the curriculum is clear that DSF's Cassandra is the metadata service.
-- [ ] 06-networking-flow.md
+- [x] 06-networking-flow.md — STATUS: findings-recorded, four corrections made, References section added
+  - Corrections applied:
+    - **Flow Network Security licensing was wrong (2 places).** Curriculum claimed Flow Network Security "requires NCM Pro or higher" and "Flow Network Security at NCM Pro is included." Per the Nutanix Cloud Platform software-options page and Flow product page, Flow Network Security is licensed via **NCI Ultimate** or via the **Security Add-On for NCI Pro** (the Security Add-On is per-usable-TiB and bundles Flow microsegmentation with Data-at-Rest Encryption, software and SED). Flow is **not** an NCM tier feature. Rewrote both places to make this explicit and to warn against confusing NCM management tiers with Flow's NCI-side licensing. Also softened the "licensing change" framing to acknowledge per-TiB pricing and the encryption bundling.
+    - **LACP recommendation tightened.** Curriculum's bond-mode discussion described LACP as "Best throughput with proper switch coordination" and "Production deployments with proper switch configuration." Per Nutanix's official posture (community thread + Nutanix Bible), Nutanix has historically leaned **away from LACP** because misconfigured upstream switches can disable cluster connectivity in hard-to-recover ways. Added a sentence calling this out and emphasizing the documentation-and-validation discipline if a customer chooses LACP.
+    - **NCP-NS introduction date refined.** Curriculum said "introduced in 2025." Public scheduling actually opened April 4, 2026 for NCP-NS 7.5. Updated to the exact name (NCP-NS = Nutanix Certified Professional – Network and Security) and the April 2026 launch date.
+  - Confirmed:
+    - OVS bridges br0 (data) and br0.local (management) confirmed.
+    - Bond modes (active-backup, balance-slb, balance-tcp, LACP) and their semantics confirmed.
+    - Default new-cluster bond mode is active-backup. Confirmed.
+    - balance-slb operates without switch-side LACP; balance-tcp and LACP do require LACP-configured switches. Confirmed.
+    - Flow Virtual Networking VPC overlay confirmed (PC 2022.x and forward); BGP integration, NAT, service insertion all verified.
+    - manage_ovs CLI tool, ovs-vsctl, ovs-ofctl as troubleshooting tools confirmed.
+    - Flow rules enforced at OVS bridge level on each host (distributed enforcement, not central).
+    - Categories drive Flow policy (vs IP-based ACLs); vSphere tag comparison accurate.
+    - Stateful firewall rules with explicit-allow / explicit-deny default policy.
+    - Service insertion for Palo Alto VM-Series, Check Point, Fortinet pattern confirmed.
+    - NSX-T Federation comparison framing accurate (NSX-T Federation is a real multi-site product; FVN is younger and catching up).
+  - Suspect (kept as-is):
+    - "vlan.<id>" naming convention is a curriculum-style suggestion; Nutanix doesn't enforce a specific naming convention for Virtual Networks. Pedagogically OK.
+    - Lab notes "Flow Network Security on Community Edition is limited; some features may not be available." Acceptable; CE Flow capabilities are version-dependent and the curriculum's caveat is appropriate.
 - [ ] 07-data-protection.md
 - [ ] 08-unified-storage.md
 - [ ] 09-licensing-economics.md

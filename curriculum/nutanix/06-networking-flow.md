@@ -46,7 +46,7 @@ sa_toolkit:
 By the end of this module you will:
 
 1. **Configure AHV networking from vSphere muscle memory.** You know vSwitches, port groups, VLAN trunking, NIC teaming. AHV uses different vocabulary (Open vSwitch, bridges, bonds, virtual networks) for largely equivalent concepts. By the end of this module the mapping is automatic.
-2. **Pass roughly half of NCP-NS, the newest specialty cert.** NCP-NS is Nutanix's network-and-security cert (introduced in 2025). Roughly half of its blueprint is the material in this module: AHV networking, Flow Network Security, Flow Virtual Networking. The other half is Module 7 territory (DR, replication networking) plus deeper Flow operations.
+2. **Pass roughly half of NCP-NS, the newest specialty cert.** NCP-NS (Nutanix Certified Professional – Network and Security) is Nutanix's network-and-security cert; the 7.5 version opened for public scheduling in April 2026. Roughly half of its blueprint is the material in this module: AHV networking, Flow Network Security, Flow Virtual Networking. The other half is Module 7 territory (DR, replication networking) plus deeper Flow operations.
 3. **Build a microsegmentation policy using categories** and explain why category-driven policy is operationally cleaner than the IP-based ACL world your customer has been living in.
 4. **Defend Flow against an NSX-T-loyal architect.** The honest comparison: Flow Network Security is competitive with NSX-T's distributed firewall for VM microsegmentation, often simpler. Flow Virtual Networking is younger than NSX-T and behind it for advanced routing patterns. You should be able to draw the comparison without flinching.
 5. **Make the network economics case.** Flow Network Security is included in NCM Pro (or higher); Flow Virtual Networking is also bundled. NSX-T is a separate VMware product with its own licensing. The licensing math is meaningful and you should be able to walk through it.
@@ -109,7 +109,7 @@ A **bond** in AHV is a Linux bonding interface (or, more recently, OVS bond) tha
 | **balance-tcp** | Balances per-flow based on TCP/IP headers. Requires LACP on the switch. | Best throughput with proper switch coordination. |
 | **LACP (active-active)** | 802.3ad link aggregation. Requires LACP on the switch. | Production deployments with proper switch configuration. |
 
-**The default for new clusters** is typically active-backup, which is robust but does not load-balance traffic across multiple NICs. Most production deployments upgrade to balance-slb (no switch-side change needed) or to LACP (with proper switch configuration). The choice depends on the network team and the switch capabilities.
+**The default for new clusters** is typically active-backup, which is robust but does not load-balance traffic across multiple NICs. Most production deployments upgrade to balance-slb (no switch-side change needed). LACP / balance-tcp is supported and gives the best throughput with proper switch coordination, but **Nutanix's official recommendation has historically leaned away from LACP** because misconfigured upstream switches can disable cluster connectivity in ways that are hard to recover from in the field. If you choose LACP for a customer, document the switch-side configuration carefully and validate before go-live. The choice depends on the network team's discipline and the switch capabilities.
 
 > [!FAMILIAR]
 > Bond modes map cleanly onto vSphere NIC teaming policies. Active-backup is "Use Explicit Failover Order." Balance-slb is roughly analogous to "Route Based on Source MAC Hash." LACP is "Route Based on IP Hash" with LACP enabled on the vDS. The concepts transfer; the configuration UI is different.
@@ -213,11 +213,11 @@ In the VMware world, the network capabilities scale up by license tier:
 - NSX-T routing/edge services: even higher NSX tiers.
 
 In the Nutanix world:
-- AHV networking with OVS, virtual networks, IPAM: included with AOS.
-- Flow Network Security (microsegmentation): requires NCM Pro or higher.
-- Flow Virtual Networking (VPC overlay, advanced routing): bundled with the platform; specific feature gating depends on AOS version.
+- AHV networking with OVS, virtual networks, IPAM: included with AOS / NCI baseline.
+- **Flow Network Security (microsegmentation):** licensed via **NCI Ultimate**, or via the optional **Security Add-On** for NCI Pro (the Security Add-On bundles Flow microsegmentation with Data-at-Rest Encryption, both software and SED, and is licensed per usable TiB). It is **not** an NCM tier feature; do not confuse the NCM management tiers with Flow's NCI-side licensing.
+- **Flow Virtual Networking (VPC overlay, advanced routing):** included with PC / AOS at the platform level; specific feature gating depends on PC and AOS version.
 
-The customer who has been paying separately for NSX-T microsegmentation will find Flow Network Security at the NCM Pro tier a meaningful licensing change. Always run the actual numbers; the answer is workload-dependent.
+The customer who has been paying separately for NSX-T microsegmentation will find Flow Network Security at the NCI Ultimate tier (or as a Security Add-On) a meaningful licensing change. Always run the actual numbers; the answer depends on tier, workload size, and whether the Security Add-On's encryption capabilities also displace another vendor's tooling.
 
 ---
 
@@ -389,7 +389,7 @@ For typical mid-market and enterprise general-purpose deployments, none of these
 
 1. **Open vSwitch as the substrate.** Open standard, auditable, well-understood. Many engineers prefer this to proprietary kernel modules.
 2. **Category-driven policy.** Flow's category model is operationally cleaner than IP-based ACLs for typical enterprise use. (NSX-T also supports tag-based policy; the comparison favors Flow on simplicity for typical use.)
-3. **Included licensing for microsegmentation.** Flow Network Security at NCM Pro is included; NSX-T microsegmentation is separately licensed.
+3. **Bundle-friendly licensing for microsegmentation.** Flow Network Security ships with NCI Ultimate (or via the Security Add-On for NCI Pro); NSX-T microsegmentation is a separate VMware product with its own per-CPU or per-workload licensing. Run the actual customer numbers, but the typical comparison favors Flow.
 4. **Single management plane.** Network configuration, microsegmentation, and policy all live in Prism Central alongside compute and storage.
 5. **Native integration with categories from compute and storage.** A single category like `Environment: Production` drives backup policy, microsegmentation, quotas, and reporting.
 
@@ -780,6 +780,25 @@ You know the licensing reality: Flow Network Security at NCM Pro is included; NS
 You have twelve practice questions worth of networking and security discrimination, including two NCX-style design defenses (financial-services compliance design, and the NSX-T architect defense conversation). The NCP-NS specialty cert is now substantially in your reach.
 
 You are now ready for data protection and DR. Module 7 covers Protection Domains, Async/NearSync/Metro replication, Recovery Plans (Leap), Site Recovery Manager comparison, and the durable DR story that frequently decides enterprise deals.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. Flow licensing in particular is the most volatile area; reverify against the current Nutanix Cloud Platform software-options page before quoting tier-specific costs.
+
+- [Nutanix Bible — AHV Architecture (networking)](https://www.nutanixbible.com/pdf/5a-book-of-ahv-architecture.pdf). Authoritative source for OVS bridges (br0, br0.local), bond modes, and the default networking topology.
+- [Nutanix Bible — AHV Administration](https://www.nutanixbible.com/pdf/5c-book-of-ahv-administration.pdf). manage_ovs CLI reference, bond-mode configuration workflows.
+- [AHV Bond Modes (Virtual Ramblings)](https://www.virtualramblings.com/define-and-differentiate-ahv-bond-modes/). Independent walkthrough of active-backup, balance-slb, balance-tcp, and LACP semantics.
+- [Changing AHV Bonding Mode to LACP / Balance-TCP (Nutanix Community)](https://next.nutanix.com/ahv-virtualization-27/changing-bonding-mode-in-ahv-from-active-backup-to-active-active-lacp-and-balance-tcp-43521). Source for Nutanix's caution on LACP and the upstream-switch coordination requirement.
+- [Flow Network Security Product Page](https://www.nutanix.com/products/flow-network-security). Current product positioning.
+- [Nutanix Cloud Platform Software Options](https://www.nutanix.com/products/cloud-platform/software-options). Authoritative source for Flow Network Security licensing: included in NCI Ultimate, or via the Security Add-On for NCI Pro (per-usable-TiB pricing, bundles Data-at-Rest Encryption).
+- [Nutanix Bible — Flow Network Security](https://www.nutanixbible.com/12a-book-of-network-services-flow-network-security.html). Distributed enforcement at OVS, category-driven policy, stateful rules.
+- [Nutanix Bible — Flow Virtual Networking](https://www.nutanixbible.com/12c-book-of-network-services-flow-virtual-networking.html). VPC overlay architecture, NAT, BGP, service insertion.
+- [Flow Virtual Networking Guide (PC 2024.2)](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Flow-Virtual-Networking-Guide-vpc_2024_2:Nutanix-Flow-Virtual-Networking-Guide-vpc_2024_2). Current FVN product documentation.
+- [Exploring BGP Routing in FVN (Nutanix.dev, 2023)](https://www.nutanix.dev/2023/08/31/exploring-bgp-routing-inside-nutanix-flow-virtual-networking-fvn-vpc/). FVN BGP integration details.
+- [NCP-NS 7.5 Open for Scheduling (Nutanix University)](https://en.vmik.net/2026/03/whats-new-at-nutanix-university-15/). Confirms the April 4, 2026 public exam launch date.
+- [TN-2094 Flow Network Security Tech Note](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2094-Flow:TN-2094-Flow). Detailed Flow technical reference.
 
 ---
 
