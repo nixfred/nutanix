@@ -7,9 +7,9 @@ prerequisites:
   - Basic understanding of enterprise procurement and financial decision-making
   - Awareness of customer accounting concepts (capex, opex, depreciation)
 key_terms:
-  - AOS Pro
-  - AOS Ultimate
-  - NCM Starter / Pro / Ultimate
+  - NCI Pro / NCI Ultimate (current platform tiers)
+  - AOS Pro / AOS Ultimate (legacy platform tier names; in conversion to NCI)
+  - NCM Starter / Pro / Ultimate (paid management tiers)
   - NX appliance (Nutanix-branded hardware)
   - OEM partner (Dell XC, Lenovo HX, HPE DX, Cisco UCS)
   - Software-only / HCIR
@@ -96,29 +96,36 @@ You have built BoMs and TCO models against this stack. You have probably been as
 
 ## Core Content
 
-### AOS Subscription Tiers: The Foundation
+### NCI Subscription Tiers: The Foundation (formerly AOS)
 
-**AOS** (the operating system: hypervisor + storage + management + Prism Element) is licensed via subscription. As of AOS 7.5 (current at curriculum production), the typical tier structure is:
+The platform itself is now licensed under **NCI (Nutanix Cloud Infrastructure)**. NCI replaces the legacy **AOS Pro / AOS Ultimate** SKU naming; **legacy AOS licenses are no longer available for new sale or renewal**, and existing AOS customers are being converted to NCI Pro / NCI Ultimate by their account teams. Both names will appear in the wild for a while: AOS in older customer contracts, current pricing tools, and customer vocabulary; NCI in net-new quotes and current Nutanix portal collateral. Internally to the platform, NCI = AOS at the version level; the rename is a packaging change, not a software change.
 
-- **AOS Pro.** The foundational tier. Includes AHV (the hypervisor at no extra charge), DSF, Prism Element, baseline replication (Async), basic snapshots and backup, network features, basic security. This is what most customers buy.
-- **AOS Ultimate.** Adds advanced features: NearSync replication, Metro Availability, advanced data services, additional storage features (e.g., specific erasure-coding configurations), some advanced security options.
+The current tier structure:
 
-Licensing is typically **per-core**. The customer pays for the cores in their cluster, not for VM count. This is similar in shape to VMware's post-Broadcom per-core model.
+- **NCI Pro** (formerly AOS Pro). The foundational tier. Includes AHV (the hypervisor at no extra charge), DSF, Prism Element, baseline replication (Async), basic snapshots and backup, baseline network features. This is what most customers buy.
+- **NCI Ultimate** (formerly AOS Ultimate). Adds advanced features: NearSync replication, Metro Availability, advanced data services, Flow Network Security (also available as a Security Add-On for NCI Pro on a per-usable-TiB model; see Module 6), additional storage features, advanced security.
+- **NCI Compute (NCI-C)** also exists as a compute-only SKU for clusters that don't need DSF storage features (rare; mostly relevant for specific edge or compute-mostly scenarios).
+
+NCI requires AOS 6.1.1 (LTS 6.5) or later, Prism Central 2022.4+, and NCC 4.5.0+ on the cluster. Customers running older AOS versions need to upgrade before converting from AOS to NCI licensing.
+
+Licensing is **per-core**. The customer pays for the cores in their cluster, not for VM count. This is similar in shape to VMware's post-Broadcom per-core model.
 
 **Multi-year subscription terms** (1, 3, or 5 years) are standard. Longer terms typically come with discount tiers. Customers who plan their compute footprint can save meaningfully on multi-year commitments.
 
 > [!ON-THE-EXAM] **NCA · NCP-MCI**
-> Tier structure is testable at a high level. Memorize: AOS Pro is the standard tier; AOS Ultimate adds NearSync, Metro, and advanced features. NCM tiers (Starter / Pro / Ultimate) are separate and add management capabilities on top. Trap distractor: questions implying AHV requires a separate license fee (false; AHV is included in AOS).
+> Tier structure is testable at a high level. Memorize: **NCI Pro** is the standard platform tier; **NCI Ultimate** adds NearSync, Metro, advanced features, and Flow Network Security. **NCM tiers** (Starter / Pro / Ultimate) are separately-licensed paid SKUs that add management capabilities on top of either NCI tier. Older exam material may still use the legacy "AOS Pro / Ultimate" naming; treat the two as functionally equivalent, but in current Nutanix collateral the term is NCI. Trap distractor: questions implying AHV requires a separate license fee (false; AHV is included with NCI / AOS at every tier).
 
 ### NCM Tiers: The Management Layer
 
-**NCM (Nutanix Cloud Manager)** is the umbrella name for the multi-cluster management features that sit on top of AOS. The tier structure (subject to ongoing simplification by Nutanix):
+**NCM (Nutanix Cloud Manager)** is the umbrella name for the multi-cluster management capabilities that sit on top of NCI. NCM is **separately licensed from NCI** (do not assume "NCM Starter is bundled with Prism Central" — it is not; basic Prism Central comes with NCI, and NCM tiers are paid add-ons). The tier structure:
 
-- **NCM Starter.** Included with Prism Central. Baseline multi-cluster management, categories, projects, baseline reporting. Most customers operate at this tier for a while.
-- **NCM Pro.** Adds Intelligent Operations: capacity analytics, anomaly detection, what-if planning, runway analysis, advanced reporting. Aria Operations equivalent functionality.
-- **NCM Ultimate.** Adds Self-Service (formerly Calm): blueprint-driven provisioning, X-Play playbook automation, cost governance, advanced multi-cloud features. Aria Automation equivalent functionality.
+- **NCM Starter.** A paid tier focused on infrastructure operations: monitoring, planning, rightsizing, basic Intelligent Operations, low-code automation.
+- **NCM Pro.** Adds deeper Intelligent Operations (anomaly detection, what-if planning, runway analysis), advanced reporting, more aggressive alert correlation. Aria Operations equivalent functionality.
+- **NCM Ultimate.** Adds Self-Service (formerly Calm) blueprint-driven provisioning, X-Play playbook automation, cost governance, advanced multi-cloud features. Aria Automation equivalent functionality.
 
-For most enterprise customers, NCM Pro is the right baseline (provides the analytics that justify the investment). NCM Ultimate is for customers who plan to drive serious self-service or multi-cloud governance.
+Nutanix also packages **NCP (Nutanix Cloud Platform)** bundles that combine NCI and NCM at matching tiers (NCP Starter = NCI Pro + NCM Pro; NCP Pro = NCI Ultimate + NCM Pro; NCP Ultimate = NCI Ultimate + NCM Ultimate). Customers who want everything in one SKU often choose NCP rather than buying NCI and NCM separately.
+
+For most enterprise customers, **NCM Pro is the right baseline** (provides the analytics that justify the investment). NCM Ultimate is for customers who plan to drive serious self-service or multi-cloud governance. **What is included with basic NCI without any NCM:** multi-cluster Prism Central management, Categories, Projects, baseline reporting and dashboards, RBAC, identity integration, the v4 REST API. That is the floor; NCM tiers add capability on top.
 
 > [!FAMILIAR]
 > The NCM tier structure maps roughly onto the VMware Aria Suite tiers. Aria Operations (formerly vROps) maps to NCM Pro's Intelligent Operations. Aria Automation (formerly vRA) maps to NCM Ultimate's Self-Service. Aria Suite Lifecycle (the bundle) is similar in spirit to NCM as the umbrella product. Customers who priced Aria Suite have a mental model that transfers.
@@ -179,12 +186,13 @@ The choice depends on the customer's organizational preferences. There is no sin
   - Flow Virtual Networking
 
 - Columns:
-  - AOS Pro
-  - AOS Ultimate
-  - NCM Starter (with PC)
+  - NCI Pro (formerly AOS Pro)
+  - NCI Ultimate (formerly AOS Ultimate)
+  - NCM Starter (paid)
   - NCM Pro
   - NCM Ultimate
-  - Add-on (Files, Objects, etc.)
+  - NCP bundles (Starter / Pro / Ultimate, combine NCI + NCM)
+  - Add-on (Files, Objects, Security Add-On for Flow + DARE, etc.)
 
 - Cells: checkmark / dot / blank to indicate inclusion
 
@@ -828,6 +836,23 @@ You have the hidden cost categories that customers forget: parallel running, rec
 You have twelve practice questions worth of pricing, BoM, and TCO discrimination, including two NCX-style design defenses (full multi-tier consolidation TCO comparison with sensitivity analysis, and the architectural defense of Nutanix economics against a skeptical CFO).
 
 You are now ready for the synthesis module. Module 10 brings everything together: the customer-running migration playbook from VMware to Nutanix, the order of operations, the technical and commercial timing, the parallel-running patterns, the cutover decisions, and the year-2 stable state. After that, the appendices.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. Licensing structure changes more than any other dimension; reverify against the BlueAlly internal pricing tools and the current Nutanix software-options page before quoting any specific tier or number to a customer.
+
+- [Nutanix Cloud Platform Software Options](https://www.nutanix.com/products/cloud-platform/software-options). Authoritative source for current NCI tiers (Pro / Ultimate), NCM tiers (Starter / Pro / Ultimate), and NCP bundle structure.
+- [Nutanix Cloud Infrastructure (NCI) Datasheet](https://www.nutanix.com/library/datasheets/nci). Tier-by-tier feature comparison and the NCI vs NCI-Compute split.
+- [Nutanix Cloud Manager (NCM) Datasheet](https://www.nutanix.com/library/datasheets/ncm). NCM tier structure and Self-Service / X-Play / cost-governance gating.
+- [License Manager — Conversion Requirements (Nutanix Portal)](https://portal.nutanix.com/page/documents/details?targetId=License-Manager:lmg-licmgr-pnp-licensing-requirements-r.html). AOS Pro → NCI Pro conversion requirements (AOS 6.1.1+ / PC 2022.4+ / NCC 4.5.0+).
+- [NCM/NCI/NUS Licensing (Nutanix Community)](https://next.nutanix.com/ncm-nci-nus-licensing-new-licensing-183). Active community thread on the licensing transition; useful for current customer-side experiences.
+- [Impact of Not Converting AOS Pro to NCI Pro](https://next.nutanix.com/ncm-nci-nus-licensing-new-licensing-183/impact-of-not-converting-aos-pro-license-to-nci-pro-before-expiry-45466). What happens to legacy AOS licenses at renewal.
+- [VCF Licensing Guide 2026 (Redress Compliance)](https://redresscompliance.com/vcf-licensing-guide-2026.html). Current Broadcom VMware licensing structure for the VMware comparison: VCF $350/core, vSphere Foundation $190/core, 16-core CPU minimum, 72-core order minimum.
+- [vSphere Foundation vs Standard 2026](https://vmwaremadesimple.com/articles/vsphere-foundation-vs-standard-2026.html). Current vSphere Foundation MSRP and partner quote ranges.
+- [Lenovo HX Nutanix Software Solution Product Guide](https://lenovopress.lenovo.com/lp1765-nutanix-software-solution-product-guide). OEM-partner pricing structure example.
+- [Flow Network Security Licensing (from Module 6 References)](https://www.nutanix.com/products/cloud-platform/software-options). Flow ships with NCI Ultimate or as the Security Add-On for NCI Pro (per usable TiB; bundles Data-at-Rest Encryption).
 
 ---
 

@@ -212,7 +212,23 @@ Modules:
   - Suspect (kept as-is):
     - "Distributed shares only available on three or more FSVMs" — TN-2041 confirms this; curriculum's three-FSVM-typical framing aligns once the single-FSVM exception is noted (now done).
     - `afs` CLI command for Files-specific operations — could not verify exact command name from public sources; flag for portal cross-check.
-- [ ] 09-licensing-economics.md
+- [x] 09-licensing-economics.md — STATUS: findings-recorded, two structural corrections made, References section added
+  - Corrections applied:
+    - **AOS Pro / AOS Ultimate → NCI Pro / NCI Ultimate.** The single biggest finding. Per the Nutanix Cloud Platform software-options page and the License Manager conversion docs, **AOS Pro and AOS Ultimate are legacy and no longer available for new sale or renewal**; existing AOS customers are being converted to NCI Pro / NCI Ultimate. Curriculum was using the legacy "AOS Pro / Ultimate" naming throughout. Rewrote the main "AOS Subscription Tiers" section as "NCI Subscription Tiers (formerly AOS)" with explicit explanation of the rename, the conversion requirement (AOS 6.1.1+ / PC 2022.4+ / NCC 4.5.0+), the dual-naming reality during transition, and the existence of NCI-Compute (NCI-C) as a compute-only SKU. Updated front matter key_terms, the ON-THE-EXAM callout, and the tier-feature-matrix diagram column names. Added NCP bundles (NCI + NCM combined SKUs) which the original module didn't surface.
+    - **NCM Starter "included with PC" wrong.** Same error I already corrected in Module 04 — propagated here. NCM Starter is a paid SKU; what's included with NCI baseline is basic Prism Central (multi-cluster, Categories, Projects, RBAC, v4 API). Rewrote the NCM tier section to match Module 04's correction and added the NCI/NCM/NCP packaging structure for clarity.
+  - Confirmed:
+    - AHV is included with NCI / AOS at every tier (no separate hypervisor licensing). Confirmed.
+    - Per-core licensing model. Confirmed.
+    - Multi-year subscription terms (1, 3, 5 year) with discount tiers. Confirmed.
+    - Hardware sourcing options: NX (Nutanix-branded, manufactured by Super Micro), OEM (Dell XC, Lenovo HX, HPE DX, Cisco UCS), software-only on HCIR commodity hardware. Confirmed.
+    - Capex vs opex framing accurate.
+    - 5-year TCO methodology, BoM categories (hardware, software, services, support, training, migration, operations, decommissioning) accurate.
+    - Broadcom comparison framing accurate (already corrected in Module 03 with the precise vSphere Foundation $190 / VCF $350 numbers; Module 09's general framing here aligns with that).
+  - Suspect (kept as-is):
+    - "Files licensing typically per-TB or per-FSVM model" — packaging varies; flag for verification against current pricing tools.
+    - "Objects licensing per-TB capacity" — same caveat.
+    - Practice questions Q1-Q12 use AOS terminology rather than NCI; pedagogically OK with the rename note added to the ON-THE-EXAM callout, since exam material is currently transitioning. Future copy pass could update the QA wording.
+    - Lab Exercise references "AOS Pro per-core" in steps; update in a future pass.
 - [ ] 10-migration-path.md
 
 Appendices:
