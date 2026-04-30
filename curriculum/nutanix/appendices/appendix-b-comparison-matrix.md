@@ -20,7 +20,7 @@ covers:
   - HCI platforms (Nutanix vs VxRail, HyperFlex, Azure Stack HCI)
   - Migration tools (Move vs alternatives)
   - Hardware sourcing (NX vs OEM vs HCIR)
-  - Licensing (AOS subscription vs VCF)
+  - Licensing (NCI subscription, formerly AOS, vs VCF)
 ---
 
 # Appendix B: Comparison Matrix
@@ -276,11 +276,11 @@ The discipline applied across every comparison in this appendix:
 | Distributed enforcement | Yes (OVS flow rules) | Yes (kernel module) |
 | Identity-based rules | Limited | Yes (deep AD integration) |
 | Maturity | ~5+ years | 10+ years |
-| Licensing | NCM Pro tier | Separate NSX-T licensing |
+| Licensing | NCI Ultimate, or Security Add-On for NCI Pro (per usable TiB) | Separate NSX-T per-CPU or per-workload subscription |
 | Integration with VMs | Native AHV (and ESXi-on-Nutanix) | Native ESXi |
 | Third-party security ecosystem | Service insertion (Palo Alto, Check Point, Fortinet) | Mature partner ecosystem |
 
-**Honest assessment:** For VM-tier microsegmentation (the dominant enterprise use case), Flow is competitive with NSX-T's distributed firewall and operationally simpler. NSX-T retains advantages in identity-based policy depth and the partner ecosystem. The licensing comparison favors Flow (included in NCM Pro vs separate NSX-T subscription).
+**Honest assessment:** For VM-tier microsegmentation (the dominant enterprise use case), Flow is competitive with NSX-T's distributed firewall and operationally simpler. NSX-T retains advantages in identity-based policy depth and the partner ecosystem. The licensing comparison favors Flow (bundled with NCI Ultimate or available as a Security Add-On to NCI Pro that also bundles Data-at-Rest Encryption, vs separate NSX-T subscription).
 
 **Coexistence pattern:** NSX-T continues to work on ESXi-on-Nutanix. Customers with deep NSX-T deployments can keep them; Flow is positioned for new AHV workloads or as a replacement evaluation.
 
@@ -352,14 +352,14 @@ The discipline applied across every comparison in this appendix:
 
 **Module reference:** [Module 4](./04-prism-management.md), [Module 9: Licensing](./09-licensing-economics.md)
 
-| Capability | NCM tier | Aria Product |
+| Capability | Where in Nutanix | Aria Product |
 |---|---|---|
-| Multi-cluster mgmt | Starter (with PC) | vCenter Linked Mode |
-| Capacity analytics | Pro (Intelligent Operations) | Aria Operations |
-| Application blueprints | Ultimate (Self-Service / Calm) | Aria Automation |
-| Event-driven automation | Ultimate (X-Play) | Aria Automation |
-| Cost governance | Ultimate | Aria Cost (CloudHealth) |
-| Log management | Integration (external SIEM) | Aria Operations for Logs |
+| Basic multi-cluster mgmt, Categories, Projects, RBAC, v4 API | Included with NCI baseline (no NCM required) | vCenter Linked Mode |
+| Capacity analytics, anomaly detection | NCM Pro (Intelligent Operations) | Aria Operations |
+| Application blueprints | NCM Ultimate (Self-Service, formerly Calm) | Aria Automation |
+| Event-driven automation | NCM Ultimate (X-Play) | Aria Automation |
+| Cost governance | NCM Ultimate | Aria Cost (CloudHealth) |
+| Log management | Integration with external SIEM | Aria Operations for Logs |
 
 **Honest assessment:** Functional parity for typical enterprise needs. NCM's value is integration into the same platform as compute and storage; Aria's value is cross-vendor reach.
 
@@ -369,7 +369,7 @@ The discipline applied across every comparison in this appendix:
 
 ## Data Protection
 
-### Nutanix Recovery Plans (Leap) vs VMware Site Recovery Manager (SRM)
+### Nutanix Recovery Plans (Nutanix Disaster Recovery / formerly Leap) vs VMware Site Recovery Manager (SRM)
 
 **Module reference:** [Module 7: Data Protection and DR](./07-data-protection.md)
 
@@ -461,11 +461,11 @@ The discipline applied across every comparison in this appendix:
 | Hardware | Multi-vendor | Cisco UCS only |
 | Hypervisor | AHV, ESXi-on-Nutanix | ESXi (Hyper-V option) |
 | Networking | Standard switching | Tightly integrated with Cisco UCS networking |
-| Market traction | Strong | Cisco announced HyperFlex EOL in 2024 |
+| Market traction | Strong | Cisco HyperFlex EOL: last order date Sep 11, 2024; last bug-fix support Sep 11, 2025; final subscription renewal Feb 28, 2029 |
 
-**Honest assessment:** Cisco discontinued HyperFlex (announced end-of-development in 2024). Customers with HyperFlex deployments are evaluating alternatives. Nutanix on Cisco UCS hardware (the OEM partnership) is a natural migration path: keep the Cisco hardware, get Nutanix software.
+**Honest assessment:** Cisco discontinued HyperFlex Data Platform (HXDP) software. Customers with HyperFlex deployments are evaluating alternatives. The Nutanix-Cisco partnership product **Cisco Compute Hyperconverged with Nutanix** runs Nutanix software on qualifying Cisco UCS M6 hardware as the recommended migration path: customers keep Cisco compute and networking, swap the storage software stack to Nutanix.
 
-**Coexistence pattern:** Migration from HyperFlex to Nutanix is the active conversation; coexistence is transitional.
+**Coexistence pattern:** Migration from HyperFlex to Nutanix-on-Cisco is the active conversation in 2026, especially as HyperFlex bug-fix support expires September 2025; coexistence is transitional.
 
 ---
 
@@ -530,21 +530,23 @@ The discipline applied across every comparison in this appendix:
 
 ## Licensing
 
-### Nutanix AOS Subscription vs VMware VCF Subscription
+### Nutanix NCI Subscription (formerly AOS) vs VMware VCF Subscription
 
 **Module reference:** [Module 9: Licensing](./09-licensing-economics.md)
 
-| Dimension | AOS Subscription | VCF Subscription |
+| Dimension | NCI Subscription (formerly AOS) | VCF Subscription |
 |---|---|---|
 | Licensing model | Per-core | Per-core (post-Broadcom) |
-| Hypervisor | AHV included | vSphere included |
+| Hypervisor | AHV included at every tier | vSphere included |
 | Distributed storage | DSF included | vSAN included |
-| Networking | Flow Network Security at NCM Pro | NSX-T included |
-| Management | Prism + NCM tier | Aria included |
+| Networking | Flow Network Security with NCI Ultimate (or Security Add-On for NCI Pro, per usable TiB) | NSX-T included in VCF |
+| Management | Prism Element / Prism Central included; advanced features via NCM tier (separate paid SKU) | Aria included with VCF |
 | Term | 1, 3, 5 year | 1-year, 3-year |
-| Minimum cores per CPU | Standard | 16-core minimum (Broadcom) |
+| Minimum cores per CPU | 1-core minimum typical | 16-core minimum (Broadcom) |
+| Order minimum | Negotiated per deal | 72-core order minimum (Broadcom, post-2025) |
 | True-up | Standard provision | Standard provision |
 | Perpetual option | Limited | Largely deprecated post-Broadcom |
+| Reference price (April 2026) | Negotiated; check BlueAlly pricing tools | vSphere Foundation ~$190/core MSRP; VCF ~$350/core MSRP (down from $700) |
 
 **Honest assessment:** Both are per-core subscription models with multi-year discount tiers. The comparison depends on customer-specific factors: configuration density, feature usage, refresh timing. Post-Broadcom changes (per-core, minimum-core floors, bundled tiers, reduced perpetual options) shifted the comparison toward Nutanix for many configurations. The honest path is the customer-specific TCO analysis.
 
@@ -565,6 +567,20 @@ When a customer mentions a competitor:
 7. **Propose concrete next steps** (POC, workload mapping, TCO analysis) when appropriate.
 
 The matrix is a reference, not a script. The SA-chair conversation is yours to have. The matrix gives you the facts to have it well.
+
+---
+
+## References
+
+The comparisons in this appendix are derived from the per-module References sections (Modules 1, 3-9). Highlights specific to the comparison matrix:
+
+- [Cisco HyperFlex End-of-Life Announcement](https://www.cisco.com/c/en/us/products/collateral/hyperconverged-infrastructure/hyperflex-hx-series/hyperflex-data-platform-eol.html). Authoritative HXDP EOL dates (last order Sep 11, 2024; last support Feb 28, 2029).
+- [Cisco Discontinues HyperFlex to Focus on Nutanix-Based HCI (Futurum Group)](https://futurumgroup.com/insights/cisco-discontinues-hyperflex-to-focus-on-nutanix-based-hci/). Industry analysis of the HyperFlex-to-Nutanix migration path.
+- [Nutanix Cloud Platform Software Options](https://www.nutanix.com/products/cloud-platform/software-options). NCI / NCM / NCP licensing structure used in the licensing comparison and the NCM-vs-Aria mapping.
+- [VCF Licensing Guide 2026 (Redress Compliance)](https://redresscompliance.com/vcf-licensing-guide-2026.html). VCF reference pricing ($350/core, 16-core CPU minimum, 72-core order minimum) used in the AOS-vs-VCF licensing row.
+- [vSphere Foundation vs Standard 2026](https://vmwaremadesimple.com/articles/vsphere-foundation-vs-standard-2026.html). vSphere Foundation MSRP $190/core, partner quotes $195+.
+- [Flow Network Security Licensing](https://www.nutanix.com/products/cloud-platform/software-options). Confirms Flow ships with NCI Ultimate or as Security Add-On for NCI Pro (per usable TiB; bundles DARE).
+- [Nutanix Disaster Recovery (formerly Leap) — Nutanix Bible Chapter 13a](https://www.nutanixbible.com/13a-book-of-dr-services.html). Recovery Plans architecture for the SRM comparison row.
 
 ---
 

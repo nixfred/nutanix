@@ -275,7 +275,28 @@ Appendices:
     - **Witness VM**: added the authoritative spec (2 vCPU / 6 GB / 25 GB / ≤500 ms / not on AWS or Azure) from BP-2083 (matches Module 02).
     - **v4 API**: corrected URL pattern, added v4 deprecation Q4 2026 note, fixed Ansible collection name to `nutanix.ansible`, flagged Pulumi as community not official (matches Modules 04, 06).
   - Added entries: **NCI**, **NCI Pro**, **NCI Ultimate**, **NCP** (Nutanix Cloud Platform bundles). These four entries make the new licensing structure searchable in the glossary.
-- [ ] appendix-b-comparison-matrix.md
+- [x] appendix-b-comparison-matrix.md — STATUS: findings-recorded, six corrections made, References section added
+  - Corrections applied:
+    - **Front matter `covers:` field**: "AOS subscription vs VCF" → "NCI subscription, formerly AOS, vs VCF" (alignment with Module 09 NCI rename).
+    - **Flow vs NSX-T licensing row**: "NCM Pro tier" → "NCI Ultimate, or Security Add-On for NCI Pro (per usable TiB)" (matches Module 06 fix). Updated the honest-assessment paragraph with the accurate licensing framing.
+    - **Recovery Plans (Leap) heading**: expanded to "Nutanix Recovery Plans (Nutanix Disaster Recovery / formerly Leap)" (matches Module 07 rename).
+    - **NCM vs Aria Suite table**: rewrote the "Multi-cluster mgmt | Starter (with PC)" row to clarify that basic multi-cluster, Categories, Projects, RBAC, and v4 API are included with NCI baseline (no NCM required); paid NCM tiers add features on top (matches Modules 04 and 09 corrections).
+    - **HyperFlex EOL row**: replaced vague "EOL announced in 2024" with authoritative dates from Cisco's official EOL announcement: last order Sep 11, 2024; last bug-fix support Sep 11, 2025; last subscription renewal Feb 28, 2029. Updated the honest-assessment paragraph to name the Cisco-Nutanix partnership product **Cisco Compute Hyperconverged with Nutanix** as the recommended migration path on qualifying M6 hardware.
+    - **AOS Subscription vs VCF Subscription** licensing comparison rewritten as "NCI Subscription (formerly AOS) vs VCF Subscription" with current pricing references: vSphere Foundation ~$190/core, VCF ~$350/core (down from $700), 16-core CPU minimum, 72-core order minimum (matches Modules 03 and 09 corrections).
+  - Confirmed:
+    - DSF vs vSAN architectural framing accurate; CVM 8-16 vCPU / 32-64 GB consistent with Module 02.
+    - DSF vs traditional arrays trade-offs accurate.
+    - Files vs NetApp ONTAP trade-offs accurate (FlexClone, FlexCache, ABE, SnapMirror).
+    - Files vs Isilon, Files vs FlashBlade comparisons accurate.
+    - Objects vs AWS S3 trade-offs accurate.
+    - Volumes vs purpose-built arrays accurate.
+    - Replication modes comparison (Async / NearSync / Metro) consistent with Module 07.
+    - NC2 vs VMC on AWS comparison accurate.
+    - VxRail comparison accurate.
+    - Nutanix vs Azure Stack HCI comparison accurate.
+    - Move vs alternatives (HCX, Zerto, RackWare) comparison accurate.
+    - Hardware sourcing (NX / OEM / HCIR) accurate.
+  - No content gaps identified beyond corrections above.
 - [ ] appendix-c-scenarios.md
 - [ ] appendix-d-objections.md
 - [ ] appendix-e-discovery-questions.md
