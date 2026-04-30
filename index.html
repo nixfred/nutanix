@@ -285,7 +285,11 @@
 
     <section class="hero">
       <figure class="hero-image">
-        <img src="public/images/hero-home.svg" alt="Abstract isometric visualization of the Nutanix field guide: ten nodes representing the curriculum's ten modules interconnected by a distributed mesh, on a deep navy background with cyan replication lines." />
+        <picture>
+          <source type="image/avif" srcset="public/images/hero-home.avif" />
+          <source type="image/webp" srcset="public/images/hero-home.webp" />
+          <img src="public/images/hero-home.webp" width="1600" height="900" loading="eager" decoding="async" alt="Abstract isometric grid of translucent server-node cubes on a deep navy background, a few nodes glowing electric cyan to suggest active data flow across a hyperconverged cluster." />
+        </picture>
       </figure>
 
       <h1>A field guide<br />to <span class="nix">Nutanix</span>.</h1>
