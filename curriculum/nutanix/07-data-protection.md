@@ -156,7 +156,7 @@ Most customers start here. Most stay here for the bulk of their workloads.
 
 ### NearSync Replication: When 1-Hour RPO Isn't Enough
 
-**NearSync** is Nutanix's "almost-synchronous" replication mode. It uses **LWS (Light-Weight Snapshots)** under the hood, taking very frequent (sub-minute) micro-snapshots and continuously replicating them.
+**NearSync** is Nutanix's "almost-synchronous" replication mode. It uses **LWS (Light-Weight Snapshots)** under the hood, taking very frequent (sub-minute) metadata-level micro-snapshots and continuously replicating them. The LWS store is allocated on the cluster's SSD tier; that is where every NearSync-protected change lands first, before it propagates to the destination cluster.
 
 **Characteristics:**
 
@@ -184,7 +184,7 @@ Most customers start here. Most stay here for the bulk of their workloads.
 **Characteristics:**
 
 - **RPO:** zero. Synchronous replication.
-- **Latency requirement:** <5ms RTT typically. Real-world deployments are usually metro-area distances (campus, dual-datacenter within a city).
+- **Latency requirement:** ≤5 ms RTT is the documented hard ceiling. **Production design targets typically aim for ≤3.5 ms RTT under load**, with the 5 ms number reserved as the headroom ceiling rather than a baseline. P99.9 latency under concurrent I/O matters more than the average; sustained micro-bursts can push average-3 ms links over the 5 ms threshold during peak load. Real-world deployments are metro-area distances (campus, dual-datacenter within a city).
 - **Topology:** active-standby (typical) or active-active (advanced configurations).
 - **Witness VM:** required for split-brain protection. Witness runs on a third site (a small cluster, a separate Nutanix instance, or sometimes a public-cloud VM) and provides quorum during partition events.
 - **Cost:** highest of the three modes. Bandwidth + tightly-coupled networking + witness infrastructure.
@@ -268,7 +268,7 @@ This is the design conversation in 15 minutes. Walk the customer through their t
 
 ### The Cycle, Frame Three: Recovery Plans (Leap) as the SRM Replacement
 
-**Recovery Plans** (sometimes called Leap, the original product brand) are Nutanix's DR orchestration product. They live in Prism Central and define:
+**Recovery Plans** are the runbook construct inside **Nutanix Disaster Recovery** (the current product name; formerly branded **Leap**). The product was renamed from Leap to Nutanix Disaster Recovery a few years back; you will still see "Leap" in older docs, in customer vocabulary, and in some current-day Nutanix product surfaces. Recovery Plans live in Prism Central and define:
 
 - **What VMs are protected** (via category membership).
 - **The startup order** (which VMs come up first, second, third).
@@ -841,6 +841,24 @@ You know test failover is the feature customers neglect and the durable BlueAlly
 You have twelve practice questions worth of DR discrimination, including two NCX-style design defenses (multi-site DR architecture with mixed tiers and SRM transition, and the architectural defense against a 14-year SRM veteran).
 
 You are now ready for the unified storage layer. Module 8 covers Files, Objects, and Volumes: the storage services that sit on top of DSF and replace separate file storage, object storage, and iSCSI block targets the customer is currently buying as separate appliances.
+
+---
+
+## References
+
+Authoritative sources verified during the technical review pass on this module. RPO numbers, latency thresholds, and product-naming history are all validated against current Nutanix documentation; reverify before quoting specifics in a customer architecture proposal.
+
+- [Nutanix Bible — AOS Backup and DR](https://www.nutanixbible.com/4e-book-of-aos-backup-dr.html). Authoritative source for snapshot semantics, replication modes (Async, NearSync, Metro), and the LWS / LWS-store architecture.
+- [Nutanix Bible — Disaster Recovery Services](https://www.nutanixbible.com/13a-book-of-dr-services.html). Recovery Plans, Protection Policies, runbook orchestration.
+- [TN-2027 Data Protection and Disaster Recovery — NearSync](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:nearsync-replication-powered-by-lightweight-snapshots.html). Authoritative NearSync technical reference; confirms 20-second RPO floor and LWS-on-SSD storage detail.
+- [TN-2027 — Metro Availability](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:metro-availability.html). Metro Availability technical reference.
+- [BP-2009 Metro Availability Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2009-Metro-Availability:BP-2009-Metro-Availability). 5 ms RTT ceiling, witness placement, failure-handling configurations.
+- [Metro Cluster Latency: Microbursts and RTT Risk](https://www.rack2cloud.com/physics-disconnected-cloud-microbursts-metro-risk/). Production design guidance: ≤3.5 ms RTT target under load with 5 ms as ceiling, P99.9 vs average latency considerations.
+- [Migrating Guest VM From PD to Protection Policy (Nutanix Community)](https://next.nutanix.com/how-it-works-22/migrating-guest-vm-from-a-protection-domain-to-a-protection-policy-39916). PD-to-Policy migration workflow and disruption considerations.
+- [Nutanix DR with AOS 6.10 / PC 2024.2 (SOSTechBlog)](https://sostechblog.com/2024/12/22/disaster-recovery-with-nutanix-aos-6-10-and-prism-central-2024-2-pt-1/). Walkthrough of the current Nutanix Disaster Recovery (formerly Leap) UX.
+- [AOS 5.17 NearSync 20-second RPO Announcement](https://www.nutanix.com/en_au/blog/aos-5-17-is-here). The original announcement of the 20-second NearSync RPO milestone.
+- [NC2 on AWS Product Page](https://www.nutanix.com/products/nutanix-cloud-clusters/aws). Cloud DR architecture reference for the NC2 section.
+- [Prism Element Data Protection Guide v7.3](https://portal.nutanix.com/docs/Prism-Element-Data-Protection-Guide-v7_3:Prism-Element-Data-Protection-Guide-v7_3). Current Protection Domain documentation in Prism Element.
 
 ---
 

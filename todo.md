@@ -175,7 +175,24 @@ Modules:
   - Suspect (kept as-is):
     - "vlan.<id>" naming convention is a curriculum-style suggestion; Nutanix doesn't enforce a specific naming convention for Virtual Networks. Pedagogically OK.
     - Lab notes "Flow Network Security on Community Edition is limited; some features may not be available." Acceptable; CE Flow capabilities are version-dependent and the curriculum's caveat is appropriate.
-- [ ] 07-data-protection.md
+- [x] 07-data-protection.md — STATUS: findings-recorded, three refinements made, References section added
+  - Refinements applied:
+    - **Recovery Plans / Leap naming clarified.** Curriculum said "Recovery Plans (sometimes called Leap, the original product brand)." The current product name is **Nutanix Disaster Recovery** (which was renamed from Leap a few years back); Recovery Plans is the runbook construct *inside* Nutanix DR. Updated the framing to make this explicit while preserving the Leap name for SAs who still use it in customer conversations.
+    - **LWS storage location added.** Curriculum mentioned LWS but didn't say where the LWS store lives. Per TN-2027, the LWS store is allocated on the cluster's SSD tier; that is where NearSync-protected changes land first. Added the detail.
+    - **Metro latency design guidance added.** Curriculum said "<5ms RTT typically." The 5 ms number is the documented hard ceiling, not a typical design target. Production architectures aim for ≤ 3.5 ms RTT under load (30% headroom), and P99.9 latency under concurrent I/O matters more than the average. Rewrote the latency-requirement bullet to capture this distinction.
+  - Confirmed:
+    - Crash-consistent vs application-consistent snapshot distinction; NGT/VSS coordination on Windows.
+    - Protection Domains in Prism Element (manual VM membership, legacy) vs Protection Policies in Prism Central (category-driven, modern); both coexist; migration is supported but disruptive.
+    - Async replication minimum RPO 1 hour typical (15 min in some configs); delta-based; bandwidth-efficient; works over WAN at any latency.
+    - NearSync RPO 20 seconds achievable in optimal configurations (AOS 5.17+); 1-15 minute RPO is the typical configured range; LWS metadata-level micro-snapshots; <5ms RTT typical; higher Stargate/Curator overhead than Async.
+    - Metro Availability: synchronous, RPO zero, witness VM in separate failure domain for split-brain protection, metro distance only (typically <100km).
+    - Recovery Plans: VM startup order, network mapping, IP remapping, pre/post scripts, test failover into isolated network.
+    - SRM comparison framing accurate: SRM more mature for complex orchestration; Recovery Plans integrated and capable for typical enterprise DR.
+    - NC2 cloud DR target on AWS or Azure bare-metal; spin-up patterns for cost optimization.
+    - Witness VM specs and constraints (covered in Module 02 review) consistent.
+  - Suspect (kept as-is):
+    - "Recovery Plans bundled with Nutanix Cloud Manager (varies by tier)" in the SRM comparison table — the licensing is actually NCI-tier-driven (basic Async with NCI; advanced DR features tied to NCI Pro/Ultimate). Worth a future copy pass to align with the corrected NCM/NCI terminology established in Modules 04 and 06.
+    - Quarterly test failover cadence is a recommendation, not a Nutanix-mandated number. Pedagogically OK.
 - [ ] 08-unified-storage.md
 - [ ] 09-licensing-economics.md
 - [ ] 10-migration-path.md
