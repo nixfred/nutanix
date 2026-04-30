@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 1: What HCI Is and Why It Exists</title>
+  <meta name="description" content="HCI foundations for VMware-trained Solutions Architects. What HCI is, what it is not, where it wins, where it loses, and the 10 practice questions to lock it in." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <meta property="og:title" content="NutaNIX · Module 1: What HCI Is and Why It Exists" />
+  <meta property="og:description" content="HCI foundations for VMware-trained Solutions Architects." />
+  <meta property="og:image" content="../../public/images/hero-01-hci-foundations.svg" />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628;
+      --bg-surface: #102747;
+      --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff;
+      --text-secondary: #a8b8d4;
+      --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff;
+      --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "ss01", "cv11";
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Sticky brand header */
+    header.brand {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px);
+      -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    header.brand .inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 22px;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    /* Layout */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px 96px;
+      width: 100%;
+    }
+    .module-hero {
+      margin: 32px 0 28px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      aspect-ratio: 16 / 9;
+      max-height: 420px;
+    }
+    .module-hero img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+    .module-title-block { margin: 0 0 24px; }
+    .module-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    h1.module-title {
+      font-size: 44px;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      font-weight: 700;
+      margin: 0 0 20px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    .chip.cert {
+      border-color: rgba(251,191,36,0.40);
+      color: var(--warning);
+    }
+    .chip.read {
+      border-color: rgba(74,158,255,0.45);
+      color: var(--accent-primary);
+    }
+
+    .cert-banner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-right: 6px;
+      border-right: 1px solid var(--border);
+      margin-right: 4px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .meta-card {
+      padding: 12px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .meta-card .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      margin-bottom: 6px;
+    }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .term-chip {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 3px 8px;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* Body content */
+    article.body {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    article.body h2 {
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      font-weight: 700;
+      margin: 56px 0 16px;
+      scroll-margin-top: 80px;
+    }
+    article.body h3 {
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 40px 0 12px;
+      color: var(--text-primary);
+      scroll-margin-top: 80px;
+    }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code {
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      background: var(--bg-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    article.body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+    article.body blockquote {
+      margin: 16px 0;
+      padding: 4px 0 4px 16px;
+      border-left: 2px solid var(--border);
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Callouts */
+    .callout {
+      margin: 24px 0;
+      padding: 18px 22px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      position: relative;
+    }
+    .callout .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .callout .label .badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid currentColor;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    /* Diagram */
+    figure.diagram {
+      margin: 36px 0;
+      padding: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 1000px;
+    }
+    figure.diagram .badges {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+    }
+    figure.diagram .badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    figure.diagram .badge.wb {
+      color: var(--success);
+      background: rgba(52,211,153,0.10);
+      border: 1px solid rgba(52,211,153,0.40);
+    }
+    figure.diagram .badge.cert {
+      color: var(--warning);
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.40);
+    }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption {
+      margin-top: 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-style: italic;
+      max-width: 70ch;
+    }
+
+    /* Practice questions */
+    section.practice { margin-top: 64px; }
+    .question {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+    }
+    .question .qhead {
+      display: flex;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .question .qnum {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+    .question .qrel {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .question .qprompt {
+      font-size: 17px;
+      color: var(--text-primary);
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease;
+      text-align: left;
+      width: 100%;
+      font: inherit;
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-tertiary);
+      flex: 0 0 auto;
+    }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct {
+      border-color: var(--success);
+      background: rgba(52,211,153,0.08);
+    }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect {
+      border-color: var(--danger);
+      background: rgba(248,113,113,0.08);
+    }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal {
+      display: none;
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+
+    /* True/False question */
+    .question.tf .choices { flex-direction: row; }
+    .question.tf .choice { flex: 1; justify-content: center; }
+
+    /* NCX-style */
+    .question.ncx .scenario {
+      padding: 12px 14px;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+    .question.ncx .scenario blockquote {
+      margin: 0;
+      padding: 0 0 0 12px;
+      border-left: 2px solid var(--border);
+      color: var(--text-primary);
+      font-style: italic;
+    }
+    .question.ncx textarea {
+      display: block;
+      width: 100%;
+      min-height: 140px;
+      padding: 12px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+    .question.ncx textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+    .question .reveal-btn {
+      font: inherit;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      padding: 9px 14px;
+      background: transparent;
+      color: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    /* References, prev-next, footer */
+    .references {
+      margin-top: 64px;
+      padding: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs {
+      margin-top: 36px;
+      padding: 20px 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .prev-next {
+      margin-top: 56px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .prev-next a {
+      flex: 1;
+      min-width: 240px;
+      padding: 16px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: border-color 150ms ease;
+    }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+
+    footer.site {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px 48px;
+      width: 100%;
+      border-top: 1px solid var(--border);
+      color: var(--text-tertiary);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path {
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+    }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 32px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">01 · HCI Foundations</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="module-hero">
+      <img src="../../public/images/hero-01-hci-foundations.svg" alt="Abstract isometric visualization of a hyperconverged cluster: nine nodes interconnected by a distributed storage fabric." />
+    </div>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/01-hci-foundations</div>
+      <h1 class="module-title">Module 1: What HCI Is and Why It Exists</h1>
+
+      <div class="meta-row">
+        <span class="chip read">~22 min read</span>
+        <span class="chip cert">NCA ~12%</span>
+        <span class="chip cert">NCP-MCI ~5%</span>
+        <span class="chip cert">NCM-MCI ~2%</span>
+      </div>
+
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~12%) · NCP-MCI (~5%) · NCM-MCI (~2%)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #1, #7, #14 · Discovery Q-ARCH-01 through Q-ARCH-03</span>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>vSphere/ESXi familiarity</li>
+            <li>Working knowledge of SAN/NAS storage</li>
+            <li>Operational experience with three-tier infrastructure</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">HCI (Hyperconverged Infrastructure)</span>
+            <span class="term-chip">Three-tier architecture</span>
+            <span class="term-chip">Scale-out vs scale-up</span>
+            <span class="term-chip">Distributed storage</span>
+            <span class="term-chip">Software-defined storage</span>
+            <span class="term-chip">Converged Infrastructure (CI)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Explain HCI without using a single marketing word.</strong> Out loud, on a customer's whiteboard, in two minutes.</li>
+        <li><strong>Pass every HCI-fundamentals question on NCA.</strong> This module covers roughly 12% of the NCA blueprint, the part that builds the entire foundation for everything else on the exam.</li>
+        <li><strong>Walk into a discovery call with three questions ready</strong> that determine whether the customer should be looking at HCI in the first place.</li>
+        <li><strong>Recognize when HCI is the wrong answer</strong>, and say so to a customer. That posture buys you trust the rest of the deal runs on.</li>
+      </ol>
+      <p>Here's the thing about HCI as a category. Everyone you talk to has an opinion. Most of those opinions are five years old. Your job, before you can sell or design anything specific to Nutanix, is to know the category cold. Until you do, every Nutanix-specific concept will land softly. After you do, the rest of this curriculum compounds.</p>
+      <p>This module is the ground.</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>You manage (or have managed) a vSphere environment. Right now, on a whiteboard, you can sketch the physical and logical layers without thinking:</p>
+      <ol>
+        <li>A rack (or many) of ESXi hosts. <strong>Compute.</strong></li>
+        <li>A storage array. FC or iSCSI. NetApp, Pure, Dell, EMC. <strong>Storage.</strong></li>
+        <li>A network fabric tying them together. Top-of-rack switches, often a separate storage network. <strong>Network.</strong></li>
+      </ol>
+      <p>Three tiers. Three vendors, often. Three teams: compute, storage, network. Three refresh cycles. Three support contracts. Three sets of firmware. Three places a problem can be hiding when a VM goes slow at 3am.</p>
+      <p>This three-tier model has been the dominant pattern in enterprise virtualization for two decades. It is not stupid. It exists because, historically, building a really good storage array required different silicon, different software, different expertise than building a really good compute server. Specialization paid off.</p>
+      <p>The Foundation question is: <strong>what changed?</strong></p>
+      <p>Two things changed.</p>
+      <p><strong>First</strong>, x86 servers got obscenely fast and obscenely cheap. The CPU in a modern dual-socket server has more capability than a 2010-era midrange storage array's controller, and there are 64 of them in a rack. The hardware that used to be "specialized storage controller" is now "what you have lying around."</p>
+      <p><strong>Second</strong>, software got better at distributed coordination. Distributed file systems, consensus protocols, software-defined networking. The kind of thing Google was doing in 2005 became table stakes for infrastructure software by 2015.</p>
+      <p>Hold those two facts in your head. They are why HCI exists, and they are the answer when a customer asks you why this is a category and not a fad.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When a customer says, "I've been running three-tier for 15 years, why change?" you do not lead with feature comparisons. You lead with what changed in the underlying technology that made HCI possible. <em>"Two things flipped: x86 caught up to dedicated controllers, and distributed software got mature. That's not a Nutanix thing. That's a category shift. The question isn't whether to look at HCI; it's which HCI, and for which workloads."</em> That answer earns you the next 30 minutes. Feature lists earn you 30 seconds.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="what-hci-is">What HCI Actually Is (Plain English Version)</h3>
+      <p>Hyperconverged infrastructure is a software architecture in which compute, storage, and (sometimes) networking are delivered by software running on the same physical servers, with no separate storage array.</p>
+      <p>Read that again. There is no SAN. There is no array. There are servers, each with local disks, and software that takes those local disks across all servers and presents them as a single shared pool.</p>
+      <p>That's it.</p>
+      <p>The compute layer is your hypervisor (ESXi, AHV, Hyper-V). The storage layer is software running on each host that pools the local disks. The pool is shared across the cluster. Every VM sees one logical "datastore" (or its equivalent) regardless of which host it runs on.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>The NCA blueprint tests whether you can identify HCI vs converged infrastructure vs traditional three-tier in a multiple-choice setup. The trap: distractors will use the word "converged" loosely. <strong>Converged Infrastructure (CI)</strong> like VxBlock or FlexPod is <em>prepackaged three-tier</em>, not HCI. <strong>Hyperconverged</strong> specifically means the storage array has been collapsed into the compute layer via software. If a question describes "a vendor-integrated stack with prepackaged compute, storage, and network components," that is CI, not HCI. If it describes "a software architecture where local disks across nodes form a shared storage pool," that is HCI.</p>
+      </aside>
+
+      <h3 id="cycle-procurement">The Cycle, Frame Two: The Procurement Angle</h3>
+      <p>You have lived the three-tier procurement cycle. Compute refresh in year one. Storage refresh in year three. They never align. Your storage vendor sells you a controller upgrade that requires a forklift migration. Your network team needs to certify firmware against both the new compute and the existing storage. The Visio diagrams take six months to update.</p>
+      <p>HCI collapses this. One platform. One refresh cadence. You add capacity by adding nodes, which give you more compute and more storage at the same time, in the same proportion, from the same vendor, with one upgrade procedure (LCM, in Nutanix-land, Module 4).</p>
+      <p>This is the procurement pitch. It is not wrong. It is also not the most interesting part.</p>
+
+      <h3 id="cycle-architectural">The Cycle, Frame Three: The Architectural Angle</h3>
+      <p>In a three-tier world, compute and storage have <em>independent fate</em>. A storage array failure takes down storage but not compute. A compute host failure takes down compute but not storage. Your HA model treats them as separate things to protect.</p>
+      <p>In an HCI world, compute and storage <strong>share fate at the node level</strong>. A node failure is both a compute failure and a (partial) storage failure simultaneously. The software has to handle this. It does, by replicating data across nodes so that any single node loss is recoverable. But the <em>architectural assumption</em> is fundamentally different.</p>
+      <p>This is why HCI is interesting and also why HCI is, in some scenarios, the wrong answer. We will return to this.</p>
+
+      <h3 id="diagram-three-tier-vs-hci">Diagram: Three-Tier vs HCI</h3>
+
+      <figure class="diagram" id="three-tier-vs-hci">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-three-tier-vs-hci-svg" viewBox="0 0 1000 560" role="img" aria-label="Diagram comparing three-tier architecture on the left to HCI on the right. The storage array on the left is consumed into the compute layer on the right."></svg>
+        <figcaption>The same workload in two architectural models. The storage array vanishes; its function is now distributed across the same nodes that run compute.</figcaption>
+      </figure>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>This is your whiteboard diagram for first customer meetings. Memorize it. When a VMware admin says "show me what makes Nutanix different from my current setup," you draw the left side first (their world), then redraw the right side (where they're going). Two boxes, one cluster pool. Takes 90 seconds. The diagram does the talking.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="scale-up-vs-scale-out">Scale-Up vs Scale-Out</h3>
+      <p>The next concept the reader needs is the shape of growth.</p>
+      <p>Three-tier storage scales <strong>up</strong>. When the array fills, you buy bigger controllers and more shelves. Eventually you hit the controller's ceiling and you replace the array. There is a top end.</p>
+      <p>HCI scales <strong>out</strong>. To grow capacity or performance, you add a node. Adding a node adds CPU, RAM, and storage proportionally. The cluster gets bigger, not denser. There is no controller to outgrow because there is no controller.</p>
+      <p>This sounds like a small distinction. It is not. It changes how you forecast capacity, how you justify spend, and how you negotiate with finance. In the three-tier world, you spend big once every three to five years. In the HCI world, you spend smaller amounts more frequently and you tie growth directly to demand.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>You already understand this pattern. You have probably watched your VMware cluster grow from 4 hosts to 8 to 12. That is scale-out compute. HCI applies the same pattern to storage.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Where the model breaks down: with three-tier storage, you can size storage independently of compute. If you have a workload that needs 500 TB but only 4 vCPUs, you buy a small compute footprint and a big storage footprint. With HCI, every node brings both. If your workload is wildly imbalanced toward storage or toward compute, HCI forces you into uneconomic node configurations or into specialized "storage-heavy" nodes that erode the simplicity HCI was supposed to deliver.</p>
+      </aside>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>Both exams test the scale-out concept. The classic distractor: a question about "how do you increase storage capacity in a Nutanix cluster" with options like "add disk shelf to controller," "expand the LUN," "add a node," "increase RF." The correct answer is <strong>add a node</strong> (occasionally "expand storage with new disks" if the node has empty slots, but the canonical Nutanix answer for capacity expansion is adding a node). The trap answers reflect three-tier thinking. Anchor your answer to scale-out.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="building-the-fence">Building the Fence: What HCI Is Not</h3>
+      <p>Confusion in this category is rampant because every vendor uses the word "converged" or "hyperconverged" to mean something slightly different. Build the fence:</p>
+      <p><strong>HCI is not "converged infrastructure" (CI).</strong> Converged infrastructure (VCE/VxBlock, FlexPod, UCS-with-NetApp reference architectures) is <em>prepackaged three-tier</em>. Still a separate array, still separate compute, still separate fabric. The vendor integrated procurement and support. Every part is still distinguishable. HCI removes the array.</p>
+      <p><strong>HCI is not "all-in-one appliances" of the SMB variety.</strong> A $5,000 box that runs a hypervisor with local disks is just a server. HCI is specifically a clustered, distributed, software-defined storage architecture. Single-node "HCI" claims are mostly marketing.</p>
+      <p><strong>HCI is not the same as software-defined storage (SDS) on its own.</strong> SDS is a component. Pure SDS solutions (Ceph, GlusterFS, ScaleIO, StorPool) provide a distributed storage layer but don't necessarily integrate with a hypervisor management plane. HCI is SDS plus virtualization plus management, sold as one operational unit.</p>
+      <p><strong>HCI is not composable infrastructure.</strong> Composable (HPE Synergy and similar) lets you assemble logical servers from disaggregated pools of compute, storage, and fabric over a high-speed backplane. It is, in a sense, the architectural opposite: where HCI fuses the layers together at the node, composable splits them apart at the rack. Both claim flexibility. They go in opposite directions.</p>
+      <p><strong>HCI is not cloud.</strong> Running an HCI cluster in your datacenter does not give you AWS. You still own the hardware, the lifecycle, the capacity planning. HCI does, however, present a shared substrate that makes it easier to <em>consume</em> like a cloud (single API, declarative provisioning), which is why most "private cloud" implementations sit on HCI today.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA</span></div>
+        <p>The NCA explicitly tests HCI vs CI vs SDS distinctions. Common question pattern: a description of an architecture, four labels (HCI, CI, SDS, Composable), pick the right one. <strong>Memorize:</strong> "Storage array eliminated, distributed across nodes" = HCI. "Prepackaged three-tier with vendor integration" = CI. "Distributed storage layer alone, no virtualization stack" = SDS. "Disaggregated pools assembled into logical servers" = Composable.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="where-hci-is-wrong">Where HCI Is the Wrong Answer</h3>
+      <p>This is the section nobody at a vendor conference will give you. Read it twice. As a BlueAlly SA, this is the section that buys you customer trust. When you say <em>"actually, for that workload, HCI is the wrong answer,"</em> the customer hears that you're not selling. After that, when you do recommend Nutanix for the rest of the workloads, the recommendation lands with weight.</p>
+      <p><strong>1. Workloads with extreme storage-to-compute imbalance.</strong> Backup repositories that need petabytes of cheap, slow storage and almost no compute. Massive media archives. These workloads still belong on dedicated, dense storage. Putting them on HCI means buying a lot of CPUs you will not use just to get the disks attached. <em>(BlueAlly play: in these conversations, position Nutanix Files / Mine for backup or partner with a storage-heavy partner. Don't force HCI where it doesn't fit.)</em></p>
+      <p><strong>2. Workloads with hard, predictable, latency-sensitive performance contracts.</strong> A Tier-0 OLTP database with a 99.999% latency SLA at the single-digit-millisecond level may still benefit from a dedicated all-flash array. HCI has gotten dramatically better here, but for the genuine top of the performance pyramid, dedicated arrays still win on tail latency. <em>(Note: NVMe-heavy modern Nutanix nodes close most of this gap. Have specifics ready: AOS 7.5 + all-NVMe routinely delivers sub-millisecond latency for OLTP. Don't concede more than the data forces you to.)</em></p>
+      <p><strong>3. Environments where storage and compute teams are politically separate and will remain so.</strong> This is not a technology problem; it is an org problem. HCI assumes one team owns the platform. If your customer's storage team will fight to the death to keep their kingdom, HCI causes damage that exceeds the technical wins. <em>(Discovery question: "Who would own the platform on day one, and is that a fight or a foregone conclusion?")</em></p>
+      <p><strong>4. Very small environments.</strong> Two or three VMs do not need distributed storage. A pair of clustered servers with shared storage (or local disks and a backup) is simpler and cheaper. HCI pays off when you have at least three nodes, ideally more. <em>(There is a 2-node ROBO Nutanix offering, but the economics only make sense above a certain scale.)</em></p>
+      <p><strong>5. Cases where the workload genuinely belongs in cloud.</strong> If the question is "should this run on HCI in our datacenter or in AWS," the answer might be AWS, or NC2 (Nutanix on AWS bare metal, Module 8). HCI is a compelling on-prem story; it is not always a compelling on-prem-vs-cloud story.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Memorize these five. When a discovery call surfaces one of them, you say so directly. <em>"From what you're describing, HCI is probably the wrong answer for that specific workload. Let's talk about the rest of the environment."</em> That sentence has won more deals for SAs than any feature list. Customers can smell sales pressure. They cannot smell honesty often enough.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="why-hci-wins">Why HCI Wins Where It Wins</h3>
+      <p>The other side, with equal honesty.</p>
+      <p><strong>Operational simplicity is not a hand-wave.</strong> When you halve the number of vendors, halve the number of upgrade cycles, halve the number of escalation paths, you get back team capacity that you can apply elsewhere. This compounds. Real customers report 50-70% reduction in infrastructure operational hours after migration. (Source: standard Nutanix customer-evidence anecdotes; verify against your own customer base before quoting specific percentages.)</p>
+      <p><strong>The economics of scale-out match the economics of demand.</strong> Capacity grows in the same shape as need. You do not pre-pay for a forklift you might not use.</p>
+      <p><strong>Software-driven means automation-friendly.</strong> Distributed storage exposing a clean API (Nutanix v4 REST) is dramatically easier to automate than a SAN with a vendor-specific CLI and a CIM provider. Infrastructure-as-code is the natural fit.</p>
+      <p><strong>One control plane is genuinely better than three.</strong> Once you have used a single management console that knows about VMs, storage, and capacity simultaneously, going back to "open vCenter, open the array UI, open Solarwinds, correlate manually" is painful.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When you're in front of a customer and they ask "what's the actual benefit?", do not lead with technology. Lead with what changes operationally. <em>"Three vendor support contracts become one. Three patch cycles become one. Three teams converge on one platform. The team capacity you free up is the real ROI, the licensing math is real but it's secondary."</em> Operational simplification is the durable benefit. Licensing math changes; ops simplification compounds.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="honest-verdict">The Honest Verdict on HCI as a Category</h3>
+      <p>HCI is not a religion. It is an architectural pattern that fits a wide and growing band of enterprise workloads and does not fit a narrow but real set of others. Treat it as a tool. Match the tool to the job.</p>
+      <p>For the BlueAlly SA in 2026, the relevant question is not "is HCI good." The relevant question is: <em>which</em> HCI, <em>for which workloads</em>, <em>under what licensing model</em>, and given Broadcom's VMware pricing, what is the <em>migration path</em> and what is the <em>real cost</em> to the customer over five years. We will spend the rest of this curriculum answering all four.</p>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Stand Up Your First CE Cluster</h2>
+
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">Time: ~3 hours</span> <span class="badge">Platform: Nutanix Community Edition 2.1 (free)</span></div>
+        <p>You cannot teach a VMware admin Nutanix from a slide deck. Same goes for you. Build a lab. Today.</p>
+      </aside>
+
+      <p><strong>Goal of this lab:</strong> Get Nutanix CE running so you can touch every concept in this curriculum yourself. This is the foundation lab. Every subsequent module assumes you have a working CE environment.</p>
+      <p><strong>Two paths:</strong></p>
+
+      <p><strong>Path A, Nested on VMware Workstation or ESXi</strong> (recommended for first-time setup)</p>
+      <ol>
+        <li>Download CE 2.1 from <code>nutanix.com/products/community-edition</code> (requires free MyNutanix account)</li>
+        <li>Provision a VM: 4 vCPU, 32 GB RAM recommended (the documented absolute minimum is 16 GB, but CE running Prism Central is realistically a 32 GB+ workload). Expose hardware-assisted virtualization, VMXNET3 NIC, vSwitch promiscuous + MAC changes + forged transmits all enabled</li>
+        <li>Add disks: 1× 32GB (boot), 1× 200GB SSD-backed (hot tier), 1× 500GB (cold tier)</li>
+        <li>Boot from the CE ISO. Walk through the installer.</li>
+        <li>After install, connect to Prism Element on <code>https://&lt;cluster-IP&gt;:9440</code></li>
+        <li>Default creds: <code>admin</code> / <code>nutanix/4u</code>, change immediately</li>
+      </ol>
+
+      <p><strong>Path B, Bare metal</strong> (best long-term lab, more work up front)</p>
+      <ul>
+        <li>Used Intel-based desktop with VT-x, ≥32 GB RAM, ≥1 SSD + 1 HDD, 1 GbE NIC</li>
+        <li>Same install process; install directly to USB or SATA-DOM boot device</li>
+      </ul>
+
+      <p><strong>What to do once it's up:</strong></p>
+      <ol>
+        <li>Log into Prism Element. Click around. The dashboard is your first introduction to the Prism aesthetic.</li>
+        <li>Find the Cluster Details page. Note the Cluster Virtual IP, AOS version, AHV version.</li>
+        <li>Open the Hardware view. See "your one node" represented.</li>
+        <li>Open Storage &gt; Storage Containers. Note the default container.</li>
+        <li>Open VM &gt; Create VM. Don't create one yet, just look at the form. Compare it mentally to vCenter's New-VM wizard.</li>
+      </ol>
+
+      <p><strong>Bookmark this:</strong> every module from here on assumes you can reproduce its concept in your CE lab. If you skip the lab, the rest of this curriculum is entertainment, not training.</p>
+
+      <hr/>
+
+      <h2 id="practice">Practice Questions</h2>
+      <p>Ten questions. Six are NCA-style knowledge or NCP-MCI-style scenario MCQs. Two are short-answer / open-ended in the style of NCX-MCI design defense. Read each, answer in your head, then read the explanation.</p>
+
+      <section class="practice">
+
+        <!-- Q1 -->
+        <div class="question" data-correct="B" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q1</span>
+            <span class="qrel">NCA</span>
+          </div>
+          <p class="qprompt">Which of the following is the defining architectural characteristic of hyperconverged infrastructure?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A single-vendor stack with prepackaged compute, storage, and network components</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A distributed storage layer running as software on the same nodes that run compute workloads</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A composable architecture where logical servers are assembled from disaggregated resource pools</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A cloud-native deployment model that runs entirely on public cloud infrastructure</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>HCI is fundamentally defined by collapsing the storage array into software running on the compute nodes. There is no separate array. The same physical servers host both VMs and the distributed storage layer.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> Describes Converged Infrastructure (CI), like VxBlock or FlexPod. CI is prepackaged three-tier, the storage array is still separate.</li>
+              <li><strong>C)</strong> Describes composable infrastructure (HPE Synergy). Composable disaggregates resources at the rack level rather than fusing them at the node level.</li>
+              <li><strong>D)</strong> Describes public cloud / SaaS, not HCI. HCI is on-premises (or in a colo); it is a deployment architecture, not a sourcing model.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and C both contain words that <em>sound</em> HCI-adjacent (single-vendor, prepackaged, composable). Test-writers count on candidates conflating "single-vendor stack" with "hyperconverged." They are different concepts.</p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question" data-correct="B" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q2</span>
+            <span class="qrel">NCP-MCI · sales-relevant</span>
+          </div>
+          <p class="qprompt">A customer is evaluating HCI for an environment with a single workload: a 2 PB media archive accessed sequentially with very low compute requirements (less than 50 vCPUs total). Which is the most accurate response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>HCI is ideal for this workload because all storage is local and performance will be excellent</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>HCI may be a poor fit because the workload is heavily storage-imbalanced, requiring far more storage capacity than compute, and node sizing will be uneconomic</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>HCI is required for this workload because it is the only way to scale beyond a petabyte</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>HCI will not work because it has a hard storage capacity limit per cluster</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>When a workload is wildly imbalanced toward storage relative to compute, HCI forces you into uneconomic configurations. You buy CPU you don't need to get the disks. Either oversized nodes or specialized storage-heavy SKUs that erode the operational simplicity HCI was supposed to deliver. A purpose-built object or scale-out file system (or partner storage) is often the better answer.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> "Local storage" doesn't matter for sequential bulk reads on cold data. Wrong reasoning.</li>
+              <li><strong>C)</strong> HCI is not the <em>only</em> way to scale to petabyte; dedicated scale-out object storage absolutely scales beyond a PB.</li>
+              <li><strong>D)</strong> Nutanix does not have a hard PB ceiling; this is factually wrong.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and C are both Nutanix-positive but technically wrong. The exam (and the customer) reward you for naming the limitation honestly.</p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question" data-correct="B" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q3</span>
+            <span class="qrel">NCA</span>
+          </div>
+          <p class="qprompt">Which statement best describes the relationship between scale-up and scale-out in storage architecture?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Scale-up adds nodes; scale-out adds disk shelves</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Scale-up adds disks or replaces controllers; scale-out adds nodes</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Scale-up and scale-out are interchangeable terms</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Scale-up applies only to virtualization; scale-out applies only to storage</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Scale-up is the traditional pattern: bigger boxes, more disks behind the same controller, eventually replacing the controller. Scale-out adds full nodes (compute + storage together), grows horizontally, has no central controller to outgrow.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> Inverted. The exam loves to swap these definitions to test whether the candidate truly internalized them.</li>
+              <li><strong>C)</strong> They are explicitly different growth patterns.</li>
+              <li><strong>D)</strong> Both terms apply to many infrastructure domains, not exclusively to one.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A. It's so easy to invert the definitions if you haven't really thought about which is which. Anchor: "scale-up = up the same controller, scale-out = out across more nodes."</p>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question" data-correct="B" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q4</span>
+            <span class="qrel">sales-relevant (the SA-chair question)</span>
+          </div>
+          <p class="qprompt">A VMware administrator at a customer site says: "We tried HCI five years ago and the performance was bad. Why would we look again now?" What is the most effective SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"Performance has improved a lot in five years"</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"What workload, what generation of HCI hardware, and what specific performance metric? The answer is probably yes, things changed. But before I make claims, I want to know what you saw."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"All HCI vendors are basically the same now"</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"Our solution is the fastest HCI on the market"</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>The first move on objection like this is <em>qualification</em>, not <em>defense</em>. You need to know what they saw, was it write latency on an OLTP database? Was it a small cluster underprovisioned for the workload? Was it an early-generation hybrid SSD/HDD platform? Each answer leads to a different (and credible) response. Defending HCI generically before you understand the specific objection is sales malpractice.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> True but generic and unconvincing. The customer has heard this from every HCI vendor.</li>
+              <li><strong>C)</strong> Untrue and weakens your position. Vendors differ meaningfully.</li>
+              <li><strong>D)</strong> A claim like this without specifics is the kind of thing that costs you the room.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>This is the question that separates SAs who close from SAs who don't. The instinct is to defend. The discipline is to qualify.</p>
+          </div>
+        </div>
+
+        <!-- Q5 True/False -->
+        <div class="question tf" data-correct="B" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q5</span>
+            <span class="qrel">NCA · True / False</span>
+          </div>
+          <p class="qprompt">A Converged Infrastructure (CI) reference architecture like FlexPod is functionally equivalent to a Hyperconverged Infrastructure (HCI) deployment.</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">T</span><span>True</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">F</span><span>False</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>CI is prepackaged three-tier. The storage array is still a separate device with its own controllers, separate fabric, separate management plane. HCI eliminates the separate array; storage software runs on the same nodes as compute. They share marketing language ("converged") but the architecture is fundamentally different.</p>
+            <h4 class="trap">The trap</h4>
+            <p>CI marketing emphasizes "single point of support" and "unified solution," which sounds a lot like HCI talking points. Don't be fooled by surface-level vocabulary; look at the architecture.</p>
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question" data-correct="C" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q6</span>
+            <span class="qrel">NCP-MCI · sales-relevant</span>
+          </div>
+          <p class="qprompt">Which of the following workloads is <em>least</em> suited to deployment on HCI?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A 50-VM general-purpose virtualization environment</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A VDI deployment with 800 desktops</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A 1.5 PB cold backup archive with no production compute requirements</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A mixed enterprise environment with database, file, and web tiers</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Same reasoning as Q2 in different clothing. Backup archives at PB scale with no compute need are the canonical HCI mismatch. The compute-to-storage ratio of an HCI node makes this uneconomic. Dedicated object storage, deduplication appliances, or tape are better tools.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> General-purpose virtualization is exactly where HCI shines.</li>
+              <li><strong>B)</strong> VDI is one of the strongest HCI workloads (predictable boot storms, linked clones benefit from data locality).</li>
+              <li><strong>D)</strong> Mixed enterprise is the bread-and-butter HCI use case.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>The answer requires you to remember that HCI's economics break when storage and compute requirements are wildly mismatched. Easy to forget under exam pressure.</p>
+          </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question" data-correct="C" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q7</span>
+            <span class="qrel">NCA · sales-relevant</span>
+          </div>
+          <p class="qprompt">What is the primary operational advantage of HCI over three-tier?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Lower hardware costs in all cases</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Higher raw IOPS in all cases</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Reduction in vendor count, refresh cycles, and management surface area</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Elimination of the need for backup</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>The <em>primary</em> operational advantage is consolidation: one platform, one vendor relationship, one upgrade procedure, one management plane. This is the durable benefit. Cost and performance comparisons depend on workload and configuration.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> HCI is sometimes cheaper, sometimes not. Depends on workload.</li>
+              <li><strong>B)</strong> Three-tier with a high-end array can absolutely beat HCI on raw IOPS for specific workloads.</li>
+              <li><strong>D)</strong> HCI does not eliminate the need for backup. (If a vendor tells a customer this, run.)</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and B sound like Nutanix sales talking points. They're not always true. Customers detect this kind of overclaim and trust suffers. The answer is the boring, durable one: operational simplification.</p>
+          </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="question" data-correct="C" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q8</span>
+            <span class="qrel">sales-relevant (NCX-MCI design context)</span>
+          </div>
+          <p class="qprompt">A discovery call reveals: customer has 12 ESXi hosts, a 200 TB Pure FlashArray, two storage admins who are "not going anywhere," and a Broadcom renewal in 14 months. Which is your strongest opening qualification question?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"When can we schedule a Nutanix POC?"</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"What is your storage admin team going to do if we collapse storage into the compute layer?"</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"What workloads are running on the FlashArray today, and what is the operational pain point that has you looking at us?"</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"How much do you spend on VMware licensing per year?"</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Discovery before pitch. You need to know what's running, what's hurting, what they want different. The renewal is the <em>trigger</em>, not the <em>requirement</em>. The renewal tells you they're shopping; it does not tell you what they need. Workload + pain point reveals fit.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li><strong>A)</strong> Asking for a POC before discovery is putting the cart before the horse. You will run a POC against the wrong workloads.</li>
+              <li><strong>B)</strong> A real question, but second. You ask it after you understand the workload, and the org-political dimension matters but isn't the lead.</li>
+              <li><strong>D)</strong> Money matters, but it's a closing-stage question, not a qualifying question. Asking it first reads as transactional.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and D feel productive but they short-circuit discovery. The discipline is to slow down at the start and ask the workload + pain question first. Every BlueAlly deal that closes well got there because the SA did C before A.</p>
+          </div>
+        </div>
+
+        <!-- Q9 NCX -->
+        <div class="question ncx" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q9</span>
+            <span class="qrel">NCX-MCI prep · sales-relevant · short-answer</span>
+          </div>
+          <p class="qprompt"><em>(NCX-style design question, open-ended)</em> Walk through your recommendation and your reasoning. Acknowledge the political dimension. Identify what you still need to know.</p>
+          <div class="scenario">
+            <strong>The scenario.</strong>
+            <p>A customer environment: 8 ESXi hosts running roughly 200 VMs (mixed workloads, no Tier-0 OLTP), one 150 TB Pure FlashArray (4 years old, support renewal due in 9 months), two storage admins (one is the customer's most senior infra person and is openly hostile to the idea of "collapsing" storage), Broadcom renewal in 14 months. The customer has asked you to recommend whether they should move to Nutanix HCI, stay three-tier with a SAN refresh, or go hybrid.</p>
+          </div>
+          <textarea placeholder="Write your reasoning here. There is no single correct answer; there are stronger and weaker frames."></textarea>
+          <button class="reveal-btn" type="button">Show strong answer</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>The technology answer is clear:</strong> the workload profile (no Tier-0, mixed general-purpose, ~200 VMs, 150 TB usable) is the bread-and-butter HCI use case. Eight nodes of modern Nutanix would handle this with margin.</li>
+              <li><strong>The political answer is harder:</strong> if the senior storage admin is openly hostile and is also the customer's most senior infrastructure person, a forced HCI migration is going to fail regardless of the technology being right. That is a real risk to name.</li>
+              <li><strong>The honest recommendation is staged:</strong> start with a contained Nutanix workload (e.g., a refresh of one workload tier) running alongside the existing FlashArray, prove the operational story over 6-12 months, then decide whether to converge or stay hybrid. This buys the storage admin a path to engage with the new platform on his terms rather than feeling displaced.</li>
+              <li><strong>Name the renewals as the forcing function:</strong> the Pure renewal in 9 months and the Broadcom renewal in 14 months together make the next 12 months the decision window. The cost of doing nothing is committing to another 3-5 years of three-tier plus VMware on Broadcom pricing.</li>
+              <li><strong>What you still need to know:</strong> the storage admin's actual concerns (skill obsolescence? control? real technical objections?), the workload growth forecast, the DR and backup architecture, the customer's appetite for hypervisor change (AHV) vs staying on ESXi.</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Recommending "rip and replace" without acknowledging the political risk.</li>
+              <li>Recommending "keep three-tier" without engaging with the renewal cost arithmetic.</li>
+              <li>Treating the storage admin as an obstacle to overcome rather than a stakeholder to engage.</li>
+              <li>Not staging the migration to de-risk the political dimension.</li>
+            </ul>
+            <h4>Why this question matters for NCX</h4>
+            <p>NCX-MCI design defenses test architectural reasoning under real-world constraints. "The technology is right but the org isn't ready" is one of the most common situations and one of the things the panel will look for you to recognize and address. The right answer isn't always the most technically aggressive one.</p>
+          </div>
+        </div>
+
+        <!-- Q10 NCX -->
+        <div class="question ncx" data-state="unanswered">
+          <div class="qhead">
+            <span class="qnum">Q10</span>
+            <span class="qrel">NCX-MCI prep · sales-relevant · architectural defense</span>
+          </div>
+          <p class="qprompt"><em>(NCX-style architectural defense, open-ended)</em> Respond to the architect. He is technical, well-prepared, and his framing of the issue is fair. Address it without dismissing it.</p>
+          <div class="scenario">
+            <strong>The scenario.</strong> You are in front of a customer's lead infrastructure architect. He says:
+            <blockquote>"My read on HCI: you're consolidating fault domains. With three-tier, my array can fail and my compute keeps running; my compute can fail and my data is intact. With HCI, every node is a piece of both. A bad node is now a compute incident AND a storage incident at the same time. That sounds like worse availability to me, not better."</blockquote>
+          </div>
+          <textarea placeholder="Write your response. The architect's framing is fair; engage with it directly."></textarea>
+          <button class="reveal-btn" type="button">Show strong answer</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the framing is correct:</strong> in HCI, compute and storage do share fate at the node level. He is not wrong about the architectural shift.</li>
+              <li><strong>Reframe what "fault domain" actually means in practice:</strong> in three-tier, the array is itself a fault domain you depend on. When the array has a controller failure, a path failure, a fabric issue, your entire compute layer can be affected. The fault domains are not as cleanly separated as the architecture diagram suggests.</li>
+              <li><strong>Compare actual failure modes:</strong> with HCI plus RF2, the cluster tolerates a single-node loss with automatic data re-replication and HA-driven VM restart. With three-tier and a controller failure, you may face I/O pause across the entire cluster while controllers fail over (or, in older arrays, you may face an outage). Both architectures handle their respective failure modes; the question is which mode is more common and which has greater blast radius.</li>
+              <li><strong>Address the "same node is now compute + storage" concern directly:</strong> that is true, but it also means the cluster's <em>self-healing is comprehensive</em>. Lose a node, AOS rebuilds the data on remaining nodes; AHV (or vSphere HA) restarts the VMs. The recovery is automatic. With three-tier, a node loss recovers compute, but a storage failure requires array-side recovery on a different timeline.</li>
+              <li><strong>Name the workloads where his concern is most valid:</strong> for a workload with single-VM resilience requirements (no application-level clustering, no second copy elsewhere), node failure on HCI is a brief outage. For workloads with application-level resilience (clustered databases, stateless app tiers), HCI's failure model is operationally identical to three-tier.</li>
+              <li><strong>Close with the honest answer:</strong> <em>"You're right that fault domains are different. They are not necessarily worse; they are differently shaped. RF3 plus availability zones gives you separate failure domains within the cluster. The right test is not architectural symmetry; it is failure mode probability times blast radius for your actual workload mix. Let us walk through your top five workloads and discuss their resilience model."</em></li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Dismissing the architect's concern as outdated thinking.</li>
+              <li>Defending HCI without conceding that the fault model is different.</li>
+              <li>Skipping the comparison to three-tier failure modes (controller failures, fabric failures, dual-path issues).</li>
+              <li>Not offering the workload-level analysis that turns the conversation into a productive design exercise.</li>
+              <li>Treating "but RF2 protects you" as a complete answer. (It is part of the answer, not all of it.)</li>
+            </ul>
+            <h4>Why this question matters for NCX</h4>
+            <p>This is a customer-architect challenge that comes up frequently in HCI evaluations. The skill being tested is your ability to engage with a fair technical critique, acknowledge the real tradeoff, and reframe the discussion productively. NCX panels are looking for this exact disposition.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can now define HCI without saying "hyperconverged" twice and calling it done. You know it is fundamentally a software architecture, not a hardware product. You know it eliminates the separate storage array by distributing storage across the same nodes that run compute. You know it scales out, not up, and you know what that implies for procurement and capacity planning.</p>
+      <p>You can now name five scenarios where HCI is the wrong answer. That alone puts you ahead of most people who pitch it. It also gives you a sales posture customers will trust.</p>
+      <p>You have the fence: HCI is not CI, not just SDS, not composable, not cloud, not all-in-one. When the next customer's incumbent vendor uses one of those words interchangeably, you will catch it.</p>
+      <p>You have the SA-chair language for the most common HCI objection ("we tried it five years ago") and for the most common opening positioning question.</p>
+      <p>You have ten practice questions worth of HCI-category discrimination. Eight test recognition and scenario judgment in NCA and NCP-MCI style. Two are open-ended NCX-MCI-style design defenses, covering staged-migration recommendation under organizational constraint and architectural defense against a fault-domain critique. The first eight earn you points on NCA. The last two are practice for the kind of architectural reasoning the NCX-MCI panel actually evaluates, and for the kind of conversation that wins or loses customer trust in front of a sharp infrastructure architect.</p>
+      <p>You are now ready to look at a specific HCI implementation, Nutanix, and see what choices it made. That is Module 2.</p>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p>Authoritative sources verified during the technical review pass on this module. Use these to validate the version-sensitive claims (AOS, CE, Prism, NC2) before quoting them in front of customers.</p>
+        <ul>
+          <li><a href="https://portal.nutanix.com/docs/Nutanix-Community-Edition-Getting-Started-v2_1:top-sysreqs-ce-r.html" target="_blank" rel="noopener">Nutanix Community Edition v2.1 — Recommended Hardware</a>. Boot disk, hot tier, and RAM minimums for CE; the source for the lab specs in this module.</li>
+          <li><a href="https://endoflife.date/nutanix-aos" target="_blank" rel="noopener">Nutanix AOS End-of-Life Calendar (endoflife.date)</a>. Current AOS release tracking. AOS 7.5 is the current major as of April 2026.</li>
+          <li><a href="https://eosl.date/eol/product/nutanix-aos/" target="_blank" rel="noopener">AOS 7.5.1.1 Support Window (eosl.date)</a>. Confirms the April 2026 GA release and the December 2027 end-of-support date.</li>
+          <li><a href="https://www.nutanix.com/blog/announcing-the-v4-api-and-sdk-general-availability-in-pc-2024-3-aos-7-0" target="_blank" rel="noopener">v4 API General Availability Announcement (Nutanix blog)</a>. v4 REST GA shipped with Prism Central 2024.3 / AOS 7.0; backs the "Nutanix v4 REST" reference in this module.</li>
+          <li><a href="https://www.nutanix.com/products/nutanix-cloud-clusters/aws" target="_blank" rel="noopener">Nutanix Cloud Clusters (NC2) on AWS</a>. Official product page confirming the NC2 product name.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Web-Console-Guide-Prism-v6_7:wc-login-wc-t.html" target="_blank" rel="noopener">Prism Web Console Login Documentation</a>. Default <code>admin</code> / <code>nutanix/4u</code> first-login credentials, port 9440, and the forced password change on first login.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-references</h3>
+        <ul>
+          <li><strong>Next:</strong> Module 2: The Nutanix Stack, Node, CVM, Cluster <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Glossary:</strong> HCI · Three-Tier · Scale-Out · Converged Infrastructure <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Architecture Row <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> #1 "We tried HCI before" · #7 "Why not just stay three-tier?" · #14 "HCI can't handle our Tier-0" <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Q-ARCH-01 Workload landscape · Q-ARCH-02 Org structure · Q-ARCH-03 Renewal trigger <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Reference Architectures:</strong> Small enterprise (3-8 nodes) <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../../index.html">
+          <div class="dir">← Home</div>
+          <div class="ttl">All modules</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 2: The Nutanix Stack (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>01-hci-foundations</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // ---------------------------------------------------------------------
+    // Practice question interactivity
+    // ---------------------------------------------------------------------
+    document.querySelectorAll('.question').forEach((q) => {
+      const isNcx = q.classList.contains('ncx');
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          // Persist progress
+          try {
+            const key = 'nutanix:m1:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = {
+              picked, correct, ts: Date.now(),
+            };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => {
+          q.dataset.state = 'answered';
+        });
+      }
+    });
+
+    // ---------------------------------------------------------------------
+    // Diagram: three-tier-vs-hci, drawn with rough.js for whiteboard feel
+    // ---------------------------------------------------------------------
+    (function drawDiagram() {
+      const svg = document.getElementById('diagram-three-tier-vs-hci-svg');
+      if (!svg || !window.rough) return;
+
+      const ns = 'http://www.w3.org/2000/svg';
+      const rc = rough.svg(svg);
+
+      // Palette
+      const C = {
+        compute: '#4a9eff',
+        computeFill: 'rgba(74,158,255,0.12)',
+        net:     '#a8b8d4',
+        netFill: 'rgba(168,184,212,0.10)',
+        storage: '#c7a17a',
+        storageFill: 'rgba(199,161,122,0.10)',
+        cvm:     '#e07a5f',
+        cvmFill: 'rgba(224,122,95,0.14)',
+        disk:    '#6b7a9a',
+        diskFill: 'rgba(107,122,154,0.14)',
+        fabric:  '#00d4ff',
+        fabricFill: 'rgba(0,212,255,0.10)',
+        text:    '#e8f0ff',
+        muted:   '#a8b8d4',
+        dim:     '#6b7a9a',
+      };
+
+      const roughOpts = (color, fill, fillStyle = 'hachure') => ({
+        stroke: color,
+        strokeWidth: 1.6,
+        roughness: 1.4,
+        fill,
+        fillStyle,
+        fillWeight: 1.2,
+        hachureGap: 6,
+        bowing: 1.2,
+      });
+
+      function text(x, y, str, opts = {}) {
+        const t = document.createElementNS(ns, 'text');
+        t.setAttribute('x', x);
+        t.setAttribute('y', y);
+        t.setAttribute('fill', opts.fill || C.text);
+        t.setAttribute('font-family', opts.mono
+          ? 'JetBrains Mono, ui-monospace, Menlo, monospace'
+          : 'Inter, system-ui, sans-serif');
+        t.setAttribute('font-size', opts.size || 13);
+        t.setAttribute('font-weight', opts.weight || 500);
+        t.setAttribute('text-anchor', opts.anchor || 'start');
+        if (opts.letterSpacing) t.setAttribute('letter-spacing', opts.letterSpacing);
+        t.textContent = str;
+        svg.appendChild(t);
+        return t;
+      }
+
+      // ===== Section headers =====
+      text(220, 30, 'THREE-TIER',     { anchor: 'middle', size: 13, weight: 700, fill: C.muted, letterSpacing: '0.18em', mono: true });
+      text(780, 30, 'HCI',             { anchor: 'middle', size: 13, weight: 700, fill: C.fabric, letterSpacing: '0.18em', mono: true });
+
+      // Center divider line
+      svg.appendChild((function () {
+        const line = document.createElementNS(ns, 'line');
+        line.setAttribute('x1', 500); line.setAttribute('y1', 50);
+        line.setAttribute('x2', 500); line.setAttribute('y2', 510);
+        line.setAttribute('stroke', '#1f3a66');
+        line.setAttribute('stroke-dasharray', '4 6');
+        line.setAttribute('stroke-width', 1);
+        return line;
+      })());
+      text(500, 525, 'Same workload. Different architecture.',
+        { anchor: 'middle', size: 12, fill: C.dim, mono: true, letterSpacing: '0.04em' });
+
+      // ===== LEFT: Three-tier =====
+      // 4 ESXi hosts in a row at top
+      const hostY = 60, hostH = 64, hostW = 78;
+      const hostStartX = 50;
+      const hostGap = 12;
+      const hostXs = [];
+      for (let i = 0; i < 4; i++) {
+        const x = hostStartX + i * (hostW + hostGap);
+        hostXs.push(x);
+        svg.appendChild(rc.rectangle(x, hostY, hostW, hostH, roughOpts(C.compute, C.computeFill)));
+        text(x + hostW / 2, hostY + 27, 'ESXi', { anchor: 'middle', size: 12, weight: 600, fill: C.compute });
+        text(x + hostW / 2, hostY + 45, 'host', { anchor: 'middle', size: 11, fill: C.muted });
+      }
+      text(50, hostY - 8, 'Compute', { size: 11, weight: 700, fill: C.dim, mono: true, letterSpacing: '0.10em' });
+
+      // SAN / Storage Network (middle)
+      const sanY = 200, sanH = 46;
+      const sanX = 50, sanW = (hostW * 4) + (hostGap * 3);
+      svg.appendChild(rc.rectangle(sanX, sanY, sanW, sanH, roughOpts(C.net, C.netFill, 'cross-hatch')));
+      text(sanX + sanW / 2, sanY + 28, 'SAN / Storage Network',
+        { anchor: 'middle', size: 13, weight: 600, fill: C.text });
+      text(50, sanY - 8, 'Network', { size: 11, weight: 700, fill: C.dim, mono: true, letterSpacing: '0.10em' });
+
+      // Storage Array (bottom)
+      const arrY = 310, arrH = 130;
+      svg.appendChild(rc.rectangle(sanX, arrY, sanW, arrH, roughOpts(C.storage, C.storageFill)));
+      text(sanX + sanW / 2, arrY + 50, 'Storage Array',
+        { anchor: 'middle', size: 16, weight: 700, fill: C.storage });
+      text(sanX + sanW / 2, arrY + 75, '(FC / iSCSI)',
+        { anchor: 'middle', size: 12, fill: C.muted, mono: true });
+      // Subtle disk-shelf hint lines
+      for (let i = 0; i < 3; i++) {
+        const y = arrY + 95 + i * 10;
+        svg.appendChild(rc.line(sanX + 18, y, sanX + sanW - 18, y,
+          { stroke: C.storage, strokeWidth: 0.8, roughness: 1.2, opacity: 0.6 }));
+      }
+      text(50, arrY - 8, 'Storage', { size: 11, weight: 700, fill: C.dim, mono: true, letterSpacing: '0.10em' });
+
+      // Arrows: each ESXi host -> SAN -> Array
+      function arrow(x1, y1, x2, y2, color) {
+        svg.appendChild(rc.line(x1, y1, x2, y2, { stroke: color, strokeWidth: 1.4, roughness: 1.5 }));
+        // arrowhead
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const ah = 7;
+        const ax1 = x2 - ah * Math.cos(angle - Math.PI / 7);
+        const ay1 = y2 - ah * Math.sin(angle - Math.PI / 7);
+        const ax2 = x2 - ah * Math.cos(angle + Math.PI / 7);
+        const ay2 = y2 - ah * Math.sin(angle + Math.PI / 7);
+        svg.appendChild(rc.line(x2, y2, ax1, ay1, { stroke: color, strokeWidth: 1.4, roughness: 1.0 }));
+        svg.appendChild(rc.line(x2, y2, ax2, ay2, { stroke: color, strokeWidth: 1.4, roughness: 1.0 }));
+      }
+      hostXs.forEach((x) => {
+        const cx = x + hostW / 2;
+        arrow(cx, hostY + hostH + 2, cx, sanY - 2, C.muted);
+      });
+      // SAN -> Array (single bus)
+      arrow(sanX + sanW / 2, sanY + sanH + 2, sanX + sanW / 2, arrY - 2, C.muted);
+
+      // Side annotations (right of three-tier column)
+      const annX = 415;
+      const annStart = 80;
+      const anns = [
+        'Compute team',
+        'Network team',
+        'Storage team',
+        '3 refresh cycles',
+        '3 vendors',
+        'Independent fate',
+      ];
+      anns.forEach((s, i) => {
+        text(annX, annStart + i * 22, '· ' + s, { size: 11, fill: C.muted, mono: true });
+      });
+
+      // ===== RIGHT: HCI =====
+      // Distributed Storage Fabric bar (top)
+      const dsfY = 60, dsfH = 38, dsfX = 540, dsfW = 420;
+      svg.appendChild(rc.rectangle(dsfX, dsfY, dsfW, dsfH, roughOpts(C.fabric, C.fabricFill, 'cross-hatch')));
+      text(dsfX + dsfW / 2, dsfY + 24, 'Distributed Storage Fabric · single logical pool',
+        { anchor: 'middle', size: 12, weight: 600, fill: C.fabric, mono: true });
+
+      // 4 nodes side-by-side, each with hypervisor / CVM / disks layers
+      const nodeY = 130;
+      const nodeW = 92, nodeH = 215;
+      const nodeGap = 14;
+      const nodeStartX = dsfX + (dsfW - (4 * nodeW + 3 * nodeGap)) / 2;
+      const nodes = [];
+      for (let i = 0; i < 4; i++) {
+        const x = nodeStartX + i * (nodeW + nodeGap);
+        nodes.push(x);
+        // Outer node container
+        svg.appendChild(rc.rectangle(x, nodeY, nodeW, nodeH,
+          { stroke: '#2a4d7a', strokeWidth: 1.4, roughness: 1.2, fill: 'rgba(26,50,88,0.25)', fillStyle: 'solid' }));
+        // Hypervisor section (top)
+        svg.appendChild(rc.rectangle(x + 6, nodeY + 8, nodeW - 12, 50, roughOpts(C.compute, C.computeFill)));
+        text(x + nodeW / 2, nodeY + 32, 'Hypervisor', { anchor: 'middle', size: 11, weight: 600, fill: C.compute });
+        text(x + nodeW / 2, nodeY + 47, 'AHV / ESXi', { anchor: 'middle', size: 9, fill: C.muted, mono: true });
+        // CVM / storage software section (middle)
+        svg.appendChild(rc.rectangle(x + 6, nodeY + 64, nodeW - 12, 50, roughOpts(C.cvm, C.cvmFill)));
+        text(x + nodeW / 2, nodeY + 88, 'CVM', { anchor: 'middle', size: 12, weight: 700, fill: C.cvm });
+        text(x + nodeW / 2, nodeY + 102, 'storage SW', { anchor: 'middle', size: 9, fill: C.muted, mono: true });
+        // Disks section (bottom)
+        svg.appendChild(rc.rectangle(x + 6, nodeY + 120, nodeW - 12, 88, roughOpts(C.disk, C.diskFill)));
+        text(x + nodeW / 2, nodeY + 140, 'Local disks', { anchor: 'middle', size: 11, weight: 600, fill: C.muted });
+        // Three little "drives"
+        for (let d = 0; d < 3; d++) {
+          const dy = nodeY + 152 + d * 16;
+          svg.appendChild(rc.rectangle(x + 14, dy, nodeW - 28, 11,
+            { stroke: C.disk, strokeWidth: 1, roughness: 1.0, fill: 'rgba(107,122,154,0.15)', fillStyle: 'solid' }));
+        }
+        // Node label
+        text(x + nodeW / 2, nodeY + nodeH + 16, 'Node ' + (i + 1),
+          { anchor: 'middle', size: 11, weight: 600, fill: C.muted, mono: true });
+      }
+
+      // Replication arrows between nodes (horizontal, at CVM level)
+      for (let i = 0; i < 3; i++) {
+        const x1 = nodes[i] + nodeW;
+        const x2 = nodes[i + 1];
+        const y = nodeY + 89;
+        // double arrow
+        svg.appendChild(rc.line(x1 + 1, y, x2 - 1, y, { stroke: C.fabric, strokeWidth: 1.2, roughness: 1.4 }));
+        // small heads
+        svg.appendChild(rc.line(x2 - 1, y, x2 - 6, y - 4, { stroke: C.fabric, strokeWidth: 1.2, roughness: 0.8 }));
+        svg.appendChild(rc.line(x2 - 1, y, x2 - 6, y + 4, { stroke: C.fabric, strokeWidth: 1.2, roughness: 0.8 }));
+        svg.appendChild(rc.line(x1 + 1, y, x1 + 6, y - 4, { stroke: C.fabric, strokeWidth: 1.2, roughness: 0.8 }));
+        svg.appendChild(rc.line(x1 + 1, y, x1 + 6, y + 4, { stroke: C.fabric, strokeWidth: 1.2, roughness: 0.8 }));
+      }
+
+      // Connect each node up into the DSF bar
+      nodes.forEach((x) => {
+        const cx = x + nodeW / 2;
+        svg.appendChild(rc.line(cx, nodeY - 2, cx, dsfY + dsfH + 2,
+          { stroke: C.fabric, strokeWidth: 1.0, roughness: 1.4, strokeOpacity: 0.7 }));
+      });
+
+      // HCI side annotations (right column, outside cluster)
+      const hciAnnX = 540;
+      const hciAnnY = 380;
+      const hciAnns = [
+        'One platform',
+        'One team',
+        'One refresh cycle',
+        'Add a node = scale-out',
+        'Shared fate at node level',
+      ];
+      hciAnns.forEach((s, i) => {
+        text(hciAnnX, hciAnnY + i * 22, '· ' + s, { size: 11, fill: C.muted, mono: true });
+      });
+
+      text(540, 500, "The 'storage array' is the cluster itself.",
+        { size: 12, fill: C.fabric, weight: 600, mono: true });
+    })();
+  </script>
+</body>
+</html>

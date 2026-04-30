@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Abstract isometric visualization of a hyperconverged cluster: nine nodes interconnected by a distributed storage fabric.">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#15294a"/>
+      <stop offset="65%" stop-color="#0c1c36"/>
+      <stop offset="100%" stop-color="#070f20"/>
+    </radialGradient>
+
+    <linearGradient id="ftop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d6aa6"/>
+      <stop offset="100%" stop-color="#27497a"/>
+    </linearGradient>
+    <linearGradient id="fleft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f3a66"/>
+      <stop offset="100%" stop-color="#142a4d"/>
+    </linearGradient>
+    <linearGradient id="fright" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="100%" stop-color="#091a33"/>
+    </linearGradient>
+
+    <linearGradient id="ftopHi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5fa3e8"/>
+      <stop offset="100%" stop-color="#357abf"/>
+    </linearGradient>
+    <linearGradient id="fleftHi" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#2b5288"/>
+      <stop offset="100%" stop-color="#1a3866"/>
+    </linearGradient>
+    <linearGradient id="frightHi" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#15325c"/>
+      <stop offset="100%" stop-color="#0d2244"/>
+    </linearGradient>
+
+    <radialGradient id="dot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9ce8ff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#00d4ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+
+    <pattern id="grid" width="80" height="46.188" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
+      <path d="M 0 23.094 L 40 0 L 80 23.094 L 40 46.188 Z" fill="none" stroke="#2a4d7a" stroke-width="0.5" opacity="0.35"/>
+    </pattern>
+
+    <symbol id="node" overflow="visible">
+      <!-- Isometric cube, side = 90, drawn around (0,0) -->
+      <!-- top face -->
+      <polygon points="0,-52 78,-7 0,38 -78,-7" fill="url(#ftop)" stroke="#4a9eff" stroke-width="1" stroke-opacity="0.55"/>
+      <!-- left face -->
+      <polygon points="-78,-7 0,38 0,128 -78,83" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1"/>
+      <!-- right face -->
+      <polygon points="78,-7 0,38 0,128 78,83" fill="url(#fright)" stroke="#1f3a66" stroke-width="1"/>
+      <!-- internal split lines hinting at hypervisor / CVM / disks layers -->
+      <line x1="-78" y1="22" x2="0" y2="67" stroke="#4a9eff" stroke-width="0.6" opacity="0.35"/>
+      <line x1="0" y1="67" x2="78" y2="22" stroke="#4a9eff" stroke-width="0.6" opacity="0.35"/>
+      <line x1="-78" y1="52" x2="0" y2="97" stroke="#4a9eff" stroke-width="0.6" opacity="0.2"/>
+      <line x1="0" y1="97" x2="78" y2="52" stroke="#4a9eff" stroke-width="0.6" opacity="0.2"/>
+      <!-- accent dot on top -->
+      <circle cx="0" cy="-7" r="2.2" fill="#00d4ff"/>
+    </symbol>
+
+    <symbol id="nodeHi" overflow="visible">
+      <polygon points="0,-52 78,-7 0,38 -78,-7" fill="url(#ftopHi)" stroke="#00d4ff" stroke-width="1.2" stroke-opacity="0.7"/>
+      <polygon points="-78,-7 0,38 0,128 -78,83" fill="url(#fleftHi)" stroke="#2a4d7a" stroke-width="1"/>
+      <polygon points="78,-7 0,38 0,128 78,83" fill="url(#frightHi)" stroke="#2a4d7a" stroke-width="1"/>
+      <line x1="-78" y1="22" x2="0" y2="67" stroke="#00d4ff" stroke-width="0.7" opacity="0.5"/>
+      <line x1="0" y1="67" x2="78" y2="22" stroke="#00d4ff" stroke-width="0.7" opacity="0.5"/>
+      <line x1="-78" y1="52" x2="0" y2="97" stroke="#00d4ff" stroke-width="0.7" opacity="0.3"/>
+      <line x1="0" y1="97" x2="78" y2="52" stroke="#00d4ff" stroke-width="0.7" opacity="0.3"/>
+      <circle cx="0" cy="-7" r="3" fill="#00d4ff"/>
+      <circle cx="0" cy="-7" r="6" fill="url(#dot)" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <!-- background -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <!-- isometric grid backdrop -->
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.55"/>
+
+  <!-- soft cyan vignette behind cluster -->
+  <ellipse cx="800" cy="470" rx="520" ry="240" fill="#00d4ff" opacity="0.06" filter="url(#softGlow)"/>
+
+  <!-- Cluster: 3x3 grid of isometric nodes.
+       Cell stride: dx = 180, dy = 104 (matches iso projection of grid pattern).
+       Centered on (800, 360).
+       Iso math: screen_x = cx + (col - row) * 180; screen_y = cy + (col + row) * 104 -->
+  <g>
+    <!-- Connection mesh: drawn first so nodes overlay cleanly.
+         Lines between top-of-node anchor points (cx, cy - 7).
+         Anchor for cell (col,row): (800 + (col-row)*180, 360 + (col+row)*104 - 7) -->
+    <g stroke="#00d4ff" stroke-opacity="0.32" stroke-width="1" fill="none">
+      <!-- horizontal-ish neighbours in iso grid (col adjacency, same row) -->
+      <line x1="440" y1="353"  x2="620" y2="353"/>
+      <line x1="620" y1="353"  x2="800" y2="353"/>
+      <line x1="800" y1="353"  x2="980" y2="353"/>
+      <line x1="980" y1="353"  x2="1160" y2="353"/>
+
+      <line x1="260" y1="457"  x2="440" y2="457"/>
+      <line x1="440" y1="457"  x2="620" y2="457"/>
+      <line x1="620" y1="457"  x2="800" y2="457"/>
+      <line x1="800" y1="457"  x2="980" y2="457"/>
+      <line x1="980" y1="457"  x2="1160" y2="457"/>
+      <line x1="1160" y1="457" x2="1340" y2="457"/>
+
+      <line x1="440" y1="561"  x2="620" y2="561"/>
+      <line x1="620" y1="561"  x2="800" y2="561"/>
+      <line x1="800" y1="561"  x2="980" y2="561"/>
+      <line x1="980" y1="561"  x2="1160" y2="561"/>
+
+      <!-- vertical-ish (row adjacency, same col) -->
+      <line x1="440" y1="353"  x2="260" y2="457"/>
+      <line x1="620" y1="353"  x2="440" y2="457"/>
+      <line x1="800" y1="353"  x2="620" y2="457"/>
+      <line x1="980" y1="353"  x2="800" y2="457"/>
+      <line x1="1160" y1="353" x2="980" y2="457"/>
+
+      <line x1="440" y1="457"  x2="260" y2="561"/>
+      <line x1="620" y1="457"  x2="440" y2="561"/>
+      <line x1="800" y1="457"  x2="620" y2="561"/>
+      <line x1="980" y1="457"  x2="800" y2="561"/>
+      <line x1="1160" y1="457" x2="980" y2="561"/>
+      <line x1="1340" y1="457" x2="1160" y2="561"/>
+
+      <line x1="620" y1="353"  x2="800" y2="457"/>
+      <line x1="800" y1="353"  x2="980" y2="457"/>
+      <line x1="980" y1="353"  x2="1160" y2="457"/>
+
+      <line x1="620" y1="457"  x2="800" y2="561"/>
+      <line x1="800" y1="457"  x2="980" y2="561"/>
+      <line x1="980" y1="457"  x2="1160" y2="561"/>
+
+      <!-- a few longer cross-cluster strands suggesting replication -->
+      <line x1="260" y1="457"  x2="1340" y2="457" stroke-opacity="0.14"/>
+      <line x1="440" y1="353"  x2="1160" y2="561" stroke-opacity="0.14"/>
+      <line x1="1160" y1="353" x2="440"  y2="561" stroke-opacity="0.14"/>
+    </g>
+
+    <!-- Nodes. Render back-to-front (lower row first means smaller y, drawn first). -->
+    <!-- Row 0 (top, col 0..4) -->
+    <use href="#node" x="440"  y="360"/>
+    <use href="#node" x="620"  y="360"/>
+    <use href="#nodeHi" x="800"  y="360"/>
+    <use href="#node" x="980"  y="360"/>
+    <use href="#node" x="1160" y="360"/>
+
+    <!-- Row 1 (col -1..5) -->
+    <use href="#node" x="260"  y="464"/>
+    <use href="#nodeHi" x="440"  y="464"/>
+    <use href="#node" x="620"  y="464"/>
+    <use href="#nodeHi" x="800"  y="464"/>
+    <use href="#node" x="980"  y="464"/>
+    <use href="#nodeHi" x="1160" y="464"/>
+    <use href="#node" x="1340" y="464"/>
+
+    <!-- Row 2 (col 0..4) -->
+    <use href="#node" x="440"  y="568"/>
+    <use href="#node" x="620"  y="568"/>
+    <use href="#nodeHi" x="800"  y="568"/>
+    <use href="#node" x="980"  y="568"/>
+    <use href="#node" x="1160" y="568"/>
+  </g>
+
+  <!-- Foreground accent: subtle scanline at bottom -->
+  <rect x="0" y="860" width="1600" height="1" fill="#00d4ff" opacity="0.18"/>
+  <rect x="0" y="864" width="1600" height="1" fill="#00d4ff" opacity="0.08"/>
+
+  <!-- Mono path treatment, top-left -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6b7a9a">
+    <text x="48" y="56" letter-spacing="0.04em"><tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix<tspan fill="#a8b8d4">/01-hci-foundations</tspan></text>
+  </g>
+
+  <!-- Module label, bottom-left -->
+  <g font-family="Inter, system-ui, sans-serif" fill="#a8b8d4">
+    <text x="48" y="816" font-size="13" letter-spacing="0.18em" font-weight="600" fill="#6b7a9a">MODULE 01</text>
+    <text x="48" y="852" font-size="34" font-weight="700" letter-spacing="-0.02em" fill="#e8f0ff">What HCI Is and Why It Exists</text>
+  </g>
+</svg>

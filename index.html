@@ -183,7 +183,13 @@
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: 6px;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms ease, transform 150ms ease;
     }
+    a.module-card:hover { border-color: var(--accent-cyan); transform: translateY(-1px); }
+    .module-card.disabled { opacity: 0.7; }
     .module-card .num {
       font-family: var(--font-mono);
       font-size: 12px;
@@ -288,16 +294,16 @@
     <section class="modules">
       <h2>Ten modules</h2>
       <div class="module-grid">
-        <div class="module-card"><span class="num">01</span><span class="title">HCI Foundations</span><span class="lede">Why hyperconverged, what it replaces.</span></div>
-        <div class="module-card"><span class="num">02</span><span class="title">Nutanix Architecture</span><span class="lede">CVM, Stargate, Cassandra, Curator.</span></div>
-        <div class="module-card"><span class="num">03</span><span class="title">AHV Hypervisor</span><span class="lede">The hypervisor most engineers underestimate.</span></div>
-        <div class="module-card"><span class="num">04</span><span class="title">Prism Management</span><span class="lede">Element vs Central, what each is for.</span></div>
-        <div class="module-card"><span class="num">05</span><span class="title">DSF Storage Deep Dive</span><span class="lede">The data path, tiering, locality.</span></div>
-        <div class="module-card"><span class="num">06</span><span class="title">Networking and Flow</span><span class="lede">Microsegmentation without the theater.</span></div>
-        <div class="module-card"><span class="num">07</span><span class="title">Data Protection</span><span class="lede">Snapshots, NearSync, Metro, Leap.</span></div>
-        <div class="module-card"><span class="num">08</span><span class="title">Unified Storage</span><span class="lede">Files, Objects, Volumes.</span></div>
-        <div class="module-card"><span class="num">09</span><span class="title">Licensing and Economics</span><span class="lede">The conversation customers want to have.</span></div>
-        <div class="module-card"><span class="num">10</span><span class="title">Migration Path</span><span class="lede">Move, design tradeoffs, what goes wrong.</span></div>
+        <a class="module-card" href="modules/01-hci-foundations/index.html"><span class="num">01</span><span class="title">HCI Foundations</span><span class="lede">Why hyperconverged, what it replaces.</span></a>
+        <div class="module-card disabled"><span class="num">02</span><span class="title">Nutanix Architecture</span><span class="lede">CVM, Stargate, Cassandra, Curator.</span></div>
+        <div class="module-card disabled"><span class="num">03</span><span class="title">AHV Hypervisor</span><span class="lede">The hypervisor most engineers underestimate.</span></div>
+        <div class="module-card disabled"><span class="num">04</span><span class="title">Prism Management</span><span class="lede">Element vs Central, what each is for.</span></div>
+        <div class="module-card disabled"><span class="num">05</span><span class="title">DSF Storage Deep Dive</span><span class="lede">The data path, tiering, locality.</span></div>
+        <div class="module-card disabled"><span class="num">06</span><span class="title">Networking and Flow</span><span class="lede">Microsegmentation without the theater.</span></div>
+        <div class="module-card disabled"><span class="num">07</span><span class="title">Data Protection</span><span class="lede">Snapshots, NearSync, Metro, Leap.</span></div>
+        <div class="module-card disabled"><span class="num">08</span><span class="title">Unified Storage</span><span class="lede">Files, Objects, Volumes.</span></div>
+        <div class="module-card disabled"><span class="num">09</span><span class="title">Licensing and Economics</span><span class="lede">The conversation customers want to have.</span></div>
+        <div class="module-card disabled"><span class="num">10</span><span class="title">Migration Path</span><span class="lede">Move, design tradeoffs, what goes wrong.</span></div>
       </div>
     </section>
 
