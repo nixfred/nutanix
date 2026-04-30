@@ -297,7 +297,18 @@ Appendices:
     - Move vs alternatives (HCX, Zerto, RackWare) comparison accurate.
     - Hardware sourcing (NX / OEM / HCIR) accurate.
   - No content gaps identified beyond corrections above.
-- [ ] appendix-c-scenarios.md
+- [x] appendix-c-scenarios.md — STATUS: findings-recorded, two corrections made, References section added
+  - Corrections applied:
+    - **Scenario 1 TCO line**: "AOS Pro + NCM Pro" → "NCI Pro (formerly AOS Pro) + NCM Pro" (matches Module 09 NCI rename).
+    - **Scenario 9 subscription line**: "3-year AOS Pro + NCM Pro term" → "3-year NCI Pro (formerly AOS Pro) + NCM Pro term" (same fix).
+  - Confirmed:
+    - Ten scenarios are synthesis / engagement exercises with thin direct-technical surface; the technical claims they reference (RF/EC math, replication modes, NCI/NCM tiers, Flow licensing, HyperFlex EOL, Move tool, hybrid steady-state) all derive from modules where corrections have already been applied.
+    - HyperFlex EOL reference in Scenario 4 is consistent with Appendix B's authoritative dates (Sep 2024 last order).
+    - NSX-T migration framing in Scenarios 1 and 2 consistent with Module 06's accurate Flow vs NSX-T comparison.
+    - SRM and Recovery Plans framing in Scenario 2 consistent with Module 07's Leap → Nutanix DR rename.
+    - Cisco UCS-based Nutanix migration path in Scenario 4 aligns with the OEM partnership product (Cisco Compute Hyperconverged with Nutanix) surfaced in Appendix B.
+    - Greenfield hardware sourcing recommendations (HCIR / OEM / NX) in Scenario 9 consistent with Module 09.
+  - References section added linking back to the per-module References sections that source the technical specifics.
 - [ ] appendix-d-objections.md
 - [ ] appendix-e-discovery-questions.md
 - [ ] appendix-f-sizing-rules.md

@@ -68,7 +68,7 @@ Customer wants a complete consolidation onto Nutanix on Dell XC hardware. Build 
 - **NSX-T strategy:** Light usage favors clean migration to Flow Network Security. Map the ~30 VMs to category-based Flow rules; replicate microsegmentation policy. NSX-T contract ends at next renewal; don't extend.
 - **Migration plan:** 12-month phased framework. Discovery 6 weeks, platform build 4 weeks (parallel with discovery), pilot wave 4 weeks, Wave 1 (general-purpose, 100 VMs) 6 weeks, Wave 2 (Tier-1, 60 VMs) 8 weeks, Wave 3 (mission-critical, 20 VMs) 4 weeks, stabilization and decommissioning 6 weeks.
 - **Backup transition:** Migrate Veeam target from Data Domain to Objects in pilot wave. Earliest, lowest-risk consolidation win.
-- **5-year TCO:** Run the math. Cluster + AOS Pro + NCM Pro + Files + Objects + services. Compare to status quo (refresh ESXi + NetApp + DD + Pure refresh in years 2-3 + VCF + NSX-T renewal). Expected delta: $300-500K savings over 5 years on this profile.
+- **5-year TCO:** Run the math. Cluster + NCI Pro (formerly AOS Pro) + NCM Pro + Files + Objects + services. Compare to status quo (refresh ESXi + NetApp + DD + Pure refresh in years 2-3 + VCF + NSX-T renewal). Expected delta: $300-500K savings over 5 years on this profile.
 - **Team capacity:** 5-person team handles the operational ramp with BlueAlly augmentation in pilot and Wave 1. Training plan: NCA cert for the team during platform build phase; NCP-MCI for senior team members during Wave 1.
 
 **Weak answer misses:**
@@ -460,7 +460,7 @@ Design a greenfield Nutanix deployment that complements the customer's AWS-nativ
   - Identity unified via SAML to Okta or similar IdP (single source for both environments)
   - Object storage: Nutanix Objects on-prem for steady-state data, AWS S3 for cloud-resident
   - Cross-environment networking: VPN or direct-connect between on-prem and AWS VPC
-- **Subscription strategy:** 3-year AOS Pro + NCM Pro term with growth provisions. Greenfield customers should not lock into 5-year at year-1 sizing; growth uncertainty is real.
+- **Subscription strategy:** 3-year NCI Pro (formerly AOS Pro) + NCM Pro term with growth provisions. Greenfield customers should not lock into 5-year at year-1 sizing; growth uncertainty is real.
 - **Operational model:** Small team (2-3 infrastructure engineers initially) operates everything from Prism Central + AWS Console. Single management plane for Nutanix; standard AWS console for cloud. Avoid premature complexity.
 - **Cost model:** Run the AWS-only run-rate vs Nutanix-plus-AWS hybrid. For steady-state workloads, on-prem is typically 40-60% cheaper than AWS at moderate scale. Variable workloads stay where elasticity wins.
 - **Growth path:** Add Nutanix nodes incrementally. Migrate AWS workloads to Nutanix as they stabilize into steady-state patterns. Keep AWS for true elasticity.
@@ -553,6 +553,20 @@ Respond. He has a real architectural argument.
 - The NCX-MCI panel defense is exactly this kind of multi-module integration.
 
 The senior-SA muscle is the integration: pulling from multiple modules at the right moments, naming the real constraints, recommending honestly even when honesty cuts against short-term commercial interest. Build it through practice.
+
+---
+
+## References
+
+The scenarios in this appendix are synthesis exercises that pull from the modules. The technical claims they reference (cluster sizing, RF/EC math, replication modes, NCI/NCM tiers, Flow licensing, Cisco HyperFlex EOL, Move tool semantics) are all sourced from the per-module References sections. Modules that back the most-cited specifics:
+
+- [Module 5 References](../05-dsf-storage-deep-dive.md#references). RF / EC / compression math used in Scenarios 1, 4, and 9.
+- [Module 6 References](../06-networking-flow.md#references). Flow Network Security licensing in Scenarios 1 and 4 (NCI Ultimate or Security Add-On for NCI Pro, not NCM Pro).
+- [Module 7 References](../07-data-protection.md#references). Async / NearSync / Metro / Recovery Plans in Scenarios 2, 4, 6, and 9.
+- [Module 8 References](../08-unified-storage.md#references). Files / Objects / Volumes consolidation math in Scenarios 1, 3, and 4.
+- [Module 9 References](../09-licensing-economics.md#references). NCI / NCM / NCP licensing structure used in every TCO discussion. Replaces the legacy AOS Pro / Ultimate naming throughout.
+- [Module 10 References](../10-migration-path.md#references). Migration framework, Move tool, hybrid steady-state in Scenarios 1, 2, 4, 5, 8.
+- [Appendix B References](./appendix-b-comparison-matrix.md#references). HyperFlex EOL dates referenced in Scenario 4.
 
 ---
 
