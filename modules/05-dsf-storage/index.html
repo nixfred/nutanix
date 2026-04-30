@@ -1,0 +1,1409 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 5: DSF Deep Dive (How Storage Actually Works)</title>
+  <meta name="description" content="The Distributed Storage Fabric end to end: hierarchy, the data path through OpLog and Extent Store, RF vs EC-X, compression and dedup, Curator failure recovery, and twelve practice questions." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Module 5: DSF Deep Dive (How Storage Actually Works)" />
+  <meta property="og:description" content="The Distributed Storage Fabric, end to end. Data path, RF vs EC, capacity math." />
+  <meta property="og:image" content="../../public/images/hero-05-dsf-storage.svg" />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    /* ============= FULL-BLEED HERO ============= */
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85); font-variant-numeric: tabular-nums;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+    figure.diagram .badge.wb { color: var(--success); background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.40); }
+    figure.diagram .badge.cert { color: var(--warning); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.40); }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption { margin-top: 16px; color: var(--text-secondary); font-size: 14px; font-style: italic; max-width: 70ch; }
+
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">05 · DSF Deep Dive</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-05-dsf-storage.svg" alt="Isometric view of the Distributed Storage Fabric: five clustered nodes with cylindrical disk stacks, replication arcs across them, and a hot-tier OpLog band glowing across the cluster." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/05-dsf-storage</div>
+      <h1 class="module-title">Module 5: DSF Deep Dive (How Storage Actually Works)</h1>
+      <div class="meta-row">
+        <span class="chip read">~42 min read</span>
+        <span class="chip cert">NCA ~15%</span>
+        <span class="chip cert">NCP-MCI ~28%</span>
+        <span class="chip cert">NCM-MCI ~30%</span>
+        <span class="chip cert">NCP-US ~20%</span>
+      </div>
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~15%) · NCP-MCI (~28%) · NCM-MCI (~30%) · NCP-US (~20% foundational)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #12, #13, #15, #19, #24 · Discovery Q-STOR-01 through Q-STOR-05</span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Module 01 (HCI Foundations)</li>
+            <li>Module 02 (Nutanix Architecture)</li>
+            <li>Module 03 (AHV)</li>
+            <li>Module 04 (Prism)</li>
+            <li>Working CE cluster</li>
+            <li>Comfort with storage concepts (RAID, replication, IOPS, latency)</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">DSF</span>
+            <span class="term-chip">Storage Pool</span>
+            <span class="term-chip">Storage Container</span>
+            <span class="term-chip">vDisk</span>
+            <span class="term-chip">Extent</span>
+            <span class="term-chip">Extent Group</span>
+            <span class="term-chip">OpLog</span>
+            <span class="term-chip">Extent Store</span>
+            <span class="term-chip">Content Cache</span>
+            <span class="term-chip">RF (Replication Factor)</span>
+            <span class="term-chip">EC-X (Erasure Coding)</span>
+            <span class="term-chip">ILM</span>
+            <span class="term-chip">Stargate · Curator · Cassandra</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Trace a VM write through DSF end to end, naming every component it touches.</strong> From the guest's <code>write()</code> call to acknowledged-on-stable-storage, you will know what happens, where it happens, and why. This is the single most-tested concept in NCP-MCI storage.</li>
+        <li><strong>Recommend RF2 vs RF3 vs erasure coding for a given workload with the math behind the choice.</strong> Capacity overhead numbers, performance tradeoffs, failure-tolerance differences. No guessing.</li>
+        <li><strong>Pass roughly 28% of NCP-MCI and 30% of NCM-MCI.</strong> This is the heaviest single-module weight in the curriculum because storage is the heart of the platform. NCM-MCI lab scenarios disproportionately involve storage troubleshooting.</li>
+        <li><strong>Defend the architecture against a senior storage admin who has been engineering arrays for 20 years.</strong> Real concerns like tail latency, write amplification, rebuild times, capacity efficiency, and vendor-managed firmware all have real answers. None requires hand-waving.</li>
+        <li><strong>Size a cluster correctly for given workload patterns.</strong> Capacity reservation, thin provisioning, OpLog sizing, Curator scan duration on large clusters. The math you need for actual customer designs.</li>
+        <li><strong>Talk about Stargate, Cassandra, and Curator</strong> in their operational roles, not just as service names. When NCC reports "Stargate degraded on node 3" or "Curator scan stalled," you know what that means and what to look at first.</li>
+      </ol>
+      <p>This is the technical core of the platform. The reader who internalizes this module has internalized Nutanix.</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>You have managed shared storage. SAN or NAS, FC or iSCSI or NFS. You know the vocabulary: LUN, datastore, volume, RAID group, parity, hot spare, cache, write-back, write-through, controller failover, multipathing.</p>
+      <p>You have also been burned by it once or twice. Maybe a controller failed at 2am and the failover took 90 seconds longer than the customer's RTO allowed. Maybe a RAID rebuild ran for 18 hours during which performance was unusable. Maybe the array's compression algorithm was great in marketing but disappointing in reality. Real stuff.</p>
+      <p>Hold that experience. You are about to look at storage in a fundamentally different shape.</p>
+      <p><strong>DSF (Distributed Storage Fabric)</strong> is the storage layer that runs across all the CVMs in a Nutanix cluster. There is no array. There is no controller in the traditional sense. There is software on every node that takes the local disks of every node, replicates data across them, deduplicates and compresses, presents one logical pool, and self-heals when nodes fail. The terminology is partly familiar (replication, compression) and partly new (OpLog, Extent Store, Curator, EC-X). The architecture, once you see it, is internally consistent.</p>
+      <p>The Foundation question for this module: how does a distributed storage layer running on the same hardware as your VMs match (and in some ways exceed) the performance and resilience of a dedicated array?</p>
+      <p>The honest short answer: by trading one set of architectural costs (extra hardware, separate controllers, FC fabric) for another (CVM resource tax, network round-trips for some operations, software complexity in distributed coordination). Whether the trade is favorable depends on the workload. For most enterprise workloads in 2026, it is. We will get to which workloads are which.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When a senior storage admin pushes you on DSF performance ("can it really match my Pure array?"), the wrong move is to claim parity in all dimensions. The right move is precision: <em>"For most workloads, yes, sometimes better, sometimes within a few percent. For specific patterns (extreme-percentile tail latency on small-block random reads, sustained sequential bandwidth on a 4-node cluster), a dedicated all-flash array still wins on paper. The gap is smaller than it was three years ago, and for typical enterprise mixed workloads it is not material. For your specific workload, we run a POC and measure."</em> That sentence buys you the rest of the conversation.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="dsf-overview">The Distributed Storage Fabric (DSF) Overview</h3>
+      <p>DSF is the storage layer that runs across all CVMs in a Nutanix cluster. From a 30,000-foot view it does these things:</p>
+      <ul>
+        <li><strong>Pools the local disks</strong> of every node into one logical capacity pool.</li>
+        <li><strong>Replicates writes</strong> across nodes for durability (RF2 or RF3).</li>
+        <li><strong>Caches reads</strong> in CVM RAM (the Content Cache) for performance.</li>
+        <li><strong>Compresses, deduplicates, and (optionally) erasure-codes</strong> data for efficiency.</li>
+        <li><strong>Tiers data</strong> between hot (NVMe / SSD) and cold (HDD, where present) based on access patterns.</li>
+        <li><strong>Self-heals</strong> when nodes or drives fail by re-replicating data to surviving copies.</li>
+        <li><strong>Snapshots and replicates</strong> for backup and DR (Module 7).</li>
+      </ul>
+      <p>DSF is built around three key services from Module 2: <strong>Stargate</strong> (the data path), <strong>Cassandra</strong> (the metadata store), and <strong>Curator</strong> (the background scrubber). Pithos owns vDisk configuration. Zeus maintains cluster consensus. These five services together implement DSF.</p>
+
+      <h3 id="storage-hierarchy">The Storage Hierarchy</h3>
+      <p>Before tracing any I/O, you need the vocabulary. DSF uses a specific hierarchy:</p>
+      <ol>
+        <li><strong>Storage Pool.</strong> The aggregate of all physical disks in the cluster. Each cluster has one Storage Pool by default that includes all node-local disks. You almost never manipulate this directly.</li>
+        <li><strong>Storage Container.</strong> A logical "datastore equivalent" carved from the Storage Pool. Containers are where you set storage-policy attributes: RF (2 or 3), compression on/off, deduplication on/off, erasure coding on/off, reservations, advertised capacity. A cluster typically has multiple containers.</li>
+        <li><strong>vDisk.</strong> The virtual disk attached to a VM. From the VM's perspective, a vDisk looks like a SCSI or virtio block device. Internally, a vDisk is a logical entity backed by extents.</li>
+        <li><strong>Extent.</strong> A contiguous range of bytes within a vDisk, typically 1 MB. Extents are the unit of metadata in Cassandra. Each extent has a metadata record indicating where it is physically stored.</li>
+        <li><strong>Extent Group.</strong> The physical allocation unit on disk that holds extents. An Extent Group is <strong>1 MB on non-deduplicated containers</strong> and <strong>4 MB on deduplicated containers</strong>. Multiple extents from one or more vDisks may share an Extent Group.</li>
+      </ol>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI · NCM-MCI</span></div>
+        <p>The hierarchy is testable in multiple forms. Which level is the policy boundary (Storage Container)? What is an Extent (1 MB metadata unit)? What is an Extent Group (1 MB on non-dedup containers; 4 MB on dedup-enabled)? Trap distractors swap "extent" and "extent group" definitions, or imply the Storage Pool is the policy boundary (it is not; the Container is). Memorize the hierarchy in order: <strong>Pool → Container → vDisk → Extent → Extent Group.</strong></p>
+      </aside>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>The hierarchy maps roughly onto traditional array concepts. Storage Pool is analogous to an array's aggregate. Storage Container is analogous to a LUN or volume that carries policy attributes (block size, deduplication, compression). vDisk is analogous to a virtual disk file (<code>.vmdk</code>) backed by the volume.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Storage policy is software-defined and operates at the Container level. Changing a vSAN policy or moving a VM between datastores in a traditional SAN often requires a Storage vMotion. In DSF, you can change container-level policies and Curator applies them in the background. The vDisk does not need to physically move. Policy is metadata; data movement is asynchronous.</p>
+      </aside>
+
+      <h3 id="diagram-storage-hierarchy">Diagram: The Storage Hierarchy</h3>
+      <figure class="diagram" id="storage-hierarchy">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-storage-hierarchy-svg" viewBox="0 0 1000 540" role="img" aria-label="The DSF storage hierarchy from VMs at the top through vDisks, extents, extent groups, the storage container as the policy boundary, the storage pool, and the physical disks at the bottom."></svg>
+        <figcaption>From physical disks to VM block I/O. Each level is a different abstraction with different operational meaning. The Container is where policy lives.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="data-path">The Data Path: A VM Write, End to End</h3>
+      <p>This is the single most important concept in the module. We will walk a VM write from <code>write()</code> syscall to acknowledged-durable.</p>
+      <ol>
+        <li><strong>The guest VM issues a write.</strong> A Linux or Windows VM running on a Nutanix node calls into its storage stack: <code>write(fd, buf, len)</code>. The OS turns this into a SCSI or virtio block command directed at the VM's vDisk.</li>
+        <li><strong>The hypervisor presents the I/O to the local CVM.</strong> On AHV, the VM's vDisk is exposed via a paravirtualized interface that routes to the local CVM. On ESXi-on-Nutanix, the CVM presents an NFS datastore that ESXi mounts; writes traverse to the CVM via NFS. Either way: the I/O lands at the local CVM's Stargate process.</li>
+        <li><strong>Stargate accepts the write.</strong> Its first decision: is this a sequential streaming write (likely large and benefits from going straight to Extent Store) or a random write (benefits from the OpLog write buffer)? Most database, VDI, and general-purpose workloads are random; Stargate routes them to the OpLog.</li>
+        <li><strong>The write goes to the OpLog (local copy).</strong> The <strong>OpLog</strong> is a persistent write buffer on the local node's hot tier (NVMe or SSD). It is essentially a write-ahead log. Writes are appended and acknowledged once durable. The OpLog is where DSF gets its low-latency write characteristic.</li>
+        <li><strong>The write is replicated to remote OpLog (RF copies).</strong> Simultaneously with the local OpLog write, Stargate replicates the write to one or two other nodes' OpLogs (RF2 or RF3 respectively). The remote OpLog write must complete before the original VM write is acknowledged. This is the cost of strong consistency.</li>
+        <li><strong>Acknowledgment to the VM.</strong> Once the local OpLog and the required number of remote OpLog replicas have all confirmed durable write, Stargate acknowledges to the hypervisor, which acknowledges to the guest VM. The VM's <code>write()</code> call returns success.</li>
+        <li><strong>OpLog drains to Extent Store (asynchronous).</strong> The OpLog is a buffer, not the permanent home for the data. As the OpLog fills past thresholds (and during quiet periods), Stargate drains writes from the OpLog to the <strong>Extent Store</strong>, the persistent backing storage on the local node. The drain is sequential and efficient.</li>
+        <li><strong>Compression and (optionally) deduplication apply during drain.</strong> Inline compression compresses data as it moves from OpLog to Extent Store. If dedup is enabled, fingerprints are computed and dedup pointers created.</li>
+        <li><strong>Erasure Coding (if enabled) is applied later.</strong> EC-X is a post-process operation. Curator runs periodic scans and converts qualifying data from RF replication to erasure-coded form.</li>
+        <li><strong>Reads.</strong> When the VM later reads the data:
+          <ul>
+            <li><strong>First check: Content Cache.</strong> Stargate maintains an in-memory cache of recently-accessed extents in CVM RAM. Cache hits return immediately.</li>
+            <li><strong>Second: local hot tier (Extent Store on NVMe/SSD).</strong> Local reads are fast.</li>
+            <li><strong>Third: remote node</strong> (over the network) if the data is not local. Curator may eventually migrate the data to be local for repeat reads.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>The data path is the heaviest single topic on NCP-MCI storage and on NCM-MCI labs. Memorize: <strong>OpLog is the persistent write buffer (hot tier). Extent Store is the persistent backing storage. Content Cache is the in-memory read cache.</strong> Trap distractors: questions implying OpLog is volatile (false; it is on durable hot-tier media), or that writes wait for Extent Store drain before acknowledgment (false; OpLog persistence is sufficient for ack), or that Content Cache is on disk (false; it is in CVM RAM).</p>
+      </aside>
+
+      <h3 id="diagram-data-path">Diagram: The Data Path</h3>
+      <figure class="diagram" id="data-path">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-data-path-svg" viewBox="0 0 1000 540" role="img" aria-label="A VM write traveling from guest syscall through the hypervisor to the local CVM Stargate, then split between the local OpLog and a remote OpLog for RF replication, acknowledged once both are durable, and asynchronously drained to the Extent Store with compression."></svg>
+        <figcaption>A VM write from guest syscall to durable acknowledgment, with replication to a remote OpLog and asynchronous drain to the Extent Store.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="cycle-2">The Cycle, Frame Two: DSF as a SAN, Distributed</h3>
+      <p>Step back. In a traditional all-flash array, an incoming write hits the array's controller, lands in NVRAM (write cache, battery-backed), is acknowledged to the host, and is later destaged to flash. The controller's NVRAM is the latency-critical buffer. Replication for redundancy happens between dual controllers in the same chassis.</p>
+      <p>DSF replaces the array controller with the CVM, replaces NVRAM with the OpLog (persistent on the local node's hot tier), and replaces dual-controller redundancy with cross-node replication (RF2 or RF3). The write path looks similar in shape: incoming write, durable buffer, acknowledgment, asynchronous destage. The major architectural shift is that the durable buffer and its peer copy are on different physical nodes connected by the network.</p>
+      <p>This is why network quality matters more in DSF than in a traditional array. Within a SAN array, controller-to-NVRAM is a backplane operation. In DSF, OpLog-to-OpLog crosses the cluster network. A 25 or 100 GbE switching fabric with low jitter is not optional; it is the substrate of write performance.</p>
+
+      <h3 id="cycle-3">The Cycle, Frame Three: DSF as Cassandra-Plus-Stargate</h3>
+      <p>Storage architects who appreciate distributed-systems internals will gravitate to this frame. DSF is, in essence, two coordinated systems:</p>
+      <ul>
+        <li><strong>Cassandra (the metadata store).</strong> Tracks every extent: which vDisks reference it, what extent group it lives in, where physically (which nodes, which disks). Every extent operation involves Cassandra metadata reads or writes. Cassandra is built on a fork of Apache Cassandra, optimized for the NoSQL key-value access patterns DSF requires. It runs in a ring across all CVMs.</li>
+        <li><strong>Stargate (the data path).</strong> Processes the actual I/O. Reads and writes flow through Stargate. Stargate consults Cassandra for "where does extent X live?" and operates on the data accordingly.</li>
+      </ul>
+      <p>The architectural separation is deliberate: metadata is a small, hot, frequently-accessed problem (good fit for a distributed NoSQL store). Data is a large, less-frequently-randomly-accessed problem (good fit for distributed object storage with caching). This is the same pattern that powers Ceph, S3, and other distributed storage systems.</p>
+
+      <h3 id="cycle-4">The Cycle, Frame Four: DSF as the Value Layer</h3>
+      <p>For an operations leader or CIO, the durable DSF story is not the data path. It is what DSF enables:</p>
+      <ul>
+        <li><strong>Snapshots that don't degrade performance.</strong> DSF native snapshots are metadata operations.</li>
+        <li><strong>Replication as a built-in primitive.</strong> Async, NearSync, and Metro replication (Module 7) all leverage DSF's primitives.</li>
+        <li><strong>Compression and deduplication without an array refresh.</strong></li>
+        <li><strong>Erasure coding as a capacity optimization.</strong></li>
+        <li><strong>Capacity portability.</strong> vDisks can move between containers and clusters.</li>
+        <li><strong>Self-healing.</strong> When a node or drive fails, DSF rebuilds without human intervention.</li>
+        <li><strong>API-first storage.</strong> Storage operations are JSON, not vendor-specific CLI.</li>
+      </ul>
+      <p>The CIO-level pitch: <em>"You are not buying storage. You are buying a software-defined storage layer that grows when your compute grows, self-heals when hardware fails, and has every storage feature your team currently buys separately built in."</em></p>
+
+      <hr/>
+
+      <h3 id="rf">Replication Factor (RF) 2 and 3</h3>
+      <p>RF is the per-container setting that determines how many copies of every write are stored across the cluster.</p>
+      <ul>
+        <li><strong>RF2.</strong> Two copies of every write. One local, one on a peer node. Survives any single node failure or single drive failure with no data loss.</li>
+        <li><strong>RF3.</strong> Three copies of every write. One local, two on peer nodes. Survives any two simultaneous node failures (or two drive failures across nodes) with no data loss.</li>
+      </ul>
+
+      <table>
+        <thead><tr><th>RF</th><th>Raw multiplier</th><th>Effective usable</th></tr></thead>
+        <tbody>
+          <tr><td>RF2</td><td>2x</td><td>50% of raw (before compression / dedup / EC)</td></tr>
+          <tr><td>RF3</td><td>3x</td><td>33% of raw (before compression / dedup / EC)</td></tr>
+        </tbody>
+      </table>
+      <p>Capacity reservation (the cluster reserves headroom for self-healing) further reduces effective usable. A typical planning number is 50% effective for RF2 and 33% for RF3, with another 10-15% set aside for reservation. Compression and EC recover meaningful capacity back.</p>
+      <p><strong>Performance implications:</strong></p>
+      <ul>
+        <li>RF2 has slightly lower write latency than RF3 (one fewer network round-trip per write).</li>
+        <li>RF3 has more network traffic during normal writes and during rebuilds.</li>
+        <li>For most workloads the latency difference is small (single-digit percent on modern 25/100 GbE networks).</li>
+      </ul>
+
+      <table>
+        <thead><tr><th>Workload pattern</th><th>Typical recommendation</th></tr></thead>
+        <tbody>
+          <tr><td>General-purpose VMs, dev/test, file/print</td><td>RF2</td></tr>
+          <tr><td>Tier-1 production with strong backup story</td><td>RF2 (with backup)</td></tr>
+          <tr><td>Tier-1 production without external backup</td><td>RF3</td></tr>
+          <tr><td>VDI</td><td>RF2 (boot storms benefit from less write amplification)</td></tr>
+          <tr><td>Mission-critical databases without application HA</td><td>RF3</td></tr>
+          <tr><td>Mission-critical databases with application HA (Always On, replica sets)</td><td>RF2 (application provides additional redundancy)</td></tr>
+          <tr><td>Compliance-driven workloads requiring multiple data copies</td><td>RF3</td></tr>
+        </tbody>
+      </table>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The wrong move is to default to RF3 ("more is better"). The right move is to ask: <em>"What is your RTO and RPO? What is your backup strategy? Are your applications doing redundancy at the application layer? How much capacity headroom can you afford?"</em> RF3 costs you 33% more raw capacity than RF2. On a 200 TB cluster that is 66 TB of raw. Recommend RF3 only when the customer's resilience requirements actually need it.</p>
+      </aside>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>RF behavior under failure is heavily tested. Memorize: RF2 survives any single failure; RF3 survives any two simultaneous failures. After a failure, the cluster automatically re-replicates (Curator-driven) to restore the configured RF. Trap distractor: RF2 surviving two simultaneous node failures (false), or RF3 having no capacity overhead vs RF2 (false; RF3 stores 50% more data).</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="ec-x">Erasure Coding (EC-X): The Capacity Optimization</h3>
+      <p><strong>Erasure coding</strong> is an alternative to replication for redundancy. Instead of storing two or three full copies, EC stores data plus parity in a way that survives node failures with substantially less capacity overhead. DSF's implementation is called <strong>EC-X.</strong> It is configurable per Storage Container.</p>
+      <p>Take a stripe of N data blocks plus K parity blocks across N+K nodes. Any K nodes can fail and the data is still recoverable. The capacity overhead is K/(N+K).</p>
+
+      <table>
+        <thead><tr><th>Configuration</th><th>Stripe</th><th>Capacity overhead</th><th>Failure tolerance</th><th>Min cluster size</th></tr></thead>
+        <tbody>
+          <tr><td>EC equiv of RF2</td><td>4+1</td><td>25% (vs RF2's 100%)</td><td>1 node</td><td>6 nodes</td></tr>
+          <tr><td>EC equiv of RF3</td><td>4+2</td><td>50% (vs RF3's 200%)</td><td>2 nodes</td><td>7 nodes</td></tr>
+        </tbody>
+      </table>
+      <p>Going from RF2 to EC 4+1 reduces capacity overhead from 100% (50% effective) to 25% (75% effective). On a 200 TB raw cluster, that is the difference between 100 TB usable and 150 TB usable: a 50% increase in effective capacity, with the same failure tolerance.</p>
+
+      <p><strong>The catch:</strong> EC has performance tradeoffs.</p>
+      <ol>
+        <li><strong>Write amplification on small writes.</strong> Writing a small block requires reading the existing stripe, modifying it, and rewriting parity. Expensive for random write workloads.</li>
+        <li><strong>Curator overhead during conversion.</strong> EC is applied as a post-process operation by Curator. New writes start as RF2 or RF3 and are converted to EC later when data has cooled. The conversion consumes background CPU and network.</li>
+        <li><strong>Recovery is more expensive.</strong> Rebuilding from EC parity requires reading from multiple surviving nodes and recomputing. Single-replica rebuilds (from RF) are simpler.</li>
+      </ol>
+
+      <table>
+        <thead><tr><th>Workload type</th><th>EC recommendation</th></tr></thead>
+        <tbody>
+          <tr><td>Cold archives, file servers, infrequently-modified data</td><td>EC strongly recommended</td></tr>
+          <tr><td>Backup repositories on Nutanix</td><td>EC recommended</td></tr>
+          <tr><td>VDI persistent profiles, general-purpose VMs</td><td>EC often beneficial; test in your environment</td></tr>
+          <tr><td>OLTP databases, latency-sensitive workloads</td><td>EC not recommended</td></tr>
+          <tr><td>High write churn with tight latency budgets</td><td>EC not recommended</td></tr>
+        </tbody>
+      </table>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCP-US</span></div>
+        <p>EC topics: configuration (per Storage Container), minimum cluster size, capacity-overhead calculations, performance tradeoffs. Memorize: EC 4+1 has 25% overhead and tolerates 1 failure (RF2-equivalent). EC 4+2 has 50% overhead and tolerates 2 failures (RF3-equivalent). Trap distractors: EC has zero performance impact (false) or EC requires the same minimum cluster size as RF (false; EC requires more nodes).</p>
+      </aside>
+
+      <h3 id="diagram-rf-vs-ec">Diagram: RF vs EC Capacity and Failure Domains</h3>
+      <figure class="diagram" id="rf-vs-ec-comparison">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+          <span class="badge cert">NCP-US</span>
+        </div>
+        <svg id="diagram-rf-vs-ec-svg" viewBox="0 0 1000 580" role="img" aria-label="A 2-by-2 comparison of RF2, RF3, EC 4+1, and EC 4+2 storing the same 1 GB of data, showing capacity overhead and failure tolerance for each."></svg>
+        <figcaption>Side-by-side: RF2, RF3, EC 4+1, EC 4+2 storing the same 1 GB of data. EC trades CPU and network during writes for substantial capacity savings.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="compression">Compression</h3>
+      <p>DSF supports compression at the Storage Container level. It happens during the OpLog drain to Extent Store (so writes are acknowledged before compression runs; the compression cost is in background drain throughput, not in write latency).</p>
+      <ul>
+        <li><strong>Inline compression.</strong> Applied during drain. The default in modern AOS for most workloads.</li>
+        <li><strong>Post-process compression.</strong> Applied later by Curator on data that wasn't compressed during drain.</li>
+      </ul>
+      <p><strong>Compression algorithms.</strong> DSF uses <strong>LZ4</strong> for inline compression on incoming writes (fast, modest ratios, suitable for the latency-critical path). For cold data that has aged onto the cold tier or that Curator processes post-hoc, DSF uses <strong>LZ4HC</strong> (high-compression LZ4), which trades CPU for tighter ratios. Inline compression is selective: it applies to sequential streams and large I/Os (greater than 64K) to avoid impacting random write performance.</p>
+      <p><strong>Real-world ratios:</strong> mixed enterprise workloads typically achieve 1.5x to 2.5x compression on DSF. Marketing numbers of 4-6x reflect best-case scenarios. Plan capacity using 2x for general workloads, 1.2x for already-compressed data, and let actual performance guide adjustment.</p>
+
+      <h3 id="dedup">Deduplication</h3>
+      <p>DSF supports deduplication at two levels:</p>
+      <ul>
+        <li><strong>Cache deduplication.</strong> In-CVM-RAM deduplication for hot data. Always on for compatible workloads.</li>
+        <li><strong>On-disk deduplication.</strong> Configured per Storage Container. Computes fingerprints during drain, deduplicates blocks across the container.</li>
+      </ul>
+      <p><strong>When dedup is valuable:</strong> VDI workloads with persistent profiles, server VMs with similar OSes, test/dev environments with cloned VMs.</p>
+      <p><strong>When dedup is expensive without benefit:</strong> already-deduplicated sources, small clusters with low data uniqueness, workloads with high write churn.</p>
+      <p><strong>Sizing implication:</strong> dedup is metadata-heavy. Enabling on-disk dedup increases the CVM's metadata footprint, which means larger CVMs (more RAM) on dedup-enabled clusters. Size accordingly.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Compression and dedup are common customer-facing topics. The discipline: never quote a specific data-reduction ratio without seeing the customer's data. Use ranges (1.5-2.5x for general workloads). Recommend dedup only for VDI or workloads with high data similarity. Misapplied dedup costs CVM resources without commensurate benefit.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="ilm">Tiering and ILM</h3>
+      <p>On hybrid platforms (NVMe/SSD + HDD), DSF tiers data automatically. Hot data lives on the NVMe/SSD tier; cold data drifts to the HDD tier. <strong>Curator</strong> drives this via ILM (Information Lifecycle Management) scans.</p>
+      <p>In 2026, all-flash (or all-NVMe) Nutanix deployments dominate, and tiering is less operationally relevant for most customers. On hybrid platforms (still shipping for cost-optimized capacity tiers like backup or large file workloads), tiering is significant.</p>
+      <p>ILM operations include: promoting hot data to the fastest tier, demoting cold data to capacity tiers, migrating data for locality after VM moves, rebalancing when nodes are added or removed, and converting data from RF to EC. ILM runs continuously in the background; it does not appear in the synchronous I/O path.</p>
+
+      <h3 id="curator">Curator: The Background Worker</h3>
+      <p><strong>Curator</strong> is the background scrubbing and rebalancing service. It runs on every CVM. One Curator is master; others are followers. Curator does:</p>
+      <ol>
+        <li><strong>Periodic scans</strong> (full and partial). Full scans every 6-24 hours; partial scans more frequently. Scans walk metadata to identify operations to perform.</li>
+        <li><strong>Re-replication after failures.</strong> Restores configured RF or EC after a node or drive loss.</li>
+        <li><strong>EC conversion.</strong> Converts qualifying data from RF to EC.</li>
+        <li><strong>Compression and dedup post-process</strong> (in some configurations).</li>
+        <li><strong>Capacity reclamation.</strong> Garbage collection of deleted vDisk space.</li>
+        <li><strong>Tiering / ILM operations.</strong></li>
+        <li><strong>Rebalancing</strong> when nodes are added or capacity is uneven.</li>
+      </ol>
+      <p>Curator is a workhorse. On a healthy cluster you barely notice it. When something is wrong (a stalled scan, a long-running re-replication, a backlog of pending operations), Curator status is one of the first things you check. The CLI command <code>curator_cli</code> and the NCC checks expose Curator state.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>Curator's role is heavily tested, especially on NCM-MCI lab scenarios. Memorize: Curator is the background scrubber. It re-replicates data after failures. It converts RF to EC. It drives ILM and tiering. It does not handle the synchronous data path (that is Stargate). Trap distractor: Curator is part of the synchronous write acknowledgment (false).</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="failure">Failure Recovery: When a Node Goes Down</h3>
+      <p>Walk through what happens when a node fails:</p>
+      <p><strong>At the moment of failure:</strong></p>
+      <ul>
+        <li>The cluster heartbeat (Cassandra and Zeus mechanisms) detects the node loss within seconds.</li>
+        <li>Stargate on the failed node stops responding. Other CVMs route I/O around the failed node.</li>
+        <li>VMs that were running on the failed node are restarted by Acropolis (AHV) or vSphere HA (ESXi-on-Nutanix). Module 3 covered this.</li>
+        <li>Cassandra removes the failed node from the active ring. Operations continue with the surviving nodes.</li>
+      </ul>
+      <p><strong>Curator's response:</strong></p>
+      <ul>
+        <li>Curator detects the missing replica copies (data that was on the failed node now has fewer than RF copies remaining).</li>
+        <li>Curator orchestrates re-replication: reads surviving copies, writes to other nodes, restores configured RF.</li>
+        <li>The duration depends on cluster size, data volume, and network bandwidth. For a 4-node cluster with 50 TB on the failed node, re-replication takes hours. For a 20-node cluster, much less.</li>
+        <li>During re-replication, the cluster runs at reduced redundancy. A second failure during this window can result in data loss for RF2 clusters.</li>
+      </ul>
+      <p><strong>For RF3 and EC clusters:</strong> the cluster tolerates the failure plus one more (RF3) or one more on a subset of nodes (EC 4+2). Re-replication still occurs to restore configured redundancy.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Customers ask "how long does rebuild take?" The honest answer depends on cluster size and data volume. Bigger clusters rebuild faster (more nodes share the work). For a typical 8-12 node cluster carrying 100-200 TB, expect rebuild times in the range of 2-8 hours after a node loss. Always frame this with "for your specific cluster size and data volume, we model it during the design phase." Don't quote a single number; the dependency is real.</p>
+      </aside>
+
+      <h3 id="diagram-failure">Diagram: Node Failure Recovery (Curator Scan)</h3>
+      <figure class="diagram" id="node-failure-recovery">
+        <div class="badges">
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-failure-svg" viewBox="0 0 1000 540" role="img" aria-label="A 5-node cluster with one node failed, showing Acropolis restarting affected VMs on surviving nodes and Curator orchestrating re-replication of lost replicas, with a time axis from heartbeat detection through full RF restoration."></svg>
+        <figcaption>A node fails. Stargate routes around it; VMs restart on survivors; Curator re-replicates lost copies. The cluster self-heals on a known timeline.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="capacity-math">Capacity Planning: The Math Customers Need</h3>
+      <p>When a customer asks "how much usable capacity will I get?", the math is more nuanced than just dividing raw by RF.</p>
+      <ol>
+        <li><strong>Raw cluster capacity.</strong> Sum of all drives across all nodes. Example: 8 nodes × 4 drives × 7.68 TB NVMe = 245.76 TB raw.</li>
+        <li><strong>Apply RF or EC.</strong> RF2: divide by 2. RF3: divide by 3. EC 4+1: 80% of raw. EC 4+2: 67% of raw.</li>
+        <li><strong>Apply capacity reservation.</strong> AOS reserves headroom for self-healing on node loss. Typically 10-15% on smaller clusters, less on larger ones.</li>
+        <li><strong>Apply compression and dedup gains.</strong> General compression: 1.5-2.5x. Dedup: variable; conservative planning is 1.0x unless workload-specific data supports a higher number.</li>
+      </ol>
+      <p><strong>Worked example:</strong> 8-node cluster, 4 × 7.68 TB NVMe per node, RF2, compression on, no EC, no dedup, general workload.</p>
+      <pre>Raw:                       245.76 TB
+After RF2 (÷ 2):           122.88 TB
+After 12% reservation:     ~108 TB
+After 2x compression:      ~216 TB effective usable</pre>
+      <p>The customer who hears "raw 245 TB, usable 216 TB" in a marketing slide is being told a real number, but only after compression. State all the assumptions when you walk through this.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCM-MCI · NCP-MCI</span></div>
+        <p>Capacity planning math is testable. Common scenarios: given raw capacity and RF, calculate effective usable. Given an EC configuration, calculate capacity overhead. Given compression assumptions, project final usable. Memorize: RF2 = divide by 2, RF3 = divide by 3, EC 4+1 = 80% of raw, EC 4+2 = 67% of raw. Apply reservation. Apply compression. State the assumptions.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="storage-only">Storage-Only Nodes</h3>
+      <p>For workloads that need a lot of capacity but not much CPU (some backup repositories, some file workloads, some object backing), Nutanix offers <strong>storage-heavy nodes</strong> and <strong>storage-only nodes</strong>.</p>
+      <p>A storage-only node has minimal compute (just enough for the CVM and DSF responsibilities) but large storage capacity. They contribute to the cluster's storage pool without contributing meaningful compute. They allow asymmetric clusters where a few storage-only nodes provide capacity for storage-heavy workloads while compute-balanced nodes handle the active VMs.</p>
+      <p><strong>When to use:</strong> backup repositories on Nutanix (especially with Mine), some Files / Objects workloads where the storage-to-compute ratio is high, clusters that have outgrown their compute-balanced node sizing on the storage axis.</p>
+      <p><strong>Tradeoffs:</strong> erodes some of HCI's operational simplicity (asymmetric node configurations), still simpler than maintaining a separate dedicated storage tier. Storage-only nodes do not eliminate the storage-imbalanced economics issue from Module 1; they soften it.</p>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Storage Container Manipulation and Failure Simulation</h2>
+      <aside class="callout lab">
+        <div class="label">Lab · ~3 hours · Your 3-node CE cluster</div>
+        <p>Hands-on with the storage hierarchy, container policies, and a controlled failure simulation. Steps below.</p>
+      </aside>
+      <ol>
+        <li><strong>Inventory the existing storage hierarchy.</strong> SSH into a CVM:
+          <pre>ncli storage-pool list
+ncli container list
+ncli vdisk list</pre>
+        </li>
+        <li><strong>Create a Storage Container with non-default policies.</strong> From Prism Element: Storage → Storage Container → Create. Name <code>lab-rf2-compressed</code>, RF=2, compression on, EC off, dedup cache-only, no reservation.</li>
+        <li><strong>Create a second container</strong> <code>lab-rf2-no-features</code> with all advanced features off.</li>
+        <li><strong>Provision a VM into each container.</strong> Power them on with a small Linux OS.</li>
+        <li><strong>Generate I/O</strong>: <code>dd if=/dev/urandom of=/tmp/test.dat bs=1M count=2048</code> for 2 GB random, then <code>dd if=/dev/zero of=/tmp/zero.dat bs=1M count=2048</code> for 2 GB zeros (zeros compress to nearly nothing).</li>
+        <li><strong>Compare in Prism.</strong> The compressed container should show meaningfully less physical space used for the same logical data, especially the zeros.</li>
+        <li><strong>Examine the data path components.</strong>
+          <pre>nodetool -h localhost ring     # Cassandra ring status
+curator_cli get_curator_state  # Curator status
+stargate_status                # Stargate health</pre>
+        </li>
+        <li><strong>Look at vDisk metadata.</strong>
+          <pre>vdisk_config_printer
+vdisk_usage_printer -vdisk_id &lt;id&gt;</pre>
+        </li>
+        <li><strong>Failure simulation (lab cluster only).</strong> From Prism, place a node in maintenance mode, then shut down the CVM via SSH (<code>sudo shutdown -h now</code>). Watch alerts fire, Data Resiliency drop, VMs restart, Curator begin re-replication. Power back on, exit maintenance, watch redundancy restore.</li>
+        <li><strong>Run NCC after recovery.</strong> <code>ncc health_checks run_all</code>.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="practice">Practice Questions</h2>
+      <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions. Read each, answer in your head, then click to reveal.</p>
+
+      <section class="practice">
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">What is the OpLog?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>An in-memory cache that stores recently-read data.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A persistent write buffer on the local node's hot tier (NVMe/SSD), used to acknowledge writes durably before they are drained to the Extent Store.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A log file generated by the Acropolis service for VM lifecycle events.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A backup of vDisk metadata stored in Cassandra.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>OpLog is the persistent, hot-tier write buffer. Writes land in OpLog (locally and on a peer node for RF2/RF3), are acknowledged once durable, and are later drained to the Extent Store. OpLog is the source of DSF's low-latency write characteristic.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) That describes the Content Cache (in CVM RAM), not OpLog.</li>
+              <li>C) Acropolis logs are unrelated; OpLog is a storage construct.</li>
+              <li>D) Cassandra holds metadata, not OpLog data.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is the seductive distractor: customers and learners hear "Op-Log" and think "log of operations." OpLog is specifically the write buffer.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which correctly describes the relationship between Storage Pool, Storage Container, and vDisk in DSF?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Storage Pool is carved from Storage Containers, which are carved from vDisks.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Storage Pool is the aggregate of all physical disks; Storage Containers are logical carvings within the pool with policy attributes; vDisks are virtual disks attached to VMs and are backed by extents within a container.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Storage Pool, Storage Container, and vDisk are interchangeable terms for the same thing.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>vDisks are physical disks; Storage Containers are RAID groups; Storage Pools are LUNs.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Pool is the physical aggregate. Container is the logical, policy-bearing layer. vDisk is the VM-facing virtual disk. The hierarchy is Pool → Container → vDisk → extents → extent groups.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Inverts the hierarchy.</li>
+              <li>C) They are distinct constructs with different purposes.</li>
+              <li>D) Mixes Nutanix and traditional-array terminology incorrectly.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and D both reflect partial mental models that get the hierarchy wrong. Memorize the order.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which statement about RF (Replication Factor) is correct?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>RF is set at the cluster level and applies uniformly to all data.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>RF is set per Storage Container; different containers in the same cluster can have different RF settings (RF2 vs RF3).</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>RF must be the same as the cluster's node count.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>RF only applies to AHV; ESXi-on-Nutanix uses VMware's native replication.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>RF is a per-container setting. A cluster commonly has multiple containers with different RF: an RF3 container for Tier-1 production, an RF2 container for general-purpose, etc.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Cluster-level RF is incorrect; granularity is per-container.</li>
+              <li>C) RF and node count are unrelated. RF2 works on any cluster of 3+ nodes; RF3 works on any cluster of 5+ nodes.</li>
+              <li>D) DSF and its RF apply uniformly across hypervisors. It is platform-level.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is intuitive ("RF must be cluster-wide"). The per-container granularity is a design strength.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">An 8-node cluster has 245 TB raw. Configured RF=2 with compression on; mixed enterprise workloads compress at roughly 2x. Approximately what is the effective usable capacity (after RF, ~12% reservation, and compression)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>122 TB</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>215 TB</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>245 TB</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>81 TB</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>245 TB / 2 (RF2) = 122.5 TB. Apply ~12% reservation: ~108 TB. Apply 2x compression: ~216 TB. The closest answer is 215 TB.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) RF only, before compression.</li>
+              <li>C) Raw, before any overhead.</li>
+              <li>D) RF3 math, not RF2.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is tempting if you stop at "divide by 2." Compression often returns more capacity than RF takes.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCP-MCI · NCP-US</span></div>
+          <p class="qprompt">Which workload is least suited for Erasure Coding (EC-X)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A backup repository with infrequent writes and high capacity needs.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A cold-tier file archive with rare modifications.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A latency-sensitive OLTP database with high random write churn.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A general-purpose virtual file server with mixed read/write.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>EC has higher write amplification on small random writes (read-modify-write of stripe parity). Latency-sensitive databases with random write workloads are the canonical anti-pattern for EC.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Backup repositories are EC's sweet spot.</li>
+              <li>B) Cold archives are similarly well-suited.</li>
+              <li>D) General-purpose file servers can benefit from EC.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>This question rewards knowing the tradeoff: EC is great for capacity-bound, low-write-churn workloads; bad for high-random-write or latency-critical workloads.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">Which DSF service is responsible for re-replicating data after a node failure?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Stargate</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Cassandra</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Curator</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Acropolis</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Curator is the background scrubber and orchestrator. After a node failure, Curator detects missing replicas and orchestrates re-replication to restore configured RF.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Stargate is the data path. It routes I/O, not background re-replication.</li>
+              <li>B) Cassandra holds metadata. It does not move data.</li>
+              <li>D) Acropolis manages VM lifecycle, not DSF data operations.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>D is plausible if you forgot Acropolis's scope is VM lifecycle. Curator owns background storage work.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">A 4-node cluster (RF=2 across all containers) has one node fail. What is the cluster's state immediately after?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>The cluster is offline until the failed node is replaced.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Cluster online; VMs that were on the failed node restart on survivors; Curator begins re-replication of data that lost a replica; during this window the cluster runs at reduced redundancy and a second failure could cause data loss.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Cluster online but in read-only mode.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Manual intervention is required to restart VMs and re-replicate data.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Canonical RF2 single-node-failure scenario. Self-healing is automatic. The re-replication window is real and the second-failure exposure is real.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) RF2 specifically tolerates single-node loss.</li>
+              <li>C) Read-only is not a normal AOS state.</li>
+              <li>D) Automation handles VM restart (HA) and re-replication (Curator).</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is a mental model from older redundancy systems. AOS's self-healing is fully automated.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">Sales-relevant · NCX-MCI prep</span></div>
+          <p class="qprompt">Customer's storage architect: "Our database has a 5ms p99 read latency requirement. Can DSF meet that?" Strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"Of course! DSF is fast; you have nothing to worry about."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"DSF on all-NVMe nodes typically delivers sub-millisecond p99 reads for cached data and low-single-digit-ms p99 for cold reads. Whether 5ms p99 is achievable depends on your specific access patterns, working set size, network topology, and cluster scale. The right answer is to run a POC with your actual workload and measure. Let me propose a POC scope."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"DSF can't match a Pure FlashArray for tail latency."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"Tail latency isn't really a concern with DSF."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Specific, honest, ends with a concrete proposal. Acknowledges the metric, gives realistic numbers, identifies the variables that affect the answer, and offers the right next step (POC).</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Overconfident and generic.</li>
+              <li>C) Concedes too much. DSF on all-NVMe with proper sizing competes with all-flash arrays on most metrics.</li>
+              <li>D) Dismissive of a legitimate concern.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and D are confident-defensive. C is conceding-defensive. B is the honest, specific, productive answer.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">Which is true about the relationship between Stargate and the OpLog?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Stargate writes to the OpLog after the Extent Store has confirmed durability.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Stargate writes to the OpLog (local and remote) and acknowledges the VM write only after the OpLog writes are durable; the Extent Store drain happens asynchronously afterward.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Stargate bypasses the OpLog for all writes; OpLog is only used for reads.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Stargate is unrelated to the OpLog; OpLog is owned by Curator.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>The data path: Stargate writes to local OpLog, replicates to remote OpLog, acknowledges the VM after both succeed. Extent Store drain is asynchronous and out of the synchronous write path.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Reverses the order. Extent Store comes after OpLog.</li>
+              <li>C) OpLog is the write buffer; reads are served by Content Cache and Extent Store.</li>
+              <li>D) Curator scans periodically; it does not own the OpLog. Stargate writes to OpLog.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is a misremembering of the order. The exam tests whether you actually internalized the data path.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">An 8-node cluster mixes compute-balanced and storage-only nodes. The customer wants to migrate a backup repository workload (heavy storage, light compute). Which approach is correct?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Storage-only nodes cannot host data; they only provide quorum.</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Storage-only nodes contribute their disks to the Storage Pool, expanding cluster capacity; the workload's data is distributed across all nodes (compute-balanced and storage-only) according to cluster policy.</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Storage-only nodes can only be used for snapshots, not for primary data.</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>The customer must create a separate cluster for storage-heavy workloads.</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Storage-only nodes are full DSF participants from a data perspective. They contribute capacity to the Storage Pool. Data is distributed across all nodes per the cluster's RF/EC policies.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Storage-only nodes do hold data; they are not just quorum.</li>
+              <li>C) No such restriction.</li>
+              <li>D) Mixing in one cluster is the canonical answer.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects a partial understanding ("storage-only" sounding like "supporting role only").</p>
+          </div>
+        </article>
+
+        <article class="question ncx" data-correct="OPEN">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · NCM-MCI prep</span></div>
+          <p class="qprompt">NCX-style design: storage container topology for a 12-node mixed-workload cluster.</p>
+          <div class="scenario">
+            <p><strong>Scenario:</strong> A 12-node cluster, all-NVMe (4 × 7.68 TB per node), 25 GbE per node redundant uplinks. Workloads:</p>
+            <ul>
+              <li>25 TB SQL Server (random read-heavy, latency-sensitive, with Always On HA across two DB VMs).</li>
+              <li>600 VDI desktops with persistent profiles (~50 GB each), boot storms at 8am.</li>
+              <li>250 general-purpose VMs (mixed read/write, no extreme latency requirements).</li>
+              <li>Separate off-cluster backup target (existing dedup appliance).</li>
+            </ul>
+            <p><strong>Challenge:</strong> Design the storage container topology. Choose RF and EC settings per workload. Calculate capacity. Justify your choices. Identify what you still need to know.</p>
+          </div>
+          <textarea placeholder="Three containers? RF per workload? EC where? Capacity math (raw → RF → reservation → compression / dedup)? What you'd ask the customer next?"></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Three containers, one per workload.</strong> Containers are the policy boundary.</li>
+              <li><strong>SQL Server container:</strong> RF2 (Always On provides app-level HA). Compression on. Dedup off. EC off (random write churn is poor for EC).</li>
+              <li><strong>VDI container:</strong> RF2 (boot storms benefit from less write amplification). Compression on. On-disk dedup on (persistent profiles share OS pages). EC off (write-heavy profile churn).</li>
+              <li><strong>General-purpose container:</strong> RF2. Compression on. Dedup cache-only. EC: candidate for EC 4+1 if read-heavy and capacity-prioritized; document the tradeoff.</li>
+              <li><strong>Capacity math.</strong> 12 × 4 × 7.68 = 368.64 TB raw. RF2: 184.32 TB. ~12% reservation: ~162 TB. 2x compression: ~324 TB effective. VDI dedup may add 20-30% more for that workload.</li>
+              <li><strong>Network considerations.</strong> 25 GbE adequate; verify redundant uplinks.</li>
+              <li><strong>Resilience.</strong> RF2 across all three tolerates single-node loss; document the 2-3 hour re-replication window.</li>
+              <li><strong>Workload placement.</strong> VM-host affinity to keep SQL primary and secondary on different nodes; ADS handles VDI rebalancing.</li>
+              <li><strong>What you still need:</strong> SQL p99 latency target, VDI golden image / linked clone strategy, growth forecast, customer's appetite for EC on general-purpose, backup window for snapshot scheduling.</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Defaulting to RF3 globally without considering Always On.</li>
+              <li>Enabling EC across all containers without considering write profile.</li>
+              <li>Forgetting compression and dedup in capacity math.</li>
+              <li>Not naming the re-replication window as a real concern.</li>
+              <li>Treating VDI as similar to SQL (the dedup case is very different).</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="question ncx" data-correct="OPEN">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style architectural defense: an incumbent storage architect challenges DSF.</p>
+          <div class="scenario">
+            <p><strong>Scenario:</strong> Customer's senior storage architect (18 years engineering all-flash arrays):</p>
+            <blockquote>"Software-defined storage running on shared compute hosts means write amplification I can't audit, network round-trips I can't tune, and a vendor that updates the storage stack as part of a hypervisor upgrade. My all-flash array has dedicated controllers, NVRAM I can characterize, replication I can configure precisely, and a firmware cadence I control. Why would I trade that for distributed storage?"</blockquote>
+            <p><strong>Challenge:</strong> Respond. He is making a serious argument. Address it.</p>
+          </div>
+          <textarea placeholder="Acknowledge what is real. Reframe each concern specifically. Address the dedicated-controller comparison. Close with a concrete POC proposal."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge what is real.</strong> Distributed storage does involve write amplification, network round-trips, and a software-update cadence tied to the platform. Pretending otherwise loses credibility.</li>
+              <li><strong>Reframe each concern specifically:</strong>
+                <ul>
+                  <li><em>Write amplification.</em> DSF's write path is well-characterized. OpLog is on local NVMe; replication adds one or two network round-trips. Bounded and measurable. Curator background work is auditable through Curator metrics. Offer to share numbers from a similar customer reference.</li>
+                  <li><em>Network round-trips.</em> Local OpLog is sub-millisecond; remote OpLog over 25/100 GbE adds modest single-digit microseconds in normal operation. Network quality matters, which is why design includes proper switching fabric. Offer a network reference architecture.</li>
+                  <li><em>Storage stack updates with the platform.</em> Real architectural choice. Benefit: storage and compute upgrade together, no version-skew incidents. Cost: less granular control over storage firmware. Offer to demo LCM in a controlled change window.</li>
+                  <li><em>Auditability.</em> DSF exposes more telemetry per workload than a typical array. Per-VM IOPS, latency, read/write split, cache hit rate, compression ratio, dedup ratio. Show him Prism's analytics during POC.</li>
+                </ul>
+              </li>
+              <li><strong>Reframe the "dedicated controller" comparison.</strong> Dedicated controllers are real; downsides too: a single chassis with two CPUs that becomes the cluster's bottleneck at scale, dual-controller firmware paths, rack space and power. DSF distributes that work across N CVMs, scaling horizontally.</li>
+              <li><strong>Address "I trade what I have."</strong> He doesn't have to trade. Run his existing array workloads on Nutanix-on-ESXi for an evaluation period. Use Move (Module 3) to migrate selected workloads. Measure. Decide.</li>
+              <li><strong>Close with a concrete POC proposal.</strong> Three workloads (one OLTP, one VSI, one capacity-heavy) onto a Nutanix cluster for 60 days, instrument both sides, let the data drive the decision.</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Dismissing the architect's experience.</li>
+              <li>Claiming DSF is universally better than all-flash arrays.</li>
+              <li>Skipping auditability (his concern about telemetry is real and answerable).</li>
+              <li>Not naming the firmware-cadence tradeoff honestly.</li>
+              <li>Not closing with a POC proposal.</li>
+            </ul>
+          </div>
+        </article>
+
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can trace a VM write through DSF end to end: guest syscall, hypervisor passthrough, local CVM Stargate, local OpLog, remote OpLog (RF=2 or RF=3), acknowledgment, asynchronous Extent Store drain, eventual compression and dedup, eventual EC conversion. Every component named.</p>
+      <p>You know the storage hierarchy: Pool → Container → vDisk → Extent → Extent Group. You know the Container is the policy boundary.</p>
+      <p>You know RF2 and RF3 in detail: capacity overhead, failure tolerance, when to choose which, the math of the choice. You know Erasure Coding (EC-X): 4+1 vs 4+2, capacity savings, performance tradeoffs, where EC wins and where it costs. You can size a cluster correctly for EC requirements (6+ nodes for 4+1, 7+ for 4+2).</p>
+      <p>You know compression and dedup honestly: what they cost, what they deliver, when to enable them. You quote ranges, not marketing peaks. You know how Curator works: background scans, re-replication, EC conversion, ILM, capacity reclamation.</p>
+      <p>You can walk a customer through a node-failure scenario: detection, VM restart, Curator re-replication, the re-replication window, the second-failure exposure, the duration math. You can do capacity planning math: raw, RF, reservation, compression, dedup, effective usable.</p>
+      <p>You are now ready for networking. Module 6 takes the same depth treatment to AHV networking, Open vSwitch, virtual switches, VLANs, bridges, and Flow microsegmentation.</p>
+
+      <hr/>
+
+      <section class="references">
+        <h2>References</h2>
+        <p>Authoritative sources verified during the technical review pass on this module. Cite these when defending architecture in front of a senior storage admin.</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/4c-book-of-aos-storage.html"><strong>Nutanix Bible — AOS Storage (DSF)</strong></a>. Authoritative source for the storage hierarchy, data path (Stargate, OpLog, Extent Store, Content Cache), Cassandra metadata replication (default 3 copies, configurable up to 5), and compression-algorithm details (LZ4 inline + LZ4HC for cold).</li>
+          <li><a href="https://polarclouds.co.uk/nutanix-storage-concepts/"><strong>Polar Clouds DSF Concepts Walkthrough</strong></a>. Independent walkthrough with the 1 MB / 4 MB extent group sizing distinction (1 MB on non-dedup containers, 4 MB on dedup-enabled).</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2032-Data-Efficiency:erasure-coding.html"><strong>Erasure Coding Solution Brief (TN-2032)</strong></a>. Authoritative source for EC-X stripe configurations, minimum cluster sizes (4+1 needs ≥ 6 nodes; 4+2 needs ≥ 7 nodes), capacity-overhead math.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2002-Erasure-Coding:TN-2002-Erasure-Coding"><strong>Erasure Coding Reference (TN-2002)</strong></a>. Original erasure coding tech note.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2032-Data-Efficiency:compression.html"><strong>Compression Reference (TN-2032 Compression section)</strong></a>. LZ4 inline + LZ4HC for cold; inline compression selectivity (greater than 64K and sequential streams only).</li>
+          <li><a href="https://portal.nutanix.com/kb/17546"><strong>Compression FAQ (KB-17546)</strong></a>. Customer-facing FAQ on compression behavior.</li>
+          <li><a href="https://next.nutanix.com/how-it-works-22/sequential-i-o-and-the-oplog-versus-the-extent-store-39228"><strong>Sequential I/O and the OpLog vs Extent Store (Nutanix Community)</strong></a>. The Stargate write characterizer's routing decision (random → OpLog; sustained sequential → Extent Store directly).</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2007-Cassandra-on-Nutanix:BP-2007-Cassandra-on-Nutanix"><strong>Cassandra on Nutanix (BP-2007)</strong></a>. Best-practices reference for Cassandra-on-Nutanix workloads.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2096-Nutanix-Core-Performance:TN-2096-Nutanix-Core-Performance"><strong>Core Performance Reference (TN-2096)</strong></a>. I/O path and performance characterization.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Previous:</strong> <a href="../04-prism-management/index.html">Module 4: Prism (Element and Central)</a></li>
+          <li><strong>Next:</strong> Module 6: Networking and Microsegmentation <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Glossary:</strong> DSF · Storage Pool · Storage Container · vDisk · Extent · Extent Group · OpLog · Extent Store · Content Cache · RF · EC-X · ILM <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Storage Row · Replication Row · Capacity Efficiency Row <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> #12 "Tail latency vs all-flash arrays" · #13 "Software-defined storage trust" · #15 "Rebuild times" · #19 "Capacity efficiency vs my array" · #24 "Storage admin role obsolescence" <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Q-STOR-01 through Q-STOR-05 (workload IOPS / latency profile, capacity targets, existing array dependencies, backup integration, compliance / data placement) <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../04-prism-management/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 4: Prism (Element and Central)</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 6: Networking and Flow (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>05-dsf-storage</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m5:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram color palette + helpers (shared across all diagrams)
+    const C = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+      green: '#34d399', greenFill: 'rgba(52,211,153,0.12)',
+      purple: '#c084fc', purpleFill: 'rgba(192,132,252,0.12)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opt = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opt.anchor) t.setAttribute('text-anchor', opt.anchor);
+      t.setAttribute('font-family', opt.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opt.size || 12);
+      if (opt.weight) t.setAttribute('font-weight', opt.weight);
+      if (opt.spacing) t.setAttribute('letter-spacing', opt.spacing);
+      if (opt.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opt.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ===== Diagram: Storage Hierarchy =====
+    (function drawStorageHierarchy() {
+      const svg = document.getElementById('diagram-storage-hierarchy-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'POOL → CONTAINER → vDISK → EXTENT → EXTENT GROUP', { anchor: 'middle', size: 12, mono: true, spacing: '0.10em', weight: '600' });
+
+      // Top: VMs
+      const vms = [
+        { x: 130, name: 'VM-A' },
+        { x: 320, name: 'VM-B' },
+        { x: 510, name: 'VM-C' },
+        { x: 700, name: 'VM-D' },
+      ];
+      vms.forEach(v => {
+        svg.appendChild(rc.rectangle(v.x, 50, 110, 36, opts(C.vm, C.vmFill)));
+        txt(svg, v.x + 55, 73, v.name, { anchor: 'middle', size: 12, mono: true, weight: '700', fill: C.label });
+      });
+      txt(svg, 870, 73, 'Block I/O', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+
+      // vDisk band
+      svg.appendChild(rc.rectangle(60, 110, 880, 50, opts(C.cvm, C.cvmFill)));
+      txt(svg, 500, 130, 'vDisk', { anchor: 'middle', size: 14, weight: '700', fill: '#fbb091' });
+      txt(svg, 500, 150, 'virtual disks attached to VMs · backed by extents', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+
+      // Extent band
+      svg.appendChild(rc.rectangle(60, 175, 880, 36, opts(C.cvm, C.cvmFill, 'hachure')));
+      txt(svg, 500, 198, 'Extent  ·  1 MB · metadata unit · Cassandra-tracked', { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
+
+      // Extent Group band
+      svg.appendChild(rc.rectangle(60, 222, 880, 36, opts(C.cvm, C.cvmFill, 'cross-hatch')));
+      txt(svg, 500, 245, 'Extent Group  ·  1 MB (non-dedup) / 4 MB (dedup) · physical alloc unit', { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
+
+      // Container band (gold) — POLICY BOUNDARY
+      svg.appendChild(rc.rectangle(60, 274, 880, 60, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 500, 295, 'Storage Container  ·  POLICY BOUNDARY', { anchor: 'middle', size: 14, weight: '700', fill: C.vip, spacing: '0.06em' });
+      txt(svg, 500, 318, 'RF=2 · Compression=on · Dedup=off · EC=off · Reservation=20 TB', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+
+      // Storage Pool band (wider gold)
+      svg.appendChild(rc.rectangle(40, 350, 920, 50, opts(C.vip, C.vipFill)));
+      txt(svg, 500, 372, 'Storage Pool', { anchor: 'middle', size: 14, weight: '700', fill: C.vip });
+      txt(svg, 500, 390, 'all physical disks across all nodes · one pool per cluster typically', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+
+      // Bottom: physical nodes with disks
+      const nodes = [
+        { x: 80,  label: 'Node 1' },
+        { x: 300, label: 'Node 2' },
+        { x: 520, label: 'Node 3' },
+        { x: 740, label: 'Node 4' },
+      ];
+      nodes.forEach(n => {
+        svg.appendChild(rc.rectangle(n.x, 420, 180, 80, opts(C.compute, C.computeFill)));
+        txt(svg, n.x + 90, 440, n.label, { anchor: 'middle', size: 11, mono: true, weight: '700', fill: C.label });
+        // 4 disks
+        for (let i = 0; i < 4; i++) {
+          svg.appendChild(rc.rectangle(n.x + 12 + i * 40, 452, 30, 36, opts(C.disk, C.diskFill)));
+          txt(svg, n.x + 27 + i * 40, 475, 'NVMe', { anchor: 'middle', size: 8, fill: C.label });
+        }
+      });
+
+      txt(svg, 500, 528, 'Cassandra (off-diagram) tracks every extent’s physical location across the cluster.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ===== Diagram: Data Path =====
+    (function drawDataPath() {
+      const svg = document.getElementById('diagram-data-path-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'DATA PATH · WRITE → OPLOG (LOCAL + REMOTE) → ACK → ASYNC DRAIN', { anchor: 'middle', size: 12, mono: true, spacing: '0.08em', weight: '600' });
+
+      // VM at top
+      svg.appendChild(rc.rectangle(420, 50, 160, 40, opts(C.vm, C.vmFill)));
+      txt(svg, 500, 75, 'VM · write(fd, buf, len)', { anchor: 'middle', size: 12, mono: true, weight: '700', fill: C.label });
+
+      // Hypervisor
+      svg.appendChild(rc.rectangle(380, 110, 240, 36, opts(C.compute, C.computeFill)));
+      txt(svg, 500, 134, 'Hypervisor (AHV / ESXi)', { anchor: 'middle', size: 12, weight: '700', fill: C.label });
+
+      // Local CVM Stargate (center)
+      svg.appendChild(rc.rectangle(380, 170, 240, 60, opts(C.cvm, C.cvmFill, 'cross-hatch')));
+      txt(svg, 500, 195, 'Local CVM · Stargate', { anchor: 'middle', size: 13, weight: '700', fill: '#fbb091' });
+      txt(svg, 500, 215, 'random → OpLog · sequential → Extent Store', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Local OpLog (left of Stargate, hot tier)
+      svg.appendChild(rc.rectangle(120, 270, 220, 70, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 230, 295, 'Local OpLog', { anchor: 'middle', size: 13, weight: '700', fill: C.fabric });
+      txt(svg, 230, 315, 'persistent · NVMe', { anchor: 'middle', size: 11, fill: C.ink });
+      txt(svg, 230, 332, 'write-ahead log', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Remote CVM Stargate
+      svg.appendChild(rc.rectangle(660, 270, 220, 70, opts(C.cvm, C.cvmFill)));
+      txt(svg, 770, 295, 'Remote CVM · Stargate', { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
+      txt(svg, 770, 315, 'Remote OpLog', { anchor: 'middle', size: 11, fill: C.fabric });
+      txt(svg, 770, 332, 'NVMe · RF replica', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Extent Store (below local OpLog)
+      svg.appendChild(rc.rectangle(120, 380, 220, 70, opts(C.disk, C.diskFill)));
+      txt(svg, 230, 405, 'Extent Store', { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+      txt(svg, 230, 425, 'persistent backing storage', { anchor: 'middle', size: 11, fill: C.ink });
+      txt(svg, 230, 442, 'compression / dedup applied here', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Content Cache (right side, separate from write path)
+      svg.appendChild(rc.rectangle(660, 380, 220, 70, opts(C.green, C.greenFill)));
+      txt(svg, 770, 405, 'Content Cache', { anchor: 'middle', size: 13, weight: '700', fill: C.green });
+      txt(svg, 770, 425, 'CVM RAM · read path', { anchor: 'middle', size: 11, fill: C.ink });
+      txt(svg, 770, 442, 'first stop on every read', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+
+      // Connections — write path (down)
+      svg.appendChild(rc.line(500, 90, 500, 110, { stroke: C.vm, strokeWidth: 1.4, roughness: 1.3 }));
+      svg.appendChild(rc.line(500, 146, 500, 170, { stroke: C.compute, strokeWidth: 1.4, roughness: 1.3 }));
+
+      // Stargate -> local OpLog
+      svg.appendChild(rc.line(380, 200, 230, 270, { stroke: C.fabric, strokeWidth: 1.4, roughness: 1.4 }));
+      // Stargate -> remote CVM
+      svg.appendChild(rc.line(620, 200, 770, 270, { stroke: C.fabric, strokeWidth: 1.4, roughness: 1.4 }));
+
+      // Both OpLogs -> ack arrow back up to VM
+      svg.appendChild(rc.line(230, 270, 460, 90, { stroke: C.green, strokeWidth: 0.9, roughness: 1.3, opacity: 0.6 }));
+      svg.appendChild(rc.line(770, 270, 540, 90, { stroke: C.green, strokeWidth: 0.9, roughness: 1.3, opacity: 0.6 }));
+      txt(svg, 380, 110, 'ACK', { anchor: 'middle', size: 10, mono: true, fill: C.green, weight: '700' });
+      txt(svg, 620, 110, 'ACK', { anchor: 'middle', size: 10, mono: true, fill: C.green, weight: '700' });
+
+      // OpLog -> Extent Store (async drain)
+      svg.appendChild(rc.line(230, 340, 230, 380, { stroke: C.disk, strokeWidth: 1.4, roughness: 1.3 }));
+      txt(svg, 280, 363, 'async drain', { anchor: 'start', size: 10, fill: C.ink, italic: true });
+
+      // Read flow note (Stargate -> Content Cache)
+      svg.appendChild(rc.line(620, 200, 770, 380, { stroke: C.green, strokeWidth: 0.8, roughness: 1.3, opacity: 0.5 }));
+      txt(svg, 720, 360, 'read path', { anchor: 'middle', size: 10, fill: C.green, italic: true });
+
+      txt(svg, 500, 490, 'Write is acknowledged after local + remote OpLog persistence — NOT after Extent Store.',
+        { anchor: 'middle', size: 11, fill: C.label, italic: true, weight: '600' });
+      txt(svg, 500, 510, 'Curator runs in background. It does not appear in the synchronous write path.',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ===== Diagram: RF vs EC Comparison =====
+    (function drawRfVsEc() {
+      const svg = document.getElementById('diagram-rf-vs-ec-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'STORING 1 GB · 4 WAYS · CAPACITY OVERHEAD AND FAILURE TOLERANCE', { anchor: 'middle', size: 12, mono: true, spacing: '0.08em', weight: '600' });
+
+      // 2x2 grid; each panel ~ 460 x 230
+      const panels = [
+        { x: 30,  y: 60,  title: 'RF2',     overhead: '100% overhead · 50% effective', fault: 'Tolerates 1 node loss',   nodes: 6, used: '2 GB stored for 1 GB',   color: C.compute, fill: C.computeFill, paint: [0,1] /* indices: copies on these nodes */, mode: 'replica' },
+        { x: 510, y: 60,  title: 'RF3',     overhead: '200% overhead · 33% effective', fault: 'Tolerates 2 node losses', nodes: 6, used: '3 GB stored for 1 GB',   color: C.compute, fill: C.computeFill, paint: [0,1,2], mode: 'replica' },
+        { x: 30,  y: 310, title: 'EC 4+1',  overhead: '25% overhead · 80% effective',  fault: 'Tolerates 1 node loss',   nodes: 6, used: '1.25 GB stored for 1 GB', color: C.green,    fill: C.greenFill,   paint: [0,1,2,3,4], mode: 'ec', parityIdx: [4] },
+        { x: 510, y: 310, title: 'EC 4+2',  overhead: '50% overhead · 67% effective',  fault: 'Tolerates 2 node losses', nodes: 6, used: '1.5 GB stored for 1 GB',  color: C.green,    fill: C.greenFill,   paint: [0,1,2,3,4,5], mode: 'ec', parityIdx: [4,5] },
+      ];
+
+      panels.forEach(p => {
+        svg.appendChild(rc.rectangle(p.x, p.y, 460, 230, opts(p.color, p.fill)));
+        txt(svg, p.x + 24, p.y + 28, p.title, { anchor: 'start', size: 16, weight: '700', fill: p.color });
+        txt(svg, p.x + 24, p.y + 48, p.overhead, { anchor: 'start', size: 11, mono: true, fill: C.label });
+        txt(svg, p.x + 24, p.y + 64, p.fault, { anchor: 'start', size: 11, fill: C.ink, italic: true });
+        txt(svg, p.x + 24, p.y + 80, p.used, { anchor: 'start', size: 11, mono: true, fill: C.ink });
+
+        // Render 6 nodes in a row inside the panel
+        const ny = p.y + 110;
+        for (let i = 0; i < p.nodes; i++) {
+          const nx = p.x + 24 + i * 70;
+          // node body
+          svg.appendChild(rc.rectangle(nx, ny, 60, 90, opts(C.compute, C.computeFill)));
+          txt(svg, nx + 30, ny + 16, 'N' + (i + 1), { anchor: 'middle', size: 10, mono: true, weight: '700', fill: C.label });
+          // shading: which holds data
+          if (p.paint.includes(i)) {
+            const isParity = p.parityIdx && p.parityIdx.includes(i);
+            const fillColor = isParity ? C.vip : (p.mode === 'ec' ? C.green : C.fabric);
+            const fillOpacity = isParity ? C.vipFill : (p.mode === 'ec' ? C.greenFill : C.fabricFill);
+            svg.appendChild(rc.rectangle(nx + 8, ny + 28, 44, 50, opts(fillColor, fillOpacity, 'cross-hatch')));
+            const labelText = isParity ? 'P' : (p.mode === 'ec' ? 'D' : 'C');
+            txt(svg, nx + 30, ny + 60, labelText, { anchor: 'middle', size: 14, mono: true, weight: '700', fill: fillColor });
+          }
+        }
+      });
+
+      // Legend
+      txt(svg, 500, 568, 'C = full copy (RF)   ·   D = data shard (EC)   ·   P = parity (EC)   ·   blank = no data on this node',
+        { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+    })();
+
+    // ===== Diagram: Node Failure Recovery =====
+    (function drawFailureRecovery() {
+      const svg = document.getElementById('diagram-failure-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'NODE FAILURE · ACROPOLIS RESTARTS VMs · CURATOR REBUILDS RF', { anchor: 'middle', size: 12, mono: true, spacing: '0.08em', weight: '600' });
+
+      // 5 nodes in a row
+      const nodes = [
+        { x: 60,  label: 'Node 1', state: 'ok' },
+        { x: 240, label: 'Node 2', state: 'ok' },
+        { x: 420, label: 'Node 3', state: 'failed' },
+        { x: 600, label: 'Node 4', state: 'ok' },
+        { x: 780, label: 'Node 5', state: 'ok' },
+      ];
+      nodes.forEach(n => {
+        const isFailed = n.state === 'failed';
+        const stroke = isFailed ? C.ext : C.compute;
+        const fill = isFailed ? C.extFill : C.computeFill;
+        svg.appendChild(rc.rectangle(n.x, 60, 160, 110, opts(stroke, fill, isFailed ? 'cross-hatch' : 'hachure')));
+        txt(svg, n.x + 80, 84, n.label, { anchor: 'middle', size: 12, mono: true, weight: '700', fill: isFailed ? C.ext : C.label });
+        if (isFailed) {
+          txt(svg, n.x + 80, 108, 'FAILED', { anchor: 'middle', size: 14, mono: true, weight: '700', fill: C.ext, spacing: '0.10em' });
+          txt(svg, n.x + 80, 132, 'lost replicas', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+          txt(svg, n.x + 80, 152, 'remaining: 1 of 2', { anchor: 'middle', size: 10, mono: true, fill: C.ext });
+        } else {
+          // Show 2 mini-bars for stored extents
+          svg.appendChild(rc.rectangle(n.x + 16, 100, 56, 16, opts(C.fabric, C.fabricFill)));
+          svg.appendChild(rc.rectangle(n.x + 88, 100, 56, 16, opts(C.fabric, C.fabricFill)));
+          txt(svg, n.x + 80, 132, 'survivor', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
+          txt(svg, n.x + 80, 152, 'carrying its share', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+        }
+      });
+
+      // Acropolis box (left side)
+      svg.appendChild(rc.rectangle(60, 210, 360, 60, opts(C.acro, C.acroFill)));
+      txt(svg, 240, 234, 'Acropolis', { anchor: 'middle', size: 13, weight: '700', fill: '#fbb091' });
+      txt(svg, 240, 256, 'restarts affected VMs on survivors (no human action)', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+
+      // Curator box (right side)
+      svg.appendChild(rc.rectangle(580, 210, 360, 60, opts(C.cvm, C.cvmFill, 'cross-hatch')));
+      txt(svg, 760, 234, 'Curator (master)', { anchor: 'middle', size: 13, weight: '700', fill: '#fbb091' });
+      txt(svg, 760, 256, 'orchestrates re-replication: read survivors → write replicas', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+
+      // Arrows from Acropolis -> survivor nodes
+      [0, 1, 3, 4].forEach((i) => {
+        const n = nodes[i];
+        svg.appendChild(rc.line(240, 210, n.x + 80, 170, { stroke: C.acro, strokeWidth: 0.8, roughness: 1.3, opacity: 0.6 }));
+      });
+      // Arrows from Curator -> survivor nodes
+      [0, 1, 3, 4].forEach((i) => {
+        const n = nodes[i];
+        svg.appendChild(rc.line(760, 210, n.x + 80, 170, { stroke: C.cvm, strokeWidth: 0.8, roughness: 1.3, opacity: 0.6 }));
+      });
+
+      // Time axis
+      svg.appendChild(rc.line(60, 330, 940, 330, { stroke: C.ink, strokeWidth: 1.2, roughness: 1.2 }));
+      txt(svg, 60, 322, 't+0', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      txt(svg, 250, 322, 't+5-30s', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      txt(svg, 460, 322, 't+30-90s', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      txt(svg, 670, 322, 't+1-15m', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      txt(svg, 880, 322, 't+15m → hours', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+
+      txt(svg, 60, 360, 'Node fails', { anchor: 'middle', size: 10, fill: C.ext, weight: '700' });
+      txt(svg, 250, 360, 'heartbeat detects', { anchor: 'middle', size: 10, fill: C.label });
+      txt(svg, 460, 360, 'VMs restart on survivors', { anchor: 'middle', size: 10, fill: C.label });
+      txt(svg, 670, 360, 'Curator scan', { anchor: 'middle', size: 10, fill: C.label });
+      txt(svg, 880, 360, 'RF restored', { anchor: 'middle', size: 10, fill: C.green, weight: '700' });
+
+      txt(svg, 500, 410, 'During re-replication, the cluster runs at reduced redundancy.', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+      txt(svg, 500, 430, 'A second failure on RF2 in this window can cause data loss. RF3 / EC 4+2 tolerate one more.', { anchor: 'middle', size: 11, fill: C.label, italic: true });
+      txt(svg, 500, 470, 'Rebuild duration: bigger clusters rebuild faster (more nodes share the work).', { anchor: 'middle', size: 11, fill: C.ink, italic: true });
+      txt(svg, 500, 490, 'Typical 8-12 node cluster · 100-200 TB · expect 2-8 hours after a node loss.', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Isometric view of the Distributed Storage Fabric — five clustered nodes with cylindrical disk stacks, replication arcs, and a hot-tier OpLog band glowing across them.">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="48%" r="85%">
+      <stop offset="0%" stop-color="#15294a"/>
+      <stop offset="65%" stop-color="#0c1c36"/>
+      <stop offset="100%" stop-color="#070f20"/>
+    </radialGradient>
+
+    <linearGradient id="nodeTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d6aa6"/>
+      <stop offset="100%" stop-color="#27497a"/>
+    </linearGradient>
+    <linearGradient id="nodeLeft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f3a66"/>
+      <stop offset="100%" stop-color="#142a4d"/>
+    </linearGradient>
+    <linearGradient id="nodeRight" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="100%" stop-color="#091a33"/>
+    </linearGradient>
+
+    <!-- CVM (rust) for the column on top of each node -->
+    <linearGradient id="cvmTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8633a"/>
+      <stop offset="100%" stop-color="#8a3a1c"/>
+    </linearGradient>
+    <linearGradient id="cvmLeft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#8a3a1c"/>
+      <stop offset="100%" stop-color="#5a2410"/>
+    </linearGradient>
+    <linearGradient id="cvmRight" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5a2410"/>
+      <stop offset="100%" stop-color="#341508"/>
+    </linearGradient>
+
+    <!-- Disk cylinder shading -->
+    <linearGradient id="diskBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="50%" stop-color="#27497a"/>
+      <stop offset="100%" stop-color="#0c1c36"/>
+    </linearGradient>
+
+    <!-- OpLog hot band glow -->
+    <linearGradient id="opband" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#00d4ff" stop-opacity="0.55"/>
+      <stop offset="50%" stop-color="#4a9eff" stop-opacity="0.85"/>
+      <stop offset="80%" stop-color="#00d4ff" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="opspot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="soft">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="softer">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <!-- Faint horizon grid -->
+  <g stroke="#1a3258" stroke-width="1" opacity="0.45" fill="none">
+    <path d="M 0 560 L 1600 560"/>
+    <path d="M 0 600 L 1600 600"/>
+    <path d="M 0 640 L 1600 640"/>
+    <path d="M 0 680 L 1600 680"/>
+    <path d="M 0 720 L 1600 720"/>
+    <path d="M 0 760 L 1600 760"/>
+  </g>
+
+  <!-- OpLog hot band across the cluster (subtle glow) -->
+  <rect x="100" y="382" width="1400" height="44" fill="url(#opband)" opacity="0.6" filter="url(#soft)"/>
+  <rect x="100" y="390" width="1400" height="28" fill="url(#opband)" opacity="0.85"/>
+  <text x="120" y="375" font-family="JetBrains Mono, ui-monospace, monospace" font-size="13" fill="#00d4ff" letter-spacing="2">OPLOG · HOT TIER · NVMe</text>
+
+  <!-- ============ Five nodes in a horizontal layout ============ -->
+  <!-- Node group: each is a stack of: 4 disks (cylinders) at base, a node cube, then a CVM cube on top -->
+  <!-- Spacing: nodes centered at x = 240, 540, 800 (center, slightly forward), 1060, 1360 -->
+
+  <!-- Helper visual: each node sits with its base around y=620, top of disk stack ~y=540 -->
+
+  <!-- ============ NODE 1 ============ -->
+  <g transform="translate(240,500)">
+    <!-- 4 disk cylinders stacked horizontally on base -->
+    <g>
+      <ellipse cx="-50" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-63" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-50" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+
+      <ellipse cx="-17" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-30" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-17" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+
+      <ellipse cx="16" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="3" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="16" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+
+      <ellipse cx="49" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="36" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="49" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+
+      <!-- LED dots on disks (cyan = active) -->
+      <circle cx="-50" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="-17" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="16" cy="135" r="2" fill="#fbbf24"/>
+      <circle cx="49" cy="135" r="2" fill="#00d4ff"/>
+    </g>
+
+    <!-- Node chassis (isometric cube ~ 130 wide x 36 tall) -->
+    <g>
+      <polygon points="-65,98 65,98 90,82 -40,82" fill="url(#nodeTop)"/>
+      <polygon points="-65,98 65,98 65,118 -65,118" fill="url(#nodeLeft)"/>
+      <polygon points="65,98 90,82 90,102 65,118" fill="url(#nodeRight)"/>
+      <line x1="-65" y1="108" x2="65" y2="108" stroke="#0a1628" stroke-width="0.5" opacity="0.4"/>
+    </g>
+
+    <!-- CVM cube on top -->
+    <g>
+      <polygon points="-40,80 36,80 56,68 -20,68" fill="url(#cvmTop)"/>
+      <polygon points="-40,80 36,80 36,98 -40,98" fill="url(#cvmLeft)"/>
+      <polygon points="36,80 56,68 56,86 36,98" fill="url(#cvmRight)"/>
+      <text x="-30" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#fde68a" opacity="0.85">CVM</text>
+    </g>
+
+    <text x="0" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="1.5">node 1</text>
+  </g>
+
+  <!-- ============ NODE 2 ============ -->
+  <g transform="translate(540,500)">
+    <g>
+      <ellipse cx="-50" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-63" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-50" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="-17" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-30" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-17" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="16" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="3" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="16" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="49" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="36" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="49" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <circle cx="-50" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="-17" cy="135" r="2" fill="#fbbf24"/>
+      <circle cx="16" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="49" cy="135" r="2" fill="#00d4ff"/>
+    </g>
+    <g>
+      <polygon points="-65,98 65,98 90,82 -40,82" fill="url(#nodeTop)"/>
+      <polygon points="-65,98 65,98 65,118 -65,118" fill="url(#nodeLeft)"/>
+      <polygon points="65,98 90,82 90,102 65,118" fill="url(#nodeRight)"/>
+    </g>
+    <g>
+      <polygon points="-40,80 36,80 56,68 -20,68" fill="url(#cvmTop)"/>
+      <polygon points="-40,80 36,80 36,98 -40,98" fill="url(#cvmLeft)"/>
+      <polygon points="36,80 56,68 56,86 36,98" fill="url(#cvmRight)"/>
+      <text x="-30" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#fde68a" opacity="0.85">CVM</text>
+    </g>
+    <text x="0" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="1.5">node 2</text>
+  </g>
+
+  <!-- ============ NODE 3 (center, the "writer") ============ -->
+  <g transform="translate(840,500)">
+    <g>
+      <ellipse cx="-50" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-63" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-50" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="-17" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-30" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-17" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="16" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="3" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="16" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="49" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="36" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="49" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <circle cx="-50" cy="135" r="2.5" fill="#00d4ff"/>
+      <circle cx="-17" cy="135" r="2.5" fill="#00d4ff"/>
+      <circle cx="16" cy="135" r="2.5" fill="#00d4ff"/>
+      <circle cx="49" cy="135" r="2.5" fill="#00d4ff"/>
+    </g>
+    <g>
+      <polygon points="-65,98 65,98 90,82 -40,82" fill="url(#nodeTop)"/>
+      <polygon points="-65,98 65,98 65,118 -65,118" fill="url(#nodeLeft)"/>
+      <polygon points="65,98 90,82 90,102 65,118" fill="url(#nodeRight)"/>
+    </g>
+    <g>
+      <polygon points="-40,80 36,80 56,68 -20,68" fill="url(#cvmTop)"/>
+      <polygon points="-40,80 36,80 36,98 -40,98" fill="url(#cvmLeft)"/>
+      <polygon points="36,80 56,68 56,86 36,98" fill="url(#cvmRight)"/>
+      <text x="-30" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#fde68a" opacity="0.95">CVM</text>
+    </g>
+    <!-- The originating-write VM, sitting on the CVM -->
+    <g transform="translate(0,-12)">
+      <polygon points="-22,76 18,76 30,68 -10,68" fill="#a8b8d4"/>
+      <polygon points="-22,76 18,76 18,86 -22,86" fill="#7c8aa8"/>
+      <polygon points="18,76 30,68 30,78 18,86" fill="#5a6680"/>
+      <text x="-2" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#0a1628" font-weight="700">VM</text>
+    </g>
+    <text x="0" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8f0ff" letter-spacing="1.5">node 3 · writer</text>
+  </g>
+
+  <!-- ============ NODE 4 ============ -->
+  <g transform="translate(1140,500)">
+    <g>
+      <ellipse cx="-50" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-63" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-50" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="-17" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-30" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-17" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="16" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="3" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="16" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="49" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="36" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="49" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <circle cx="-50" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="-17" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="16" cy="135" r="2" fill="#fbbf24"/>
+      <circle cx="49" cy="135" r="2" fill="#00d4ff"/>
+    </g>
+    <g>
+      <polygon points="-65,98 65,98 90,82 -40,82" fill="url(#nodeTop)"/>
+      <polygon points="-65,98 65,98 65,118 -65,118" fill="url(#nodeLeft)"/>
+      <polygon points="65,98 90,82 90,102 65,118" fill="url(#nodeRight)"/>
+    </g>
+    <g>
+      <polygon points="-40,80 36,80 56,68 -20,68" fill="url(#cvmTop)"/>
+      <polygon points="-40,80 36,80 36,98 -40,98" fill="url(#cvmLeft)"/>
+      <polygon points="36,80 56,68 56,86 36,98" fill="url(#cvmRight)"/>
+      <text x="-30" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#fde68a" opacity="0.85">CVM</text>
+    </g>
+    <text x="0" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="1.5">node 4</text>
+  </g>
+
+  <!-- ============ NODE 5 ============ -->
+  <g transform="translate(1440,500)">
+    <g>
+      <ellipse cx="-50" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-63" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-50" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="-17" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="-30" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="-17" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="16" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="3" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="16" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <ellipse cx="49" cy="180" rx="13" ry="5" fill="#1f3a66"/>
+      <rect x="36" y="120" width="26" height="60" fill="url(#diskBody)"/>
+      <ellipse cx="49" cy="120" rx="13" ry="5" fill="#3d6aa6"/>
+      <circle cx="-50" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="-17" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="16" cy="135" r="2" fill="#00d4ff"/>
+      <circle cx="49" cy="135" r="2" fill="#fbbf24"/>
+    </g>
+    <g>
+      <polygon points="-65,98 65,98 90,82 -40,82" fill="url(#nodeTop)"/>
+      <polygon points="-65,98 65,98 65,118 -65,118" fill="url(#nodeLeft)"/>
+      <polygon points="65,98 90,82 90,102 65,118" fill="url(#nodeRight)"/>
+    </g>
+    <g>
+      <polygon points="-40,80 36,80 56,68 -20,68" fill="url(#cvmTop)"/>
+      <polygon points="-40,80 36,80 36,98 -40,98" fill="url(#cvmLeft)"/>
+      <polygon points="36,80 56,68 56,86 36,98" fill="url(#cvmRight)"/>
+      <text x="-30" y="92" font-family="JetBrains Mono, monospace" font-size="9" fill="#fde68a" opacity="0.85">CVM</text>
+    </g>
+    <text x="0" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="1.5">node 5</text>
+  </g>
+
+  <!-- ============ Replication arcs from node 3 (writer) ============ -->
+  <!-- Cyan arc to node 2 (local replica) -->
+  <g fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.85">
+    <path d="M 820 580 Q 690 420 560 575" stroke-dasharray="6 6"/>
+  </g>
+  <!-- Gold arc to node 4 (RF=3 second remote) -->
+  <g fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.7">
+    <path d="M 860 580 Q 990 410 1120 575" stroke-dasharray="4 8"/>
+  </g>
+  <!-- Subtle async drain arc to local extent store (down) -->
+  <g fill="none" stroke="#a8b8d4" stroke-width="1.5" opacity="0.5">
+    <path d="M 840 590 Q 840 660 840 690" stroke-dasharray="2 6"/>
+  </g>
+
+  <!-- Replication labels -->
+  <g font-family="JetBrains Mono, monospace" font-size="10" fill="#00d4ff" opacity="0.85">
+    <text x="640" y="468" letter-spacing="1">RF write → peer</text>
+  </g>
+  <g font-family="JetBrains Mono, monospace" font-size="10" fill="#fbbf24" opacity="0.75">
+    <text x="970" y="458" letter-spacing="1">RF=3 second peer</text>
+  </g>
+
+  <!-- Glowing OpLog activity dots over each node CVM -->
+  <g>
+    <circle cx="240" cy="488" r="14" fill="url(#opspot)" opacity="0.65"/>
+    <circle cx="540" cy="488" r="14" fill="url(#opspot)" opacity="0.85"/>
+    <circle cx="840" cy="478" r="20" fill="url(#opspot)" opacity="1"/>
+    <circle cx="1140" cy="488" r="14" fill="url(#opspot)" opacity="0.65"/>
+    <circle cx="1440" cy="488" r="14" fill="url(#opspot)" opacity="0.6"/>
+  </g>
+
+  <!-- ============ Lower band: Extent Store / Cold tier indication ============ -->
+  <g opacity="0.55">
+    <text x="120" y="725" font-family="JetBrains Mono, monospace" font-size="13" fill="#a8b8d4" letter-spacing="2">EXTENT STORE · DRAIN ASYNC · LZ4 / EC-X / ILM</text>
+  </g>
+  <g stroke="#1f3a66" stroke-width="1" opacity="0.4" fill="none">
+    <path d="M 120 740 L 1480 740"/>
+  </g>
+
+  <!-- ============ Floating "extents" being shipped between nodes (capsules) ============ -->
+  <g>
+    <!-- between node3 and node2: cyan extent capsule mid-air -->
+    <g transform="translate(700,470)">
+      <rect x="-12" y="-5" width="24" height="10" rx="4" fill="#00d4ff" opacity="0.85"/>
+      <rect x="-9" y="-3" width="18" height="6" rx="2" fill="#0a1628" opacity="0.4"/>
+    </g>
+    <!-- between node3 and node4: gold extent capsule -->
+    <g transform="translate(990,470)">
+      <rect x="-12" y="-5" width="24" height="10" rx="4" fill="#fbbf24" opacity="0.7"/>
+      <rect x="-9" y="-3" width="18" height="6" rx="2" fill="#0a1628" opacity="0.4"/>
+    </g>
+  </g>
+
+  <!-- Mono path treatment top-left -->
+  <g font-family="JetBrains Mono, monospace" font-size="13" letter-spacing="2">
+    <text x="76" y="80" fill="#00d4ff" opacity="0.85">/nix/nutanix/05</text>
+    <text x="76" y="100" fill="#a8b8d4" opacity="0.75">DSF · OPLOG → EXTENT STORE</text>
+  </g>
+
+  <!-- Module title block: bottom-left, ready for the page title-block to overlay (the page also overlays its own title, this is a low-opacity backstop) -->
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+    <text x="76" y="800" fill="#e8f0ff" font-size="16" font-weight="600" letter-spacing="3" opacity="0.85">MODULE 05</text>
+    <text x="76" y="850" fill="#e8f0ff" font-size="34" font-weight="700" letter-spacing="-0.5" opacity="0.95">DSF Deep Dive</text>
+  </g>
+
+  <!-- Side fade overlays so the SVG fades nicely into the page bg-base when masked by the page's hero gradient -->
+  <rect x="0" y="0" width="200" height="900" fill="url(#bg)" opacity="0.3"/>
+  <rect x="1400" y="0" width="200" height="900" fill="url(#bg)" opacity="0.3"/>
+</svg>
