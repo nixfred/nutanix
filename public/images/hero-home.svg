@@ -1,36 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Abstract isometric visualization of the Nutanix field guide: ten nodes representing the curriculum's ten modules interconnected by a distributed mesh.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Topographic map abstraction with a cyan path tracing across the terrain through ten waypoints, evoking a field guide to the Nutanix curriculum.">
   <defs>
     <radialGradient id="bg" cx="50%" cy="42%" r="80%">
       <stop offset="0%" stop-color="#15294a"/>
       <stop offset="65%" stop-color="#0c1c36"/>
       <stop offset="100%" stop-color="#070f20"/>
     </radialGradient>
-
-    <linearGradient id="ftop" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3d6aa6"/>
-      <stop offset="100%" stop-color="#27497a"/>
-    </linearGradient>
-    <linearGradient id="fleft" x1="0" y1="0" x2="1" y2="0.4">
-      <stop offset="0%" stop-color="#1f3a66"/>
-      <stop offset="100%" stop-color="#142a4d"/>
-    </linearGradient>
-    <linearGradient id="fright" x1="0" y1="0.4" x2="1" y2="0">
-      <stop offset="0%" stop-color="#0f2444"/>
-      <stop offset="100%" stop-color="#091a33"/>
-    </linearGradient>
-
-    <linearGradient id="ftopHi" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#5fa3e8"/>
-      <stop offset="100%" stop-color="#357abf"/>
-    </linearGradient>
-    <linearGradient id="fleftHi" x1="0" y1="0" x2="1" y2="0.4">
-      <stop offset="0%" stop-color="#2b5288"/>
-      <stop offset="100%" stop-color="#1a3866"/>
-    </linearGradient>
-    <linearGradient id="frightHi" x1="0" y1="0.4" x2="1" y2="0">
-      <stop offset="0%" stop-color="#15325c"/>
-      <stop offset="100%" stop-color="#0d2244"/>
-    </linearGradient>
 
     <radialGradient id="dot" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#9ce8ff" stop-opacity="1"/>
@@ -39,113 +13,194 @@
     </radialGradient>
 
     <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
     </filter>
 
-    <pattern id="grid" width="80" height="46.188" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
-      <path d="M 0 23.094 L 40 0 L 80 23.094 L 40 46.188 Z" fill="none" stroke="#2a4d7a" stroke-width="0.5" opacity="0.32"/>
+    <filter id="bigGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14"/>
+    </filter>
+
+    <!-- Subtle hairline grid; deliberately faint so it doesn't fight the topo -->
+    <pattern id="hairgrid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 0 0 L 0 80 M 0 0 L 80 0" fill="none" stroke="#1f3a66" stroke-width="0.4" opacity="0.18"/>
     </pattern>
 
-    <symbol id="node" overflow="visible">
-      <polygon points="0,-52 78,-7 0,38 -78,-7" fill="url(#ftop)" stroke="#4a9eff" stroke-width="1" stroke-opacity="0.55"/>
-      <polygon points="-78,-7 0,38 0,128 -78,83" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1"/>
-      <polygon points="78,-7 0,38 0,128 78,83" fill="url(#fright)" stroke="#1f3a66" stroke-width="1"/>
-      <line x1="-78" y1="22" x2="0" y2="67" stroke="#4a9eff" stroke-width="0.6" opacity="0.35"/>
-      <line x1="0" y1="67" x2="78" y2="22" stroke="#4a9eff" stroke-width="0.6" opacity="0.35"/>
-      <line x1="-78" y1="52" x2="0" y2="97" stroke="#4a9eff" stroke-width="0.6" opacity="0.2"/>
-      <line x1="0" y1="97" x2="78" y2="52" stroke="#4a9eff" stroke-width="0.6" opacity="0.2"/>
-      <circle cx="0" cy="-7" r="2.2" fill="#00d4ff"/>
-    </symbol>
-
-    <symbol id="nodeHi" overflow="visible">
-      <polygon points="0,-52 78,-7 0,38 -78,-7" fill="url(#ftopHi)" stroke="#00d4ff" stroke-width="1.2" stroke-opacity="0.7"/>
-      <polygon points="-78,-7 0,38 0,128 -78,83" fill="url(#fleftHi)" stroke="#2a4d7a" stroke-width="1"/>
-      <polygon points="78,-7 0,38 0,128 78,83" fill="url(#frightHi)" stroke="#2a4d7a" stroke-width="1"/>
-      <line x1="-78" y1="22" x2="0" y2="67" stroke="#00d4ff" stroke-width="0.7" opacity="0.55"/>
-      <line x1="0" y1="67" x2="78" y2="22" stroke="#00d4ff" stroke-width="0.7" opacity="0.55"/>
-      <line x1="-78" y1="52" x2="0" y2="97" stroke="#00d4ff" stroke-width="0.7" opacity="0.32"/>
-      <line x1="0" y1="97" x2="78" y2="52" stroke="#00d4ff" stroke-width="0.7" opacity="0.32"/>
-      <circle cx="0" cy="-7" r="3" fill="#00d4ff"/>
-      <circle cx="0" cy="-7" r="6" fill="url(#dot)" opacity="0.9"/>
-    </symbol>
+    <!-- Reusable contour-ring path, used across the three peaks. -->
   </defs>
 
   <!-- background -->
   <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#hairgrid)"/>
 
-  <!-- isometric grid backdrop -->
-  <rect width="1600" height="900" fill="url(#grid)" opacity="0.5"/>
-
-  <!-- twin cyan vignettes behind the two rows, suggesting a wider field -->
-  <ellipse cx="620" cy="400" rx="420" ry="200" fill="#00d4ff" opacity="0.06" filter="url(#softGlow)"/>
-  <ellipse cx="980" cy="600" rx="460" ry="220" fill="#00d4ff" opacity="0.05" filter="url(#softGlow)"/>
+  <!-- Soft cyan glow behind the central peak, very subtle -->
+  <ellipse cx="850" cy="400" rx="520" ry="240" fill="#00d4ff" opacity="0.04" filter="url(#bigGlow)"/>
 
   <!--
-    Composition: two staggered rows of 5 nodes each = 10, mapping the
-    10 curriculum modules. Wider and flatter than the per-module hero
-    so the home page reads as platform-wide overview.
-    Row 0 (top):    y = 380; x = 440, 620, 800, 980, 1160
-    Row 1 (bottom): y = 580; x = 530, 710, 890, 1070, 1250 (offset +90 px to interlock)
+    TOPOGRAPHIC LAYER — three peaks of nested contour ellipses.
+    Strokes are navy hairlines at varying opacity to suggest elevation rings on a topo map.
+    Each peak rotates and scales differently so the contours never read as concentric circles.
   -->
-  <g>
-    <!-- Connection mesh: drawn first so node cubes overlay cleanly.
-         Anchor for each node is (cx, cy - 7) i.e. its top-of-cube vertex. -->
-    <g stroke="#00d4ff" stroke-opacity="0.30" stroke-width="1" fill="none">
-      <!-- Row 0 chain -->
-      <line x1="440"  y1="373" x2="620"  y2="373"/>
-      <line x1="620"  y1="373" x2="800"  y2="373"/>
-      <line x1="800"  y1="373" x2="980"  y2="373"/>
-      <line x1="980"  y1="373" x2="1160" y2="373"/>
-
-      <!-- Row 1 chain -->
-      <line x1="530"  y1="573" x2="710"  y2="573"/>
-      <line x1="710"  y1="573" x2="890"  y2="573"/>
-      <line x1="890"  y1="573" x2="1070" y2="573"/>
-      <line x1="1070" y1="573" x2="1250" y2="573"/>
-
-      <!-- Inter-row links (each top node to the two bottom nodes nearest below it) -->
-      <line x1="440"  y1="373" x2="530"  y2="573"/>
-      <line x1="620"  y1="373" x2="530"  y2="573"/>
-      <line x1="620"  y1="373" x2="710"  y2="573"/>
-      <line x1="800"  y1="373" x2="710"  y2="573"/>
-      <line x1="800"  y1="373" x2="890"  y2="573"/>
-      <line x1="980"  y1="373" x2="890"  y2="573"/>
-      <line x1="980"  y1="373" x2="1070" y2="573"/>
-      <line x1="1160" y1="373" x2="1070" y2="573"/>
-      <line x1="1160" y1="373" x2="1250" y2="573"/>
-
-      <!-- A handful of longer cross-cluster strands suggesting replication / cert ladder progression -->
-      <line x1="440"  y1="373" x2="1250" y2="573" stroke-opacity="0.13"/>
-      <line x1="1160" y1="373" x2="530"  y2="573" stroke-opacity="0.13"/>
-      <line x1="800"  y1="373" x2="800"  y2="690" stroke-opacity="0.10"/>
+  <g fill="none" stroke="#3a6090" stroke-width="0.9">
+    <!-- Peak A: bottom-left, lower elevation. Slight rotation. -->
+    <g transform="translate(360 580) rotate(-12)">
+      <ellipse rx="40"  ry="28"  opacity="0.85"/>
+      <ellipse rx="78"  ry="54"  opacity="0.66"/>
+      <ellipse rx="120" ry="84"  opacity="0.50"/>
+      <ellipse rx="166" ry="116" opacity="0.36"/>
+      <ellipse rx="218" ry="152" opacity="0.24"/>
+      <ellipse rx="278" ry="194" opacity="0.14"/>
     </g>
 
-    <!-- Nodes. Three highlights placed for rhythm (Module 01 leftmost, Module 05 center, Module 10 rightmost). -->
-    <!-- Row 0: top -->
-    <use href="#nodeHi" x="440"  y="380"/>   <!-- highlighted: M01 HCI Foundations -->
-    <use href="#node"   x="620"  y="380"/>
-    <use href="#nodeHi" x="800"  y="380"/>   <!-- highlighted: M05 DSF Deep Dive -->
-    <use href="#node"   x="980"  y="380"/>
-    <use href="#node"   x="1160" y="380"/>
+    <!-- Peak B: center, the highest peak. Tilted opposite. -->
+    <g transform="translate(870 360) rotate(8)">
+      <ellipse rx="34"  ry="26"  opacity="0.95"/>
+      <ellipse rx="70"  ry="54"  opacity="0.78"/>
+      <ellipse rx="112" ry="86"  opacity="0.62"/>
+      <ellipse rx="160" ry="124" opacity="0.46"/>
+      <ellipse rx="216" ry="166" opacity="0.32"/>
+      <ellipse rx="280" ry="216" opacity="0.20"/>
+      <ellipse rx="354" ry="272" opacity="0.10"/>
+    </g>
 
-    <!-- Row 1: bottom -->
-    <use href="#node"   x="530"  y="580"/>
-    <use href="#node"   x="710"  y="580"/>
-    <use href="#node"   x="890"  y="580"/>
-    <use href="#node"   x="1070" y="580"/>
-    <use href="#nodeHi" x="1250" y="580"/>   <!-- highlighted: M10 Migration Path -->
+    <!-- Peak C: top-right, mid elevation. Tilted. -->
+    <g transform="translate(1280 280) rotate(22)">
+      <ellipse rx="42"  ry="30"  opacity="0.82"/>
+      <ellipse rx="84"  ry="60"  opacity="0.62"/>
+      <ellipse rx="132" ry="94"  opacity="0.46"/>
+      <ellipse rx="184" ry="130" opacity="0.32"/>
+      <ellipse rx="244" ry="172" opacity="0.20"/>
+      <ellipse rx="312" ry="220" opacity="0.10"/>
+    </g>
+
+    <!-- A few stray contour fragments at the edges to suggest terrain extending off-canvas -->
+    <g transform="translate(120 220) rotate(35)">
+      <ellipse rx="180" ry="60"  opacity="0.10"/>
+      <ellipse rx="240" ry="80"  opacity="0.06"/>
+    </g>
+    <g transform="translate(1480 760) rotate(-20)">
+      <ellipse rx="200" ry="70"  opacity="0.10"/>
+      <ellipse rx="270" ry="94"  opacity="0.06"/>
+    </g>
+  </g>
+
+  <!--
+    THE PATH — a curving traverse across the terrain from lower-left to upper-right.
+    Underglow pass first, then the bright stroke on top.
+  -->
+  <g fill="none" stroke-linecap="round">
+    <!-- Underglow -->
+    <path d="M 130 740
+             C 260 700, 340 640, 410 580
+             S 600 460, 760 420
+             S 990 410, 1110 470
+             S 1280 360, 1410 230"
+          stroke="#00d4ff" stroke-width="14" opacity="0.18" filter="url(#softGlow)"/>
+    <!-- Crisp path -->
+    <path d="M 130 740
+             C 260 700, 340 640, 410 580
+             S 600 460, 760 420
+             S 990 410, 1110 470
+             S 1280 360, 1410 230"
+          stroke="#00d4ff" stroke-width="2.2" opacity="0.95"/>
+    <!-- Faint dashed direction-of-travel overlay -->
+    <path d="M 130 740
+             C 260 700, 340 640, 410 580
+             S 600 460, 760 420
+             S 990 410, 1110 470
+             S 1280 360, 1410 230"
+          stroke="#9ce8ff" stroke-width="0.8" stroke-dasharray="2 8" opacity="0.55"/>
+  </g>
+
+  <!--
+    TEN MODULE WAYPOINTS along the path.
+    Each waypoint is a small cyan node with a glowing halo plus a mono numeric label.
+    Coordinates were sampled by eye along the bezier above.
+  -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="11" fill="#a8b8d4" letter-spacing="0.06em">
+
+    <g transform="translate(190 720)">
+      <circle r="11" fill="url(#dot)" opacity="0.7"/>
+      <circle r="3.4" fill="#00d4ff"/>
+      <text x="14" y="4" fill="#a8b8d4">01</text>
+    </g>
+    <g transform="translate(330 640)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">02</text>
+    </g>
+    <g transform="translate(440 555)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">03</text>
+    </g>
+    <g transform="translate(580 480)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">04</text>
+    </g>
+    <g transform="translate(770 422)">
+      <circle r="14" fill="url(#dot)" opacity="0.85"/>
+      <circle r="4.2" fill="#00d4ff"/>
+      <text x="16" y="4" fill="#e8f0ff" font-weight="600">05</text>
+    </g>
+    <g transform="translate(910 423)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">06</text>
+    </g>
+    <g transform="translate(1040 450)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">07</text>
+    </g>
+    <g transform="translate(1170 446)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">08</text>
+    </g>
+    <g transform="translate(1300 360)">
+      <circle r="10" fill="url(#dot)" opacity="0.6"/>
+      <circle r="3" fill="#00d4ff"/>
+      <text x="13" y="4">09</text>
+    </g>
+    <g transform="translate(1410 230)">
+      <circle r="13" fill="url(#dot)" opacity="0.8"/>
+      <circle r="4" fill="#00d4ff"/>
+      <text x="-30" y="-14" fill="#e8f0ff" font-weight="600">10</text>
+    </g>
+  </g>
+
+  <!-- Compass-style mark in the upper left corner of the map area -->
+  <g transform="translate(120 130)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="11" fill="#6b7a9a">
+    <line x1="0" y1="-22" x2="0" y2="22" stroke="#3a6090" stroke-width="1"/>
+    <line x1="-22" y1="0" x2="22" y2="0" stroke="#3a6090" stroke-width="1"/>
+    <text x="0" y="-28" text-anchor="middle" fill="#00d4ff" font-weight="700">N</text>
+    <text x="32" y="4" fill="#6b7a9a">FIELD GUIDE</text>
+  </g>
+
+  <!-- Faint scale-bar bottom-right, completing the map metaphor -->
+  <g transform="translate(1280 760)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="10" fill="#6b7a9a" letter-spacing="0.08em">
+    <line x1="0"   y1="0" x2="50"  y2="0" stroke="#3a6090" stroke-width="1.5"/>
+    <line x1="50"  y1="0" x2="100" y2="0" stroke="#a8b8d4" stroke-width="1.5"/>
+    <line x1="100" y1="0" x2="150" y2="0" stroke="#3a6090" stroke-width="1.5"/>
+    <line x1="0"   y1="-4" x2="0"   y2="4" stroke="#a8b8d4" stroke-width="1"/>
+    <line x1="50"  y1="-4" x2="50"  y2="4" stroke="#a8b8d4" stroke-width="1"/>
+    <line x1="100" y1="-4" x2="100" y2="4" stroke="#a8b8d4" stroke-width="1"/>
+    <line x1="150" y1="-4" x2="150" y2="4" stroke="#a8b8d4" stroke-width="1"/>
+    <text x="0"   y="18" fill="#6b7a9a">M01</text>
+    <text x="150" y="18" text-anchor="end" fill="#6b7a9a">M10</text>
   </g>
 
   <!-- Foreground accent: subtle scanlines at bottom -->
   <rect x="0" y="858" width="1600" height="1" fill="#00d4ff" opacity="0.18"/>
   <rect x="0" y="862" width="1600" height="1" fill="#00d4ff" opacity="0.08"/>
 
-  <!-- Mono path treatment, top-left (no module suffix; this is the home) -->
+  <!-- Mono path treatment, top-left -->
   <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6b7a9a">
     <text x="48" y="56" letter-spacing="0.04em"><tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix</text>
   </g>
 
-  <!-- Top-right meta: ten modules + thirteen reference appendices -->
+  <!-- Top-right meta -->
   <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="12" fill="#6b7a9a" text-anchor="end">
     <text x="1552" y="56" letter-spacing="0.12em">10 MODULES &#xb7; 13 APPENDICES</text>
   </g>
