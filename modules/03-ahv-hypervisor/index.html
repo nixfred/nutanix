@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 3: AHV (The Hypervisor Question)</title>
+  <meta name="description" content="AHV explained for VMware-trained Solutions Architects. KVM lineage, Acropolis control plane, the Broadcom math, the FT gap, the mixed-hypervisor reality, and twelve practice questions." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <meta property="og:title" content="NutaNIX · Module 3: AHV (The Hypervisor Question)" />
+  <meta property="og:description" content="The hypervisor question: KVM lineage, Acropolis, the Broadcom math, the FT gap, the mixed-hypervisor reality." />
+  <meta property="og:image" content="../../public/images/hero-03-ahv-hypervisor.svg" />
+  <meta property="og:type" content="article" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "ss01", "cv11";
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+    .module-hero {
+      margin: 32px 0 28px; border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border); background: var(--bg-surface);
+      aspect-ratio: 16 / 9; max-height: 420px;
+    }
+    .module-hero img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .module-title-block { margin: 0 0 24px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; }
+    h1.module-title { font-size: 44px; line-height: 1.08; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: var(--bg-surface); font-variant-numeric: tabular-nums;
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.tf .choices { flex-direction: row; }
+    .question.tf .choice { flex: 1; justify-content: center; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+    @media (max-width: 760px) { header.brand .inner { padding: 12px 20px; } main { padding: 0 20px 64px; } h1.module-title { font-size: 32px; } article.body h2 { font-size: 24px; } .breadcrumb { font-size: 12px; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">03 · AHV (The Hypervisor Question)</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="module-hero">
+      <img src="../../public/images/hero-03-ahv-hypervisor.svg" alt="Exploded isometric stack of the AHV hypervisor layers from hardware up through KVM, QEMU, libvirt, Open vSwitch, and Acropolis, with a small follower-cluster of CVMs in the background indicating the distributed Acropolis control plane." />
+    </div>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/03-ahv-hypervisor</div>
+      <h1 class="module-title">Module 3: AHV (The Hypervisor Question)</h1>
+
+      <div class="meta-row">
+        <span class="chip read">~35 min read</span>
+        <span class="chip cert">NCA ~10%</span>
+        <span class="chip cert">NCP-MCI ~28%</span>
+        <span class="chip cert">NCM-MCI ~15%</span>
+      </div>
+
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~10%) · NCP-MCI (~28%) · NCM-MCI (~15%)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #4, #5, #9, #21 · Discovery Q-HYP-01 through Q-HYP-05</span>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Module 01 (HCI Foundations)</li>
+            <li>Module 02 (Nutanix Architecture)</li>
+            <li>ESXi and vCenter operational experience</li>
+            <li>Working CE cluster from Module 02</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">AHV (Acropolis Hypervisor)</span>
+            <span class="term-chip">KVM</span>
+            <span class="term-chip">QEMU</span>
+            <span class="term-chip">libvirt</span>
+            <span class="term-chip">Acropolis (the service)</span>
+            <span class="term-chip">Live Migration</span>
+            <span class="term-chip">ADS (Acropolis Dynamic Scheduling)</span>
+            <span class="term-chip">NGT (Nutanix Guest Tools)</span>
+            <span class="term-chip">Nutanix Move</span>
+            <span class="term-chip">Open vSwitch (OVS)</span>
+            <span class="term-chip">VirtIO drivers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Explain AHV to a VMware admin in 60 seconds without sounding defensive.</strong> AHV is the most emotionally loaded comparison in the Nutanix conversation. The customer's entire career is built on ESXi. You need a frame for AHV that lands as honest, not as conversion.</li>
+        <li><strong>Know exactly what AHV does well, what it lacks, and the comparison to ESXi at a sentence level.</strong> No marketing. Specific gaps named. Specific strengths quantified.</li>
+        <li><strong>Pass the AHV portions of NCP-MCI.</strong> Roughly 28% of the NCP-MCI blueprint touches AHV directly. Master this module and a quarter of NCP-MCI is in your pocket.</li>
+        <li><strong>Handle the four most common AHV objections</strong> in customer conversations: "why would I switch hypervisors?", "what about FT?", "my backup vendor doesn't support AHV," and "my team has 10 years of ESXi expertise."</li>
+        <li><strong>Make the Broadcom math case</strong> with specific dollar comparisons. By April 2026, this is the single strongest economic argument in your bag.</li>
+        <li><strong>Position the mixed-hypervisor option correctly.</strong> The most common deal pattern in 2026 is not "switch from ESXi to AHV." It is "run ESXi on Nutanix today, drift to AHV over time, or stay mixed forever." You should be able to recommend this without sounding like you're hedging.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>You know ESXi cold. The VMkernel, the vSphere stack, vCenter as a separate piece of management infrastructure, the licensing tiers (Standard, Enterprise Plus, vSphere Foundation, vCloud Foundation post-Broadcom), VMware Tools, the snapshot mechanics that everyone has been burned by once.</p>
+      <p>You know what vCenter does. It is the brain. Without it, you have unmanaged ESXi hosts. With it, you have HA, DRS, vMotion, Storage vMotion, distributed switches, content libraries, vRealize integrations, the Update Manager, the whole thing. vCenter is software you have to install, patch, monitor, and license.</p>
+      <p>Hold that picture. Now switch hypervisors.</p>
+      <p>AHV reorganizes those vCenter responsibilities. There is no separate management product to install. The control plane lives inside the CVM as a service called Acropolis. HA, Live Migration, scheduling, and VM lifecycle are all handled by Acropolis without any external coordinator. The result is operationally simpler. It is also genuinely different from what you are used to.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The first time a VMware admin asks you "why would I switch hypervisors?", the worst answer is a feature comparison. The right answer starts with: <em>"You don't have to. You can run ESXi on Nutanix today, get all the HCI operational benefits, and never touch AHV. Most of our customers start there. The hypervisor decision is a separate decision from the platform decision, and you can make it later, on your terms."</em> That sentence buys you the rest of the meeting.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="what-ahv-is">What AHV Actually Is</h3>
+      <p>AHV is a Type-1 hypervisor based on KVM (Kernel-based Virtual Machine) with QEMU as the device emulator and libvirt for management primitives. It is bundled into every Nutanix cluster. It is free in the sense that there is no separate AHV license; the cost is part of the AOS (now NCI) subscription.</p>
+      <p>Read carefully: KVM is a Linux kernel module that turns Linux into a hypervisor. QEMU is the user-space process that emulates devices for guest VMs. libvirt is a management API. AHV is what Nutanix built on top of those open-source pieces: a hardened, opinionated, enterprise-managed hypervisor with the upstream complexity hidden behind Prism and Acropolis.</p>
+      <p>The lineage matters because customers will ask. The honest framing: <em>"AHV is to KVM what RHEL is to upstream Linux. Nutanix took the open-source kernel-mode hypervisor that Red Hat, IBM, AWS, and Google all use in some form, hardened it for enterprise HCI, integrated it with the rest of the platform, and made it manageable for people who don't want to think about KVM internals."</em></p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>Both exams expect you to know that AHV is KVM-based. Trap distractor: "AHV is a fork of Xen" (false), or "AHV is a Nutanix-proprietary hypervisor with no open-source heritage" (false), or "AHV requires a separate Linux installation on each node" (false; AHV is a complete hypervisor stack, not a layer added to a separate Linux install). Anchor: AHV is built on KVM, QEMU, libvirt, and Open vSwitch, with Acropolis as the Nutanix-specific control plane.</p>
+      </aside>
+
+      <h3 id="acropolis-no-vcenter">Acropolis: The Service That Replaces vCenter (For AHV)</h3>
+      <p>This is the architectural insight that changes everything for a VMware admin.</p>
+      <p>In the VMware world, vCenter is a separate appliance running an entire management stack. It is software you deploy, patch, license, and protect. If vCenter fails, your hosts keep running, but DRS does not work without vCenter; vMotion does not work without vCenter.</p>
+      <p>AHV does not have a vCenter. The control-plane responsibilities (VM lifecycle, HA, scheduling, Live Migration, host management) are handled by a service called <strong>Acropolis</strong>, which runs inside every CVM. One Acropolis instance is elected master at any time; the others are followers, ready to take over if the master CVM is lost. The election uses the Zeus / ZooKeeper consensus mechanism we covered in Module 2.</p>
+      <p>This means three things:</p>
+      <ol>
+        <li><strong>There is no external management appliance to deploy.</strong> AHV is functionally complete out of the box.</li>
+        <li><strong>HA, Live Migration, scheduling, and VM lifecycle have no external dependency.</strong> They survive the loss of any single CVM (or even multiple) because Acropolis is replicated across CVMs.</li>
+        <li><strong>The management surface lives at Prism Element (per-cluster) and Prism Central (multi-cluster).</strong> Module 4 goes deep on Prism. For now, treat Prism as the AHV equivalent of the vSphere Web Client, with Acropolis underneath as the equivalent of vCenter Server.</li>
+      </ol>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>If you understand vCenter's responsibilities, you understand Acropolis's responsibilities. The functions are the same: lifecycle, HA, scheduling, migration. The packaging is different: Acropolis is a distributed service inside the cluster's CVMs, not a separate appliance you deploy.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>No external management appliance is the durable architectural advantage. You do not maintain, patch, license, or protect a vCenter. You do not have a vCenter outage that disables vMotion. You do not have a vCenter that needs its own DR plan.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="broadcom-math">The Cycle, Frame Two: AHV as the Hypervisor Without a Tax</h3>
+      <p>In the ESXi world, you pay for the hypervisor (now subscription-only post-Broadcom) and you pay for vCenter (bundled into the same subscription, but it is its own deployment). Broadcom-era pricing depends heavily on which SKU. <strong>vSphere Foundation</strong> (vSphere + vCenter + HA / DRS / vMotion) is roughly <strong>$190 per core per year MSRP</strong> as of 2026 (partner quotes often land at $195+). <strong>VMware Cloud Foundation (VCF)</strong>, the higher-tier SDDC stack including vSAN, NSX, and Aria, is roughly <strong>$350 per core per year</strong> (down from the $700 announced at the start of the Broadcom transition). Both SKUs require a <strong>16-core minimum per CPU</strong>, and Broadcom has a <strong>72-core minimum order</strong> for new subscriptions.</p>
+      <p>For a typical 4-node cluster with 64 cores per node (256 cores cluster-wide), vSphere Foundation lands at roughly $48,000 per year and VCF lands at roughly $90,000 per year, before add-ons, support uplift, or discount. Customers on the original $700/core VCF tier are paying close to $180,000 a year on the same cluster. Always confirm the customer's specific SKU before quoting numbers.</p>
+      <p>AHV's hypervisor license is bundled into the NCI subscription (formerly AOS). Functionally, the hypervisor is free. The customer pays for NCI, which they would pay for anyway if they buy Nutanix. The hypervisor cost line on the BOM goes to zero.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The Broadcom math is the strongest economic argument you have right now and you should be able to recite it from memory. Practice this on a whiteboard. <em>"At your current core count, you're paying roughly $X per year for vSphere licensing. On AHV, that line goes to zero. Over five years, that's $5X. Apply that against the cost of platform migration and team retraining; the math is usually clear within 18-24 months."</em> Always offer to run the actual math on the customer's specific environment.</p>
+      </aside>
+
+      <h3 id="cycle-3">The Cycle, Frame Three: AHV as KVM Hardened for HCI</h3>
+      <p>For a customer with a Linux-savvy team, the technical lineage matters. AHV is not a science project. KVM is the kernel virtualization layer in Red Hat OpenStack, AWS Nitro (in part), Google Compute Engine (KVM-derived), Oracle Cloud, and many others. It is one of the two hypervisors (alongside ESXi and Hyper-V, three if you count Xen's diminishing presence) that powers production at hyperscale.</p>
+      <p>What Nutanix added: hardening (security profiles, restricted access, controlled package set), opinionation (one supported configuration per AOS version, no manual KVM tuning), enterprise management (Prism, Acropolis, NGT, NCC integration), and the integration with DSF that makes AHV's snapshot, replication, and DR experience genuinely better than running stock KVM with external storage.</p>
+
+      <h3 id="cycle-4">The Cycle, Frame Four: AHV as One Less Thing to Manage</h3>
+      <p>For an operations leader, the durable AHV pitch is not lower licensing or KVM lineage. It is: one less management product to deploy, patch, license, protect, and integrate.</p>
+      <p>vCenter is software your team manages. It has a database. It has its own upgrade cadence. It has a backup story. It has its own HA story (vCenter HA, which is its own thing). It has a Tomcat instance and a Postgres database and an LDAP integration and a certificate refresh cycle. None of this is hard, individually. All of it adds up to a thing your team owns.</p>
+      <p>AHV does not have any of that. The Acropolis service auto-starts on every CVM. The master election is automatic. There is no database to back up because state lives in Cassandra and Zeus. The customer does not get a free hypervisor; the customer gets a hypervisor that does not require a parallel management infrastructure.</p>
+
+      <hr/>
+
+      <h3 id="live-migration">Live Migration (the vMotion Equivalent)</h3>
+      <p>AHV's Live Migration is functionally equivalent to vMotion. It moves a running VM from one host to another with sub-second user-visible disruption. The mechanism is the same kind of memory-copy plus iterative dirty-page tracking that vMotion uses, with a final stun-and-switch when the dirty rate is low enough.</p>
+      <p>What it does:</p>
+      <ul>
+        <li>Live migration of running VMs between hosts in the same cluster.</li>
+        <li>No interruption visible to the guest OS or the application (for typical workloads).</li>
+        <li>Storage stays in DSF; only memory and execution state move.</li>
+      </ul>
+      <p>What it does not do:</p>
+      <ul>
+        <li>Cross-cluster live migration. (For this, you use Nutanix Move, which is async, not live.)</li>
+        <li>Cross-hypervisor live migration. (You cannot live-migrate from ESXi to AHV; you migrate VMs cold or use Move.)</li>
+      </ul>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI</span></div>
+        <p>Live Migration is a high-frequency NCP-MCI topic. <strong>Memorize:</strong> AHV Live Migration moves memory and execution state, not storage. Storage stays in DSF and is accessible from any node. Data locality is a separate, eventually-consistent optimization.</p>
+      </aside>
+
+      <h3 id="ahv-ha">HA in AHV (No vCenter Required)</h3>
+      <p>When a node fails in an AHV cluster, here is what happens:</p>
+      <ol>
+        <li>The remaining CVMs detect the loss via cluster heartbeat (Zeus / Cassandra mechanisms).</li>
+        <li>Acropolis (the master, on a surviving CVM) inventories the VMs that were on the failed node.</li>
+        <li>Acropolis selects target hosts for those VMs based on resource availability and any affinity rules in effect.</li>
+        <li>The VMs are restarted on surviving hosts.</li>
+      </ol>
+      <p>End to end this is on the order of 30-90 seconds, similar to vSphere HA. The key difference: there is no vCenter dependency. AHV does not have this dependency because the equivalent of vCenter (Acropolis) lives in the surviving cluster.</p>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>There is no FT (Fault Tolerance / lockstep CPU) equivalent in AHV. ESXi's FT mirrors a VM's CPU state to a secondary host in real time, providing zero-downtime failover for the protected VM. AHV does not offer this. Customers who genuinely require FT (a small subset, typically real-time financial systems and some medical devices) cannot achieve it on AHV. The honest answer: <em>"FT is one of a small number of features ESXi has that AHV does not. If you have workloads that genuinely require lockstep failover, those workloads stay on ESXi. Most workloads don't actually need FT; they need application-level HA, which AHV's HA handles equivalently to vSphere's."</em></p>
+      </aside>
+
+      <h3 id="ads">ADS: The DRS Equivalent</h3>
+      <p>ADS (Acropolis Dynamic Scheduling, sometimes written as the Acropolis Dynamic Scheduler) is the AHV equivalent of vSphere DRS. It periodically rebalances VMs across hosts to address resource pressure. The internal service that runs this is called <strong>Lazan</strong>; you will see the name in logs and <code>acli</code> output.</p>
+      <p>ADS is genuinely simpler than DRS. DRS has decades of tuning for aggressive placement, pre-emptive load balancing, and granular policy options. ADS does the practical 80% of what DRS does with a fraction of the configuration surface. Specifically:</p>
+      <ul>
+        <li>ADS runs every 15 minutes by default and evaluates host CPU and memory pressure.</li>
+        <li>When pressure exceeds thresholds, ADS recommends or executes Live Migrations to rebalance.</li>
+        <li>VM-host affinity, VM-VM affinity, and anti-affinity rules are honored.</li>
+        <li>ADS does not micromanage at the granularity DRS does; it acts on persistent pressure, not transient spikes.</li>
+      </ul>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>ADS is less aggressive and less configurable than DRS. For most customers this is operationally a benefit (less micromanagement). For density-obsessed customers it can feel like a regression. Know your customer.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="snapshots">Snapshots: The Genuine AHV Win</h3>
+      <p>Here is where AHV (in fact, AOS, since it works on ESXi-on-Nutanix too) has a real advantage: snapshots are native to DSF, not the hypervisor.</p>
+      <p>In the ESXi world, a VM snapshot creates a delta vmdk. The hypervisor redirects writes to the delta. Read performance can degrade as the snapshot tree grows. Removing a snapshot triggers a consolidation operation that can be slow and can actually pause I/O for noticeable periods on large VMs. Anyone who has accidentally run with a months-old snapshot on a database VM has felt this pain.</p>
+      <p>In Nutanix, snapshots are a DSF operation. They are:</p>
+      <ul>
+        <li><strong>Instant.</strong> Snapshot creation takes milliseconds, regardless of VM size.</li>
+        <li><strong>Space-efficient.</strong> DSF uses redirect-on-write with metadata pointers; the snapshot consumes only the changed blocks.</li>
+        <li><strong>No I/O penalty.</strong> Reads and writes to the active VM continue at native speed; the snapshot is a metadata reference, not a delta file in the VM's I/O path.</li>
+        <li><strong>Consolidation-free.</strong> Removing a snapshot is a metadata operation. No multi-hour consolidation that pauses your VM.</li>
+      </ul>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When a customer has been burned by ESXi snapshot consolidation outages (and most customers with database admins have been burned at least once), the AHV/Nutanix snapshot story is genuinely emotional. Lead with: <em>"Snapshots in Nutanix are a DSF operation, not a hypervisor operation. They are instant, they don't degrade VM performance, and there is no consolidation step. If your DBA has ever paged you because a snapshot delete pegged the disk, you know why this matters."</em> That sentence is gold.</p>
+      </aside>
+
+      <h3 id="ngt">Console Access and NGT</h3>
+      <p><strong>NGT (Nutanix Guest Tools)</strong> is the analog of VMware Tools. It provides:</p>
+      <ul>
+        <li>Time synchronization between host and guest</li>
+        <li>IP address detection and reporting (so Prism shows guest IPs)</li>
+        <li>VirtIO drivers for paravirtualized I/O (storage, network)</li>
+        <li>VSS-aware snapshots for Windows (application-consistent snapshots)</li>
+        <li>File-Level Recovery (FLR) for guest file recovery from a Nutanix snapshot</li>
+        <li>Self-service file restore utilities</li>
+      </ul>
+      <p>NGT is required for VSS-consistent snapshots on Windows guests, for accurate IP reporting in Prism, and for FLR. Install it on every production VM as a matter of course.</p>
+
+      <hr/>
+
+      <h3 id="gap-list">What AHV Genuinely Lacks (The Honest Gap List)</h3>
+      <p>Read this twice. As a BlueAlly SA, naming the gap honestly is what wins customer trust.</p>
+      <ol>
+        <li><strong>FT (Fault Tolerance, lockstep CPU mirroring).</strong> No equivalent in AHV. If a customer has a workload that requires lockstep failover, that workload stays on ESXi.</li>
+        <li><strong>Mature third-party ISV ecosystem.</strong> ESXi has 20+ years of ISV support. AHV's ecosystem is meaningful and growing (Veeam, Commvault, Rubrik, HYCU, Cohesity, others all support AHV; major monitoring tools support AHV via APIs), but ESXi is broader. Specific niche ISVs may not yet certify AHV. Always check.</li>
+        <li><strong>Some advanced networking features that NSX-T provides on ESXi.</strong> Distributed firewall sophistication, advanced routing patterns, gateway services. Module 6 covers this in detail.</li>
+        <li><strong>DRS-level scheduling sophistication.</strong> ADS does the practical work; it does not match DRS's tuning surface.</li>
+        <li><strong>vSphere with Tanzu / native Kubernetes integration in the way VMware ships it.</strong> AHV has NKE (Nutanix Kubernetes Engine, branded "Kubernetes Management" in current PC versions), which is genuinely good, but it is a different product with a different operational model.</li>
+        <li><strong>Hot-add CPU and memory limits.</strong> AHV supports hot-add but with tighter limits than ESXi in some scenarios. Check current AOS version specifics.</li>
+        <li><strong>Console UX parity with VMRC.</strong> Prism's in-browser VNC console is functional but not as feature-rich as the VMware Remote Console.</li>
+      </ol>
+
+      <h3 id="strength-list">What AHV Has That ESXi Does Not</h3>
+      <ol>
+        <li><strong>No separate hypervisor licensing line item.</strong> Bundled with NCI.</li>
+        <li><strong>No vCenter dependency.</strong> Acropolis lives in the cluster.</li>
+        <li><strong>DSF-native snapshots.</strong> Instant, space-efficient, no I/O penalty, no consolidation.</li>
+        <li><strong>One-click rolling upgrades via LCM.</strong> AOS, AHV, BIOS, BMC, NIC firmware, drive firmware in one orchestrated workflow.</li>
+        <li><strong>Tight integration with Nutanix DR (Recovery Plans, NearSync, Metro).</strong> Module 7 goes deep.</li>
+        <li><strong>Open Virtual Switch (OVS) underneath networking.</strong> Module 6 covers this; for SDN-friendly customers, OVS is a meaningful technical asset.</li>
+        <li><strong>Single API surface (Nutanix v4).</strong> No need to glue together vSphere API + array API + network API. Automation is genuinely simpler.</li>
+      </ol>
+
+      <hr/>
+
+      <h3 id="mixed-hypervisor">The Mixed-Hypervisor Reality (Read This Carefully)</h3>
+      <p>This is the section that wins more BlueAlly deals than any feature comparison.</p>
+      <p>The customer does not have to choose AHV or ESXi. They can run both. Specifically:</p>
+      <ul>
+        <li><strong>ESXi on Nutanix</strong> is a fully supported, common deployment pattern. The customer keeps vCenter, keeps ESXi, keeps every piece of their VMware tooling, and gets the HCI platform benefits underneath. They still pay VMware for vSphere licensing.</li>
+        <li><strong>AHV on Nutanix</strong> is the alternative. Same hardware, different hypervisor, no VMware bill.</li>
+        <li><strong>Mixed clusters within a single Prism Central</strong> are supported. You can have an ESXi cluster and an AHV cluster, both Nutanix, both managed from the same Prism Central.</li>
+        <li><strong>Migration from ESXi to AHV</strong> is a controlled process using Nutanix Move (free tool). Module 10 walks the migration end to end.</li>
+      </ul>
+      <p>The most common 2026 deal pattern at BlueAlly is not "switch from ESXi to AHV." It is:</p>
+      <ol>
+        <li>Deploy Nutanix with ESXi on it. Customer keeps everything they know.</li>
+        <li>Get HCI benefits immediately (snapshots, DR, scale-out, lifecycle management).</li>
+        <li>Over 12-36 months, drift workloads to AHV at the customer's pace, starting with low-risk workloads (dev/test, monitoring, file/print, internal apps).</li>
+        <li>Maybe converge fully to AHV. Maybe stay mixed forever. Either is fine.</li>
+      </ol>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The mixed-hypervisor option is your strongest opening positioning for any VMware shop right now. <em>"You don't have to switch hypervisors to start. Run ESXi on Nutanix, get the HCI benefits today, and decide on AHV later, on your terms. Most customers stay on ESXi for the first 12-18 months. After that, the licensing math usually decides for them."</em> Memorize that. It defuses the hypervisor objection in three sentences.</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="move">Nutanix Move: The Migration Tool</h3>
+      <p><strong>Move</strong> is Nutanix's free VM migration tool. It is delivered as a small VM you deploy on your Nutanix cluster. It supports migration from:</p>
+      <ul>
+        <li>VMware ESXi (most common)</li>
+        <li>Microsoft Hyper-V</li>
+        <li>AWS EC2</li>
+        <li>Microsoft Azure</li>
+        <li>Google Cloud Platform</li>
+        <li>Other Nutanix clusters</li>
+      </ul>
+      <p>The Move workflow:</p>
+      <ol>
+        <li>Deploy Move (download an OVA / qcow2; run it on your Nutanix cluster).</li>
+        <li>Add source environment (e.g., point Move at your vCenter and provide credentials).</li>
+        <li>Add target (your Nutanix cluster's Prism Element or Central).</li>
+        <li>Create a migration plan: select VMs, set network mappings, set scheduling.</li>
+        <li>Run the plan. Move performs the bulk of the data copy <em>while the VM continues running on the source</em> (using CBT-equivalent change tracking).</li>
+        <li>At the cutover, the VM is briefly powered off, the final delta is copied, drivers are swapped (VMware Tools out, NGT in), and the VM powers up on AHV.</li>
+      </ol>
+      <p>Total downtime per VM is typically 5-15 minutes for the cutover. Bulk data copy happens in the background and can take hours per terabyte depending on network and source array performance.</p>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Live Migration and a VM on AHV</h2>
+
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">~90 min · 3-node CE</span></div>
+        <p>This lab puts AHV concepts into your hands. You deploy a VM, observe its placement, live-migrate it, snapshot it, and explore the Acropolis control plane.</p>
+      </aside>
+
+      <p><strong>Steps:</strong></p>
+      <ol>
+        <li><strong>Log into Prism Element</strong> at <code>https://&lt;cluster-vip&gt;:9440</code>.</li>
+        <li><strong>Navigate to VM &gt; Create VM.</strong> Provision a small Linux VM (2 vCPU, 4 GB RAM, 20 GB disk on the default storage container, default network, boot from a Linux ISO).</li>
+        <li>Power on, install the OS, then power off. Take note of which physical host the VM landed on.</li>
+        <li><strong>Power the VM back on.</strong> Note the host placement again.</li>
+        <li><strong>Live Migrate the VM.</strong> Right-click the VM in Prism, choose "Migrate," select a different host. Watch the migration. Confirm the guest OS is unaffected.</li>
+        <li><strong>Take a snapshot.</strong> Right-click VM &gt; "Take Snapshot." Note that this is instant. Take three more in quick succession to build a snapshot tree.</li>
+        <li><strong>Restore the VM from a snapshot.</strong> Note that this is also fast.</li>
+        <li><strong>Open an SSH session to the cluster</strong> (<code>ssh nutanix@&lt;any-cvm-ip&gt;</code>). Run <code>acli vm.list</code> to see all VMs from the CLI. Run <code>acli vm.get lab-vm-01</code> to see detailed VM properties.</li>
+        <li><strong>Optional: simulate a host failure.</strong> If you have a non-production cluster, you can power off the host running your VM. Watch HA restart the VM on a surviving host.</li>
+        <li><strong>Check Acropolis master.</strong> Run <code>acli</code> interactive mode and look at cluster state.</li>
+      </ol>
+
+      <hr/>
+
+      <section class="practice">
+        <h2 id="practice">Practice Questions</h2>
+        <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions.</p>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">What is AHV?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A proprietary Nutanix hypervisor with no open-source heritage</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A Type-1 hypervisor based on KVM, QEMU, libvirt, and Open vSwitch, with Acropolis as the Nutanix-specific control plane</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A Type-2 hypervisor that runs on top of Linux</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A modified version of Xen developed by Nutanix</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>AHV is built on KVM (a Type-1 hypervisor at the kernel level), uses QEMU for device emulation, libvirt for management primitives, Open vSwitch for networking, and adds Acropolis as the distributed control plane.</p>
+            <h4 class="trap">The trap</h4>
+            <p>D is the seductive distractor for someone who knows VMware history. Xen has nothing to do with AHV; it is KVM-based.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCP-MCI</span></div>
+          <p class="qprompt">Which Nutanix service is responsible for VM lifecycle, HA, and Live Migration on an AHV cluster?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Stargate</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Acropolis</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Cassandra</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Curator</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>Acropolis is the distributed control plane that handles VM lifecycle, HA, ADS scheduling, and Live Migration. It runs as a service inside every CVM. One Acropolis is master; the others are followers.</p>
+          </div>
+        </article>
+
+        <article class="question tf" data-correct="B">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">True or false: AHV requires an external management appliance similar to vCenter for HA, Live Migration, and VM lifecycle management to function.</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>True</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>False</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why False</h4>
+            <p>AHV does not require any external management appliance. The control plane (Acropolis) lives inside the CVMs as a distributed service. HA, Live Migration, scheduling, and VM lifecycle all work without an external coordinator. Prism Element provides the user-facing management UI and runs in-cluster as well.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCP-MCI</span></div>
+          <p class="qprompt">A VM running on AHV node-A is live-migrated to node-B. What happens to the VM's storage during the migration?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Storage is migrated synchronously with the memory and execution state; the VM cannot resume on node-B until storage is fully transferred</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Storage remains in DSF and is accessible from node-B without any data movement; only memory and execution state are transferred during Live Migration</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Storage must be manually migrated using Storage vMotion equivalent</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Live Migration copies storage to node-B and deletes the original</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>DSF is a distributed storage fabric. The VM's storage is already accessible from any node in the cluster. Live Migration moves only the memory pages and execution state, not storage. Data locality is a separate, eventually-consistent optimization that happens after migration.</p>
+            <h4 class="trap">The trap</h4>
+            <p>A is the classic VMware-mental-model trap. In a non-HCI world, moving a VM might involve moving its storage. In AHV, DSF makes that unnecessary by design.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which of the following is NOT a feature provided by NGT (Nutanix Guest Tools)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>VirtIO drivers for paravirtualized I/O</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>VSS-aware snapshots for Windows guests</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Real-time CPU lockstep between primary and secondary VMs (Fault Tolerance)</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>IP address detection and reporting to Prism</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>Fault Tolerance (lockstep CPU mirroring) does not exist in AHV. It is an ESXi feature with no AHV equivalent. NGT cannot provide it.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">NCA · NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">Approximately how long does it take to create a snapshot of a 1 TB VM on Nutanix?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Several minutes, proportional to VM size</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Several seconds, with brief I/O quiescing</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Milliseconds, regardless of VM size</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Snapshots are not supported on VMs larger than 500 GB</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>DSF snapshots are metadata operations using redirect-on-write semantics. They are instant regardless of VM size. There is no data-copy step at snapshot creation.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer is running 4 ESXi nodes (16 cores per CPU, 2 CPUs per node, so 128 cores cluster-wide). They are evaluating Nutanix and considering whether to stay on ESXi-on-Nutanix or switch to AHV. With current Broadcom-era subscription pricing, approximately what is the annual VMware licensing they could eliminate by moving to AHV?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>About $5,000-$10,000 per year</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>About $20,000-$30,000 per year</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>About $50,000-$70,000 per year</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Nothing; AHV requires equivalent licensing</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>This question assumes the customer is on VCF (the higher tier with vSAN, NSX, and Aria) at roughly $350 per core per year as of 2026, with full support uplift and the 72-core order minimum already met. 128 cores × $350 = $44,800 per year, plus support uplift and any add-ons typically pushes the line item into the $50-70k range. Customers on <strong>vSphere Foundation only</strong> (the lower tier, ~$190 per core) would land closer to answer B. Customers still on the original $700/core VCF pricing would be closer to $90,000+. The point is the order of magnitude and the doing-the-math discipline; the precise number depends on SKU and the SA should always confirm before quoting.</p>
+            <h4 class="trap">The trap</h4>
+            <p>D is the trap for someone who hasn't internalized the AHV pricing model. AHV is bundled with NCI subscription; no separate hypervisor licensing fee.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer's VMware admin says: "I have ten years of ESXi expertise. I'm not retraining my team for AHV." What is the strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"AHV is so similar to ESXi that retraining isn't really needed."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"You don't have to. Run ESXi on Nutanix, keep your team's expertise intact, and decide on AHV later, on your terms. Most customers stay on ESXi for the first 12-18 months. After that, the licensing math usually drives the conversation."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"Your team will adapt quickly, AHV is much simpler."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"If your team can't learn AHV, that's a problem you need to address."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why B</h4>
+            <p>This response respects the admin's expertise, removes the false binary (HCI requires hypervisor switch), names the real path forward (mixed deployment, time-based decision), and points to the durable economic driver (licensing math).</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">Which of the following workloads is least likely to be a good fit for migration from ESXi to AHV?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A general-purpose Windows file server</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A SQL Server database (single instance, application-level resilience)</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A real-time financial trading system requiring lockstep failover (FT)</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A Linux VDI deployment</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why C</h4>
+            <p>AHV does not support Fault Tolerance (lockstep CPU mirroring). Workloads that genuinely require zero-downtime failover at the hypervisor level are the rare cases that should stay on ESXi.</p>
+          </div>
+        </article>
+
+        <article class="question" data-correct="A">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCP-MCI</span></div>
+          <p class="qprompt">A customer's environment has 50 VMs on ESXi. They want to migrate to AHV. What tool do you use, and what is the typical per-VM downtime during cutover?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Nutanix Move; downtime is typically 5-15 minutes per VM at cutover</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>vMotion; downtime is zero</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>PowerCLI scripts; downtime is hours</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Manual export/import; downtime is variable but always significant</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why A</h4>
+            <p>Nutanix Move is the supported, free tool for ESXi-to-AHV migration. It performs change-tracked bulk copy in the background while the VM continues running, then a brief cutover (5-15 minutes typical) to swap drivers and restart on AHV.</p>
+            <h4 class="trap">The trap</h4>
+            <p>B is intuitive ("I know vMotion"); but vMotion only moves VMs between ESXi hosts. It cannot cross hypervisors.</p>
+          </div>
+        </article>
+
+        <article class="question ncx">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · sales-relevant</span></div>
+          <p class="qprompt"><em>(NCX-style design question)</em> Walk through your recommendation. Cover the financial case, the technical migration plan, the risk assessment, and the human/political dimension.</p>
+          <div class="scenario">
+            <p>A customer environment: 12 ESXi hosts, 600 VMs, mixed workloads (no FT requirements anywhere, no real-time requirements, several SQL Server databases with Always On clusters, ~150 VDI desktops, the rest general-purpose). VMware Foundation renewal in 6 months. Annual VMware licensing currently $180,000. Storage refresh on the existing FlashArray due in 9 months ($350,000 quoted refresh). Two infrastructure engineers who are skeptical of AHV but open-minded if shown the numbers. CTO has asked for a five-year cost comparison and a risk-assessment recommendation.</p>
+          </div>
+          <textarea placeholder="Five-year licensing math, storage-refresh comparison, migration plan recommendation, risk assessment, workload-specific notes, honest gaps to flag, recommended structure of the proposal..."></textarea>
+          <button class="reveal-btn">Show strong-answer framework</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Five-year licensing math:</strong> $180k/year → conservatively $200-250k/year over 5 years with Broadcom escalations, total VMware spend ~$1.0-1.25M if they stay on ESXi. AHV eliminates this. Net savings ~$1M over 5 years.</li>
+              <li><strong>Storage refresh comparison:</strong> the $350k FlashArray refresh becomes Nutanix node spend instead. Apples-to-apples is not 1-to-1 (you're getting compute + storage), but the storage refresh budget alone covers a substantial portion of the Nutanix purchase.</li>
+              <li><strong>Migration plan recommendation:</strong> Phase 1 (months 1-6): deploy Nutanix with ESXi, migrate VMs onto Nutanix-on-ESXi, use the FlashArray refresh budget to fund this. Phase 2 (months 6-18): migrate low-risk workloads to AHV using Move (general-purpose, then VDI, then file/print). Phase 3 (months 18-36): migrate SQL Server VMs to AHV after the team has confidence. Stop migrating when the customer wants; mixed steady-state is fine.</li>
+              <li><strong>Risk assessment:</strong> the platform risk is low. The team risk is the real risk: the two skeptical engineers need to be brought along, not overridden. Recommend dedicated training budget and lab time. Ideally one becomes the AHV champion.</li>
+              <li><strong>Workload-specific notes:</strong> SQL Server with Always On is fully supported on AHV; Always On replicas provide application-level HA so FT is not required. VDI on AHV is a strong use case.</li>
+              <li><strong>Honest gaps to flag:</strong> if any niche ISV product explicitly requires ESXi certification, those workloads stay on ESXi.</li>
+              <li><strong>Recommended structure:</strong> financial case, phased migration plan, training plan, risk register, workload-by-workload disposition matrix.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="question ncx">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · sales-relevant</span></div>
+          <p class="qprompt"><em>(NCX-style architectural defense)</em> Respond to the architect's challenge below.</p>
+          <div class="scenario">
+            <blockquote>"AHV is fine for greenfield workloads, but my mature ESXi environment has 15 years of integration: vROps, Aria Automation, Aria Operations for Logs, our SOAR pipeline reading vCenter events, our backup vendor's vCenter integration, our chargeback system pulling from vCenter APIs, our PAM/identity integration with vCenter SSO, our compliance scanners reading vCenter inventory. Switching hypervisors means rebuilding all of that. The licensing savings don't cover the integration cost."</blockquote>
+          </div>
+          <textarea placeholder="Acknowledge integration cost is real. Reframe by integration category. Stage the answer. Reframe against the licensing savings. Offer the hybrid approach. Close with a concrete next step."></textarea>
+          <button class="reveal-btn">Show strong-answer framework</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the integration cost is real and not trivial.</strong> A mature ESXi environment with 15 years of tooling has real switching cost.</li>
+              <li><strong>Reframe by integration category:</strong>
+                <ul>
+                  <li><em>Infrastructure monitoring (vROps, Aria Operations):</em> Prism Central provides equivalent functionality natively. Many customers find Prism's experience cleaner than Aria's. There is migration work but the destination is functional.</li>
+                  <li><em>Automation (Aria Automation):</em> Nutanix v4 REST API is well-documented and clean; NCM Self-Service (formerly Calm) replaces blueprint-style automation. Migration is real work but the platform is API-first.</li>
+                  <li><em>Backup vendor integration:</em> Veeam, Commvault, Rubrik, Cohesity, HYCU all support AHV. Confirm with the specific vendor and version.</li>
+                  <li><em>SOAR / event pipelines:</em> Nutanix exposes events via API and via syslog-equivalent forwarding. The existing event consumers can usually be repointed; not a rewrite.</li>
+                  <li><em>Identity / PAM:</em> Nutanix supports SAML, LDAP, AD integration. Existing identity infrastructure usually plugs into Prism with reasonable effort.</li>
+                  <li><em>Compliance scanners:</em> if the scanner uses VMware-specific APIs, that's real rework. If it uses inventory APIs at a higher abstraction (CMDB), the change is smaller.</li>
+                </ul>
+              </li>
+              <li><strong>Stage the answer:</strong> integration cost is bounded. Total integration migration cost is real but typically in the $100-300k range for a mature enterprise environment.</li>
+              <li><strong>Reframe against the licensing savings:</strong> if VMware licensing is $200k/year, the integration migration cost pays back in 1-2 years.</li>
+              <li><strong>Offer a hybrid approach:</strong> the architect's environment can stay on ESXi-on-Nutanix indefinitely. New workloads go to AHV. Drift over time.</li>
+              <li><strong>Close with a concrete next step:</strong> <em>"Let me build a workload-by-workload integration map with you. We'll mark which integrations are Nutanix-equivalent ready, which need re-pointing, and which would require rework."</em></li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can now explain AHV to a VMware admin in 60 seconds without sounding defensive. You know it is KVM-based, with QEMU and libvirt and Open vSwitch underneath, and Acropolis as the Nutanix-specific control plane.</p>
+      <p>You have four mental frames for AHV: the hypervisor without a vCenter, the hypervisor without a tax, KVM hardened for HCI, and one less management product to maintain. When a customer pushes from any of those angles, you have a frame ready.</p>
+      <p>You know what AHV genuinely lacks: FT, mature niche-ISV ecosystem in some categories, DRS-level scheduling sophistication, console UX parity in heavy desktop scenarios. You can name those gaps without flinching.</p>
+      <p>You know the mixed-hypervisor story cold: <em>they don't have to switch hypervisors to get the platform benefits.</em> That sentence wins meetings.</p>
+      <p>You know the Broadcom math: vSphere Foundation ~$190/core, VCF ~$350/core, 16-core CPU minimum, 72-core order minimum. AHV bundles into NCI; that line goes to zero.</p>
+      <p>You are now ready for the management plane. AHV's control plane lives inside the cluster (Acropolis), but the user-facing experience lives in Prism Element and Prism Central. Module 4 makes that concrete.</p>
+
+      <section class="references">
+        <h2>References</h2>
+        <p>Authoritative sources verified during the technical review pass on this module. The licensing math is the most volatile section; reverify against current Broadcom and Nutanix price lists before quoting numbers in front of a customer.</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/5a-book-of-ahv-architecture.html">Nutanix Bible — AHV Architecture</a>. KVM/QEMU/libvirt/OVS lineage, Acropolis service description, ADS internals (Lazan service, 15-minute polling interval, 30-minute backoff after rebalance).</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=AHV-Admin-Guide-v6_8:ahv-dynamic-scheduling-c.html">Acropolis Dynamic Scheduling in AHV (AHV Admin Guide v6.8)</a>. Authoritative reference confirming the "Dynamic" expansion (not "Distributed").</li>
+          <li><a href="https://www.nutanix.com/products/move">Nutanix Move Product Page</a>. Confirms supported sources (ESXi, Hyper-V, AWS, Azure, GCP) and that Move is free.</li>
+          <li><a href="https://www.nutanixbible.com/21b-vm-migration-arch.html">Nutanix Bible — VM Migration Architecture</a>. Move's CBT-equivalent change-tracking, cutover semantics, downtime envelope.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-manager/self-service">NCM Self-Service (formerly Calm)</a>. Confirms the 2022 Calm-to-NCM-Self-Service rename.</li>
+          <li><a href="https://www.nutanixbible.com/18c-book-of-cloud-native-services-nutanix-kubernetes-engine.html">Nutanix Kubernetes Engine (formerly Karbon)</a>. NKE is the current branding (with current PC versions surfacing it as "Kubernetes Management").</li>
+          <li><a href="https://redresscompliance.com/vcf-licensing-guide-2026.html">VCF Licensing Guide 2026 (Redress Compliance)</a>. VCF reduced to $350/core/year (was $700); 16-core CPU minimum; 72-core order minimum.</li>
+          <li><a href="https://vmwaremadesimple.com/articles/vsphere-foundation-vs-standard-2026.html">vSphere Foundation vs Standard 2026</a>. vSphere Foundation MSRP ~$190/core; partner quotes ~$195+.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Previous:</strong> <a href="../02-nutanix-architecture/index.html">Module 2: The Nutanix Stack</a></li>
+          <li><strong>Next:</strong> Module 4: Prism (Element and Central) <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Glossary:</strong> AHV · KVM · Acropolis · Live Migration · ADS · NGT · Nutanix Move · Open vSwitch · VirtIO <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Hypervisor Row · Management Plane Row · Snapshots Row <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> #4 "Why switch hypervisors?" · #5 "What about FT?" · #9 "My backup vendor doesn't support AHV" · #21 "My team has 10 years of ESXi expertise" <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../02-nutanix-architecture/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 2: The Nutanix Stack</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 4: Prism (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>03-ahv-hypervisor</span>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m3:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+  </script>
+</body>
+</html>

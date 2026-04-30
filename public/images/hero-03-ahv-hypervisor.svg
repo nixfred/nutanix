@@ -1,0 +1,257 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Exploded isometric stack of the AHV hypervisor layers from hardware up through KVM, QEMU, libvirt, Open vSwitch, and Acropolis, with a small follower-cluster of CVMs in the background indicating the distributed Acropolis control plane.">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#15294a"/>
+      <stop offset="65%" stop-color="#0c1c36"/>
+      <stop offset="100%" stop-color="#070f20"/>
+    </radialGradient>
+
+    <!-- Standard cube faces -->
+    <linearGradient id="ftop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d6aa6"/>
+      <stop offset="100%" stop-color="#27497a"/>
+    </linearGradient>
+    <linearGradient id="fleft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f3a66"/>
+      <stop offset="100%" stop-color="#142a4d"/>
+    </linearGradient>
+    <linearGradient id="fright" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2444"/>
+      <stop offset="100%" stop-color="#091a33"/>
+    </linearGradient>
+
+    <!-- Acropolis layer (rust accent — same as CVM elsewhere in the family) -->
+    <linearGradient id="acroLeft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#b04a26"/>
+      <stop offset="100%" stop-color="#7a3319"/>
+    </linearGradient>
+    <linearGradient id="acroRight" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8c3b1d"/>
+      <stop offset="100%" stop-color="#5e2812"/>
+    </linearGradient>
+    <linearGradient id="acroTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d97c4a"/>
+      <stop offset="100%" stop-color="#a85530"/>
+    </linearGradient>
+
+    <!-- KVM layer (slightly distinct emerald-tinted blue, hinting at "Linux kernel") -->
+    <linearGradient id="kvmTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d8aa6"/>
+      <stop offset="100%" stop-color="#27647a"/>
+    </linearGradient>
+    <linearGradient id="kvmLeft" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#1f4f66"/>
+      <stop offset="100%" stop-color="#143a4d"/>
+    </linearGradient>
+    <linearGradient id="kvmRight" x1="0" y1="0.4" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f3344"/>
+      <stop offset="100%" stop-color="#092433"/>
+    </linearGradient>
+
+    <radialGradient id="dot" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9ce8ff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#00d4ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+
+    <pattern id="grid" width="80" height="46.188" patternUnits="userSpaceOnUse">
+      <path d="M 0 23.094 L 40 0 L 80 23.094 L 40 46.188 Z" fill="none" stroke="#2a4d7a" stroke-width="0.5" opacity="0.32"/>
+    </pattern>
+
+    <!--
+      Reusable layer-slab (a thin isometric slab with top diamond + side faces).
+      Default size: width 320, depth 200 (so half-width = 160, half-depth = 100,
+      iso projection means top diamond points = (0,-h), (w/2,h/2-h), (0,h), (-w/2,h/2-h)
+      Slab thickness h_thick added below.
+    -->
+
+    <!-- Small follower-cluster cube (re-used from M1 hero family) -->
+    <symbol id="smallnode" overflow="visible">
+      <polygon points="0,-26 39,-3.5 0,19 -39,-3.5" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+      <polygon points="-39,-3.5 0,19 0,64 -39,41.5" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+      <polygon points="39,-3.5 0,19 0,64 39,41.5" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      <circle cx="0" cy="-3.5" r="1.4" fill="#00d4ff"/>
+    </symbol>
+  </defs>
+
+  <!-- background -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity="0.5"/>
+
+  <!-- soft cyan vignette behind the main stack -->
+  <ellipse cx="780" cy="500" rx="500" ry="280" fill="#00d4ff" opacity="0.06" filter="url(#softGlow)"/>
+
+  <!--
+    BACKGROUND: a faint follower-cluster of small cubes off to the right,
+    suggesting the distributed Acropolis control plane (master + followers).
+    These are deliberately small + low-opacity so they don't compete with the stack.
+  -->
+  <g opacity="0.35">
+    <use href="#smallnode" x="1240" y="320"/>
+    <use href="#smallnode" x="1320" y="370"/>
+    <use href="#smallnode" x="1400" y="420"/>
+    <use href="#smallnode" x="1240" y="430"/>
+    <use href="#smallnode" x="1320" y="480"/>
+
+    <!-- Connection mesh between follower nodes (Acropolis distributed plane) -->
+    <g stroke="#b04a26" stroke-opacity="0.32" stroke-width="0.8" fill="none">
+      <line x1="1240" y1="316.5" x2="1320" y2="366.5"/>
+      <line x1="1320" y1="366.5" x2="1400" y2="416.5"/>
+      <line x1="1240" y1="426.5" x2="1320" y2="476.5"/>
+      <line x1="1240" y1="316.5" x2="1240" y2="426.5"/>
+      <line x1="1320" y1="366.5" x2="1320" y2="476.5"/>
+    </g>
+  </g>
+
+  <!-- Background label for follower cluster -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="11" fill="#6b7a9a" letter-spacing="0.08em">
+    <text x="1400" y="600" text-anchor="end">FOLLOWER CVMs</text>
+    <text x="1400" y="618" text-anchor="end" fill="#d97c4a">(Acropolis distributed)</text>
+  </g>
+
+  <!--
+    MAIN STACK — exploded isometric tower of AHV layers, centered roughly at x=780.
+    Each layer is a slab: top diamond (320x200 footprint) + thin side bands (h=18).
+    Layers stacked bottom-to-top with vertical gaps between them so the tower reads
+    as "exploded view." Center of each top diamond at (780, y_n).
+  -->
+  <g>
+    <!-- Y positions for the centers of each layer's top diamond, bottom-to-top: -->
+    <!-- Hardware: y=720 -->
+    <!-- KVM: y=620 -->
+    <!-- QEMU: y=540 -->
+    <!-- libvirt: y=460 -->
+    <!-- OVS: y=380 -->
+    <!-- Acropolis (master): y=290 -->
+    <!-- VM cubes: y=190 (smaller, on top) -->
+
+    <!-- Slab geometry: top diamond points (160,0), (0,100), (-160,0), (0,-100)
+         Side faces: left = (-160,0)-(0,100)-(0,118)-(-160,18); right mirrored -->
+
+    <!-- ===== LAYER 1: Hardware (deep base) ===== -->
+    <g transform="translate(780 720)">
+      <polygon points="0,-100 160,0 0,100 -160,0" fill="url(#ftop)" stroke="#4a9eff" stroke-width="1" stroke-opacity="0.55" opacity="0.85"/>
+      <polygon points="-160,0 0,100 0,118 -160,18" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1" opacity="0.85"/>
+      <polygon points="160,0 0,100 0,118 160,18" fill="url(#fright)" stroke="#1f3a66" stroke-width="1" opacity="0.85"/>
+    </g>
+    <!-- label to the right -->
+    <g transform="translate(960 730)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#a8b8d4" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#3a6090" stroke-width="0.8"/>
+      <text x="50" y="4" font-weight="600" fill="#e8f0ff">PHYSICAL HARDWARE</text>
+      <text x="50" y="22" fill="#6b7a9a" font-size="11">x86 server, CPU, RAM, NICs, NVMe / SSD</text>
+    </g>
+
+    <!-- ===== LAYER 2: KVM (Linux kernel hypervisor) ===== -->
+    <g transform="translate(780 620)">
+      <polygon points="0,-100 160,0 0,100 -160,0" fill="url(#kvmTop)" stroke="#3d8aa6" stroke-width="1" stroke-opacity="0.65"/>
+      <polygon points="-160,0 0,100 0,118 -160,18" fill="url(#kvmLeft)" stroke="#1f4f66" stroke-width="1"/>
+      <polygon points="160,0 0,100 0,118 160,18" fill="url(#kvmRight)" stroke="#1f4f66" stroke-width="1"/>
+    </g>
+    <g transform="translate(960 630)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#a8b8d4" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#3d8aa6" stroke-width="0.8"/>
+      <text x="50" y="4" font-weight="600" fill="#e8f0ff">KVM</text>
+      <text x="50" y="22" fill="#6b7a9a" font-size="11">Linux kernel hypervisor</text>
+    </g>
+
+    <!-- ===== LAYER 3: QEMU ===== -->
+    <g transform="translate(780 540)">
+      <polygon points="0,-100 160,0 0,100 -160,0" fill="url(#ftop)" stroke="#4a9eff" stroke-width="1" stroke-opacity="0.55"/>
+      <polygon points="-160,0 0,100 0,118 -160,18" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1"/>
+      <polygon points="160,0 0,100 0,118 160,18" fill="url(#fright)" stroke="#1f3a66" stroke-width="1"/>
+    </g>
+    <g transform="translate(960 550)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#a8b8d4" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#3a6090" stroke-width="0.8"/>
+      <text x="50" y="4" font-weight="600" fill="#e8f0ff">QEMU</text>
+      <text x="50" y="22" fill="#6b7a9a" font-size="11">Device emulation</text>
+    </g>
+
+    <!-- ===== LAYER 4: libvirt ===== -->
+    <g transform="translate(780 460)">
+      <polygon points="0,-100 160,0 0,100 -160,0" fill="url(#ftop)" stroke="#4a9eff" stroke-width="1" stroke-opacity="0.55"/>
+      <polygon points="-160,0 0,100 0,118 -160,18" fill="url(#fleft)" stroke="#1f3a66" stroke-width="1"/>
+      <polygon points="160,0 0,100 0,118 160,18" fill="url(#fright)" stroke="#1f3a66" stroke-width="1"/>
+    </g>
+    <g transform="translate(960 470)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#a8b8d4" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#3a6090" stroke-width="0.8"/>
+      <text x="50" y="4" font-weight="600" fill="#e8f0ff">libvirt</text>
+      <text x="50" y="22" fill="#6b7a9a" font-size="11">Management primitives</text>
+    </g>
+
+    <!-- ===== LAYER 5: Open vSwitch ===== -->
+    <g transform="translate(780 380)">
+      <polygon points="0,-100 160,0 0,100 -160,0" fill="url(#kvmTop)" stroke="#3d8aa6" stroke-width="1" stroke-opacity="0.65"/>
+      <polygon points="-160,0 0,100 0,118 -160,18" fill="url(#kvmLeft)" stroke="#1f4f66" stroke-width="1"/>
+      <polygon points="160,0 0,100 0,118 160,18" fill="url(#kvmRight)" stroke="#1f4f66" stroke-width="1"/>
+    </g>
+    <g transform="translate(960 390)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#a8b8d4" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#3d8aa6" stroke-width="0.8"/>
+      <text x="50" y="4" font-weight="600" fill="#e8f0ff">Open vSwitch (OVS)</text>
+      <text x="50" y="22" fill="#6b7a9a" font-size="11">Kernel-level virtual switching</text>
+    </g>
+
+    <!-- ===== LAYER 6: Acropolis (the rust-colored Nutanix layer) ===== -->
+    <g transform="translate(780 290)">
+      <polygon points="0,-100 160,0 0,100 -160,0" fill="url(#acroTop)" stroke="#b04a26" stroke-width="1.4" stroke-opacity="0.85"/>
+      <polygon points="-160,0 0,100 0,118 -160,18" fill="url(#acroLeft)" stroke="#7a3319" stroke-width="1"/>
+      <polygon points="160,0 0,100 0,118 160,18" fill="url(#acroRight)" stroke="#7a3319" stroke-width="1"/>
+      <!-- accent dot on top -->
+      <circle cx="0" cy="-10" r="3.2" fill="#00d4ff"/>
+      <circle cx="0" cy="-10" r="7" fill="url(#dot)" opacity="0.9"/>
+    </g>
+    <g transform="translate(960 300)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#fbb091" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#b04a26" stroke-width="1"/>
+      <text x="50" y="4" font-weight="700" fill="#fbb091">Acropolis  (master)</text>
+      <text x="50" y="22" fill="#a8b8d4" font-size="11">VM lifecycle · HA · ADS · Live Migration</text>
+    </g>
+
+    <!-- ===== TOP: User VMs as small floating cubes ===== -->
+    <g transform="translate(780 190)">
+      <!-- 3 small VM cubes hovering above the Acropolis layer, in a horizontal row -->
+      <g transform="translate(-90 0)">
+        <polygon points="0,-22 33,0 0,18 -33,0" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+        <polygon points="-33,0 0,18 0,42 -33,24" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="33,0 0,18 0,42 33,24" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+      <g transform="translate(0 -8)">
+        <polygon points="0,-26 39,0 0,21 -39,0" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.8" stroke-opacity="0.55"/>
+        <polygon points="-39,0 0,21 0,49 -39,28" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="39,0 0,21 0,49 39,28" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+      <g transform="translate(90 0)">
+        <polygon points="0,-22 33,0 0,18 -33,0" fill="url(#ftop)" stroke="#4a9eff" stroke-width="0.7" stroke-opacity="0.5"/>
+        <polygon points="-33,0 0,18 0,42 -33,24" fill="url(#fleft)" stroke="#1f3a66" stroke-width="0.7"/>
+        <polygon points="33,0 0,18 0,42 33,24" fill="url(#fright)" stroke="#1f3a66" stroke-width="0.7"/>
+      </g>
+    </g>
+    <g transform="translate(960 200)" font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="13" fill="#a8b8d4" letter-spacing="0.06em">
+      <line x1="-10" y1="0" x2="40" y2="0" stroke="#3a6090" stroke-width="0.8"/>
+      <text x="50" y="4" font-weight="600" fill="#e8f0ff">USER VMs</text>
+      <text x="50" y="22" fill="#6b7a9a" font-size="11">Linux + Windows guests</text>
+    </g>
+
+    <!-- Subtle dotted vertical guide running through the stack center -->
+    <line x1="780" y1="170" x2="780" y2="850" stroke="#3a6090" stroke-width="0.6" stroke-dasharray="2 6" opacity="0.45"/>
+  </g>
+
+  <!-- Connector arc from Acropolis master to follower cluster (showing distributed control plane) -->
+  <path d="M 945 290 Q 1130 240 1240 320" fill="none" stroke="#b04a26" stroke-width="1.2" stroke-dasharray="4 6" opacity="0.55"/>
+
+  <!-- Foreground accent: subtle scanlines at bottom -->
+  <rect x="0" y="858" width="1600" height="1" fill="#00d4ff" opacity="0.18"/>
+  <rect x="0" y="862" width="1600" height="1" fill="#00d4ff" opacity="0.08"/>
+
+  <!-- Mono path treatment, top-left -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" font-size="14" fill="#6b7a9a">
+    <text x="48" y="56" letter-spacing="0.04em"><tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix<tspan fill="#a8b8d4">/03-ahv-hypervisor</tspan></text>
+  </g>
+
+  <!-- Module label, bottom-left -->
+  <g font-family="Inter, system-ui, sans-serif" fill="#a8b8d4">
+    <text x="48" y="816" font-size="13" letter-spacing="0.18em" font-weight="600" fill="#6b7a9a">MODULE 03</text>
+    <text x="48" y="852" font-size="34" font-weight="700" letter-spacing="-0.02em" fill="#e8f0ff">AHV: The Hypervisor Question</text>
+  </g>
+</svg>
