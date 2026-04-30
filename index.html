@@ -104,6 +104,21 @@
       margin: 0 0 32px;
     }
 
+    .hero-image {
+      margin: 0 0 40px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-surface);
+    }
+    .hero-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
     .terminal {
       font-family: var(--font-mono);
       font-size: 14px;
@@ -263,6 +278,10 @@
     </header>
 
     <section class="hero">
+      <figure class="hero-image">
+        <img src="public/images/hero-home.svg" alt="Abstract isometric visualization of the Nutanix field guide: ten nodes representing the curriculum's ten modules interconnected by a distributed mesh, on a deep navy background with cyan replication lines." />
+      </figure>
+
       <h1>A field guide<br />to <span class="nix">Nutanix</span>.</h1>
       <p class="subtitle">
         Written for the people who have to explain it. Cert prep, customer-conversation language,
