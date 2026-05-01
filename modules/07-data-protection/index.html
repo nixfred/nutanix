@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 7: Data Protection and DR</title>
+  <meta name="description" content="Nutanix data protection from VMware DR muscle memory: crash- vs application-consistent snapshots, Protection Domains vs Protection Policies, Async / NearSync / Metro replication, Recovery Plans (Nutanix Disaster Recovery, formerly Leap), NC2 cloud DR, and twelve practice questions for NCP-MCI and NCM-MCI." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Module 7: Data Protection and DR" />
+  <meta property="og:description" content="Snapshots, Protection Policies, Async / NearSync / Metro replication, Recovery Plans, NC2. NCP-MCI and NCM-MCI preparation." />
+  <meta property="og:image" content="../../public/images/hero-07-data-protection.svg" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Module 7: Data Protection and DR" />
+  <meta name="twitter:description" content="Replication modes, Recovery Plans, NC2, and how to defend Recovery Plans against an SRM-loyal customer." />
+  <meta name="twitter:image" content="../../public/images/hero-07-data-protection.svg" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85); font-variant-numeric: tabular-nums;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+    figure.diagram .badge.wb { color: var(--success); background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.40); }
+    figure.diagram .badge.cert { color: var(--warning); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.40); }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption { margin-top: 16px; color: var(--text-secondary); font-size: 14px; font-style: italic; max-width: 70ch; }
+
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">07 · Data Protection and DR</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-07-data-protection.svg" alt="Two clusters tightly coupled in a metro pair under a synchronous green Metro link, plus a remote DR cluster reached by dotted cyan NearSync and dashed gold Async arcs over WAN, with a Witness VM glyph at a third site providing quorum." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/07-data-protection</div>
+      <h1 class="module-title">Module 7: Data Protection and DR</h1>
+      <div class="meta-row">
+        <span class="chip read">~38 min read</span>
+        <span class="chip cert">NCA ~10%</span>
+        <span class="chip cert">NCP-MCI ~22%</span>
+        <span class="chip cert">NCM-MCI ~25%</span>
+        <span class="chip cert">NCP-NS ~8%</span>
+      </div>
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~10%) · NCP-MCI (~22%) · NCM-MCI (~25%) · NCP-NS (~8%)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #26 through #30 · Discovery Q-DR-01 through Q-DR-05</span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Modules 01 through 06</li>
+            <li>vSphere DR experience helpful (VR, SRM, snapshots)</li>
+            <li>Understanding of RPO and RTO</li>
+            <li>Familiarity with categories from Module 04</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">Crash-consistent</span>
+            <span class="term-chip">Application-consistent</span>
+            <span class="term-chip">NGT</span>
+            <span class="term-chip">Protection Domain</span>
+            <span class="term-chip">Protection Policy</span>
+            <span class="term-chip">Async</span>
+            <span class="term-chip">NearSync</span>
+            <span class="term-chip">LWS</span>
+            <span class="term-chip">Metro Availability</span>
+            <span class="term-chip">Witness VM</span>
+            <span class="term-chip">Recovery Plan</span>
+            <span class="term-chip">NDR (Leap)</span>
+            <span class="term-chip">NC2</span>
+            <span class="term-chip">RPO / RTO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Design a multi-site DR architecture in 30 minutes.</strong> Pick the replication mode (Async, NearSync, Metro), define RPO and RTO targets, choose between Protection Domains and Protection Policies, and produce a sized bandwidth requirement. One of the highest-leverage SA conversations.</li>
+        <li><strong>Pass roughly 22% of NCP-MCI and 25% of NCM-MCI.</strong> Data protection is one of the heaviest single-topic weights on these exams. NCM-MCI labs frequently include configure-a-policy / set-up-replication / test-failover / troubleshoot-a-stalled-job DR scenarios.</li>
+        <li><strong>Defend Recovery Plans against an SRM-loyal customer.</strong> SRM has 15+ years of polish. Recovery Plans is younger. The honest comparison is that for AHV-native deployments Recovery Plans is integrated and capable; for established SRM shops, the migration is real work and coexistence is often the right answer.</li>
+        <li><strong>Make the cloud-DR case</strong> using NC2 (Nutanix Cloud Clusters on AWS or Azure) for customers who want a DR site without a second datacenter. By 2026, this is one of the more compelling Nutanix-specific stories.</li>
+        <li><strong>Walk the snapshot, replication, and recovery sequence end-to-end.</strong> When DR breaks, the customer's first call is to you. Know where to look: snapshot schedule status, replication queue depth, Recovery Plan validation, network path between sites.</li>
+        <li><strong>Make RPO/RTO/cost tradeoffs explicit.</strong> The customer who wants 1-minute RPO and 30-minute RTO and zero cost increase is asking for something that does not exist. Translate business requirements into the right product mix at a real budget.</li>
+      </ol>
+      <p>DR is the dimension that decides enterprise deals. Customers who survived a real outage have opinions; customers who haven't are about to. Either way, when DR comes up, you need to know this material cold.</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>You have built or maintained DR for VMware. The pieces:</p>
+      <ul>
+        <li><strong>VMware snapshots</strong> for point-in-time recovery (with the consolidation pain Module 3 already covered).</li>
+        <li><strong>vSphere Replication</strong> for VM-level replication to a secondary site.</li>
+        <li><strong>Storage array replication</strong> (NetApp SnapMirror, EMC RecoverPoint, Pure ActiveCluster) for storage-level replication, often with better RPO than VR.</li>
+        <li><strong>Site Recovery Manager (SRM)</strong> for orchestrating failover: VM boot order, IP remapping, runbook automation, test recovery.</li>
+        <li><strong>Backup tooling</strong> (Veeam, Commvault, Rubrik, Cohesity) layered on top for longer-retention backup and granular recovery.</li>
+      </ul>
+      <p>You know the operational realities. RPO depends on the replication mechanism. RTO depends on how fast you can boot VMs at the DR site, with what network reconfiguration, with what application checks. SRM runbook tests are the only thing that proves DR works, and most customers do not run them as often as they should.</p>
+      <p>Hold that experience. Nutanix's data protection stack reorganizes those pieces. Replication is built into the platform (no separate appliance). Orchestration is integrated (no separate SRM purchase). Snapshots are DSF-native (no consolidation pain). Cloud DR is NC2 (no need to build a second datacenter). The pieces are different but the operational concepts transfer.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>When a customer brings up DR, the first move is not feature comparison. It is qualifying their actual requirements. <em>"What is your RPO target by application tier? What is your RTO? Do you have a contractual or regulatory requirement that drives those numbers? Have you tested a real failover in the last 12 months? What broke when you did?"</em> Most customers cannot answer all five questions cleanly. The conversation that follows is where the SA earns trust by translating their actual needs into the right Nutanix mix. Skip the qualifying step and you are pitching products against requirements you do not actually understand.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="snapshots">Snapshots Revisited: Crash-Consistent vs Application-Consistent</h3>
+      <p>Module 3 covered DSF snapshots as a DSF-native, instant, no-I/O-penalty operation. Layer the consistency dimension on top.</p>
+      <p><strong>Crash-consistent snapshots.</strong> Capture the state of the vDisk at a moment in time. From a guest's perspective this is equivalent to pulling the power cord and the system coming back up: file systems may need recovery on first boot, in-memory data is lost, transactional databases may roll back recent transactions. For most workloads, crash-consistent recovery is sufficient.</p>
+      <p><strong>Application-consistent snapshots.</strong> The snapshot is taken after the application has flushed its in-memory state to disk. On Windows, this requires VSS (Volume Shadow Copy Service) coordination, which Nutanix Guest Tools (NGT) provides. On Linux, application-consistent snapshots typically rely on application-level mechanisms (a database's quiesce command) coordinated through NGT.</p>
+      <p>When does the distinction matter?</p>
+      <ul>
+        <li><strong>Database VMs (SQL Server, Oracle, PostgreSQL).</strong> Application-consistent snapshots are strongly preferred for direct restoration. Crash-consistent recovery requires the database's startup recovery to succeed, which usually works but is slower and occasionally messy.</li>
+        <li><strong>File servers.</strong> Crash-consistent is fine for general SMB/NFS workloads.</li>
+        <li><strong>Application servers (web, app tier).</strong> Crash-consistent is fine if the application is stateless or has its state in a backed-up database.</li>
+        <li><strong>Active Directory domain controllers.</strong> AD has its own consistency protocols; crash-consistent is acceptable but Microsoft's preferred approach involves database-aware snapshots.</li>
+      </ul>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>Snapshot consistency types are testable. Memorize: crash-consistent (default, captures vDisk state at a moment), application-consistent (requires NGT and VSS coordination on Windows or application-level quiesce on Linux). Trap distractor: questions that imply application-consistent is the same as crash-consistent (false), or that NGT is unrelated to snapshot consistency (false; NGT provides the VSS integration).</p>
+      </aside>
+
+      <h3 id="pd-vs-pp">Protection Domains vs Protection Policies</h3>
+      <p>This is the architectural shift that matters operationally and exam-wise. Read carefully.</p>
+      <p><strong>Protection Domains (PDs).</strong> The legacy construct, configured in Prism Element. A PD is a group of VMs (and/or vDisks) that share a single replication and snapshot schedule. You create a PD, add VMs to it, attach a remote site, configure the schedule (e.g., snapshot every hour, replicate every 4 hours), and the PD enforces it. PDs have been the workhorse of Nutanix DR for years.</p>
+      <p><strong>Protection Policies.</strong> The modern construct, configured in Prism Central. Policies are category-driven (Module 4). A Protection Policy says: "All VMs with <code>Environment: Production</code> get hourly snapshots retained for 7 days, with NearSync replication to the DR site." VMs are assigned to the policy by their categories, not by manual addition. Policies are tied to <strong>Recovery Plans</strong> (Nutanix Disaster Recovery, formerly Leap) for orchestrated failover.</p>
+
+      <table>
+        <thead><tr><th>Dimension</th><th>Protection Domain</th><th>Protection Policy</th></tr></thead>
+        <tbody>
+          <tr><td>Where configured</td><td>Prism Element</td><td>Prism Central</td></tr>
+          <tr><td>Membership model</td><td>Manual VM addition</td><td>Category-driven (auto)</td></tr>
+          <tr><td>Failover orchestration</td><td>Native PD failover (basic)</td><td>Recovery Plans (rich orchestration)</td></tr>
+          <tr><td>Multi-site management</td><td>Per-PD, per-cluster</td><td>Centralized in PC</td></tr>
+          <tr><td>Recommended for new deployments</td><td>No</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Existing customers:</strong> PDs continue to work. There is no forced migration. Many production environments still run PDs because the migration to Policies is a project that requires planning. New deployments should start with Policies.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Customers with established Protection Domains are common. The wrong move is to demand they migrate. The right move is: <em>"Your existing PDs continue to work. We recommend Policies for any new workload, and we can plan a migration of existing PDs at your pace, on your timeline. There's no pressure."</em> That respects their installed base. For greenfield deployments, recommend Policies from day one.</p>
+      </aside>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>Both PDs and Policies are testable. Memorize the distinction: PDs are PE-based, manual-membership, legacy. Policies are PC-based, category-driven, modern. Trap distractor: "Protection Policies replaced Protection Domains and PDs are no longer supported" (false; both coexist).</p>
+      </aside>
+
+      <h3 id="async">Async Replication: The Default Workhorse</h3>
+      <p><strong>Async replication</strong> is the bread-and-butter Nutanix DR mechanism. The pattern:</p>
+      <ol>
+        <li>Take a snapshot at the source cluster on schedule (e.g., hourly).</li>
+        <li>Compute the delta between this snapshot and the previous replicated one.</li>
+        <li>Send the delta over the network to the destination cluster.</li>
+        <li>The destination cluster materializes the new snapshot.</li>
+        <li>Retain snapshots per the configured retention policy.</li>
+      </ol>
+      <p><strong>Characteristics:</strong></p>
+      <ul>
+        <li><strong>Minimum RPO:</strong> typically 1 hour, configurable down to 15 minutes in some scenarios. RPO is governed by the snapshot/replication interval, not by inherent technology limits.</li>
+        <li><strong>Bandwidth efficiency:</strong> delta-based, so steady-state bandwidth scales with change rate, not with total data size.</li>
+        <li><strong>Network requirements:</strong> any IP-routable connection between sites. Latency is forgiving (works fine over WAN with hundreds of milliseconds RTT).</li>
+        <li><strong>Cost:</strong> lowest of the three replication modes. Suitable for most workloads.</li>
+      </ul>
+      <p><strong>Topology options:</strong></p>
+      <ul>
+        <li><strong>One-to-one.</strong> Single primary, single DR site.</li>
+        <li><strong>One-to-many.</strong> Single primary replicating to multiple DR sites (different RPOs to each).</li>
+        <li><strong>Many-to-one.</strong> Multiple production clusters replicating to a consolidated DR site (common for ROBO consolidation).</li>
+        <li><strong>Bi-directional.</strong> Two clusters protecting each other.</li>
+      </ul>
+      <p>Most customers start here. Most stay here for the bulk of their workloads.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>Async replication maps cleanly onto vSphere Replication mental models. Periodic snapshot capture, delta computation, network transfer, target-side materialization. The mechanics are familiar; VR works the same way at a different layer. The differences are operational: Nutanix Async is configured in Prism (no separate VR appliance), runs natively in the platform (no separate licensing), and is part of the same management plane as compute and storage. If you have configured VR before, you will configure Nutanix Async in less time on your first try.</p>
+      </aside>
+
+      <h3 id="nearsync">NearSync Replication: When 1-Hour RPO Isn't Enough</h3>
+      <p><strong>NearSync</strong> is Nutanix's "almost-synchronous" replication mode. It uses <strong>LWS (Light-Weight Snapshots)</strong> under the hood, taking very frequent (sub-minute) metadata-level micro-snapshots and continuously replicating them. The LWS store is allocated on the cluster's SSD tier; that is where every NearSync-protected change lands first, before propagating to the destination cluster.</p>
+      <p><strong>Characteristics:</strong></p>
+      <ul>
+        <li><strong>RPO:</strong> as low as 20 seconds in optimal configurations; commonly designed for 1-15 minute RPO.</li>
+        <li><strong>Bandwidth requirements:</strong> higher than Async. The replication is more continuous and less coalesced. Plan for sustained bandwidth roughly proportional to the workload's write rate.</li>
+        <li><strong>Network requirements:</strong> typically &lt;5 ms RTT to the destination, though specific platform versions vary. Some configurations relax this.</li>
+        <li><strong>Cluster overhead:</strong> higher than Async. NearSync places more load on Stargate and Curator at the source cluster.</li>
+        <li><strong>Cost:</strong> higher than Async, lower than Metro.</li>
+      </ul>
+      <p><strong>When to use NearSync:</strong></p>
+      <ul>
+        <li>Tier-1 production databases where 1-hour RPO is too long.</li>
+        <li>Compliance-driven workloads with sub-15-minute RPO mandates.</li>
+        <li>Customers with adequate bandwidth and acceptable latency between sites.</li>
+      </ul>
+      <p><strong>The honest gotcha:</strong> NearSync's resource cost on the cluster is real. Customers who try to NearSync-protect their entire estate often find they need bigger CVMs or face cluster headroom issues. Use NearSync for the workloads that genuinely need it; leave the rest on Async.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI · NCP-NS</span></div>
+        <p>NearSync's specifics are tested. Memorize: NearSync uses Light-Weight Snapshots (LWS), achieves sub-15-minute RPO commonly, requires lower-latency networking than Async, and has higher cluster resource overhead. Trap distractor: "NearSync is synchronous" (false; sync is Metro). NearSync is "near" sync but not zero RPO.</p>
+      </aside>
+
+      <h3 id="metro">Metro Availability: Synchronous, Zero RPO</h3>
+      <p><strong>Metro Availability</strong> is true synchronous replication: every write at the source is replicated to the destination before it is acknowledged. RPO is zero (no data loss on any single-site failure).</p>
+      <p><strong>Characteristics:</strong></p>
+      <ul>
+        <li><strong>RPO:</strong> zero. Synchronous replication.</li>
+        <li><strong>Latency requirement:</strong> ≤5 ms RTT is the documented hard ceiling. <strong>Production design targets typically aim for ≤3.5 ms RTT under load</strong>, with the 5 ms number reserved as the headroom ceiling. P99.9 latency under concurrent I/O matters more than the average; sustained micro-bursts can push average-3 ms links over the 5 ms threshold during peak load. Real-world deployments are metro-area distances (campus, dual-datacenter within a city).</li>
+        <li><strong>Topology:</strong> active-standby (typical) or active-active (advanced configurations).</li>
+        <li><strong>Witness VM:</strong> required for split-brain protection. Witness runs on a third site (a small cluster, a separate Nutanix instance, or sometimes a public-cloud VM) and provides quorum during partition events.</li>
+        <li><strong>Cost:</strong> highest of the three modes. Bandwidth + tightly-coupled networking + witness infrastructure.</li>
+      </ul>
+      <p><strong>When to use Metro:</strong></p>
+      <ul>
+        <li>Mission-critical workloads with zero-data-loss requirements.</li>
+        <li>Active-active datacenter architectures where workloads run in both sites simultaneously.</li>
+        <li>Compliance frameworks that mandate synchronous replication (less common, but exists).</li>
+      </ul>
+      <p><strong>Important constraint:</strong> Metro is only useful within metro-area latency (typically &lt;100 km). It is not a long-distance DR solution. For wide-area DR, you combine Metro (between two close sites) with Async or NearSync to a third remote site for full geographic resilience.</p>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Metro Availability resembles VMware's Stretched Cluster (often deployed with vSAN Stretched Cluster or NetApp MetroCluster) but with different operational characteristics. The Witness requirement is similar in concept. The latency budget is similar. The deployment workflow is integrated into Prism rather than requiring vSphere + storage-array-specific tooling. Customers familiar with stretched clusters in the VMware world transfer their mental model directly.</p>
+      </aside>
+
+      <h3 id="diagram-replication">Diagram: Replication Topologies (Async / NearSync / Metro)</h3>
+      <figure class="diagram" id="replication-topologies">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+          <span class="badge cert">NCP-NS</span>
+        </div>
+        <svg id="diagram-replication-svg" viewBox="0 0 1000 560" role="img" aria-label="Three side-by-side panels comparing Async, NearSync, and Metro replication. Each panel shows two cluster icons connected by a labelled link, with characteristics for RPO, latency, bandwidth, and cluster overhead listed underneath. The Metro panel adds a Witness VM at a third site."></svg>
+        <figcaption>Three replication modes at a glance. RPO, latency budget, bandwidth, and cluster overhead in one frame. Most customers run a mix: Async for bulk, NearSync for Tier-1 databases, Metro for genuine zero-RPO use cases.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="cycle-2">The Cycle, Frame Two: DR as RPO/RTO Mapped to Products</h3>
+      <p>For an operations leader, the durable DR frame is mapping business requirements to technology choices.</p>
+
+      <table>
+        <thead><tr><th>Application Tier</th><th>Business RPO</th><th>Business RTO</th><th>Recommended Approach</th></tr></thead>
+        <tbody>
+          <tr><td>Mission-critical, zero-data-loss</td><td>0</td><td>&lt;30 min</td><td>Metro Availability (campus) + Async to third site</td></tr>
+          <tr><td>Tier-1 production DB</td><td>1-15 min</td><td>1-2 hours</td><td>NearSync to DR cluster + Recovery Plan</td></tr>
+          <tr><td>Production general-purpose</td><td>1-4 hours</td><td>2-4 hours</td><td>Async + Recovery Plan</td></tr>
+          <tr><td>Test / Dev</td><td>8-24 hours</td><td>4-8 hours</td><td>Async with longer interval, or no DR</td></tr>
+          <tr><td>Ephemeral / stateless</td><td>n/a</td><td>redeploy</td><td>No replication; redeploy from source-of-truth</td></tr>
+        </tbody>
+      </table>
+
+      <p>This is the design conversation in 15 minutes. Walk the customer through their tiers, agree on RPO/RTO targets, map to the technology, and the architecture writes itself.</p>
+
+      <h3 id="recovery-plans">The Cycle, Frame Three: Recovery Plans (NDR) as the SRM Replacement</h3>
+      <p><strong>Recovery Plans</strong> are the runbook construct inside <strong>Nutanix Disaster Recovery</strong> (the current product name; formerly branded <strong>Leap</strong>). The product was renamed from Leap to Nutanix Disaster Recovery a few years back; you will still see "Leap" in older docs, in customer vocabulary, and in some current-day Nutanix product surfaces. Recovery Plans live in Prism Central and define:</p>
+      <ul>
+        <li><strong>What VMs are protected</strong> (via category membership).</li>
+        <li><strong>The startup order</strong> (which VMs come up first, second, third).</li>
+        <li><strong>Network mapping</strong> (production VLAN 100 maps to DR VLAN 200).</li>
+        <li><strong>IP address remapping</strong> (or DHCP-based reassignment at the DR site).</li>
+        <li><strong>Pre-checks and post-checks</strong> (run a script before failover, run a script after).</li>
+        <li><strong>Test failover capability</strong> (run a failover into an isolated network, validate, tear down).</li>
+        <li><strong>Manual or automated failover triggers.</strong></li>
+      </ul>
+      <p>This is the SRM equivalent. The functional comparison:</p>
+
+      <table>
+        <thead><tr><th>Feature</th><th>Site Recovery Manager (SRM)</th><th>Recovery Plans (NDR / Leap)</th></tr></thead>
+        <tbody>
+          <tr><td>Hypervisor support</td><td>ESXi only</td><td>AHV native; ESXi-on-Nutanix supported via integration</td></tr>
+          <tr><td>Replication source</td><td>vSphere Replication or array-based</td><td>Native Nutanix (Async, NearSync, Metro)</td></tr>
+          <tr><td>Licensing</td><td>Separate VMware product</td><td>Bundled with Nutanix Cloud Manager (varies by tier)</td></tr>
+          <tr><td>Test failover</td><td>Yes, mature</td><td>Yes</td></tr>
+          <tr><td>Runbook orchestration</td><td>Mature, deeply customizable</td><td>Capable, less customizable in advanced edge cases</td></tr>
+          <tr><td>IP remapping / DHCP</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Pre/post-failover scripts</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Multi-site planning</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Maturity</td><td>15+ years</td><td>5+ years, rapidly improving</td></tr>
+          <tr><td>Cross-site management</td><td>vCenter-driven</td><td>Prism Central</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>The honest comparison:</strong> SRM is more mature and has more advanced runbook customization for complex scenarios. Recovery Plans is integrated, free or bundled, and simpler to operate. For most enterprise DR requirements, Recovery Plans is sufficient. For customers with established SRM deployments, the migration is real work and the coexistence pattern (SRM on ESXi-on-Nutanix, Recovery Plans for AHV workloads) is often the right answer.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · NCM-MCI</span></div>
+        <p>Recovery Plans are testable. Memorize: Recovery Plans live in Prism Central, define VM startup order and network/IP mappings, support test failover without disrupting production, and are the orchestration layer on top of Nutanix replication. Trap distractor: "Recovery Plans require Site Recovery Manager" (false; they are independent of SRM).</p>
+      </aside>
+
+      <h3 id="diagram-policies">Diagram: Protection Policies and Categories</h3>
+      <figure class="diagram" id="protection-policies">
+        <div class="badges">
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-policies-svg" viewBox="0 0 1000 560" role="img" aria-label="A pool of VMs with assorted category tags on the left flows into a Protection Policy box matching Environment: Production, which then drives an automatic protection action on the right and connects down to a Recovery Plan that orchestrates failover."></svg>
+        <figcaption>Category assignment is the policy enrollment moment. Tag a VM <code>Production</code>, it is protected within minutes. No manual addition. No forgotten VMs. Recovery Plans orchestrate the failover of category-protected VMs.</figcaption>
+      </figure>
+
+      <h3 id="nc2">NC2: DR to the Cloud Without a Second Datacenter</h3>
+      <p><strong>NC2 (Nutanix Cloud Clusters)</strong> runs the Nutanix platform on AWS or Azure bare-metal hosts. From the platform's perspective, an NC2 cluster looks like any other Nutanix cluster: AOS, AHV, CVMs, DSF, Prism. From the customer's perspective, it is Nutanix infrastructure they pay for as a cloud-consumption model rather than as on-premises hardware.</p>
+      <p><strong>For DR specifically, NC2 enables:</strong></p>
+      <ul>
+        <li><strong>Replicate from on-prem Nutanix to NC2 in cloud.</strong> Use the same Async, NearSync (where supported), or Metro mechanisms.</li>
+        <li><strong>Failover to cloud without a second datacenter.</strong> When primary fails, VMs come up on NC2 in the cloud region.</li>
+        <li><strong>Variable cost.</strong> Pay for cloud capacity continuously (active replication target) or with hibernation patterns (cluster spun down most of the time, spun up on failover or DR test).</li>
+        <li><strong>Fast scaling.</strong> Add NC2 capacity in cloud at the rate of cloud provisioning, not at the rate of physical hardware procurement.</li>
+      </ul>
+      <p><strong>The economics:</strong> NC2 is meaningfully cheaper than building and maintaining a second physical datacenter for many mid-market customers. For large customers, the math depends on workload size, retention requirements, and whether they have existing colo space they would otherwise consolidate.</p>
+      <p><strong>The honest constraints:</strong></p>
+      <ul>
+        <li>Cloud bare-metal pricing varies. Some workloads are cheap in cloud; some are expensive.</li>
+        <li>Replication bandwidth from on-prem to cloud is real cost (egress fees apply on failback in some models).</li>
+        <li>Failover RTO depends on whether the NC2 cluster is hot, warm, or cold.</li>
+        <li>Some workloads have data-sovereignty constraints that prevent cloud DR.</li>
+      </ul>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>NC2 is one of the most compelling Nutanix-specific value propositions in 2026. For mid-market customers without a second datacenter, the conversation goes: <em>"You don't need to build a DR datacenter. We can replicate to NC2 in AWS or Azure, run your DR site as cloud capacity, and only pay for it during DR testing or actual failover. The economics often beat building physical DR by a wide margin, and the architecture is the same Nutanix platform you're already running on-prem."</em> When discovery surfaces "we don't have a second datacenter and our DR is paper-only," NC2 is the answer that turns that conversation around.</p>
+      </aside>
+
+      <h3 id="diagram-failover">Diagram: Recovery Plan Failover Flow</h3>
+      <figure class="diagram" id="recovery-plan-failover">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">NCM-MCI</span>
+        </div>
+        <svg id="diagram-failover-svg" viewBox="0 0 1000 580" role="img" aria-label="Site A primary fails, time axis shows the Recovery Plan execution sequence: detect, pre-check, power on VMs in startup-order groups (DB, App, Web), apply IP remap and DNS update, run post-checks, and finally service restored at Site B."></svg>
+        <figcaption>A primary-site loss triggers Recovery Plan execution at the DR site. VMs come up in the right order with the right network mappings. Test failovers can run this whole flow into an isolated network, without disrupting production.</figcaption>
+      </figure>
+
+      <h3 id="test-failover">Test Failover: The Feature That Customers Actually Use</h3>
+      <p>The most important DR feature is the one customers neglect: testing.</p>
+      <p>Recovery Plans support <strong>test failover</strong>: run the entire failover sequence into an isolated network at the DR site, validate that everything comes up correctly, and tear down without affecting production. The test creates an isolated VLAN at the DR site, brings VMs up there, runs the configured checks, and reports.</p>
+      <p><strong>Why this matters:</strong> DR runbooks that have not been tested in 12+ months frequently do not work when a real failover comes. The state of the world changes: VMs are added, network configurations drift, IP allocations change, application dependencies shift. The runbook decays.</p>
+      <p><strong>Recommended customer cadence:</strong> quarterly test failovers minimum, monthly for critical workloads. The test takes 1-2 hours typically. The customer's DR program is real if and only if they actually run these.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Test failover is one of the durable BlueAlly value propositions. <em>"Building DR is necessary; testing DR is what proves it works. Recovery Plans make test failover a 1-2-hour quarterly exercise instead of a multi-day fire drill that disrupts production. When you run your first quarterly test and find three things that don't work the way the runbook said, you'll know the platform paid for itself."</em> That sentence wins customers who have been burned by untested DR.</p>
+      </aside>
+
+      <h3 id="gaps">What DR Genuinely Lacks vs Mature SRM Deployments</h3>
+      <p>Honest gap list. Read it twice.</p>
+      <ol>
+        <li><strong>Some advanced runbook customization.</strong> SRM has 15+ years of accumulated capabilities for very complex orchestration patterns (cross-vendor app integration, complex pre-checks, vendor-specific scripted callouts). Recovery Plans handles the typical cases well; some advanced edge cases require scripted extensions.</li>
+        <li><strong>Cross-vendor replication source flexibility.</strong> SRM can use array-based replication from a wide range of arrays. Recovery Plans is tied to Nutanix's native replication. For customers who want to keep their array's replication and orchestrate failover via SRM, that's a reason to keep SRM-on-ESXi-on-Nutanix.</li>
+        <li><strong>Reporting depth.</strong> SRM's reporting around DR readiness, test history, and compliance posture has had more time to mature. Prism's reporting is increasingly capable but younger.</li>
+        <li><strong>Cross-environment scope.</strong> SRM deployments often span heterogeneous infrastructure that includes non-Nutanix elements; Recovery Plans is Nutanix-centric.</li>
+      </ol>
+      <p>For typical mid-market and enterprise general-purpose DR requirements, none of these are deal-breakers. For customers with established SRM and complex multi-vendor DR, the coexistence pattern is the durable answer.</p>
+
+      <h3 id="strengths">What Nutanix DR Has That SRM Does Not</h3>
+      <ol>
+        <li><strong>Integrated platform.</strong> DR is part of the platform, not a separate purchased product.</li>
+        <li><strong>DSF-native snapshots underneath.</strong> No I/O penalty, no consolidation, instant.</li>
+        <li><strong>Category-driven protection policies.</strong> New VMs auto-enroll based on tagging.</li>
+        <li><strong>NC2 cloud DR option.</strong> SRM has cloud-DR via VMware Cloud, but the integration is more recent and the licensing is separate.</li>
+        <li><strong>Single management plane.</strong> Replication, recovery plans, and DR test in the same UI as compute and storage.</li>
+        <li><strong>Bundled licensing for basic capabilities.</strong> Recovery Plans and basic replication included; advanced features in NCM tiers.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Build a Protection Policy and Recovery Plan</h2>
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">~3 hours · 3-node CE + Prism Central</span></div>
+        <p>Multi-cluster DR scenarios require two clusters; for CE, this lab focuses on single-cluster snapshot/policy operations and conceptual coverage of multi-cluster.</p>
+      </aside>
+
+      <ol>
+        <li><strong>Take a manual VM snapshot.</strong> From Prism Central, select a VM, choose "Take Snapshot." Note the type options: crash-consistent (default) or application-consistent (requires NGT in the guest, which lab VMs may not have).</li>
+        <li><strong>Install NGT on a Linux VM.</strong> SSH in, then mount and install:
+          <pre>sudo mount /dev/cdrom /mnt/cdrom
+sudo /mnt/cdrom/installer/linux/install_ngt.py</pre>
+        </li>
+        <li><strong>Take an application-consistent snapshot.</strong> With NGT installed, the snapshot UI offers application-consistent. Take one. Verify it succeeds.</li>
+        <li><strong>Create categories</strong> if you haven't already (Module 4 lab):
+          <ul>
+            <li>Key: <code>Environment</code>, Values: <code>Production</code>, <code>Development</code>, <code>Test</code></li>
+            <li>Key: <code>BackupTier</code>, Values: <code>Gold</code>, <code>Silver</code>, <code>Bronze</code></li>
+          </ul>
+        </li>
+        <li><strong>Tag VMs with categories.</strong> Apply <code>Environment: Production</code> and <code>BackupTier: Gold</code> to your lab VM.</li>
+        <li><strong>Create a Protection Policy</strong> in Prism Central: Name <code>Lab-Production-Policy</code>, match VMs with category <code>Environment: Production</code>, snapshot every 1 hour retain 7 days, replication disabled (single-cluster lab) or to a second cluster if available.</li>
+        <li><strong>Verify policy enrollment.</strong> Confirm the VM is automatically included based on category.</li>
+        <li><strong>Tag a second VM with <code>Environment: Production</code>.</strong> Confirm it auto-enrolls without manual addition.</li>
+        <li><strong>(Multi-cluster, if available)</strong> Pair two clusters. Configure replication. Validate snapshots transfer.</li>
+        <li><strong>Create a Recovery Plan.</strong> Recovery Plans &gt; Create. Define name, source/target, VMs (via category), startup order (DB &gt; App &gt; Web), network mapping, optional scripts.</li>
+        <li><strong>Run a test failover</strong> (multi-cluster, optional). The platform spins up VMs at the DR site in an isolated network, runs your defined checks, and reports.</li>
+        <li><strong>Inspect Curator's role in protection.</strong> From a CVM:
+          <pre>curator_cli get_curator_state</pre>
+          Note the protection-related background tasks: snapshot reclamation, replication queue management, retention enforcement.
+        </li>
+      </ol>
+
+      <p><strong>What this teaches you:</strong></p>
+      <ul>
+        <li>The snapshot-consistency distinction in practice.</li>
+        <li>Category-driven Protection Policy enrollment.</li>
+        <li>Recovery Plan structure and configuration.</li>
+        <li>The CLI surface for protection diagnostics.</li>
+      </ul>
+      <p><strong>Customer-demo angle:</strong> Steps 4-7 are the customer-demo flow for category-driven protection. Show a customer how tagging a VM with <code>Environment: Production</code> automatically enrolls it. The "no manual addition" insight lands viscerally.</p>
+
+      <hr/>
+
+      <section class="practice">
+        <h2 id="practice-questions">Practice Questions</h2>
+        <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions. Read each, answer in your head, then click to reveal.</p>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">What is required for an application-consistent snapshot of a Windows VM running on AHV?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Nothing additional; all snapshots are application-consistent by default</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>NGT (Nutanix Guest Tools) must be installed in the guest, and the application must support VSS</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>The VM must be powered off during the snapshot</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>An external backup product must orchestrate the snapshot</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Application-consistent snapshots on Windows require VSS coordination, which NGT provides. The application must be VSS-aware (most major applications including SQL Server, Exchange, AD are).</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Default snapshots are crash-consistent; application-consistent requires NGT.</li>
+              <li>C) Power-off would be cold backup, not application-consistent in the live sense.</li>
+              <li>D) NGT and the platform handle this natively; external products may use the same NGT integration but are not required.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is the default-mental-model trap. Snapshot consistency is a configuration, not a default behavior.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCP-MCI</span></div>
+          <p class="qprompt">Which of the following correctly describes the relationship between Protection Domains and Protection Policies?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Protection Policies replaced Protection Domains; PDs are no longer supported</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Protection Domains are configured in Prism Element with manual VM membership; Protection Policies are configured in Prism Central with category-driven membership; both are supported and interoperate</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>They are the same construct under different names</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Protection Domains are for snapshots; Protection Policies are for replication</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>PDs (PE-based, manual) and Policies (PC-based, category-driven) are both supported. Policies are recommended for new deployments; PDs continue to work for existing deployments.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) PDs continue to be supported.</li>
+              <li>C) They are distinct constructs with different membership models and management surfaces.</li>
+              <li>D) Both can do snapshots and replication.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is tempting if you assume "newer must have replaced older." Nutanix maintains both for compatibility with existing deployments.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">What is the minimum typical RPO for Async replication?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>0 (synchronous)</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>20 seconds</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>1 hour, with 15-minute possible in some configurations</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>24 hours</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Async replication's typical minimum RPO is 1 hour, configurable down to 15 minutes in some scenarios. Async is the default for general-purpose DR.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) That is Metro Availability.</li>
+              <li>B) That is NearSync's territory.</li>
+              <li>D) Async can certainly do 24 hours, but the minimum is much shorter.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>B is the seductive answer for someone who confuses Async and NearSync. Memorize: Async = 1 hour typical (15 min minimum); NearSync = 20 seconds to 15 minutes; Metro = 0.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCP-MCI · NCP-NS</span></div>
+          <p class="qprompt">Metro Availability requires which of the following?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>WAN-distance separation between sites for geographic resilience</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Sub-5 ms RTT between sites and a Witness VM at a third site</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Identical hardware at both sites</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>NC2 (Nutanix Cloud Clusters) deployment</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Metro is synchronous, so it requires very low latency (typically &lt;5 ms RTT, metro-area distance). Witness VM at a third site provides quorum during partition events.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) WAN distance is incompatible with synchronous replication; Metro is metro-area only.</li>
+              <li>C) Hardware compatibility is general but not specifically a Metro requirement.</li>
+              <li>D) NC2 is unrelated to the Metro requirement.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects a misunderstanding of Metro's purpose. Metro is for short-distance, zero-RPO requirements. Long-distance DR uses Async or NearSync.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">A customer needs DR with 1-minute RPO for a critical SQL Server. Which replication mode should you recommend?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Async with frequent intervals</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>NearSync replication</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Metro Availability</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Manual snapshot copying every minute</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>NearSync's RPO range (20 seconds to 15 minutes) fits the 1-minute target. It does not require Metro's strict latency budget but provides much tighter RPO than Async.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Async typically tops out at 15-minute minimum RPO; 1-minute is below its operational range.</li>
+              <li>C) Metro provides zero RPO but requires &lt;5 ms latency, which is not specified or required for 1-minute RPO. Metro is overkill and constrains the deployment.</li>
+              <li>D) Not a real option for any production deployment.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>C is the temptation to "use the strongest option." Metro's constraints (latency, witness, cost) are real and unwarranted for a 1-minute RPO that NearSync can meet.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer running SRM on ESXi for DR is moving to Nutanix. What is the recommended approach?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Force migration to Recovery Plans on day one</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Continue running SRM on ESXi-on-Nutanix; over time, evaluate migration to Recovery Plans for AHV-targeted workloads or new deployments; coexist for the foreseeable future if SRM functionality is integral</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Replace SRM with PowerShell scripts</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Use Recovery Plans to manage SRM remotely</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>This is the operationally correct approach. SRM continues to work on ESXi-on-Nutanix. Recovery Plans is recommended for AHV deployments and new workloads. Migration is a project, not a single event.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Forced migration ignores the customer's installed base and operational continuity.</li>
+              <li>C) Scripts are not a replacement for an orchestration product.</li>
+              <li>D) Recovery Plans does not manage SRM.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects the impulse to consolidate immediately. The right answer respects existing investment and migrates at the customer's pace.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">What does NC2 provide for DR scenarios?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A free DR site with no operational cost</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>The ability to run Nutanix on AWS or Azure bare-metal infrastructure, replicate from on-premises Nutanix to NC2, and fail over to cloud capacity without building a second datacenter</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A backup software product</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A vSphere Replication alternative</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>NC2 (Nutanix Cloud Clusters) runs the Nutanix platform on cloud bare-metal hardware (AWS or Azure). It enables DR-to-cloud without a second physical datacenter, with the same operational platform on both sides.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) NC2 has real costs (cloud bare-metal pricing, bandwidth); not free.</li>
+              <li>C) NC2 is not a backup product; it is infrastructure.</li>
+              <li>D) NC2 is the destination for replication, not a replication product.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects a marketing-flavored mental model. NC2 has costs but the economics often beat building physical DR.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">NCP-MCI · NCM-MCI · sales-relevant</span></div>
+          <p class="qprompt">A customer has 200 VMs: 30 Tier-1 databases (5-min RPO, 30-min RTO), 70 Tier-2 apps (1-hour RPO, 2-hour RTO), 100 Tier-3 general (4-hour RPO, 4-hour RTO). What replication architecture do you recommend?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Metro for everything</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>NearSync for Tier-1, Async (1-hour interval) for Tier-2, Async (4-hour interval) for Tier-3, with appropriate Recovery Plans for each tier</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Manual snapshots for all tiers</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>NC2 only</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Match the replication mode to the RPO target. NearSync handles 5-minute RPO for Tier-1. Async handles the longer RPOs for Tier-2 and Tier-3 with appropriate intervals. Recovery Plans orchestrate failover for each tier.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Metro is overkill (and infeasible at WAN distances) for most workloads. Tier-3's 4-hour RPO does not need Metro.</li>
+              <li>C) Manual snapshots are not a DR strategy.</li>
+              <li>D) NC2 is a destination option, not a replication mode answer.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A demonstrates the "use the strongest option" failure mode. Right-sizing to RPO/RTO requirements is the SA-chair discipline.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCP-MCI · NCM-MCI</span></div>
+          <p class="qprompt">Which of the following is correct about test failover in Recovery Plans?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Test failover is impossible in Nutanix; only real failovers can be performed</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Test failover runs the failover sequence into an isolated network at the DR site, allowing validation without disrupting production; teardown returns the cluster to normal protection state</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Test failover requires powering down the production VMs</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Test failover is the same as a real failover from a system perspective</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>This is exactly what test failover is designed for: validate the runbook, in an isolated network, without affecting production. The platform isolates DR-site VMs from the production network during the test.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Test failover is a core platform feature.</li>
+              <li>C) Production VMs continue running normally; the test happens at the DR site.</li>
+              <li>D) Test and real failovers differ specifically in network isolation and the post-test teardown step.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>C is the misconception that any DR action affects production. Recovery Plans were designed to enable testing without disruption.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">Which DR feature is NOT included in Nutanix's baseline platform (without Pro / Ultimate NCM tiers)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Native DSF snapshots</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Async replication via Protection Domains</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Recovery Plans / NDR (Leap) orchestration with advanced runbook features</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Crash-consistent snapshot scheduling</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Recovery Plans / NDR with advanced orchestration features sits at NCM Pro tier or higher. Basic replication, snapshots, and Protection Domains are part of the platform baseline.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) DSF snapshots are core to the platform.</li>
+              <li>B) Async replication via PDs has been included for many AOS versions.</li>
+              <li>D) Snapshot scheduling is included.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and B sound like they should be tier-gated, but they are platform baseline. Recovery Plans' advanced features are the licensed add-on.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question ncx" data-correct="ncx">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · NCM-MCI prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style design question. There is no single correct answer; there are stronger and weaker frames. Write your reasoning, then click to compare against the strong-answer outline.</p>
+          <div class="scenario">
+            <p>A customer is consolidating their VMware environment onto Nutanix. They have:</p>
+            <ul>
+              <li>Two physical datacenters in the same metro area (50 km apart, 2-3 ms RTT, 10 GbE link)</li>
+              <li>One co-located DR datacenter 800 km away (35-40 ms RTT, 1 Gbps WAN)</li>
+              <li>1,200 VMs total: ~50 mission-critical (zero-RPO, financial systems), ~250 Tier-1 production (5-15 min RPO, mostly databases), ~900 general-purpose (4-hour RPO acceptable)</li>
+              <li>Existing investment in SRM with about 300 VMs orchestrated through it</li>
+              <li>Compliance mandate for monthly DR test attestations</li>
+            </ul>
+            <p>Design the data protection architecture: replication mode per tier, Protection Policy structure, Recovery Plan design, the SRM transition approach, DR test cadence.</p>
+          </div>
+          <textarea placeholder="Walk through your design. Cover replication architecture, policy design, orchestration, transition, operational rhythm. Identify what you still need to know."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Multi-site architecture.</strong> Datacenters A and B (metro pair): Metro Availability between them for the 50 mission-critical VMs (zero RPO, 2-3 ms RTT well within Metro's 5 ms budget). Witness VM hosted at the third (DR) datacenter to provide quorum for the metro pair. DR datacenter (800 km): Async replication target for all tiers, NearSync for Tier-1 if bandwidth permits.</li>
+              <li><strong>Protection Policy structure (in Prism Central).</strong> Policy 1 "Mission-Critical-Metro": match VMs with <code>Tier: Mission-Critical</code>, Metro replication between A and B, hourly snapshots retained 14 days, replication to remote DR via Async. Policy 2 "Tier1-NearSync": match <code>Tier: Tier1</code>, NearSync to DR datacenter (verify capacity), 5-minute RPO target. Policy 3 "GeneralPurpose-Async": match <code>Tier: General</code>, Async replication to DR at 4-hour interval.</li>
+              <li><strong>Recovery Plans.</strong> One per tier, defining startup order (DB &gt; App &gt; Web), network mappings (DC A VLANs to DR DC VLANs), IP remapping or DHCP reassignment, pre/post checks. Test cadence: monthly for mission-critical (compliance-driven), quarterly for Tier-1, semi-annual for general-purpose.</li>
+              <li><strong>SRM transition.</strong> SRM continues on ESXi-on-Nutanix for the 300 currently-orchestrated VMs (no forced migration). As workloads migrate to AHV they move to Recovery Plans. Plan a 12-18 month phased transition, prioritizing simpler workloads first.</li>
+              <li><strong>Bandwidth math.</strong> Verify 1 Gbps WAN supports sustained replication for the workload mix. NearSync for 250 VMs requires careful sizing; if bandwidth is constrained, drop to Async with 15-min intervals for Tier-1.</li>
+              <li><strong>DR test cadence.</strong> Monthly mission-critical full failover (compliance attestation), quarterly Tier-1, semi-annual general-purpose (rotating subset). Document each result in the audit log.</li>
+              <li><strong>Operational considerations.</strong> Witness VM availability is critical. Categories drive policy enrollment; new VMs must be properly tagged at creation. Use Prism Central RBAC to give the DR team appropriate access without broader admin rights.</li>
+              <li><strong>What you still need to know.</strong> WAN bandwidth profile (full 1 Gbps available, or shared?). Specific compliance framework (PCI DSS? SOX?). Application dependencies for startup order. SRM's current runbook complexity (scripted callouts that don't translate cleanly?). Should NC2 be considered as an additional or alternative DR option?</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Defaulting to Metro for all mission-critical without acknowledging Witness VM placement.</li>
+              <li>Forgetting to plan Tier-1 NearSync bandwidth feasibility on a 1 Gbps WAN.</li>
+              <li>Forced SRM migration timeline rather than coexistence.</li>
+              <li>Missing the test cadence (compliance-driven monthly is the customer's specific requirement).</li>
+              <li>Not naming category hygiene as an operational requirement.</li>
+            </ul>
+            <h4 class="trap">Why this matters for NCX</h4>
+            <p>NCX panels probe multi-site DR designs. The right answer integrates replication topology, orchestration, transition strategy, operational rhythm, and identifies the constraints that need validation. Pure-feature answers fail.</p>
+          </div>
+        </div>
+
+        <div class="question ncx" data-correct="ncx">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style architectural defense. Respond to the customer's senior DR architect. He is making a real argument; address it.</p>
+          <div class="scenario">
+            <p>You are in front of a customer's senior DR architect, who has run SRM-based DR for 14 years. He says:</p>
+            <blockquote>"SRM has 14 years of runbook customization, deep VMware integration, mature reporting, and a clear escalation path with VMware. Recovery Plans is younger, less feature-rich, and tied to Nutanix. Why would I move my proven DR practice to a less mature product?"</blockquote>
+          </div>
+          <textarea placeholder="Write your response. Acknowledge what he's right about. Reframe what he's wrong about. Offer a path."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge SRM's maturity directly.</strong> SRM is mature. Recovery Plans is younger. Pretending otherwise loses credibility.</li>
+              <li><strong>Reframe the comparison precisely.</strong> Maturity vs integration. SRM's maturity is real. Recovery Plans' integration is also real: part of the platform, no separate purchase. The comparison is "mature standalone vs integrated platform feature," not "mature vs less mature in isolation."</li>
+              <li><strong>Runbook customization.</strong> SRM has more advanced scripted-callout customization. For typical enterprise DR, this is rarely the differentiator. Walk through what customization the customer actually uses; if it is simple ordering and IP remapping, Recovery Plans handles it; if there are complex scripted callouts, map those carefully.</li>
+              <li><strong>VMware integration.</strong> SRM's tight VMware integration is a feature when the entire stack is VMware. As workloads move to AHV the integration value diminishes (the workloads are no longer VMware). For ESXi-on-Nutanix, SRM continues to work; you don't lose the integration where it matters.</li>
+              <li><strong>Reporting maturity.</strong> SRM has more reporting depth. Prism's DR reporting is improving. For compliance-driven reporting, both can typically meet requirements; for nuanced operational dashboards, SRM has more polish today.</li>
+              <li><strong>Escalation path with vendor.</strong> Real. VMware's DR support is mature; Nutanix's is also mature. Evaluate via reference customers.</li>
+              <li><strong>Reframe the migration question.</strong> "You don't have to migrate. SRM continues to work on ESXi-on-Nutanix; your existing investment is preserved. New workloads on AHV use Recovery Plans. Evaluate Recovery Plans on its merits over time, not under migration pressure."</li>
+              <li><strong>Concrete validation step.</strong> "Run a test failover with Recovery Plans on a non-critical AHV workload. Compare the experience to SRM. Decision will be informed by hands-on, not feature-comparison decks."</li>
+              <li><strong>Close with the durable framing.</strong> "I am not here to replace what works. The right answer is probably hybrid for the next 12-24 months: SRM continues to handle what it orchestrates today; Recovery Plans handles new AHV workloads."</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Claiming Recovery Plans matches SRM in every dimension.</li>
+              <li>Dismissing the architect's 14 years as outdated.</li>
+              <li>Forcing a migration timeline.</li>
+              <li>Not naming the coexistence pattern as the durable answer.</li>
+              <li>Not offering the hands-on evaluation step.</li>
+            </ul>
+            <h4 class="trap">Why this matters for NCX</h4>
+            <p>Senior DR architects with deep SRM history are common in enterprise. The skill being tested is acknowledging real expertise, naming real gaps, and reframing to coexistence rather than forced migration. This is also the disposition that wins enterprise DR conversations.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can distinguish crash-consistent from application-consistent snapshots and know when each is appropriate. You know NGT's role in providing VSS coordination on Windows.</p>
+      <p>You know the difference between Protection Domains (legacy, Prism Element, manual membership) and Protection Policies (modern, Prism Central, category-driven). You can recommend Policies for new deployments while respecting existing PDs.</p>
+      <p>You have the three replication modes mapped to RPO and operational characteristics: Async (1-hour typical, WAN-friendly, low overhead), NearSync (sub-15-minute RPO, low-latency required, moderate-high overhead), Metro (zero RPO, &lt;5 ms RTT, witness required, highest cost).</p>
+      <p>You can map application tiers to the right replication mode in 15 minutes. The matrix is in your hands.</p>
+      <p>You have Recovery Plans (Nutanix Disaster Recovery, formerly Leap) as the SRM equivalent: orchestrated failover, network mapping, IP remapping, startup order, test failover, all integrated into Prism Central.</p>
+      <p>You can compare Recovery Plans to SRM honestly: SRM is more mature for advanced runbook customization; Recovery Plans is integrated and capable for typical use; coexistence is the durable answer for established SRM customers.</p>
+      <p>You have NC2 as the cloud DR option that eliminates the need for a second datacenter. The economics often beat physical DR for mid-market customers.</p>
+      <p>You know test failover is the feature customers neglect and the durable BlueAlly value: quarterly tests in 1-2 hours each instead of multi-day fire drills with disrupted production.</p>
+      <p>You are now ready for the unified storage layer. Module 8 covers Files, Objects, and Volumes: storage services that sit on top of DSF and replace separate file storage, object storage, and iSCSI block targets the customer is currently buying as separate appliances.</p>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p style="margin: 8px 0 14px; color: var(--text-secondary); font-size: 13px;">Authoritative sources verified during the technical review pass on this module. RPO numbers, latency thresholds, and product-naming history are validated against current Nutanix documentation; reverify before quoting specifics in a customer architecture proposal.</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/4e-book-of-aos-backup-dr.html"><strong>Nutanix Bible — AOS Backup and DR</strong></a>. Authoritative source for snapshot semantics, replication modes (Async, NearSync, Metro), and the LWS / LWS-store architecture.</li>
+          <li><a href="https://www.nutanixbible.com/13a-book-of-dr-services.html"><strong>Nutanix Bible — Disaster Recovery Services</strong></a>. Recovery Plans, Protection Policies, runbook orchestration.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:nearsync-replication-powered-by-lightweight-snapshots.html"><strong>TN-2027 — NearSync replication powered by Light-Weight Snapshots</strong></a>. Authoritative NearSync technical reference; confirms 20-second RPO floor and LWS-on-SSD storage detail.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:metro-availability.html"><strong>TN-2027 — Metro Availability</strong></a>. Metro Availability technical reference.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2009-Metro-Availability:BP-2009-Metro-Availability"><strong>BP-2009 Metro Availability Best Practices</strong></a>. 5 ms RTT ceiling, witness placement, failure-handling configurations.</li>
+          <li><a href="https://www.rack2cloud.com/physics-disconnected-cloud-microbursts-metro-risk/"><strong>Metro Cluster Latency: Microbursts and RTT Risk</strong></a>. Production design guidance: ≤3.5 ms RTT target under load with 5 ms as ceiling, P99.9 vs average latency considerations.</li>
+          <li><a href="https://next.nutanix.com/how-it-works-22/migrating-guest-vm-from-a-protection-domain-to-a-protection-policy-39916"><strong>Migrating a Guest VM from a Protection Domain to a Protection Policy</strong></a> (Nutanix Community). PD-to-Policy migration workflow and disruption considerations.</li>
+          <li><a href="https://sostechblog.com/2024/12/22/disaster-recovery-with-nutanix-aos-6-10-and-prism-central-2024-2-pt-1/"><strong>Disaster Recovery with Nutanix AOS 6.10 and Prism Central 2024.2</strong></a> (SOSTechBlog). Walkthrough of the current Nutanix Disaster Recovery (formerly Leap) UX.</li>
+          <li><a href="https://www.nutanix.com/en_au/blog/aos-5-17-is-here"><strong>AOS 5.17: NearSync 20-second RPO announcement</strong></a>. Original announcement of the 20-second NearSync RPO milestone.</li>
+          <li><a href="https://www.nutanix.com/products/nutanix-cloud-clusters/aws"><strong>NC2 on AWS — Product page</strong></a>. Cloud DR architecture reference for the NC2 section.</li>
+          <li><a href="https://portal.nutanix.com/docs/Prism-Element-Data-Protection-Guide-v7_3:Prism-Element-Data-Protection-Guide-v7_3"><strong>Prism Element Data Protection Guide v7.3</strong></a>. Current Protection Domain documentation in Prism Element.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Glossary:</strong> Crash-consistent · Application-consistent · Protection Domain · Protection Policy · Async Replication · NearSync · Metro Availability · LWS · Recovery Plan · Witness VM · NC2 · SRM · RPO · RTO <span style="color:var(--text-tertiary)">(Appendix A coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Replication Modes · DR Orchestration · Cloud DR <span style="color:var(--text-tertiary)">(Appendix B coming)</span></li>
+          <li><strong>Objections:</strong> #26 "What about SRM?" · #27 "We have array-based replication" · #28 "DR is too complex to migrate" · #29 "Cloud DR isn't for us" · #30 "Test failover is too disruptive" <span style="color:var(--text-tertiary)">(Appendix D coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Q-DR-01 RPO/RTO targets per tier · Q-DR-02 existing DR infrastructure · Q-DR-03 SRM footprint · Q-DR-04 DR test cadence and history · Q-DR-05 compliance / regulatory drivers <span style="color:var(--text-tertiary)">(Appendix E coming)</span></li>
+          <li><strong>Sizing Rules:</strong> Replication bandwidth math · NearSync cluster overhead · Metro witness placement <span style="color:var(--text-tertiary)">(Appendix F coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../06-networking-flow/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 6: Networking and Microsegmentation</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 8: Unified Storage (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>07-data-protection</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m7:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram color palette + helpers
+    const C = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+      green: '#34d399', greenFill: 'rgba(52,211,153,0.12)',
+      purple: '#c084fc', purpleFill: 'rgba(192,132,252,0.12)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opt = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opt.anchor) t.setAttribute('text-anchor', opt.anchor);
+      t.setAttribute('font-family', opt.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opt.size || 12);
+      if (opt.weight) t.setAttribute('font-weight', opt.weight);
+      if (opt.spacing) t.setAttribute('letter-spacing', opt.spacing);
+      if (opt.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opt.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+    function cluster(svg, rc, x, y, label, fillColor) {
+      // small two-node cluster glyph
+      svg.appendChild(rc.rectangle(x, y, 90, 50, opts(C.compute, fillColor || C.computeFill)));
+      svg.appendChild(rc.rectangle(x + 100, y, 90, 50, opts(C.compute, fillColor || C.computeFill)));
+      // CVM bands
+      svg.appendChild(rc.rectangle(x + 6, y + 6, 78, 10, opts(C.cvm, C.cvmFill, 'solid')));
+      svg.appendChild(rc.rectangle(x + 106, y + 6, 78, 10, opts(C.cvm, C.cvmFill, 'solid')));
+      txt(svg, x + 95, y - 6, label, { anchor: 'middle', size: 11, mono: true, weight: '600', fill: C.label });
+    }
+
+    // ===== Diagram 1: Replication Topologies (3 panels) =====
+    (function drawReplicationTopologies() {
+      const svg = document.getElementById('diagram-replication-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, 'ASYNC · NEARSYNC · METRO — RPO, LATENCY, OVERHEAD', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // ---- Panel 1: ASYNC ----
+      const px = 30, py = 60, pw = 300, ph = 460;
+      svg.appendChild(rc.rectangle(px, py, pw, ph, opts(C.vip, 'rgba(251,191,36,0.06)', 'solid')));
+      txt(svg, px + pw/2, py + 26, 'ASYNC', { anchor: 'middle', size: 16, weight: '700', fill: C.vip, spacing: '0.10em' });
+      txt(svg, px + pw/2, py + 44, 'GENERAL-PURPOSE DR', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      cluster(svg, rc, px + 18, py + 80, 'SITE A · primary');
+      cluster(svg, rc, px + 18, py + 180, 'SITE B · DR');
+      // dashed long arrow between clusters with snapshot capsules
+      const aArrow = rc.path(`M ${px+150} ${py+135} L ${px+150} ${py+175}`, { stroke: C.vip, strokeWidth: 2, roughness: 1.6, strokeLineDash: [10, 8] });
+      svg.appendChild(aArrow);
+      // snapshot clock capsules
+      [115, 145, 175].forEach((sy, i) => {
+        svg.appendChild(rc.ellipse(px + 230, py + sy, 26, 16, opts(C.vip, C.vipFill, 'solid')));
+        txt(svg, px + 230, py + sy + 4, '⏱', { anchor: 'middle', size: 11, fill: C.vip });
+      });
+      txt(svg, px + 270, py + 145, 'WAN', { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.vip });
+      txt(svg, px + 270, py + 158, 'any latency', { anchor: 'middle', size: 9, mono: true, fill: C.ink });
+      // characteristics
+      const ay = py + 270;
+      svg.appendChild(rc.rectangle(px + 14, ay, pw - 28, 170, opts(C.fabric, 'rgba(0,212,255,0.04)', 'solid')));
+      txt(svg, px + 24, ay + 22, 'RPO', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, px + 80, ay + 22, '1 hr typical (15 min min)', { size: 11, fill: C.label });
+      txt(svg, px + 24, ay + 46, 'LATENCY', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, px + 80, ay + 46, 'any · works over WAN', { size: 11, fill: C.label });
+      txt(svg, px + 24, ay + 70, 'BANDWIDTH', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, px + 110, ay + 70, 'change-rate prop.', { size: 11, fill: C.label });
+      txt(svg, px + 24, ay + 94, 'OVERHEAD', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, px + 100, ay + 94, 'low', { size: 11, fill: C.green, weight: '600' });
+      txt(svg, px + 24, ay + 124, 'USE FOR', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, px + 24, ay + 144, 'general-purpose DR, ROBO,', { size: 11, fill: C.label });
+      txt(svg, px + 24, ay + 158, 'geographic distance', { size: 11, fill: C.label });
+
+      // ---- Panel 2: NEARSYNC ----
+      const qx = 350;
+      svg.appendChild(rc.rectangle(qx, py, pw, ph, opts(C.fabric, 'rgba(0,212,255,0.06)', 'solid')));
+      txt(svg, qx + pw/2, py + 26, 'NEARSYNC', { anchor: 'middle', size: 16, weight: '700', fill: C.fabric, spacing: '0.10em' });
+      txt(svg, qx + pw/2, py + 44, 'TIER-1 DATABASES · LWS', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      cluster(svg, rc, qx + 18, py + 80, 'SITE A · primary');
+      cluster(svg, rc, qx + 18, py + 180, 'SITE B · DR');
+      const nArrow = rc.path(`M ${qx+150} ${py+135} L ${qx+150} ${py+175}`, { stroke: C.fabric, strokeWidth: 2.4, roughness: 1.4, strokeLineDash: [3, 5] });
+      svg.appendChild(nArrow);
+      // many small dots = micro-snapshots
+      for (let i = 0; i < 8; i++) {
+        svg.appendChild(rc.circle(qx + 230, py + 110 + i * 8, 6, opts(C.fabric, C.fabricFill, 'solid')));
+      }
+      txt(svg, qx + 270, py + 145, '<5 ms', { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.fabric });
+      txt(svg, qx + 270, py + 158, 'low-latency net', { anchor: 'middle', size: 9, mono: true, fill: C.ink });
+      const ny = py + 270;
+      svg.appendChild(rc.rectangle(qx + 14, ny, pw - 28, 170, opts(C.fabric, 'rgba(0,212,255,0.04)', 'solid')));
+      txt(svg, qx + 24, ny + 22, 'RPO', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, qx + 80, ny + 22, '20 s – 15 min commonly', { size: 11, fill: C.label });
+      txt(svg, qx + 24, ny + 46, 'LATENCY', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, qx + 80, ny + 46, '<5 ms RTT typical', { size: 11, fill: C.label });
+      txt(svg, qx + 24, ny + 70, 'BANDWIDTH', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, qx + 110, ny + 70, 'continuous, write-rate', { size: 11, fill: C.label });
+      txt(svg, qx + 24, ny + 94, 'OVERHEAD', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, qx + 100, ny + 94, 'moderate–high', { size: 11, fill: C.vip, weight: '600' });
+      txt(svg, qx + 24, ny + 124, 'USE FOR', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, qx + 24, ny + 144, 'Tier-1 DBs, sub-15 min RPO,', { size: 11, fill: C.label });
+      txt(svg, qx + 24, ny + 158, 'compliance windows', { size: 11, fill: C.label });
+
+      // ---- Panel 3: METRO ----
+      const rx = 670;
+      svg.appendChild(rc.rectangle(rx, py, pw, ph, opts(C.green, 'rgba(52,211,153,0.06)', 'solid')));
+      txt(svg, rx + pw/2, py + 26, 'METRO AVAILABILITY', { anchor: 'middle', size: 16, weight: '700', fill: C.green, spacing: '0.10em' });
+      txt(svg, rx + pw/2, py + 44, 'SYNCHRONOUS · ZERO RPO', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      cluster(svg, rc, rx + 18, py + 80, 'SITE A · active');
+      cluster(svg, rc, rx + 18, py + 180, 'SITE B · active/standby');
+      // tight loop synchronous arrows
+      const m1 = rc.path(`M ${rx+108} ${py+135} L ${rx+108} ${py+175}`, { stroke: C.green, strokeWidth: 2.4, roughness: 0.8 });
+      const m2 = rc.path(`M ${rx+170} ${py+175} L ${rx+170} ${py+135}`, { stroke: C.green, strokeWidth: 2.4, roughness: 0.8 });
+      svg.appendChild(m1); svg.appendChild(m2);
+      txt(svg, rx + 232, py + 145, 'sync', { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.green });
+      txt(svg, rx + 232, py + 158, '<5 ms RTT', { anchor: 'middle', size: 9, mono: true, fill: C.ink });
+      // witness icon - third site
+      svg.appendChild(rc.rectangle(rx + 110, py + 248, 80, 18, opts(C.purple, C.purpleFill, 'solid')));
+      txt(svg, rx + 150, py + 261, 'WITNESS · 3rd site', { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.purple });
+      // dashed lines from witness to clusters
+      const wL = rc.path(`M ${rx+128} ${py+248} L ${rx+74} ${py+220}`, { stroke: C.purple, strokeWidth: 1, roughness: 1.2, strokeLineDash: [3, 4] });
+      const wR = rc.path(`M ${rx+178} ${py+248} L ${rx+200} ${py+220}`, { stroke: C.purple, strokeWidth: 1, roughness: 1.2, strokeLineDash: [3, 4] });
+      svg.appendChild(wL); svg.appendChild(wR);
+
+      const my = py + 290;
+      svg.appendChild(rc.rectangle(rx + 14, my, pw - 28, 150, opts(C.green, 'rgba(52,211,153,0.04)', 'solid')));
+      txt(svg, rx + 24, my + 22, 'RPO', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, rx + 80, my + 22, '0 · zero data loss', { size: 11, fill: C.green, weight: '600' });
+      txt(svg, rx + 24, my + 46, 'LATENCY', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, rx + 80, my + 46, '≤5 ms · metro distance', { size: 11, fill: C.label });
+      txt(svg, rx + 24, my + 70, 'BANDWIDTH', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, rx + 110, my + 70, 'full write throughput', { size: 11, fill: C.label });
+      txt(svg, rx + 24, my + 94, 'OVERHEAD', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, rx + 100, my + 94, 'high', { size: 11, fill: C.ext, weight: '600' });
+      txt(svg, rx + 24, my + 124, 'USE FOR', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, rx + 80, my + 124, 'mission-critical, active-active', { size: 11, fill: C.label });
+    })();
+
+    // ===== Diagram 2: Protection Policies and Categories =====
+    (function drawPolicies() {
+      const svg = document.getElementById('diagram-policies-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'CATEGORY-DRIVEN PROTECTION POLICY · AUTO-ENROLLMENT', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // Left: pool of VMs with assorted tags
+      svg.appendChild(rc.rectangle(40, 60, 240, 380, opts(C.vm, 'rgba(107,122,154,0.04)', 'solid')));
+      txt(svg, 160, 84, 'VM POOL', { anchor: 'middle', size: 13, weight: '700', fill: C.label, spacing: '0.10em' });
+      txt(svg, 160, 102, 'with category tags', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      const vms = [
+        { x: 60, y: 124, tag: 'Env: Prod', match: true },
+        { x: 162, y: 124, tag: 'Env: Prod', match: true },
+        { x: 60, y: 184, tag: 'Env: Dev', match: false },
+        { x: 162, y: 184, tag: 'Env: Prod', match: true },
+        { x: 60, y: 244, tag: '(untagged)', match: false },
+        { x: 162, y: 244, tag: 'Env: Test', match: false },
+        { x: 60, y: 304, tag: 'Env: Prod', match: true },
+        { x: 162, y: 304, tag: 'Env: Dev', match: false },
+        { x: 60, y: 364, tag: '(new)', match: 'new' },
+        { x: 162, y: 364, tag: 'Env: Prod', match: true },
+      ];
+      vms.forEach((v) => {
+        const hue = v.match === true ? C.vip : v.match === 'new' ? C.fabric : C.vm;
+        const fill = v.match === true ? C.vipFill : v.match === 'new' ? C.fabricFill : C.vmFill;
+        svg.appendChild(rc.rectangle(v.x, v.y, 80, 50, opts(hue, fill, 'solid')));
+        txt(svg, v.x + 40, v.y + 20, 'VM', { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.label });
+        txt(svg, v.x + 40, v.y + 36, v.tag, { anchor: 'middle', size: 9, mono: true, fill: hue });
+      });
+
+      // Center: Protection Policy box
+      svg.appendChild(rc.rectangle(330, 110, 320, 220, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 490, 138, 'PROTECTION POLICY', { anchor: 'middle', size: 14, weight: '700', fill: C.vip, spacing: '0.10em' });
+      txt(svg, 490, 156, 'Lab-Production-Policy', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+
+      svg.appendChild(rc.line(348, 174, 632, 174, { stroke: C.vip, roughness: 1.2 }));
+
+      txt(svg, 348, 196, 'MATCH', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, 408, 196, 'category Env: Prod', { size: 11, fill: C.label });
+      txt(svg, 348, 220, 'SNAPSHOT', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, 426, 220, 'hourly · keep 7 d', { size: 11, fill: C.label });
+      txt(svg, 348, 244, 'REPLICATE', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, 422, 244, 'NearSync', { size: 11, fill: C.fabric, weight: '600' });
+      txt(svg, 348, 268, 'DESTINATION', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, 444, 268, 'Site B', { size: 11, fill: C.label });
+      txt(svg, 348, 292, 'STATE', { size: 10, mono: true, fill: C.ink, spacing: '0.10em' });
+      txt(svg, 408, 292, 'enabled', { size: 11, fill: C.green, weight: '600' });
+
+      // Right: Auto-enrollment results
+      svg.appendChild(rc.rectangle(700, 110, 260, 220, opts(C.green, C.greenFill, 'solid')));
+      txt(svg, 830, 138, 'AUTO-PROTECTED', { anchor: 'middle', size: 13, weight: '700', fill: C.green, spacing: '0.10em' });
+      txt(svg, 830, 156, '5 of 10 VMs match', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+      svg.appendChild(rc.line(718, 174, 942, 174, { stroke: C.green, roughness: 1.2 }));
+      txt(svg, 718, 198, '✓ matching VMs auto-included', { size: 11, fill: C.label });
+      txt(svg, 718, 222, '✓ new VMs tagged Env: Prod', { size: 11, fill: C.label });
+      txt(svg, 730, 238, '   auto-enroll within minutes', { size: 11, fill: C.ink });
+      txt(svg, 718, 262, '✓ VMs that lose the tag are', { size: 11, fill: C.label });
+      txt(svg, 730, 278, '   auto-removed from policy', { size: 11, fill: C.ink });
+      txt(svg, 718, 302, '✗ no manual addition required', { size: 11, fill: C.green, weight: '600' });
+
+      // Bottom: Recovery Plan reference
+      svg.appendChild(rc.rectangle(330, 380, 630, 110, opts(C.acro, C.acroFill, 'cross-hatch')));
+      txt(svg, 645, 408, 'RECOVERY PLAN · Production-Failover-Plan', { anchor: 'middle', size: 13, weight: '700', fill: C.acro, spacing: '0.08em' });
+      txt(svg, 645, 428, 'startup order · network mapping · IP remap · pre/post checks · test failover', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+      txt(svg, 645, 460, 'orchestrates failover of category-protected VMs at the DR site', { anchor: 'middle', size: 11, italic: true, fill: C.ink });
+
+      // arrows: VM pool -> Policy (curved/wavy)
+      const a1 = rc.path(`M 280 240 Q 305 220 330 220`, { stroke: C.vip, strokeWidth: 1.6, roughness: 1.6, strokeLineDash: [4, 4] });
+      svg.appendChild(a1);
+      txt(svg, 305, 210, 'category match', { anchor: 'middle', size: 10, mono: true, fill: C.vip, italic: true });
+
+      // Policy -> Auto results
+      const a2 = rc.path(`M 650 220 L 700 220`, { stroke: C.green, strokeWidth: 2, roughness: 1.0 });
+      svg.appendChild(a2);
+
+      // Policy -> Recovery Plan (down)
+      const a3 = rc.path(`M 490 330 L 490 380`, { stroke: C.acro, strokeWidth: 2, roughness: 1.0 });
+      svg.appendChild(a3);
+      txt(svg, 502, 358, 'referenced by', { size: 10, mono: true, italic: true, fill: C.acro });
+
+      // Site B replication tag
+      svg.appendChild(rc.rectangle(820, 50, 130, 32, opts(C.fabric, C.fabricFill, 'solid')));
+      txt(svg, 885, 70, 'SITE B · DR', { anchor: 'middle', size: 11, mono: true, weight: '600', fill: C.fabric });
+      const a4 = rc.path(`M 700 178 Q 800 130 880 90`, { stroke: C.fabric, strokeWidth: 1.4, roughness: 1.4, strokeLineDash: [2, 5] });
+      svg.appendChild(a4);
+      txt(svg, 810, 130, 'NearSync replication', { anchor: 'middle', size: 10, mono: true, italic: true, fill: C.fabric });
+
+      // Legend
+      txt(svg, 60, 510, 'gold = VMs matching Env: Prod (auto-enrolled) · cyan = new VM tagged Env: Prod (auto-enrolling) · gray = non-matching, untouched', { size: 10, mono: true, fill: C.ink });
+    })();
+
+    // ===== Diagram 3: Recovery Plan Failover Flow =====
+    (function drawFailover() {
+      const svg = document.getElementById('diagram-failover-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 26, 'RECOVERY PLAN EXECUTION · PRIMARY-LOSS TIMELINE', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // Top half: Site A before
+      svg.appendChild(rc.rectangle(40, 50, 380, 140, opts(C.compute, C.computeFill, 'solid')));
+      txt(svg, 230, 74, 'SITE A · PRIMARY (BEFORE FAILURE)', { anchor: 'middle', size: 12, weight: '700', fill: C.label, spacing: '0.08em' });
+      // 4 nodes
+      [60, 152, 244, 336].forEach((x, i) => {
+        svg.appendChild(rc.rectangle(x, 96, 70, 70, opts(C.compute, 'rgba(74,158,255,0.15)', 'solid')));
+        svg.appendChild(rc.rectangle(x + 6, 102, 58, 10, opts(C.cvm, C.cvmFill, 'solid')));
+        txt(svg, x + 35, 110, 'CVM', { anchor: 'middle', size: 8, mono: true, fill: '#fff' });
+        // VMs
+        svg.appendChild(rc.rectangle(x + 8, 124, 22, 14, opts(C.vm, C.vmFill, 'solid')));
+        svg.appendChild(rc.rectangle(x + 36, 124, 22, 14, opts(C.vm, C.vmFill, 'solid')));
+        svg.appendChild(rc.rectangle(x + 8, 144, 22, 14, opts(C.vm, C.vmFill, 'solid')));
+        svg.appendChild(rc.rectangle(x + 36, 144, 22, 14, opts(C.vm, C.vmFill, 'solid')));
+      });
+      // X mark
+      svg.appendChild(rc.line(60, 50, 420, 190, { stroke: C.ext, strokeWidth: 3, roughness: 2.0 }));
+      svg.appendChild(rc.line(420, 50, 60, 190, { stroke: C.ext, strokeWidth: 3, roughness: 2.0 }));
+      svg.appendChild(rc.rectangle(160, 154, 140, 26, opts(C.ext, 'rgba(248,113,113,0.30)', 'cross-hatch')));
+      txt(svg, 230, 172, 'PRIMARY SITE LOST', { anchor: 'middle', size: 12, weight: '700', fill: C.ext, spacing: '0.08em' });
+
+      // Replication arrow before failure (pre-existing snapshots flowing to DR)
+      svg.appendChild(rc.rectangle(460, 50, 500, 140, opts(C.acro, 'rgba(217,124,74,0.06)', 'solid')));
+      txt(svg, 710, 74, 'CONTINUOUS REPLICATION TO SITE B (BEFORE FAILURE)', { anchor: 'middle', size: 11, weight: '700', fill: C.label, spacing: '0.06em' });
+      txt(svg, 710, 96, 'Snapshots flowing source → target on schedule', { anchor: 'middle', size: 11, mono: true, italic: true, fill: C.ink });
+      // wave of capsules
+      for (let i = 0; i < 8; i++) {
+        svg.appendChild(rc.ellipse(490 + i * 60, 130, 24, 14, opts(C.acro, 'rgba(217,124,74,0.30)', 'solid')));
+        txt(svg, 490 + i * 60, 134, '◧', { anchor: 'middle', size: 10, fill: C.acro });
+      }
+      txt(svg, 710, 168, '↓ snapshots = the foundation of recovery', { anchor: 'middle', size: 11, italic: true, fill: C.ink });
+
+      // Timeline
+      svg.appendChild(rc.line(40, 240, 960, 240, { stroke: C.fabric, strokeWidth: 2, roughness: 0.8 }));
+      txt(svg, 40, 230, 'T+0', { size: 11, mono: true, weight: '600', fill: C.fabric });
+      txt(svg, 240, 230, 'T+1-5 min', { size: 11, mono: true, weight: '600', fill: C.fabric });
+      txt(svg, 440, 230, 'T+5-10 min', { size: 11, mono: true, weight: '600', fill: C.fabric });
+      txt(svg, 640, 230, 'T+10-20 min', { size: 11, mono: true, weight: '600', fill: C.fabric });
+      txt(svg, 840, 230, 'T+30 min', { size: 11, mono: true, weight: '600', fill: C.fabric });
+
+      const phases = [
+        { x: 40, label: 'DETECT', sub: 'monitoring or human triggers Recovery Plan', color: C.ext, fill: 'rgba(248,113,113,0.15)' },
+        { x: 200, label: 'TRIGGER RP', sub: 'Recovery Plan invoked, scope evaluated', color: C.acro, fill: C.acroFill },
+        { x: 400, label: 'PRE-CHECKS', sub: 'DNS, network online, capacity verified', color: C.vip, fill: C.vipFill },
+        { x: 600, label: 'POWER ON VMs', sub: 'startup-order groups: DB → App → Web', color: C.fabric, fill: C.fabricFill },
+        { x: 800, label: 'IP REMAP / DNS', sub: 'apply network mapping, post-check apps', color: C.green, fill: C.greenFill },
+      ];
+      phases.forEach((p) => {
+        svg.appendChild(rc.rectangle(p.x, 252, 150, 84, opts(p.color, p.fill, 'solid')));
+        txt(svg, p.x + 75, 274, p.label, { anchor: 'middle', size: 12, weight: '700', fill: p.color, spacing: '0.06em' });
+        const words = p.sub.split(' ');
+        const half = Math.ceil(words.length / 2);
+        txt(svg, p.x + 75, 298, words.slice(0, half).join(' '), { anchor: 'middle', size: 10, fill: C.ink });
+        txt(svg, p.x + 75, 314, words.slice(half).join(' '), { anchor: 'middle', size: 10, fill: C.ink });
+      });
+
+      // arrows between phases
+      [190, 390, 590, 790].forEach((x) => {
+        const a = rc.path(`M ${x} 294 L ${x + 10} 294`, { stroke: C.fabric, strokeWidth: 2, roughness: 0.8 });
+        svg.appendChild(a);
+        const a2 = rc.path(`M ${x + 6} 290 L ${x + 10} 294 L ${x + 6} 298`, { stroke: C.fabric, strokeWidth: 2, roughness: 0.8 });
+        svg.appendChild(a2);
+      });
+
+      // Bottom half: Site B after failover
+      svg.appendChild(rc.rectangle(40, 380, 920, 160, opts(C.green, 'rgba(52,211,153,0.06)', 'solid')));
+      txt(svg, 500, 406, 'SITE B · DR · SERVICE RESTORED', { anchor: 'middle', size: 14, weight: '700', fill: C.green, spacing: '0.10em' });
+
+      // 4 nodes back online with VMs in startup-order tiers
+      const dbVMs = [{ x: 100, y: 432, label: 'DB tier', color: C.vip, sub: 'DB · DB · DB' }];
+      const appVMs = [{ x: 320, y: 432, label: 'App tier', color: C.fabric, sub: 'App · App · App · App' }];
+      const webVMs = [{ x: 580, y: 432, label: 'Web tier', color: C.purple, sub: 'Web · Web · Web · Web' }];
+      const userBox = [{ x: 820, y: 432, label: 'End users', color: C.green, sub: 'service restored' }];
+
+      [dbVMs, appVMs, webVMs, userBox].flat().forEach((g) => {
+        svg.appendChild(rc.rectangle(g.x, g.y, 180, 88, opts(g.color, 'rgba(255,255,255,0.04)', 'solid')));
+        txt(svg, g.x + 90, g.y + 26, g.label, { anchor: 'middle', size: 12, weight: '700', fill: g.color, spacing: '0.06em' });
+        txt(svg, g.x + 90, g.y + 50, g.sub, { anchor: 'middle', size: 10, mono: true, fill: C.label });
+      });
+      // small icons inside DB/app/web
+      [110, 142, 174].forEach((x) => svg.appendChild(rc.rectangle(x, 484, 22, 26, opts(C.vip, C.vipFill, 'solid'))));
+      [330, 362, 394, 426].forEach((x) => svg.appendChild(rc.rectangle(x, 484, 22, 26, opts(C.fabric, C.fabricFill, 'solid'))));
+      [590, 622, 654, 686].forEach((x) => svg.appendChild(rc.rectangle(x, 484, 22, 26, opts(C.purple, C.purpleFill, 'solid'))));
+      // "users" glyph
+      svg.appendChild(rc.circle(910, 498, 24, opts(C.green, C.greenFill, 'solid')));
+
+      // arrows DB -> App -> Web -> Users (startup order chain)
+      [280, 540, 770].forEach((x, i) => {
+        const arr = rc.path(`M ${x} 476 L ${x + 30} 476`, { stroke: C.green, strokeWidth: 2, roughness: 0.8 });
+        svg.appendChild(arr);
+      });
+
+      txt(svg, 500, 568, 'startup order matters · DB before App before Web · post-failover checks confirm health', { anchor: 'middle', size: 11, italic: true, fill: C.ink });
+    })();
+  </script>
+</body>
+</html>
