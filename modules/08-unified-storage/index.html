@@ -1,0 +1,1351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 8: Unified Storage (Files, Objects, Volumes)</title>
+  <meta name="description" content="Nutanix Unified Storage from VMware-and-NetApp muscle memory: Nutanix Files (FSVMs, SMB/NFS, SSR, Files Analytics, anti-ransomware), Nutanix Objects (S3 API, WORM, lifecycle, replication, backup-target consolidation), Nutanix Volumes (iSCSI for non-Nutanix consumers), and twelve practice questions for NCP-US." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Module 8: Unified Storage (Files, Objects, Volumes)" />
+  <meta property="og:description" content="Files, Objects, Volumes on one platform. The four-appliance consolidation pitch with FSVM/Object Service architecture, WORM, and the backup-target win. NCP-US preparation." />
+  <meta property="og:image" content="../../public/images/hero-08-unified-storage.svg" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Module 8: Unified Storage (Files, Objects, Volumes)" />
+  <meta name="twitter:description" content="The unified-storage consolidation pitch in one module. Files, Objects, Volumes architecture, gaps, and the backup-target ROI case." />
+  <meta name="twitter:image" content="../../public/images/hero-08-unified-storage.svg" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85); font-variant-numeric: tabular-nums;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+    figure.diagram .badge.wb { color: var(--success); background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.40); }
+    figure.diagram .badge.cert { color: var(--warning); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.40); }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption { margin-top: 16px; color: var(--text-secondary); font-size: 14px; font-style: italic; max-width: 70ch; }
+
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">08 · Unified Storage (Files, Objects, Volumes)</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-08-unified-storage.svg" alt="Three protocol streams — purple SMB/NFS clients, cyan S3 clients, gold iSCSI initiators — converging onto three service-VM bands (FSVM, Object Service, Volumes) above a single six-node Nutanix cluster, with DSF as the shared substrate underneath." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/08-unified-storage</div>
+      <h1 class="module-title">Module 8: Unified Storage (Files, Objects, Volumes)</h1>
+      <div class="meta-row">
+        <span class="chip read">~32 min read</span>
+        <span class="chip cert">NCA ~5%</span>
+        <span class="chip cert">NCP-MCI ~10%</span>
+        <span class="chip cert">NCM-MCI ~5%</span>
+        <span class="chip cert">NCP-US ~80%</span>
+      </div>
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~5%) · NCP-MCI (~10%) · NCM-MCI (~5%) · NCP-US (~80% heavy)</span>
+        <span><span class="lbl">SA toolkit</span> Objections #31 through #34 · Discovery Q-STOR-06 through Q-STOR-09</span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Modules 01 through 07</li>
+            <li>DSF concepts from Module 05</li>
+            <li>Familiarity with SMB / NFS, S3, iSCSI</li>
+            <li>Working CE cluster</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">Nutanix Files</span>
+            <span class="term-chip">FSVM</span>
+            <span class="term-chip">File Server</span>
+            <span class="term-chip">Nutanix Objects</span>
+            <span class="term-chip">Bucket</span>
+            <span class="term-chip">Versioning</span>
+            <span class="term-chip">WORM</span>
+            <span class="term-chip">Nutanix Volumes</span>
+            <span class="term-chip">Volume Group</span>
+            <span class="term-chip">SMB / NFS / S3 / iSCSI</span>
+            <span class="term-chip">Files Analytics</span>
+            <span class="term-chip">Data Lens</span>
+            <span class="term-chip">SSR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Make the unified-storage consolidation pitch on a whiteboard in 5 minutes.</strong> Replace separate filers (NetApp, Isilon), separate object storage (Cloudian, Scality, on-prem S3), and separate iSCSI arrays with one Nutanix cluster. Three vendor relationships consolidate to one. Three refresh cycles consolidate to one.</li>
+        <li><strong>Pass roughly 80% of NCP-US</strong>, the Unified Storage specialty cert. This module is the foundation. NCP-US tests Files, Objects, and Volumes architecture, configuration, and operations.</li>
+        <li><strong>Position Files, Objects, and Volumes against their incumbent competitors.</strong> NetApp ONTAP for files. AWS S3 or on-prem object stores for objects. Pure or Dell arrays for iSCSI block. Each comparison is honest: Nutanix is competitive in 90% of cases, behind in specific niches, with the integration and platform consolidation as the durable win.</li>
+        <li><strong>Recognize when unified storage is the wrong answer.</strong> Some workloads (extreme-throughput HPC filers, hyperscale object workloads, very specialized SAN block scenarios) are still better served by purpose-built storage. Naming the gap honestly buys customer trust.</li>
+        <li><strong>Make the backup-target consolidation case.</strong> Nutanix Objects as a Veeam, Commvault, or Rubrik target replaces a separate Data Domain, Quantum, or NetApp StorageGRID appliance. One of the more concrete economic wins in 2026 and one of the easier-to-prove ROI cases.</li>
+        <li><strong>Identify which storage service to recommend for which use case.</strong> Files for user shares and SMB-aware applications. Objects for backup targets and cloud-native applications. Volumes for non-Nutanix consumers (physical hosts, Oracle RAC on bare metal, legacy apps requiring iSCSI).</li>
+      </ol>
+      <p>This module is the answer to "what other storage problems can Nutanix solve?" The answer, more often than customers expect, is "most of them."</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>Your customer has multiple storage appliances. Walk into any enterprise datacenter and you find:</p>
+      <ul>
+        <li>A <strong>NetApp filer</strong> (or Isilon, Pure FlashBlade, Dell PowerScale) handling user shares, application file storage, and backup targets that need NFS or SMB.</li>
+        <li>An <strong>object storage tier</strong> somewhere: AWS S3 for cloud-resident data, possibly Cloudian or Scality or MinIO on-prem for archive or backup.</li>
+        <li>An <strong>iSCSI array</strong> for workloads that need block storage but aren't on the VMware cluster: physical database servers, legacy applications, bare-metal Linux, sometimes backup targets.</li>
+        <li>Possibly a <strong>Data Domain or similar dedup appliance</strong> for backup repositories.</li>
+      </ul>
+      <p>Each is a separate appliance with its own controller hardware, its own software upgrade cycle, its own support contract, its own management UI, its own replication story, and its own capacity-planning surface. Your customer's storage admin has spent years getting good at this. They are not necessarily happy about it.</p>
+      <p>The unified-storage story for Nutanix is: those four appliances consolidate to one cluster. <strong>Files</strong> replaces the filer. <strong>Objects</strong> replaces the object store and often the dedup appliance. <strong>Volumes</strong> replaces the iSCSI array. All three run on the same DSF substrate, in the same management plane, with the same lifecycle.</p>
+      <p>This is consolidation at the storage tier. It is the same operational argument that drove HCI adoption for compute, applied to storage services. The customer who saved one team's effort by collapsing compute-storage-network into HCI saves another team's effort by collapsing file-object-block onto unified storage.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The unified-storage pitch lands hardest with operations leaders and CIOs, less so with individual storage admins (who reasonably value their domain expertise). The right framing for the storage admin: <em>"Your expertise stays valuable. The consolidation removes the appliances you spend time maintaining, not the storage knowledge you bring to the conversation. You become the architect for one platform instead of the operator of four. Your team gets back the hours that go into vendor escalations, firmware compatibility matrices, and quarterly upgrade dances."</em> That sentence respects their expertise and reframes the change as career advancement, not displacement.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="files">Nutanix Files: SMB and NFS at HCI Scale</h3>
+      <p><strong>Nutanix Files</strong> is a scale-out file storage service that runs on top of a Nutanix cluster. It provides SMB shares (for Windows clients and applications) and NFS exports (for Linux clients and applications). The architecture:</p>
+      <ul>
+        <li>A <strong>File Server</strong> is a logical SMB/NFS service. You can have multiple File Servers per cluster (e.g., one for Production, one for Engineering, one for VDI profiles).</li>
+        <li>Each File Server is implemented as a cluster of <strong>FSVMs</strong> (File Server VMs). FSVMs are dedicated VMs that run the file-services stack on top of Nutanix. <strong>Three FSVMs per File Server is the typical deployment for HA and scale-out.</strong> Smaller deployments support <strong>single-FSVM File Servers</strong> (intended for one- and two-node Nutanix clusters or small-environment scenarios), but a single FSVM gives up the HA-across-FSVMs property and limits horizontal scale. Distributed shares and exports require three or more FSVMs.</li>
+        <li>FSVMs distribute the file-services workload across the underlying cluster. Adding FSVMs scales capacity and performance horizontally.</li>
+        <li>File data sits on DSF with all of DSF's properties: RF, compression, deduplication, snapshots, replication.</li>
+      </ul>
+
+      <p><strong>Capabilities:</strong></p>
+      <ul>
+        <li><strong>SMB 2.x and 3.x</strong> with full Active Directory integration. Kerberos, ACLs, ABE (Access-Based Enumeration), DFS-N integration. Standard for Windows shares and applications.</li>
+        <li><strong>NFS v3 and v4</strong> for Linux clients and applications. Kerberos for v4.</li>
+        <li><strong>Multi-protocol shares</strong> (SMB and NFS on the same data, with appropriate ACL translation).</li>
+        <li><strong>Snapshots</strong> at the File Server, share, or path level. Native to DSF; instant; no I/O penalty.</li>
+        <li><strong>Self-Service Restore (SSR).</strong> End users can restore deleted files from snapshot via the Windows "Previous Versions" tab, without involving IT.</li>
+        <li><strong>Files Analytics / Data Lens.</strong> Analytics on file usage, access patterns, hot/cold data identification, and ransomware-pattern anomaly detection. The on-cluster product is <strong>Files Analytics</strong>; the broader unified-storage analytics and ransomware-detection service that evolved from it is <strong>Data Lens</strong>. Data Lens v2.0 (GA 2026) supports fully on-premises deployment, including air-gapped and dark-site environments.</li>
+        <li><strong>Anti-ransomware.</strong> Real-time pattern detection on writes; alerts and (optionally) blocks suspicious activity. This has matured significantly in recent AOS releases.</li>
+        <li><strong>Replication</strong> to another Nutanix cluster (DR for file data).</li>
+        <li><strong>Quotas</strong> at the share or directory level.</li>
+        <li><strong>DFS-N integration</strong> for namespace-based access.</li>
+      </ul>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>The protocol surface maps cleanly onto NetApp ONTAP, EMC Isilon, or any enterprise filer your customer runs today. SMB 3.x, NFS v3/v4, AD integration, ACLs, quotas, snapshots, replication. The vocabulary is the vocabulary your customer's storage team already speaks. The architectural difference is what runs underneath: instead of a purpose-built filer with proprietary controllers, Files runs as FSVMs on the same Nutanix cluster as the customer's compute. The user-facing experience is the same; the platform underneath is consolidated.</p>
+      </aside>
+
+      <p><strong>When Files is the right tool:</strong></p>
+      <ul>
+        <li>User home directories and department shares (the canonical SMB use case).</li>
+        <li>Application file storage: Windows applications that need an SMB share, Linux apps that need NFS.</li>
+        <li>VDI persistent profiles (combined with Citrix or Horizon profile management).</li>
+        <li>Web content stores, software distribution shares.</li>
+        <li>Backup target for VM-level backups (where SMB/NFS is the protocol).</li>
+      </ul>
+
+      <p><strong>When Files is not the right tool:</strong></p>
+      <ul>
+        <li>Extreme-throughput HPC scenarios where you need genuinely thousands of clients hitting one filer at saturation. Dedicated parallel filers (Lustre, GPFS / IBM Spectrum Scale, dedicated Isilon clusters) still win at the very top end.</li>
+        <li>Workloads requiring features specific to a particular filer (NetApp FlexClone for file-level cloning, FlexCache for distributed caching, certain ONTAP-specific snapshot policies). Files is competitive but does not match every NetApp feature.</li>
+      </ul>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-US</span></div>
+        <p>Files architecture is the largest topic on NCP-US. Memorize: a File Server is the logical SMB/NFS service; it is implemented by a cluster of FSVMs (typically 3+); FSVMs are dedicated VMs running on the underlying Nutanix cluster; data lives on DSF. Trap distractor: "Files is delivered as a feature of AHV with no dedicated VMs" (false; FSVMs are real, dedicated VMs).</p>
+      </aside>
+
+      <h3 id="diagram-files">Diagram: Files Architecture</h3>
+      <figure class="diagram" id="files-architecture">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-US</span>
+          <span class="badge cert">NCP-MCI</span>
+        </div>
+        <svg id="diagram-files-svg" viewBox="0 0 1000 540" role="img" aria-label="SMB and NFS clients connect to a File Server endpoint, which load-balances across three FSVMs that persist file data on the underlying DSF substrate, with Files Analytics attached to the FSVMs."></svg>
+        <figcaption>A Nutanix File Server is implemented as a cluster of FSVMs running on top of Nutanix. Clients connect via SMB or NFS to a load-balanced endpoint. Adding an FSVM scales capacity and performance horizontally. All DSF benefits apply: snapshots, replication, compression, dedup.</figcaption>
+      </figure>
+
+      <h3 id="analytics">Files Analytics and Data Lens: A Real Differentiator</h3>
+      <p>Most filers have analytics. <strong>Files Analytics</strong> (the on-cluster service inside Files) and <strong>Data Lens</strong> (the broader cloud-and-on-prem unified-storage governance product that evolved from Files Analytics) are genuinely good. The pair provides:</p>
+      <ul>
+        <li><strong>File-system aging.</strong> What percentage of data hasn't been accessed in 12+ months? (Often surprising and budget-relevant.)</li>
+        <li><strong>Top users by capacity.</strong> Who owns the largest file footprints?</li>
+        <li><strong>Top users by I/O activity.</strong> Who is actively reading/writing the most?</li>
+        <li><strong>File type breakdown.</strong> PDF, video, log, database files: where is your storage actually going?</li>
+        <li><strong>Anomaly detection.</strong> A user account that suddenly accesses 10,000x normal volume is flagged. This is the foundation of the anti-ransomware capability.</li>
+        <li><strong>Permission audit.</strong> Which users have access to which shares; who has elevated permissions; what changed recently.</li>
+        <li><strong>Compliance reporting.</strong> Standard reports for various compliance frameworks.</li>
+      </ul>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Files Analytics is one of the cleaner customer demos. The 3-minute version: pull up Files Analytics on a populated environment, show the file-aging dashboard (<em>"70% of your data hasn't been accessed in over a year"</em>), show the top-users-by-capacity report, show the access anomaly detection. Customers respond to seeing real, actionable information that their current filer doesn't expose this clearly. The aging-data insight in particular often unlocks tiering or archival decisions the customer has been deferring for years.</p>
+      </aside>
+
+      <h3 id="ransomware">Anti-Ransomware: The Security Story for Files</h3>
+      <p>Files (with Files Analytics on-cluster) and <strong>Data Lens</strong> include real-time ransomware detection that watches file write patterns. Data Lens ships with a constantly-growing library of known ransomware signatures (65,000+ as of 2026) plus behavior-based anomaly detection. The detection-and-block flow watches for encrypt-at-write patterns, mass-rename patterns, and suspicious extension changes, and can trigger:</p>
+      <ul>
+        <li>Alerts (immediate notification to administrators).</li>
+        <li>Optional blocking (refusing the suspicious writes, preventing further damage).</li>
+        <li>Snapshot creation at detection time (preserving the pre-attack state).</li>
+      </ul>
+      <p>For customers concerned about ransomware (which by 2026 is essentially every customer), this is a meaningful security story. It is not a complete anti-ransomware strategy by itself; it is a layer that complements endpoint protection, network segmentation, backup hygiene, and user awareness training.</p>
+
+      <hr/>
+
+      <h3 id="objects">Nutanix Objects: S3 at Cluster Scale</h3>
+      <p><strong>Nutanix Objects</strong> is an S3-compatible object storage service running on top of a Nutanix cluster. It provides:</p>
+      <ul>
+        <li><strong>S3 API compatibility.</strong> Standard S3 endpoints, signatures, requests. Most S3-compatible tools work without modification.</li>
+        <li><strong>Buckets</strong> as the unit of organization, with access policies, IAM-style users, and versioning.</li>
+        <li><strong>Object versioning.</strong> Multiple versions of an object retained per bucket configuration.</li>
+        <li><strong>WORM (Write Once Read Many).</strong> Compliance-driven immutability via the S3 Object Lock specification. Once a bucket is marked WORM, there is a 24-hour grace period for testing; after that, no objects within the bucket (or the bucket itself) can be deleted until the date specified by the WORM policy. The retention period can be <strong>extended but never reduced</strong>. WORM buckets have versioning auto-enabled (versioning cannot be suspended on a WORM bucket). Useful for regulatory archives and some backup retention scenarios.</li>
+        <li><strong>Lifecycle policies.</strong> Auto-tier or auto-delete objects based on age.</li>
+        <li><strong>Replication</strong> to other Nutanix Objects deployments or to AWS S3.</li>
+        <li><strong>Multi-tenancy.</strong> Separate object stores for different tenants, each with their own users and policies.</li>
+      </ul>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Objects' S3 API is the same API your customer uses against AWS S3. The architectural difference is where the data lives and who pays for what. AWS S3 is consumption-priced, ingress-free, egress-billed; it is operationally hands-off and economically well-suited for some patterns (variable workloads, cloud-resident apps). Nutanix Objects is capex-or-subscription priced on customer-owned cluster capacity; it is operationally consolidated with the rest of the platform and economically well-suited for other patterns (steady-state backup repositories, latency-sensitive on-prem workloads, compliance-driven data sovereignty). For most customer environments by 2026, the right answer is some-of-each: Objects on-prem for the steady high-volume workloads, AWS S3 for the truly cloud-native and elastic patterns. Frame it as complementary, not competitive.</p>
+      </aside>
+
+      <p>The architecture is similar in spirit to Files: dedicated VMs (the Objects "Object Service") run the S3 stack on top of DSF. Capacity scales by adding cluster capacity; throughput scales by adding object service VMs.</p>
+
+      <p><strong>When Objects is the right tool:</strong></p>
+      <ul>
+        <li><strong>Backup targets.</strong> Veeam, Commvault, Rubrik, Cohesity all support S3 as a target. Objects becomes a Veeam repository, replacing a separate Data Domain or NetApp StorageGRID. One of the most concrete consolidation wins.</li>
+        <li><strong>Cloud-native applications.</strong> Apps designed against the S3 API (which is most modern apps) work natively against Objects.</li>
+        <li><strong>Archives and long-term retention.</strong> Use lifecycle policies to age data toward longer retention.</li>
+        <li><strong>Compliance archives.</strong> WORM mode for regulatory data (financial, healthcare, legal).</li>
+        <li><strong>Big data and analytics intermediate storage.</strong> Spark, Hadoop, modern data-warehouse staging often use S3-compatible storage.</li>
+      </ul>
+
+      <p><strong>When Objects is not the right tool:</strong></p>
+      <ul>
+        <li>Hyperscale workloads at AWS-S3 scale (tens of petabytes, millions of TPS). Objects scales well but is not in the same league as AWS infrastructure.</li>
+        <li>Workloads that require AWS-specific features beyond S3 API (S3 Glacier deep archive economics, S3 Select compute pushdown for some specific patterns).</li>
+        <li>Workloads where the cloud-economics arbitrage (capex vs cloud-opex) clearly favors public cloud.</li>
+      </ul>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-US</span></div>
+        <p>Objects topics: bucket configuration, object versioning, WORM, lifecycle policies, S3 access (key pair, signature), multi-tenancy. Memorize: Objects is S3-compatible (Object Service VMs running on DSF). Trap distractor: "Objects requires a dedicated cluster separate from VM workloads" (false; Objects runs on the same cluster).</p>
+      </aside>
+
+      <h3 id="diagram-objects">Diagram: Objects Architecture</h3>
+      <figure class="diagram" id="objects-architecture">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-US</span>
+        </div>
+        <svg id="diagram-objects-svg" viewBox="0 0 1000 560" role="img" aria-label="S3 clients (Veeam, cloud-native applications, S3 SDKs) hit a load-balanced S3 endpoint, served by three Object Service VMs that manage buckets with WORM, versioning, and lifecycle policies, with data persisted on DSF and replication arrows to another Objects deployment or AWS S3."></svg>
+        <figcaption>S3-compatible storage running on Nutanix. Clients hit the S3 endpoint; data lives in DSF with full platform features. Standard S3 API: tools that work with AWS S3 work with Objects with endpoint-only changes. Often the answer for backup targets — replaces dedicated Data Domain or NetApp StorageGRID.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="volumes">Nutanix Volumes: iSCSI for Non-Nutanix Consumers</h3>
+      <p><strong>Nutanix Volumes</strong> is the iSCSI block-storage service. It exposes LUNs (called Virtual Volumes in Nutanix vocabulary) over iSCSI to external consumers: physical servers, non-Nutanix VMs, certain bare-metal database deployments, legacy applications.</p>
+      <p>The architecture:</p>
+      <ul>
+        <li><strong>Volume Group:</strong> a logical grouping of one or more LUNs that are presented together. Useful for application-aware grouping (e.g., "all the disks for SQL Server cluster instance ABC").</li>
+        <li><strong>iSCSI Target:</strong> the cluster acts as an iSCSI target. Standard initiator software on Linux, Windows, ESXi, or other consumers connects.</li>
+        <li><strong>Multi-pathing:</strong> the cluster exposes multiple iSCSI portal IPs for HA. Standard iSCSI multipath software on the consumer handles failover.</li>
+        <li><strong>Data resides in DSF:</strong> with all DSF properties (RF, compression, snapshots, replication, EC if applicable).</li>
+      </ul>
+
+      <p><strong>When Volumes is the right tool:</strong></p>
+      <ul>
+        <li><strong>Physical Linux or Windows servers</strong> that need block storage but aren't running on Nutanix as VMs. Examples: standalone database hosts, legacy physical applications, specialized hardware that runs bare metal.</li>
+        <li><strong>Oracle RAC</strong> or other clustered databases that prefer raw block storage shared across nodes (RAC's ASM works well over iSCSI).</li>
+        <li><strong>Legacy iSCSI consumers</strong> that the customer hasn't yet migrated.</li>
+        <li><strong>VMware ESXi clusters not on Nutanix</strong> that want to use Nutanix storage. ESXi can mount Volumes as iSCSI datastores. (Niche but real, often during migrations.)</li>
+        <li><strong>Backup targets</strong> for backup software that prefers iSCSI over SMB/NFS/S3.</li>
+      </ul>
+
+      <p><strong>When Volumes is not the right tool:</strong></p>
+      <ul>
+        <li>Standard VM workloads on AHV. Just use AHV's normal vDisk presentation; you don't need iSCSI on top.</li>
+        <li>Workloads where the consumer can use SMB, NFS, or S3 instead. Block protocols are more complex than file or object; only use them where genuinely required.</li>
+      </ul>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-US</span></div>
+        <p>Volumes topics: Volume Groups, iSCSI initiator/target configuration, multi-pathing, attaching to AHV/ESXi/physical hosts. Memorize: Volume Groups are the management unit; LUNs are exposed via iSCSI; multi-pathing is provided via multiple portal IPs. Trap distractor: "Volumes requires AHV" (false; Volumes is consumed by external initiators, often physical or non-Nutanix consumers).</p>
+      </aside>
+
+      <hr/>
+
+      <h3 id="cycle-2">The Cycle, Frame Two: Unified Storage as Consolidation</h3>
+      <p>For an operations leader or CIO, the durable Unified Storage story is consolidation. Specifically:</p>
+
+      <table>
+        <thead><tr><th>Customer Has Today</th><th>Unified Storage Replaces With</th></tr></thead>
+        <tbody>
+          <tr><td>NetApp / Isilon / FlashBlade for file shares</td><td>Nutanix Files (FSVMs on DSF)</td></tr>
+          <tr><td>Cloudian / Scality / MinIO / on-prem S3</td><td>Nutanix Objects (Object Services on DSF)</td></tr>
+          <tr><td>iSCSI array (Pure, NetApp, Dell) for non-Nutanix consumers</td><td>Nutanix Volumes (Volume Groups on DSF)</td></tr>
+          <tr><td>Data Domain / Quantum / dedicated dedup appliance</td><td>Nutanix Objects with appropriate retention (often paired with backup software's native dedup)</td></tr>
+        </tbody>
+      </table>
+
+      <p>Four appliances consolidate to one cluster. The customer's BOM gets simpler. Their refresh cycles align. Their support contracts consolidate. Their team's effort goes into one platform instead of four.</p>
+      <p>The economic argument is real. Run the actual numbers for the specific customer; the savings depend on their deployment size and current depreciation schedule. Typical mid-market deployments save 30-50% over five years compared to maintaining four separate storage tiers.</p>
+
+      <h3 id="cycle-3">The Cycle, Frame Three: Unified Storage as DSF Made Consumable</h3>
+      <p>For a technical architect, the architectural frame is more interesting: unified storage is DSF's distributed-storage primitives made consumable through industry-standard protocols.</p>
+      <p>DSF already does the hard parts: distributed metadata, replication, erasure coding, compression, dedup, snapshots, geographic replication. Files, Objects, and Volumes are protocol layers on top of DSF that translate user requests (SMB/NFS/S3/iSCSI) into DSF operations.</p>
+      <p>This is why all three services automatically benefit from DSF improvements. When DSF gets better at compression in a future release, Files, Objects, and Volumes all get better at compression. When DSF improves replication, all three services benefit.</p>
+      <p>The architecture is a single platform with multiple consumption protocols. Compare this to the NetApp world where the filer is purpose-built for files and bolting on object or block requires different products (StorageGRID for object, ONTAP block features for iSCSI), each with their own software lifecycles.</p>
+
+      <h3 id="cycle-4">The Cycle, Frame Four: Unified Storage as the Backup-Target Win</h3>
+      <p>For backup teams, the durable frame is specifically about backup repositories. Most enterprise backup deployments today use:</p>
+      <ul>
+        <li><strong>Primary backup tier:</strong> a deduplication appliance (Data Domain, Quantum, NetApp StorageGRID-with-dedup-software).</li>
+        <li><strong>Secondary tier:</strong> sometimes tape; increasingly cloud (AWS S3, Azure Blob).</li>
+        <li><strong>Cloud archive:</strong> AWS S3 Glacier or equivalent.</li>
+      </ul>
+      <p>This stack costs real money. The dedup appliance alone is often a six-figure capex item. Software licensing on top of the appliance is more.</p>
+      <p>Unified Storage's pitch: Nutanix Objects becomes the primary backup repository. The major backup vendors (Veeam, Commvault, Rubrik, Cohesity, HYCU) all support S3-compatible storage as a target. The customer's backup workflow stays the same; the destination changes from Data Domain to Nutanix Objects. Replication to Objects in another datacenter (or to NC2 in cloud) handles geographic redundancy. Lifecycle policies handle long-term retention.</p>
+      <p>The consolidation: dedup appliance gone, separate cloud-archive billing simplified (depending on retention strategy), one less vendor relationship.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The backup-target consolidation is one of the easier-to-prove ROI cases in 2026. <em>"Pull your Data Domain quote from your last refresh. Pull your annual Data Domain support cost. Pull the cost of cloud-archive egress and re-ingest you've experienced. Now compare that five-year run-rate to running Veeam (or your backup product) against Nutanix Objects on the same cluster you're already buying. The math is usually obvious within 24-36 months."</em> Bring this up early when discovery surfaces a backup vendor relationship; it gives you a concrete consolidation conversation that the customer can model on their own data.</p>
+      </aside>
+
+      <h3 id="diagram-consolidation">Diagram: Unified Storage Consolidation</h3>
+      <figure class="diagram" id="unified-storage-consolidation">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">NCP-US</span>
+          <span class="badge cert">sales-relevant</span>
+        </div>
+        <svg id="diagram-consolidation-svg" viewBox="0 0 1000 600" role="img" aria-label="Side-by-side before-and-after comparison. Before: VMware compute connecting to four separate storage appliances stacked vertically (NetApp filer, Cloudian object store, Pure iSCSI array, Data Domain backup). After: a single Nutanix cluster providing compute alongside Files, Objects, and Volumes services on a shared DSF substrate."></svg>
+        <figcaption>Before: four storage tiers from four vendors. After: one Nutanix cluster providing all four functions. One platform, one vendor, one refresh cycle, one management plane. The customer's BOM gets simpler; their refresh cycles align; their team gets back the hours that go into vendor escalations.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="gaps">What Unified Storage Genuinely Lacks</h3>
+      <p>Honest gap list. Read it carefully.</p>
+      <ol>
+        <li><strong>Files vs NetApp ONTAP at the high end.</strong> ONTAP has 30+ years of file-services maturity: FlexClone for file-level cloning, FlexCache for distributed caching, advanced quotas, ABE policy refinement, ONTAP-specific snapshot policies, deep volume-management semantics. Files is competitive for the bulk of enterprise file workloads. For customers running deep ONTAP workflows, the comparison favors ONTAP.</li>
+        <li><strong>Objects vs AWS S3 ecosystem maturity.</strong> AWS S3 has the broadest tooling ecosystem and the most niche-feature depth (S3 Select, Glacier Deep Archive economics, S3 Outposts, dozens of S3-native AWS services). Nutanix Objects is S3-compatible at the API level, which works for nearly every common S3 tool, but AWS-specific features beyond S3 are not available.</li>
+        <li><strong>Hyperscale object workloads.</strong> AWS-scale or Google-scale object workloads (multi-petabyte, millions of operations per second) are out of scope for Nutanix Objects. Use cloud for cloud-scale.</li>
+        <li><strong>Specialized HPC filers.</strong> Lustre, IBM Spectrum Scale (GPFS), and other parallel filers serve workloads where extreme throughput across thousands of clients is the requirement. Files does not target this segment.</li>
+        <li><strong>Volumes vs purpose-built block arrays at the very top end.</strong> For block workloads requiring sub-millisecond p99 latency at extreme IOPS, dedicated block arrays still have an edge in some scenarios. Most enterprise block workloads are well-served by Volumes; the very top end is the exception.</li>
+      </ol>
+      <p>These are real. None are deal-breakers for typical mid-market or enterprise workloads. Customers in those niches need targeted purpose-built storage.</p>
+
+      <h3 id="strengths">What Unified Storage Has That Separates It From Pieces-Bought-Separately</h3>
+      <ol>
+        <li><strong>Single platform.</strong> One cluster, one vendor, one upgrade cycle, one support contract.</li>
+        <li><strong>Shared DSF foundation.</strong> All three services inherit DSF's snapshots, replication, compression, dedup, EC.</li>
+        <li><strong>Shared management plane.</strong> Files, Objects, and Volumes all configured and monitored from Prism Central.</li>
+        <li><strong>Shared identity integration.</strong> AD or SAML configured once, applies across all three services.</li>
+        <li><strong>Shared replication topology.</strong> Files Replication, Objects Replication, and DSF Async all use compatible network paths and policies.</li>
+        <li><strong>Shared scaling.</strong> Adding cluster capacity adds capacity for VMs, files, objects, and block simultaneously.</li>
+        <li><strong>Shared licensing.</strong> Bundled into AOS subscriptions; specific tier requirements vary but no separate appliance licensing.</li>
+      </ol>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Deploy Files, Create a Share, Test Snapshot Recovery</h2>
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">~3 hours · 3-node CE + Prism Central</span></div>
+        <p>Files deployment on CE has limitations; some advanced features may not be available. Objects deployment is typically not supported on CE. Volumes can be tested on CE.</p>
+      </aside>
+
+      <ol>
+        <li><strong>Verify Files availability on your CE cluster.</strong> From Prism Central, navigate to Services &gt; Files. If available, proceed; if not, walk through the deployment workflow conceptually.</li>
+        <li><strong>Deploy a File Server.</strong> Use the deployment wizard:
+          <ul>
+            <li>Name: <code>lab-fs-01</code></li>
+            <li>Number of FSVMs: 3 (the minimum for HA)</li>
+            <li>Storage container: default or new</li>
+            <li>Network: place FSVMs on an existing virtual network</li>
+            <li>Domain: integrate with AD if available; otherwise workgroup</li>
+          </ul>
+        </li>
+        <li><strong>Create an SMB share.</strong> Once the File Server is up: name <code>lab-share-01</code>, type SMB (or NFS), path <code>/lab-data</code>, permissions appropriate for your test environment.</li>
+        <li><strong>Mount the share from a client.</strong> From a Windows VM, map a network drive: <code>\\&lt;file-server-name&gt;\lab-share-01</code>. From Linux, mount via NFS or SMB.</li>
+        <li><strong>Generate test data on the share.</strong> Copy some files. Create directories. Make the share look "real."</li>
+        <li><strong>Take a snapshot of the share.</strong> Files &gt; Snapshots &gt; Create. Note that this is instant regardless of share size.</li>
+        <li><strong>Test Self-Service Restore.</strong> From a Windows client with the share mapped: right-click on a file &gt; Properties &gt; Previous Versions. You should see the snapshot. Restore a previous version. This is the user-facing recovery experience and is genuinely valuable for customers.</li>
+        <li><strong>Configure a snapshot schedule.</strong> Define an hourly schedule with retention. Confirm snapshots are taken on schedule.</li>
+        <li><strong>(Optional) Test Volumes.</strong> Create a Volume Group with one or more LUNs. From a Linux VM:
+          <pre>iscsiadm -m discovery -t sendtargets -p &lt;cluster-data-services-ip&gt;
+iscsiadm -m node -T &lt;iqn&gt; -p &lt;portal&gt; --login</pre>
+          The new block device should appear; format and mount it.
+        </li>
+        <li><strong>Inspect Files via CLI.</strong> From a CVM:
+          <pre>afs                          # Files CLI (ssh to FSVM if needed)
+ncli filesserver list        # List file servers
+ncli filesserver status name=&lt;name&gt;</pre>
+        </li>
+      </ol>
+
+      <p><strong>What this teaches you:</strong></p>
+      <ul>
+        <li>Files deployment workflow and architecture in practice.</li>
+        <li>The user-facing Self-Service Restore experience (a key customer-demo moment).</li>
+        <li>iSCSI / Volumes consumption pattern from an external-style consumer.</li>
+      </ul>
+      <p><strong>Customer-demo angle:</strong> Steps 6-7 are the customer demo for Files SSR. Show how an end user can restore their own deleted files without an IT ticket. Help-desk reductions land emotionally. Time it: 90 seconds total.</p>
+
+      <hr/>
+
+      <section class="practice">
+        <h2 id="practice-questions">Practice Questions</h2>
+        <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions. Read each, answer in your head, then click to reveal.</p>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCP-US · NCP-MCI</span></div>
+          <p class="qprompt">What is an FSVM in Nutanix Files architecture?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A user account with elevated file-server permissions</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>A dedicated VM that runs the file-services stack as part of a File Server cluster</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A storage pool reserved for file-share usage</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A snapshot type used for file recovery</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>FSVMs (File Server VMs) are dedicated VMs that run the SMB/NFS file-services stack on top of Nutanix. Three FSVMs typically form a File Server (the logical share-serving entity). They are real VMs, not abstractions.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) FSVM is an architectural component, not a user account.</li>
+              <li>C) Storage pools are DSF-level constructs, unrelated to FSVMs.</li>
+              <li>D) Snapshots are a DSF feature; FSVMs do not refer to snapshots.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and C reflect partial understanding. FSVMs are the implementation of Files. Memorize: File Server = logical service; FSVMs = the VMs implementing it.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCP-US · sales-relevant</span></div>
+          <p class="qprompt">Which Unified Storage service replaces a dedicated S3-compatible object storage appliance (like Cloudian or MinIO) used as a backup target?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Nutanix Files</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Nutanix Objects</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Nutanix Volumes</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>DSF storage container directly</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Nutanix Objects provides S3-compatible object storage. Backup software (Veeam, Commvault, Rubrik, Cohesity) supports S3 as a target, so Objects is the direct replacement for Cloudian/MinIO/StorageGRID in this role.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Files is for SMB/NFS, not object storage.</li>
+              <li>C) Volumes is for iSCSI block, not object.</li>
+              <li>D) DSF storage containers are the underlying layer; you don't expose them directly to S3 clients.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>D is technically clever ("just use the underlying storage") but operationally wrong. Customers consume DSF through the appropriate service layer.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCP-US</span></div>
+          <p class="qprompt">What is the primary use case for Nutanix Volumes?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Replacing the AHV hypervisor's vDisk presentation</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Providing iSCSI block storage to non-Nutanix consumers (physical hosts, bare-metal databases, legacy applications)</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Storing snapshots for VM-level backup</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Hosting Nutanix Files data</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Volumes exposes iSCSI LUNs to external consumers: physical Linux/Windows servers, bare-metal database hosts (Oracle RAC), legacy applications that require block storage and are not running as Nutanix VMs.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) AHV's vDisk presentation works natively for VMs on Nutanix; Volumes is for external consumers.</li>
+              <li>C) Snapshots are a DSF feature; Volumes is not specifically a snapshot mechanism.</li>
+              <li>D) Files data lives on DSF, not on Volumes.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects misunderstanding the consumer of Volumes. Memorize: Volumes is for clients outside the Nutanix VM context (typically physical or non-Nutanix hosts).</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="A">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">NCP-US · sales-relevant</span></div>
+          <p class="qprompt">A customer wants to enable end users to recover deleted files from a Files share without involving IT. Which capability provides this?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Self-Service Restore (SSR), accessible via Windows "Previous Versions"</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>IT-managed snapshot restoration only</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Recovery Plan / NDR orchestration</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Files Analytics</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>SSR exposes Files snapshots to end users via the Windows "Previous Versions" tab. Users can restore deleted files or earlier versions without IT involvement. One of Files' most operationally valuable features.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>B) IT-managed restore is the "old way" without SSR; SSR specifically removes IT from the loop for routine recovery.</li>
+              <li>C) Recovery Plans are for VM-level DR orchestration, not user-level file recovery.</li>
+              <li>D) Files Analytics provides reporting, not recovery.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>B is intuitive ("of course, only IT can restore") and misses the SSR feature. Memorize SSR as the user-facing recovery capability.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">NCP-US</span></div>
+          <p class="qprompt">Which of the following correctly describes Files Analytics?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>An external monitoring tool that must be deployed separately on a Windows server</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>An integrated analytics service within Files providing file aging, top users, file type breakdown, anomaly detection (anti-ransomware foundation), and permission auditing</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A reporting export to Splunk only</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A licensed add-on requiring NCM Ultimate</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Files Analytics is integrated with the Files product. It provides the analytics described, runs as part of the Files infrastructure, and forms the foundation for the anti-ransomware capability.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Files Analytics is integrated, not external.</li>
+              <li>C) Files Analytics has its own UI; it is not just a Splunk export (though it can integrate).</li>
+              <li>D) Files Analytics is part of Files, not a separate licensed add-on.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>D reflects the fear that "useful features cost extra." Files Analytics is included with Files.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">NCP-US</span></div>
+          <p class="qprompt">What is WORM in the context of Nutanix Objects?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>A diagnostic tool for tracing S3 API calls</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Write Once Read Many: an immutability feature that prevents modification of objects in a bucket for a defined retention period, used for compliance archives</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>A programming language SDK for Objects</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>A bucket-replication mechanism</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>WORM (Write Once Read Many) provides regulatory-grade immutability. Once written, objects cannot be modified or deleted until the retention period expires. Common compliance use cases: financial records, healthcare data, legal archives. Retention can be extended but not reduced; WORM buckets auto-enable versioning.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Not a diagnostic tool.</li>
+              <li>C) Not a programming language.</li>
+              <li>D) Not a replication mechanism.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>Test-takers unfamiliar with compliance vocabulary may guess. The retention/immutability use case is specific and important for regulated industries.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">NCP-US · NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">A customer with a 6-node Nutanix cluster wants to consolidate their NetApp filer (50 TB used), their Data Domain backup target (200 TB usable after dedup), and their Pure iSCSI array (30 TB used) onto Nutanix. They are concerned about whether one cluster can serve all four roles (compute + Files + Objects + Volumes). What is the recommended approach?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Tell the customer to stay with their existing storage; Nutanix cannot replace all three</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Size the cluster appropriately for the consolidated workload (compute + storage capacity for all three storage roles); deploy Files for the filer replacement, Objects for the backup target, and Volumes for the iSCSI consumer; verify compute and storage are both adequate</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Recommend separate Nutanix clusters for each storage type</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Recommend keeping the Data Domain because Objects can't replace it</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>This is exactly the unified-storage use case. One cluster, sized for the combined workload, runs Files + Objects + Volumes alongside the customer's compute. The sizing exercise must account for the additional capacity (50+200+30 TB = 280 TB net, before RF and overhead).</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) The customer's workload is well within Nutanix's consolidation sweet spot.</li>
+              <li>C) Separate clusters defeat the consolidation purpose.</li>
+              <li>D) Objects with appropriate sizing combined with backup-software dedup is a credible Data Domain replacement.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and D reflect undue conservatism. The sizing is non-trivial but achievable.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer's senior storage admin says: "We've spent 12 years building NetApp expertise. Why would we walk away from FlexClone, FlexCache, and ONTAP's snapshot maturity?" What is the strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"Files is a perfect replacement for NetApp; you'll get all the same features."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"You don't have to walk away. Files is competitive for the bulk of enterprise file workloads, but for the specific ONTAP capabilities you mentioned, NetApp retains advantages. The right pattern for many customers is to consolidate the bulk of the file estate onto Files (user shares, application file storage, backup repositories) and keep NetApp for workloads that genuinely need ONTAP-specific features. Let's map your shares against the feature matrix together."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"NetApp is overpriced; you should switch immediately."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"FlexClone is unnecessary; nobody uses it anymore."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Honest about the gap, respects the customer's expertise, names a concrete coexistence pattern, and proposes a workload-mapping exercise as the next step. The durable enterprise SA response.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Untrue. NetApp retains real ONTAP-specific advantages; pretending otherwise loses credibility.</li>
+              <li>C) Bashing the incumbent loses the room.</li>
+              <li>D) Dismissive of a real ONTAP capability that customers genuinely use.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and D are confident-defensive. Honesty about the gap is what wins customer trust.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">NCP-US · sales-relevant</span></div>
+          <p class="qprompt">Which backup software products commonly support Nutanix Objects as a backup repository target?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Only Veeam</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Veeam, Commvault, Rubrik, Cohesity, and HYCU all support S3-compatible storage and can use Nutanix Objects</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Only Nutanix's own backup product</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>None; Objects is not a supported backup target</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>All major enterprise backup vendors support S3-compatible storage as a target. Nutanix Objects is S3-compatible, so it works with the full ecosystem of S3-aware backup tools.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Veeam works, but the support extends well beyond.</li>
+              <li>C) Customers use third-party backup with Objects.</li>
+              <li>D) Objects is explicitly designed to be a backup target.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is a common mental model from heavily Veeam-shop customers. The reality is broader.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">NCP-US · sales-relevant</span></div>
+          <p class="qprompt">A customer wants to deploy a new file share for a department of 200 users. Their NetApp filer is at end-of-life and they are deciding between buying new NetApp or consolidating onto their existing 12-node Nutanix cluster. What is the strongest recommendation?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Buy new NetApp; Files isn't ready for primary file workloads</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Consolidate onto Nutanix Files: deploy a File Server with 3 FSVMs on the existing cluster, integrate with AD, configure quotas and snapshot schedules, train users on Self-Service Restore, decommission the NetApp at end of lifecycle</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Buy a separate small filer for this department</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Use Objects instead of Files because it's newer</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Textbook unified-storage consolidation. A 200-user department with standard SMB workloads is squarely within Files' capability. Consolidation onto the existing cluster eliminates a future refresh cycle and simplifies management.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Files handles standard departmental file workloads cleanly.</li>
+              <li>C) Buying separate small storage defeats the consolidation premise.</li>
+              <li>D) Objects is for object workloads (S3), not file shares (SMB/NFS).</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects undue conservatism; D reflects misunderstanding of the protocol differences.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question ncx" data-correct="ncx">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · NCP-US prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style design question. There is no single correct answer; there are stronger and weaker frames. Write your reasoning, then click to compare against the strong-answer outline.</p>
+          <div class="scenario">
+            <p>A customer's environment:</p>
+            <ul>
+              <li>8 ESXi hosts, ~250 VMs</li>
+              <li>200 TB NetApp filer (4 years old, support ends in 8 months) serving SMB shares for ~800 users plus application file storage for several Java/Tomcat apps</li>
+              <li>100 TB Data Domain (5 years old) serving as Veeam backup target</li>
+              <li>50 TB Pure FlashArray serving iSCSI to a small bare-metal Oracle environment</li>
+              <li>Annual storage spend: roughly $400K across the three appliances (refresh amortization + support + power/space)</li>
+            </ul>
+            <p>The customer is evaluating consolidation onto a new Nutanix cluster. They want a 5-year cost projection, an architecture proposal, and a phased migration plan.</p>
+          </div>
+          <textarea placeholder="Walk through your design. Cover the consolidated cluster sizing, the Files / Objects / Volumes deployment, the backup repository transition, the iSCSI consumer migration, and the phased rollout. Identify what you still need to know."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Consolidated cluster sizing.</strong> Total: ~250 VMs (existing compute) + 200 TB Files + 100 TB Objects + 50 TB Volumes + headroom for RF, reservation, growth. Estimate a 12-node Nutanix cluster sized for compute with all-NVMe nodes, accounting for storage role consolidation. Verify networking is 25 or 100 GbE.</li>
+              <li><strong>Files deployment.</strong> File Server with 3-5 FSVMs initially (scale-out as data grows). AD integration. SMB shares mirroring existing NetApp share structure. Snapshot schedules per existing recovery requirements. Files Analytics for reporting and anti-ransomware.</li>
+              <li><strong>Objects deployment.</strong> Object Service configured as a Veeam target. Migrate Veeam repositories from Data Domain to Objects in stages: non-critical first, validate, then critical. Lifecycle policies for retention.</li>
+              <li><strong>Volumes deployment.</strong> Volume Groups for Oracle bare-metal. Multipath iSCSI for HA. Migrate Oracle data via standard techniques (RMAN restore, or careful storage-level copy with downtime window).</li>
+              <li><strong>Phased migration plan.</strong> Months 1-2: deploy cluster, validate platform. Months 2-3: migrate Veeam target to Objects (lowest risk, highest immediate value). Months 3-6: migrate file shares from NetApp to Files (Robocopy or Files Migration tool); decommission NetApp at end of support. Months 6-9: migrate Oracle from Pure to Volumes (planned downtime window). Months 9-12: validate, optimize, decommission Pure.</li>
+              <li><strong>5-year cost projection.</strong> Status quo: $400K/year × 5 = $2M, plus three refresh cycles. Nutanix: cluster capex ($700-900K for 12-node) + 5 years subscription + Files / Objects / Volumes licensing + reduced support overhead = typically $1.0-1.4M for 5 years. Net savings: $600K-$1M, with operational simplification not quantified.</li>
+              <li><strong>What you still need to know.</strong> Specific application file-storage requirements (some apps may have ONTAP-specific dependencies). Oracle's licensing posture (per-CPU vs per-core). Veeam's specific S3-target version compatibility. RPO/RTO requirements for the file workloads. Growth forecast for each storage tier.</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Defaulting to "rip and replace" without phased migration.</li>
+              <li>Skipping the cost projection (the customer asked for it).</li>
+              <li>Not naming the Veeam migration first (lowest-risk consolidation).</li>
+              <li>Forgetting to plan the Oracle migration window (real downtime).</li>
+              <li>Treating all three storage tiers as equivalent migration risks.</li>
+            </ul>
+            <h4 class="trap">Why this matters for NCX</h4>
+            <p>NCX panels evaluate multi-tier storage consolidation. Pure-feature answers fail. The right answer integrates platform architecture, migration sequencing, cost analysis, and risk assessment.</p>
+          </div>
+        </div>
+
+        <div class="question ncx" data-correct="ncx">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · NCP-US prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style architectural defense. Respond to the customer's lead storage architect.</p>
+          <div class="scenario">
+            <p>You are in front of a customer's lead storage architect, a NetApp NCDA for 12 years. He says:</p>
+            <blockquote>"Files is fine for general SMB shares, but we have ONTAP-specific workflows: FlexClone for instant SQL test environments from production data, FlexCache for distributed branch-office reads, ABE refinements that took years to tune, custom SnapMirror policies, and integration with Veritas NetBackup that uses ONTAP-specific APIs. Walking away from this means rebuilding workflows that took us a decade. Why is Files the right answer for us?"</blockquote>
+          </div>
+          <textarea placeholder="Respond. He has named specific ONTAP capabilities. Address each."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the ONTAP capability set is real and the workflow investment is significant.</strong> This is a 12-year specialist. Pretending Files matches every ONTAP feature loses the conversation.</li>
+              <li><strong>FlexClone.</strong> Files snapshots are space-efficient and instant; clone-equivalent workflows can use snapshot-based provisioning with some workflow adaptation. For SQL Server specifically, Nutanix has database-aware cloning patterns (NDB / Era) that handle the test-from-prod use case. Map his specific FlexClone workflows; many translate, some require workflow change.</li>
+              <li><strong>FlexCache.</strong> Distributed-branch caching is a real ONTAP capability. Files does not have a direct equivalent. For branch-office read patterns, alternatives include small Nutanix Files clusters at branches with replication, or third-party WAN acceleration. Acknowledge this gap.</li>
+              <li><strong>ABE.</strong> Files supports ABE; the years of refinement on his ONTAP ABE policies translate as workflow-import-and-test rather than feature-loss.</li>
+              <li><strong>Custom SnapMirror policies.</strong> Files Replication has its own policy model. Migrating SnapMirror policies is migration work, not feature-loss; the destination capabilities are comparable for most use cases.</li>
+              <li><strong>NetBackup with ONTAP-specific APIs.</strong> Some backup integrations use ONTAP-specific APIs (NDMP variants, snapshot integration). Veritas supports Files at the SMB/NFS protocol level; ONTAP-specific integrations would require switching to standard backup approaches. This is a real cost in some workflows.</li>
+              <li><strong>The honest reframe.</strong> "You have legitimate ONTAP investment. The question isn't whether to throw it away. The question is whether the consolidation benefits over 5 years justify the workflow migration costs. For workflows like FlexClone and SnapMirror, the cost is real but bounded; for FlexCache, the gap is real and may favor keeping NetApp for specific branch use cases. The right answer is workflow-by-workflow."</li>
+              <li><strong>Concrete next step.</strong> "Let me build a workflow inventory with you. We mark each workflow as: (1) translates cleanly to Files, (2) translates with workflow change, (3) requires keeping NetApp. The map will tell us whether full consolidation makes sense or whether the right answer is hybrid (Files for the bulk, NetApp for the workflows that don't translate). Either path saves money compared to refreshing all NetApp."</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Claiming Files matches every ONTAP feature.</li>
+              <li>Dismissing the architect's 12 years of expertise.</li>
+              <li>Not naming FlexCache as a real gap.</li>
+              <li>Forcing a full migration when hybrid is the better answer.</li>
+              <li>Not closing with the workflow-mapping exercise as a concrete proposal.</li>
+            </ul>
+            <h4 class="trap">Why this matters for NCX</h4>
+            <p>Storage architects with deep ONTAP investment are common. The disposition tested is acknowledging real expertise, naming real gaps, and reframing to workflow-by-workflow mapping rather than a binary migration decision.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can articulate the unified-storage consolidation pitch in 5 minutes on a whiteboard: NetApp + Cloudian + Pure-iSCSI + Data-Domain consolidate to one Nutanix cluster running Files + Objects + Volumes on shared DSF.</p>
+      <p>You know each service's purpose: Files for SMB/NFS file workloads, Objects for S3-compatible object storage (especially backup targets and cloud-native apps), Volumes for iSCSI block to non-Nutanix consumers.</p>
+      <p>You know each service's architecture: Files uses dedicated FSVMs; Objects uses Object Service VMs; Volumes is the cluster acting as iSCSI target. All three sit on DSF and inherit DSF's properties.</p>
+      <p>You know Files' operational features: Self-Service Restore, Files Analytics, anti-ransomware, multi-protocol shares, replication. You can demo SSR in 90 seconds.</p>
+      <p>You know Objects' compliance and lifecycle features: versioning, WORM, lifecycle policies, replication. You know which backup vendors support it (Veeam, Commvault, Rubrik, Cohesity, HYCU).</p>
+      <p>You know Volumes' use cases: physical hosts, bare-metal databases (Oracle RAC), legacy iSCSI consumers, ESXi clusters not on Nutanix that want to consume Nutanix storage.</p>
+      <p>You have the honest gap list: Files vs ONTAP at the high end (FlexClone, FlexCache, advanced policies); Objects vs AWS S3 ecosystem maturity; hyperscale workloads still cloud-native; specialized HPC filers still purpose-built.</p>
+      <p>You have the consolidation economics: typical mid-market deployments save 30-50% over 5 years compared to maintaining four separate storage tiers. The backup-target consolidation alone (Objects replacing Data Domain) is one of the easier ROI wins.</p>
+      <p>You are now ready for licensing. Module 9 covers Nutanix licensing, NCM tiers, AOS subscription models, hardware vs software pricing, and the financial conversation that frequently decides deals. After all the technical depth, this is the dimension that gets things signed.</p>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p style="margin: 8px 0 14px; color: var(--text-secondary); font-size: 13px;">Authoritative sources verified during the technical review pass on this module. Files Analytics is in the middle of being absorbed into the broader Data Lens product; reverify product naming against the current Nutanix portal before quoting in customer proposals.</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/11b-book-of-storage-services-files.html"><strong>Nutanix Bible — Files</strong></a>. Authoritative architecture reference for File Servers, FSVMs, multi-protocol shares, distributed shares.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2041-Nutanix-Files:tn-nutanix-files-architecture.html"><strong>TN-2041 Nutanix Files Architecture</strong></a>. Tech note covering FSVM minimum count, single-FSVM exception for small clusters, and protocol support (SMB 2/3, NFS v3/v4).</li>
+          <li><a href="https://www.nutanixbible.com/11c-book-of-storage-services-objects.html"><strong>Nutanix Bible — Objects</strong></a>. Object Service architecture, S3 API surface.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2106-Nutanix-Objects:nutanix-objects-buckets.html"><strong>TN-2106 Nutanix Objects Buckets</strong></a>. Bucket configuration, WORM (S3 Object Lock), versioning semantics including auto-enabled versioning on WORM buckets and the 24-hour grace period.</li>
+          <li><a href="https://next.nutanix.com/community-blog-154/maintaining-compliance-with-worm-for-nutanix-objects-33239"><strong>Maintaining Compliance with WORM for Nutanix Objects</strong></a>. WORM operational details (extend-but-never-reduce, grace period).</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Objects-v3_2:v32-buckets-configuration-c.html"><strong>Objects 3.2 Bucket Policy Configuration</strong></a>. Current bucket-policy reference.</li>
+          <li><a href="https://www.nutanix.com/products/data-lens"><strong>Nutanix Data Lens — Product Page</strong></a>. Cloud-and-on-prem unified-storage analytics and ransomware-detection product that evolved from Files Analytics.</li>
+          <li><a href="https://www.nutanix.com/blog/defend-your-data-proactively-with-nutanix-data-lens"><strong>Data Lens v2.0 GA Announcement</strong></a>. Confirms 2026 GA of fully on-prem Data Lens including air-gapped support.</li>
+          <li><a href="https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-unified-storage-v65"><strong>NCP-US Certification Page</strong></a>. Authoritative source for the NCP-US blueprint covering Files, Objects, and Volumes.</li>
+          <li><a href="https://next.nutanix.com/education-blog-153/your-roadmap-to-success-5-steps-to-prep-for-the-ncp-us-certification-exam-42945"><strong>NCP-US Exam Roadmap (Nutanix Community)</strong></a>. Preparation guidance for the specialty cert.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Glossary:</strong> Nutanix Files · FSVM · File Server · Nutanix Objects · Object Store · Bucket · Versioning · WORM · Nutanix Volumes · Volume Group · SMB · NFS · S3 · iSCSI · Files Analytics · Self-Service Restore <span style="color:var(--text-tertiary)">(Appendix A coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Files vs NetApp · Objects vs S3 · Volumes vs Block Arrays <span style="color:var(--text-tertiary)">(Appendix B coming)</span></li>
+          <li><strong>Objections:</strong> #31 "We have NetApp; why add Files?" · #32 "Objects vs AWS S3" · #33 "Backup-target consolidation" · #34 "iSCSI consumers and Volumes" <span style="color:var(--text-tertiary)">(Appendix D coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Q-STOR-06 file workload inventory · Q-STOR-07 Object/S3 use cases · Q-STOR-08 iSCSI consumer inventory · Q-STOR-09 backup target architecture <span style="color:var(--text-tertiary)">(Appendix E coming)</span></li>
+          <li><strong>Sizing Rules:</strong> Files sizing · Objects sizing · Volumes sizing <span style="color:var(--text-tertiary)">(Appendix F coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../07-data-protection/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 7: Data Protection and DR</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 9: Licensing and Economics (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>08-unified-storage</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m8:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram color palette + helpers
+    const C = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+      green: '#34d399', greenFill: 'rgba(52,211,153,0.12)',
+      purple: '#c084fc', purpleFill: 'rgba(192,132,252,0.12)',
+      gray: '#6b7a9a', grayFill: 'rgba(107,122,154,0.08)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opt = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opt.anchor) t.setAttribute('text-anchor', opt.anchor);
+      t.setAttribute('font-family', opt.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opt.size || 12);
+      if (opt.weight) t.setAttribute('font-weight', opt.weight);
+      if (opt.spacing) t.setAttribute('letter-spacing', opt.spacing);
+      if (opt.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opt.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ===== Diagram 1: Files Architecture =====
+    (function drawFilesArchitecture() {
+      const svg = document.getElementById('diagram-files-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, 'CLIENTS → ENDPOINT → FSVMs → DSF', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // TOP: clients (SMB + NFS)
+      const clients = [
+        { x: 80,  label: 'WIN', sub: 'SMB 3.x', color: C.purple, fill: C.purpleFill },
+        { x: 220, label: 'WIN', sub: 'SMB 3.x', color: C.purple, fill: C.purpleFill },
+        { x: 360, label: 'LINUX', sub: 'NFS v4', color: C.purple, fill: C.purpleFill },
+        { x: 500, label: 'APP', sub: 'NFS v3', color: C.purple, fill: C.purpleFill },
+        { x: 640, label: 'WIN', sub: 'SMB 3.x', color: C.purple, fill: C.purpleFill },
+        { x: 780, label: 'VDI', sub: 'profile', color: C.purple, fill: C.purpleFill },
+      ];
+      clients.forEach((c) => {
+        svg.appendChild(rc.rectangle(c.x, 50, 96, 56, opts(c.color, c.fill, 'solid')));
+        txt(svg, c.x + 48, 76, c.label, { anchor: 'middle', size: 12, mono: true, weight: '600', fill: c.color });
+        txt(svg, c.x + 48, 94, c.sub, { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      });
+
+      // arrow into endpoint
+      [128, 268, 408, 548, 688, 828].forEach((x) => {
+        const arr = rc.path(`M ${x} 110 L ${x} 138`, { stroke: C.purple, strokeWidth: 1.4, roughness: 1.4 });
+        svg.appendChild(arr);
+      });
+
+      // ENDPOINT (load-balanced)
+      svg.appendChild(rc.rectangle(60, 142, 880, 38, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 500, 167, 'FILE SERVER ENDPOINT  ·  DNS round-robin / VIP  ·  load-balances across FSVMs', { anchor: 'middle', size: 12, weight: '700', fill: C.fabric, spacing: '0.06em' });
+
+      // arrows to FSVMs
+      [220, 500, 780].forEach((x) => {
+        const arr = rc.path(`M ${x} 180 L ${x} 218`, { stroke: C.fabric, strokeWidth: 1.6, roughness: 1.2 });
+        svg.appendChild(arr);
+      });
+
+      // FSVMs (3)
+      const fsvms = [
+        { x: 100, n: 'FSVM-01' },
+        { x: 380, n: 'FSVM-02' },
+        { x: 660, n: 'FSVM-03' },
+      ];
+      fsvms.forEach((f) => {
+        svg.appendChild(rc.rectangle(f.x, 220, 240, 96, opts(C.acro, C.acroFill, 'cross-hatch')));
+        txt(svg, f.x + 120, 248, f.n, { anchor: 'middle', size: 14, weight: '700', fill: C.acro, spacing: '0.10em' });
+        txt(svg, f.x + 120, 270, 'SMB 3.x · NFS v4', { anchor: 'middle', size: 10, mono: true, fill: C.label });
+        txt(svg, f.x + 120, 286, 'multi-protocol · ACL translation', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+        txt(svg, f.x + 120, 302, 'AD · Kerberos · ABE', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      });
+
+      // arrows to DSF
+      [220, 500, 780].forEach((x) => {
+        const arr = rc.path(`M ${x} 316 L ${x} 358`, { stroke: C.cvm, strokeWidth: 1.6, roughness: 1.2 });
+        svg.appendChild(arr);
+      });
+
+      // DSF band
+      svg.appendChild(rc.rectangle(60, 358, 880, 80, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 500, 388, 'DSF · Distributed Storage Fabric (the underlying Nutanix cluster)', { anchor: 'middle', size: 13, weight: '700', fill: C.fabric, spacing: '0.06em' });
+      txt(svg, 500, 408, 'RF  ·  compression  ·  dedup  ·  snapshots  ·  replication  ·  EC', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+      txt(svg, 500, 426, 'all DSF benefits apply to file data automatically', { anchor: 'middle', size: 10, italic: true, fill: C.ink });
+
+      // Side panel: Files Analytics
+      svg.appendChild(rc.rectangle(60, 460, 240, 60, opts(C.green, C.greenFill, 'solid')));
+      txt(svg, 180, 482, 'FILES ANALYTICS', { anchor: 'middle', size: 12, weight: '700', fill: C.green, spacing: '0.08em' });
+      txt(svg, 180, 500, 'aging · top users · anomalies', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 180, 514, 'anti-ransomware foundation', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      const arrAnal = rc.path(`M 300 484 L 380 280`, { stroke: C.green, strokeWidth: 1, roughness: 1.4, strokeLineDash: [3, 4] });
+      svg.appendChild(arrAnal);
+
+      // Side panel: SSR
+      svg.appendChild(rc.rectangle(700, 460, 240, 60, opts(C.vip, C.vipFill, 'solid')));
+      txt(svg, 820, 482, 'SELF-SERVICE RESTORE', { anchor: 'middle', size: 12, weight: '700', fill: C.vip, spacing: '0.08em' });
+      txt(svg, 820, 500, 'Windows "Previous Versions"', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 820, 514, 'no IT ticket required', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      const arrSsr = rc.path(`M 700 484 L 620 280`, { stroke: C.vip, strokeWidth: 1, roughness: 1.4, strokeLineDash: [3, 4] });
+      svg.appendChild(arrSsr);
+    })();
+
+    // ===== Diagram 2: Objects Architecture =====
+    (function drawObjectsArchitecture() {
+      const svg = document.getElementById('diagram-objects-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, 'S3 CLIENTS → ENDPOINT → OBJECT SERVICE → BUCKETS → DSF', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // TOP: S3 clients
+      const clients = [
+        { x: 80,  label: 'VEEAM',   sub: 'PutObject',   color: C.fabric },
+        { x: 220, label: 'COMMVAULT', sub: 'backup → S3', color: C.fabric },
+        { x: 380, label: 'APP',     sub: 'cloud-native', color: C.fabric },
+        { x: 520, label: 'aws s3 cp', sub: 'SDK',         color: C.fabric },
+        { x: 660, label: 'SPARK',   sub: 's3a://',       color: C.fabric },
+        { x: 800, label: 'CURL',    sub: 'PUT',          color: C.fabric },
+      ];
+      clients.forEach((c) => {
+        svg.appendChild(rc.rectangle(c.x, 50, 100, 56, opts(c.color, C.fabricFill, 'solid')));
+        txt(svg, c.x + 50, 76, c.label, { anchor: 'middle', size: 11, mono: true, weight: '600', fill: c.color });
+        txt(svg, c.x + 50, 94, c.sub, { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      });
+      // arrows to endpoint
+      [130, 270, 430, 570, 710, 850].forEach((x) => {
+        const arr = rc.path(`M ${x} 110 L ${x} 138`, { stroke: C.fabric, strokeWidth: 1.4, roughness: 1.4 });
+        svg.appendChild(arr);
+      });
+
+      // S3 endpoint
+      svg.appendChild(rc.rectangle(60, 142, 880, 38, opts(C.vip, C.vipFill, 'cross-hatch')));
+      txt(svg, 500, 167, 'S3 ENDPOINT  ·  HTTPS  ·  signature v4  ·  IAM-style users', { anchor: 'middle', size: 12, weight: '700', fill: C.vip, spacing: '0.06em' });
+
+      // arrows to Object Service VMs
+      [220, 500, 780].forEach((x) => {
+        const arr = rc.path(`M ${x} 180 L ${x} 218`, { stroke: C.vip, strokeWidth: 1.6, roughness: 1.2 });
+        svg.appendChild(arr);
+      });
+
+      // Object Service VMs (3)
+      const oss = [
+        { x: 100, n: 'OBJ-SVC-01' },
+        { x: 380, n: 'OBJ-SVC-02' },
+        { x: 660, n: 'OBJ-SVC-03' },
+      ];
+      oss.forEach((o) => {
+        svg.appendChild(rc.rectangle(o.x, 220, 240, 80, opts(C.acro, C.acroFill, 'cross-hatch')));
+        txt(svg, o.x + 120, 248, o.n, { anchor: 'middle', size: 13, weight: '700', fill: C.acro, spacing: '0.10em' });
+        txt(svg, o.x + 120, 268, 'S3 stack', { anchor: 'middle', size: 10, mono: true, fill: C.label });
+        txt(svg, o.x + 120, 284, 'multi-tenancy', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      });
+
+      // Object Stores (buckets)
+      svg.appendChild(rc.rectangle(60, 320, 880, 70, opts(C.vip, C.vipFill, 'solid')));
+      txt(svg, 500, 342, 'OBJECT STORES · BUCKETS · POLICIES', { anchor: 'middle', size: 13, weight: '700', fill: C.vip, spacing: '0.10em' });
+
+      // Bucket cards
+      const buckets = [
+        { x: 80, label: 'veeam-repo', tag: 'BACKUP', color: C.fabric },
+        { x: 270, label: 'compliance-archive', tag: 'WORM', color: C.ext },
+        { x: 470, label: 'app-data', tag: 'VERSIONED', color: C.green },
+        { x: 670, label: 'logs-2026', tag: 'LIFECYCLE', color: C.purple },
+      ];
+      buckets.forEach((b) => {
+        svg.appendChild(rc.rectangle(b.x, 354, 180, 30, opts(b.color, 'rgba(255,255,255,0.04)', 'solid')));
+        txt(svg, b.x + 90, 370, b.label, { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.label });
+        txt(svg, b.x + 90, 382, b.tag, { anchor: 'middle', size: 9, mono: true, fill: b.color, spacing: '0.10em' });
+      });
+
+      // arrows to DSF
+      [220, 500, 780].forEach((x) => {
+        const arr = rc.path(`M ${x} 390 L ${x} 422`, { stroke: C.cvm, strokeWidth: 1.6, roughness: 1.2 });
+        svg.appendChild(arr);
+      });
+
+      // DSF band
+      svg.appendChild(rc.rectangle(60, 422, 880, 68, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 500, 450, 'DSF · object data persisted with full platform features', { anchor: 'middle', size: 13, weight: '700', fill: C.fabric, spacing: '0.06em' });
+      txt(svg, 500, 470, 'RF · compression · dedup · snapshots · EC', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+
+      // Replication arrow off to the right
+      svg.appendChild(rc.rectangle(760, 510, 200, 38, opts(C.green, C.greenFill, 'solid')));
+      txt(svg, 860, 528, 'REPLICATE → OBJECTS / AWS S3', { anchor: 'middle', size: 11, mono: true, weight: '600', fill: C.green });
+      const arrRepl = rc.path(`M 700 456 Q 740 510 800 528`, { stroke: C.green, strokeWidth: 1.4, roughness: 1.2, strokeLineDash: [4, 4] });
+      svg.appendChild(arrRepl);
+
+      txt(svg, 80, 528, 'AWS-S3-compatible API · most S3 tools work unchanged', { size: 11, italic: true, fill: C.ink });
+    })();
+
+    // ===== Diagram 3: Unified Storage Consolidation (BEFORE / AFTER) =====
+    (function drawConsolidation() {
+      const svg = document.getElementById('diagram-consolidation-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, 'BEFORE: 4 APPLIANCES, 4 VENDORS  ·  AFTER: 1 CLUSTER', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // ===== LEFT: BEFORE =====
+      svg.appendChild(rc.rectangle(20, 50, 460, 510, opts(C.gray, 'rgba(107,122,154,0.04)', 'solid')));
+      txt(svg, 250, 76, 'BEFORE', { anchor: 'middle', size: 18, weight: '700', fill: C.gray, spacing: '0.20em' });
+
+      // VMware compute at top
+      svg.appendChild(rc.rectangle(50, 100, 400, 56, opts(C.compute, C.computeFill, 'solid')));
+      txt(svg, 250, 124, 'VMware compute · 8 ESXi hosts · ~250 VMs', { anchor: 'middle', size: 12, weight: '700', fill: C.label });
+      txt(svg, 250, 142, 'consumes storage from FOUR separate appliances below', { anchor: 'middle', size: 10, italic: true, fill: C.ink });
+
+      // 4 appliances stacked
+      const apps = [
+        { y: 175, label: 'NetApp filer',     sub: 'File · SMB / NFS',        color: C.gray },
+        { y: 250, label: 'Cloudian object',  sub: 'Object · S3',             color: C.gray },
+        { y: 325, label: 'Pure iSCSI array', sub: 'Block · iSCSI (non-VM)',  color: C.gray },
+        { y: 400, label: 'Data Domain',      sub: 'Backup target / dedup',   color: C.gray },
+      ];
+      apps.forEach((a) => {
+        svg.appendChild(rc.rectangle(50, a.y, 400, 56, opts(a.color, C.grayFill, 'cross-hatch')));
+        txt(svg, 250, a.y + 22, a.label, { anchor: 'middle', size: 13, weight: '700', fill: C.label });
+        txt(svg, 250, a.y + 40, a.sub, { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+        // arrows from compute to appliance
+        const arr = rc.path(`M 250 156 L 250 ${a.y}`, { stroke: C.gray, strokeWidth: 0.8, roughness: 1.4, strokeLineDash: [2, 4] });
+        svg.appendChild(arr);
+      });
+
+      // before annotation
+      txt(svg, 250, 482, '4 vendors · 4 refresh cycles · 4 management UIs', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      txt(svg, 250, 500, '4 support contracts · 4 capacity-planning surfaces', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      txt(svg, 250, 522, '~$400K/year run rate', { anchor: 'middle', size: 12, weight: '700', fill: C.ext });
+
+      // arrow to AFTER
+      const arrTo = rc.path(`M 490 305 L 530 305`, { stroke: C.fabric, strokeWidth: 3, roughness: 1.0 });
+      svg.appendChild(arrTo);
+      txt(svg, 510, 295, '→', { anchor: 'middle', size: 24, weight: '700', fill: C.fabric });
+      txt(svg, 510, 332, 'consolidate', { anchor: 'middle', size: 10, mono: true, italic: true, fill: C.fabric });
+
+      // ===== RIGHT: AFTER =====
+      svg.appendChild(rc.rectangle(540, 50, 440, 510, opts(C.fabric, 'rgba(0,212,255,0.04)', 'solid')));
+      txt(svg, 760, 76, 'AFTER', { anchor: 'middle', size: 18, weight: '700', fill: C.fabric, spacing: '0.20em' });
+
+      // Single cluster wrapper with compute + 3 service stacks
+      svg.appendChild(rc.rectangle(560, 100, 400, 380, opts(C.acro, C.acroFill, 'cross-hatch')));
+      txt(svg, 760, 124, 'SINGLE NUTANIX CLUSTER', { anchor: 'middle', size: 13, weight: '700', fill: C.acro, spacing: '0.10em' });
+
+      // compute strip at top
+      svg.appendChild(rc.rectangle(580, 138, 360, 38, opts(C.compute, C.computeFill, 'solid')));
+      txt(svg, 760, 162, '~250 VMs · same compute layer', { anchor: 'middle', size: 12, weight: '700', fill: C.label });
+
+      // 3 service stacks side by side
+      svg.appendChild(rc.rectangle(580, 188, 110, 88, opts(C.purple, C.purpleFill, 'solid')));
+      txt(svg, 635, 210, 'FILES', { anchor: 'middle', size: 12, weight: '700', fill: C.purple, spacing: '0.10em' });
+      txt(svg, 635, 228, '3 FSVMs', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 635, 244, 'SMB · NFS', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 635, 260, 'AD · ABE', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      svg.appendChild(rc.rectangle(705, 188, 110, 88, opts(C.fabric, C.fabricFill, 'solid')));
+      txt(svg, 760, 210, 'OBJECTS', { anchor: 'middle', size: 12, weight: '700', fill: C.fabric, spacing: '0.10em' });
+      txt(svg, 760, 228, 'Object Svc', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 760, 244, 'S3 · WORM', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 760, 260, 'lifecycle', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      svg.appendChild(rc.rectangle(830, 188, 110, 88, opts(C.vip, C.vipFill, 'solid')));
+      txt(svg, 885, 210, 'VOLUMES', { anchor: 'middle', size: 12, weight: '700', fill: C.vip, spacing: '0.10em' });
+      txt(svg, 885, 228, 'VG / iSCSI', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 885, 244, 'multi-path', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+      txt(svg, 885, 260, 'phys hosts', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      // DSF band underneath all three
+      svg.appendChild(rc.rectangle(580, 290, 360, 60, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 760, 312, 'DSF · shared substrate', { anchor: 'middle', size: 13, weight: '700', fill: C.fabric, spacing: '0.06em' });
+      txt(svg, 760, 332, 'RF · compression · dedup · snapshots · replication', { anchor: 'middle', size: 10, mono: true, fill: C.label });
+
+      // Backup workflow callout
+      svg.appendChild(rc.rectangle(580, 365, 360, 50, opts(C.green, C.greenFill, 'solid')));
+      txt(svg, 760, 386, 'Veeam / Commvault / Rubrik → Objects bucket', { anchor: 'middle', size: 11, mono: true, weight: '600', fill: C.green });
+      txt(svg, 760, 402, 'replaces dedicated Data Domain / StorageGRID', { anchor: 'middle', size: 10, italic: true, fill: C.ink });
+
+      txt(svg, 760, 442, 'compute + storage scale together', { anchor: 'middle', size: 11, italic: true, fill: C.ink });
+      txt(svg, 760, 458, 'add a node → adds VM, file, object, block capacity at once', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      // after annotation
+      txt(svg, 760, 502, '1 platform · 1 vendor · 1 refresh cycle · 1 management plane', { anchor: 'middle', size: 11, mono: true, fill: C.label });
+      txt(svg, 760, 522, 'typical 5-yr savings: 30–50%', { anchor: 'middle', size: 12, weight: '700', fill: C.green });
+    })();
+  </script>
+</body>
+</html>

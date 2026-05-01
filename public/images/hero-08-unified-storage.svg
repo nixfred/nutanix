@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="m8-title m8-desc">
+  <title id="m8-title">Module 8 hero: Unified Storage — three protocols on one cluster</title>
+  <desc id="m8-desc">Three client streams — SMB/NFS file clients in purple, S3 object clients in cyan, and iSCSI initiators in gold — converge on three service-VM bands (FSVM, Object Service, Volumes) floating above a single Nutanix cluster, with DSF as the shared substrate underneath.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="cubeFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a3258"/>
+      <stop offset="100%" stop-color="#0f2440"/>
+    </linearGradient>
+    <linearGradient id="cubeTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#244a82"/>
+      <stop offset="100%" stop-color="#173461"/>
+    </linearGradient>
+    <linearGradient id="cubeSide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0d2244"/>
+      <stop offset="100%" stop-color="#1c3e6f"/>
+    </linearGradient>
+
+    <linearGradient id="cvmGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c8552d"/>
+      <stop offset="100%" stop-color="#7a2e15"/>
+    </linearGradient>
+
+    <linearGradient id="dsfBand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(0,212,255,0.0)"/>
+      <stop offset="20%" stop-color="rgba(0,212,255,0.45)"/>
+      <stop offset="50%" stop-color="rgba(0,212,255,0.85)"/>
+      <stop offset="80%" stop-color="rgba(0,212,255,0.45)"/>
+      <stop offset="100%" stop-color="rgba(0,212,255,0.0)"/>
+    </linearGradient>
+
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(74,158,255,0.0)"/>
+      <stop offset="100%" stop-color="rgba(74,158,255,0.18)"/>
+    </linearGradient>
+
+    <filter id="cyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <marker id="arrowFiles" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#c084fc"/>
+    </marker>
+    <marker id="arrowObj" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#00d4ff"/>
+    </marker>
+    <marker id="arrowVol" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <!-- subtle grid floor lines -->
+  <g stroke="rgba(74,158,255,0.08)" stroke-width="1" fill="none">
+    <path d="M0,720 L1600,720"/>
+    <path d="M0,760 L1600,760"/>
+    <path d="M0,800 L1600,800"/>
+  </g>
+
+  <!-- mono path treatment top-left -->
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#00d4ff">/</tspan>nix<tspan fill="#00d4ff">/</tspan>nutanix<tspan fill="#00d4ff">/</tspan>08
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">UNIFIED STORAGE · FILES · OBJECTS · VOLUMES</text>
+
+  <!-- ============================================================ -->
+  <!-- THREE CLIENT POOLS at top                                     -->
+  <!-- ============================================================ -->
+
+  <!-- FILES clients (left) -->
+  <g transform="translate(180, 140)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#c084fc" letter-spacing="0.10em">SMB · NFS CLIENTS</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="0.06em">800 USERS · WIN + LINUX</text>
+    <!-- 4 client glyphs -->
+    <g transform="translate(0,38)">
+      <rect x="0" y="0" width="56" height="44" rx="3" fill="rgba(192,132,252,0.12)" stroke="#c084fc" stroke-width="1.2"/>
+      <rect x="6" y="6" width="44" height="28" fill="rgba(192,132,252,0.20)" stroke="#c084fc" stroke-width="0.8"/>
+      <text x="28" y="24" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#c084fc">SMB</text>
+    </g>
+    <g transform="translate(72,38)">
+      <rect x="0" y="0" width="56" height="44" rx="3" fill="rgba(192,132,252,0.12)" stroke="#c084fc" stroke-width="1.2"/>
+      <rect x="6" y="6" width="44" height="28" fill="rgba(192,132,252,0.20)" stroke="#c084fc" stroke-width="0.8"/>
+      <text x="28" y="24" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#c084fc">SMB</text>
+    </g>
+    <g transform="translate(144,38)">
+      <rect x="0" y="0" width="56" height="44" rx="3" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="28" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#c084fc">NFS</text>
+      <text x="28" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">linux app</text>
+    </g>
+  </g>
+
+  <!-- OBJECTS clients (center) -->
+  <g transform="translate(720, 140)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#00d4ff" letter-spacing="0.10em" text-anchor="middle">S3 CLIENTS</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="0.06em" text-anchor="middle">VEEAM · CLOUD-NATIVE APPS</text>
+    <g transform="translate(-100,38)">
+      <rect x="0" y="0" width="76" height="44" rx="3" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.2"/>
+      <text x="38" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#00d4ff">VEEAM</text>
+      <text x="38" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">backup → S3</text>
+    </g>
+    <g transform="translate(-12,38)">
+      <rect x="0" y="0" width="76" height="44" rx="3" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.2"/>
+      <text x="38" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#00d4ff">APP</text>
+      <text x="38" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">PutObject</text>
+    </g>
+    <g transform="translate(76,38)">
+      <rect x="0" y="0" width="76" height="44" rx="3" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="38" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#00d4ff">SDK</text>
+      <text x="38" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">aws s3 cp</text>
+    </g>
+  </g>
+
+  <!-- VOLUMES clients (right) -->
+  <g transform="translate(1200, 140)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#fbbf24" letter-spacing="0.10em" text-anchor="end">iSCSI INITIATORS</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4" letter-spacing="0.06em" text-anchor="end">PHYS HOSTS · ORACLE RAC</text>
+    <g transform="translate(-216,38)">
+      <rect x="0" y="0" width="64" height="44" rx="3" fill="rgba(251,191,36,0.10)" stroke="#fbbf24" stroke-width="1.2"/>
+      <text x="32" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#fbbf24">PHYS</text>
+      <text x="32" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">Linux</text>
+    </g>
+    <g transform="translate(-128,38)">
+      <rect x="0" y="0" width="64" height="44" rx="3" fill="rgba(251,191,36,0.10)" stroke="#fbbf24" stroke-width="1.2"/>
+      <text x="32" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#fbbf24">RAC</text>
+      <text x="32" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">Oracle</text>
+    </g>
+    <g transform="translate(-40,38)">
+      <rect x="0" y="0" width="64" height="44" rx="3" fill="rgba(251,191,36,0.08)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="32" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#fbbf24">ESXi</text>
+      <text x="32" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">non-NTNX</text>
+    </g>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- PROTOCOL ARCS converging on the cluster                       -->
+  <!-- ============================================================ -->
+
+  <!-- Files: SMB/NFS arc -->
+  <g filter="url(#cyanGlow)">
+    <path d="M 280 230 Q 360 380 720 420" stroke="#c084fc" stroke-width="2.4" fill="none" stroke-linecap="round" marker-end="url(#arrowFiles)"/>
+  </g>
+  <text x="380" y="320" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="#c084fc" letter-spacing="0.06em">SMB 3.x · NFS v4 · AD</text>
+
+  <!-- Objects: S3 arc -->
+  <g filter="url(#cyanGlow)">
+    <path d="M 720 230 L 760 410" stroke="#00d4ff" stroke-width="2.6" fill="none" stroke-linecap="round" marker-end="url(#arrowObj)"/>
+  </g>
+  <text x="760" y="320" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="#00d4ff" letter-spacing="0.06em">S3 · WORM · LIFECYCLE</text>
+
+  <!-- Volumes: iSCSI arc -->
+  <g filter="url(#cyanGlow)">
+    <path d="M 1140 230 Q 1080 380 820 420" stroke="#fbbf24" stroke-width="2.4" fill="none" stroke-linecap="round" marker-end="url(#arrowVol)"/>
+  </g>
+  <text x="1020" y="320" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="#fbbf24" letter-spacing="0.06em" text-anchor="end">iSCSI · MULTI-PATH</text>
+
+  <!-- ============================================================ -->
+  <!-- SERVICE-VM BANDS floating above cluster                       -->
+  <!-- ============================================================ -->
+
+  <!-- FSVM band -->
+  <g transform="translate(440, 420)">
+    <rect x="0" y="0" width="240" height="60" rx="2" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1.5"/>
+    <rect x="10" y="10" width="64" height="40" fill="rgba(192,132,252,0.25)" stroke="#c084fc" stroke-width="1"/>
+    <text x="42" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#c084fc">FSVM-01</text>
+    <rect x="88" y="10" width="64" height="40" fill="rgba(192,132,252,0.25)" stroke="#c084fc" stroke-width="1"/>
+    <text x="120" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#c084fc">FSVM-02</text>
+    <rect x="166" y="10" width="64" height="40" fill="rgba(192,132,252,0.25)" stroke="#c084fc" stroke-width="1"/>
+    <text x="198" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#c084fc">FSVM-03</text>
+    <text x="120" y="-6" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">FILES · 3 FSVMs</text>
+  </g>
+
+  <!-- Object Service band -->
+  <g transform="translate(700, 420)">
+    <rect x="0" y="0" width="240" height="60" rx="2" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.5"/>
+    <rect x="10" y="10" width="64" height="40" fill="rgba(0,212,255,0.22)" stroke="#00d4ff" stroke-width="1"/>
+    <text x="42" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#00d4ff">OBJ-SVC-01</text>
+    <rect x="88" y="10" width="64" height="40" fill="rgba(0,212,255,0.22)" stroke="#00d4ff" stroke-width="1"/>
+    <text x="120" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#00d4ff">OBJ-SVC-02</text>
+    <rect x="166" y="10" width="64" height="40" fill="rgba(0,212,255,0.22)" stroke="#00d4ff" stroke-width="1"/>
+    <text x="198" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#00d4ff">OBJ-SVC-03</text>
+    <text x="120" y="-6" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">OBJECTS · S3</text>
+  </g>
+
+  <!-- Volumes band -->
+  <g transform="translate(960, 420)">
+    <rect x="0" y="0" width="200" height="60" rx="2" fill="rgba(251,191,36,0.10)" stroke="#fbbf24" stroke-width="1.5"/>
+    <rect x="10" y="10" width="180" height="40" fill="rgba(251,191,36,0.18)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="100" y="26" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#fbbf24">VOLUME GROUPS</text>
+    <text x="100" y="42" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">LUNs · iSCSI target</text>
+    <text x="100" y="-6" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#fbbf24" letter-spacing="0.10em">VOLUMES · BLOCK</text>
+  </g>
+
+  <!-- arrows from service bands down into cluster -->
+  <g stroke-width="1.4" fill="none" stroke-dasharray="2 4" opacity="0.7">
+    <path d="M 560 488 L 600 580" stroke="#c084fc"/>
+    <path d="M 820 488 L 800 580" stroke="#00d4ff"/>
+    <path d="M 1060 488 L 1000 580" stroke="#fbbf24"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- THE NUTANIX CLUSTER (big, single, central)                    -->
+  <!-- ============================================================ -->
+  <g transform="translate(280, 580)">
+    <text x="510" y="-10" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600" letter-spacing="0.10em" fill="#e8f0ff">SINGLE NUTANIX CLUSTER · 6 NODES · ONE PLATFORM</text>
+
+    <!-- 6 nodes in a row -->
+    <g>
+      <g transform="translate(0,20)">
+        <rect x="0" y="40" width="140" height="80" fill="url(#cubeFront)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="0,40 30,20 170,20 140,40" fill="url(#cubeTop)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="140,40 170,20 170,100 140,120" fill="url(#cubeSide)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <rect x="14" y="50" width="112" height="14" fill="url(#cvmGrad)" stroke="#a04020" stroke-width="0.8"/>
+        <text x="70" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" letter-spacing="0.10em">CVM</text>
+        <g fill="#0a1628" stroke="#1f3a66" stroke-width="0.8">
+          <rect x="14" y="74" width="112" height="6"/><rect x="14" y="84" width="112" height="6"/>
+          <rect x="14" y="94" width="112" height="6"/><rect x="14" y="104" width="112" height="6"/>
+        </g>
+        <rect x="14" y="74" width="44" height="6" fill="#00d4ff" opacity="0.55"/>
+      </g>
+      <g transform="translate(160,20)">
+        <rect x="0" y="40" width="140" height="80" fill="url(#cubeFront)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="0,40 30,20 170,20 140,40" fill="url(#cubeTop)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="140,40 170,20 170,100 140,120" fill="url(#cubeSide)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <rect x="14" y="50" width="112" height="14" fill="url(#cvmGrad)" stroke="#a04020" stroke-width="0.8"/>
+        <text x="70" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" letter-spacing="0.10em">CVM</text>
+        <g fill="#0a1628" stroke="#1f3a66" stroke-width="0.8">
+          <rect x="14" y="74" width="112" height="6"/><rect x="14" y="84" width="112" height="6"/>
+          <rect x="14" y="94" width="112" height="6"/><rect x="14" y="104" width="112" height="6"/>
+        </g>
+        <rect x="14" y="74" width="60" height="6" fill="#00d4ff" opacity="0.55"/>
+      </g>
+      <g transform="translate(320,20)">
+        <rect x="0" y="40" width="140" height="80" fill="url(#cubeFront)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="0,40 30,20 170,20 140,40" fill="url(#cubeTop)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="140,40 170,20 170,100 140,120" fill="url(#cubeSide)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <rect x="14" y="50" width="112" height="14" fill="url(#cvmGrad)" stroke="#a04020" stroke-width="0.8"/>
+        <text x="70" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" letter-spacing="0.10em">CVM</text>
+        <g fill="#0a1628" stroke="#1f3a66" stroke-width="0.8">
+          <rect x="14" y="74" width="112" height="6"/><rect x="14" y="84" width="112" height="6"/>
+          <rect x="14" y="94" width="112" height="6"/><rect x="14" y="104" width="112" height="6"/>
+        </g>
+        <rect x="14" y="74" width="36" height="6" fill="#00d4ff" opacity="0.55"/>
+      </g>
+      <g transform="translate(480,20)">
+        <rect x="0" y="40" width="140" height="80" fill="url(#cubeFront)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="0,40 30,20 170,20 140,40" fill="url(#cubeTop)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="140,40 170,20 170,100 140,120" fill="url(#cubeSide)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <rect x="14" y="50" width="112" height="14" fill="url(#cvmGrad)" stroke="#a04020" stroke-width="0.8"/>
+        <text x="70" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" letter-spacing="0.10em">CVM</text>
+        <g fill="#0a1628" stroke="#1f3a66" stroke-width="0.8">
+          <rect x="14" y="74" width="112" height="6"/><rect x="14" y="84" width="112" height="6"/>
+          <rect x="14" y="94" width="112" height="6"/><rect x="14" y="104" width="112" height="6"/>
+        </g>
+        <rect x="14" y="74" width="52" height="6" fill="#00d4ff" opacity="0.55"/>
+      </g>
+      <g transform="translate(640,20)">
+        <rect x="0" y="40" width="140" height="80" fill="url(#cubeFront)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="0,40 30,20 170,20 140,40" fill="url(#cubeTop)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="140,40 170,20 170,100 140,120" fill="url(#cubeSide)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <rect x="14" y="50" width="112" height="14" fill="url(#cvmGrad)" stroke="#a04020" stroke-width="0.8"/>
+        <text x="70" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" letter-spacing="0.10em">CVM</text>
+        <g fill="#0a1628" stroke="#1f3a66" stroke-width="0.8">
+          <rect x="14" y="74" width="112" height="6"/><rect x="14" y="84" width="112" height="6"/>
+          <rect x="14" y="94" width="112" height="6"/><rect x="14" y="104" width="112" height="6"/>
+        </g>
+        <rect x="14" y="74" width="68" height="6" fill="#00d4ff" opacity="0.55"/>
+      </g>
+      <g transform="translate(800,20)">
+        <rect x="0" y="40" width="140" height="80" fill="url(#cubeFront)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="0,40 30,20 170,20 140,40" fill="url(#cubeTop)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <polygon points="140,40 170,20 170,100 140,120" fill="url(#cubeSide)" stroke="#3a6cb0" stroke-width="1.2"/>
+        <rect x="14" y="50" width="112" height="14" fill="url(#cvmGrad)" stroke="#a04020" stroke-width="0.8"/>
+        <text x="70" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff" letter-spacing="0.10em">CVM</text>
+        <g fill="#0a1628" stroke="#1f3a66" stroke-width="0.8">
+          <rect x="14" y="74" width="112" height="6"/><rect x="14" y="84" width="112" height="6"/>
+          <rect x="14" y="94" width="112" height="6"/><rect x="14" y="104" width="112" height="6"/>
+        </g>
+        <rect x="14" y="74" width="48" height="6" fill="#00d4ff" opacity="0.55"/>
+      </g>
+    </g>
+
+    <!-- DSF band underneath -->
+    <g transform="translate(0,160)">
+      <rect x="0" y="0" width="940" height="34" fill="url(#dsfBand)" stroke="#00d4ff" stroke-width="0.8" opacity="0.7"/>
+      <text x="470" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#0a1628" letter-spacing="0.20em">DSF · DISTRIBUTED STORAGE FABRIC · RF · COMPRESSION · DEDUP · SNAPSHOTS</text>
+    </g>
+
+    <ellipse cx="470" cy="220" rx="540" ry="22" fill="url(#floor)"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- legend bottom-left                                            -->
+  <!-- ============================================================ -->
+  <g transform="translate(60, 818)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#e8f0ff" letter-spacing="0.10em">FOUR APPLIANCES · ONE CLUSTER</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">NetApp + Cloudian + Pure-iSCSI + Data-Domain → Files + Objects + Volumes on shared DSF</text>
+  </g>
+
+  <!-- subtle vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
