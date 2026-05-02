@@ -1,0 +1,1323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · Module 9: Licensing and Real Costs</title>
+  <meta name="description" content="Nutanix licensing structure (NCI Pro, NCI Ultimate, NCM Starter / Pro / Ultimate, NCP bundles), hardware sourcing options (NX, OEM, software-only), the post-Broadcom VMware comparison, complete BoM checklists, 5-year TCO methodology, capex vs opex framing, multi-year subscription mechanics, and twelve practice questions." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Module 9: Licensing and Real Costs" />
+  <meta property="og:description" content="The licensing matrix in 60 seconds: NCI tiers, NCM tiers, NCP bundles, hardware sourcing, BoM discipline, 5-year TCO, the Broadcom comparison, and the CFO conversation." />
+  <meta property="og:image" content="../../public/images/hero-09-licensing-economics.svg" />
+  <meta property="og:type" content="article" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Module 9: Licensing and Real Costs" />
+  <meta name="twitter:description" content="The module that turns technical wins into signed deals. NCI / NCM / NCP licensing, complete BoM, 5-year TCO methodology, the post-Broadcom comparison." />
+  <meta name="twitter:image" content="../../public/images/hero-09-licensing-economics.svg" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-glow: rgba(74, 158, 255, 0.75);
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --callout-familiar:  rgba(74, 158, 255, 0.10);
+      --callout-familiar-border: rgba(74, 158, 255, 0.45);
+      --callout-different: rgba(168, 85, 247, 0.10);
+      --callout-different-border: rgba(168, 85, 247, 0.50);
+      --callout-exam:      rgba(251, 191, 36, 0.10);
+      --callout-exam-border: rgba(251, 191, 36, 0.50);
+      --callout-sa:        rgba(0, 212, 255, 0.10);
+      --callout-sa-border: rgba(0, 212, 255, 0.50);
+      --callout-lab:       rgba(52, 211, 153, 0.10);
+      --callout-lab-border: rgba(52, 211, 153, 0.50);
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-cyan); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85); font-variant-numeric: tabular-nums;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.cert { border-color: rgba(251,191,36,0.40); color: var(--warning); }
+    .chip.read { border-color: rgba(74,158,255,0.45); color: var(--accent-primary); }
+    .cert-banner {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 28px;
+    }
+    .cert-banner strong { color: var(--text-primary); font-weight: 600; }
+    .cert-banner .lbl {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; padding-right: 6px;
+      border-right: 1px solid var(--border); margin-right: 4px;
+    }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .meta-card { padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; }
+    .meta-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 6px; }
+    .meta-card ul { margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 14px; }
+    .meta-card .terms { display: flex; flex-wrap: wrap; gap: 6px; }
+    .term-chip { font-family: var(--font-mono); font-size: 12px; padding: 3px 8px; background: var(--bg-elevated); color: var(--text-secondary); border-radius: 4px; border: 1px solid var(--border); }
+
+    article.body { max-width: 760px; margin: 0 auto; }
+    article.body h2 { font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 56px 0 16px; scroll-margin-top: 80px; }
+    article.body h3 { font-size: 21px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 12px; color: var(--text-primary); scroll-margin-top: 80px; }
+    article.body p { margin: 0 0 16px; color: var(--text-primary); max-width: 70ch; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 16px; }
+    article.body ul li, article.body ol li { margin-bottom: 8px; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+    article.body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    article.body blockquote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 2px solid var(--border); color: var(--text-secondary); font-style: italic; }
+    article.body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; color: var(--text-primary); }
+    article.body th, article.body td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    article.body th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); font-weight: 600; background: var(--bg-surface); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .callout { margin: 24px 0; padding: 18px 22px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-surface); position: relative; }
+    .callout .label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .callout .label .badge { font-family: var(--font-mono); font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--text-secondary); letter-spacing: 0.08em; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.familiar  { background: var(--callout-familiar);  border-color: var(--callout-familiar-border); }
+    .callout.familiar  .label { color: var(--accent-primary); }
+    .callout.different { background: var(--callout-different); border-color: var(--callout-different-border); }
+    .callout.different .label { color: #c084fc; }
+    .callout.exam      { background: var(--callout-exam);      border-color: var(--callout-exam-border); }
+    .callout.exam      .label { color: var(--warning); }
+    .callout.sa        { background: var(--callout-sa);        border-color: var(--callout-sa-border); }
+    .callout.sa        .label { color: var(--accent-cyan); }
+    .callout.lab       { background: var(--callout-lab);       border-color: var(--callout-lab-border); }
+    .callout.lab       .label { color: var(--success); }
+
+    figure.diagram {
+      margin: 36px 0; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 12px; max-width: 1000px;
+    }
+    figure.diagram .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    figure.diagram .badge { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+    figure.diagram .badge.wb { color: var(--success); background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.40); }
+    figure.diagram .badge.cert { color: var(--warning); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.40); }
+    figure.diagram svg { width: 100%; height: auto; display: block; }
+    figure.diagram figcaption { margin-top: 16px; color: var(--text-secondary); font-size: 14px; font-style: italic; max-width: 70ch; }
+
+    section.practice { margin-top: 64px; }
+    .question { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 16px; }
+    .question .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; }
+    .question .qnum { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+    .question .qrel { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .question .qprompt { font-size: 17px; color: var(--text-primary); margin: 0 0 16px; line-height: 1.5; }
+    .question .choices { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; }
+    .question .choice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; text-align: left; width: 100%; font: inherit; color: var(--text-primary); font-size: 15px; line-height: 1.5; }
+    .question .choice:hover:not(:disabled) { border-color: var(--accent-primary); }
+    .question .choice .letter { font-family: var(--font-mono); font-weight: 600; color: var(--text-tertiary); flex: 0 0 auto; }
+    .question[data-state="answered"] .choice { cursor: default; }
+    .question .choice.correct { border-color: var(--success); background: rgba(52,211,153,0.08); }
+    .question .choice.correct .letter { color: var(--success); }
+    .question .choice.incorrect { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+    .question .choice.incorrect .letter { color: var(--danger); }
+    .question .reveal { display: none; margin-top: 12px; padding: 14px 16px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 8px; }
+    .question[data-state="answered"] .reveal { display: block; }
+    .question .reveal h4 { margin: 0 0 6px; font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); font-weight: 600; }
+    .question .reveal h4.trap { color: var(--warning); }
+    .question .reveal p { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul { margin: 0 0 12px; padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .question .reveal ul li { margin-bottom: 4px; }
+    .question.ncx .scenario { padding: 12px 14px; background: var(--bg-base); border: 1px solid var(--border); border-left: 3px solid var(--accent-cyan); border-radius: 6px; margin-bottom: 16px; color: var(--text-secondary); font-size: 15px; }
+    .question.ncx .scenario blockquote { margin: 0; padding: 0 0 0 12px; border-left: 2px solid var(--border); color: var(--text-primary); font-style: italic; }
+    .question.ncx textarea { display: block; width: 100%; min-height: 140px; padding: 12px 14px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; margin-bottom: 12px; }
+    .question.ncx textarea:focus { outline: none; border-color: var(--accent-primary); }
+    .question .reveal-btn { font: inherit; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em; padding: 9px 14px; background: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); border-radius: 6px; cursor: pointer; transition: background 150ms ease, color 150ms ease; }
+    .question .reveal-btn:hover { background: var(--accent-cyan); color: var(--bg-base); }
+    .question[data-state="answered"] .reveal-btn { display: none; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin-top: 0; font-size: 22px; }
+    .references ul { padding-left: 20px; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+    .prev-next { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .prev-next a { flex: 1; min-width: 240px; padding: 16px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); text-decoration: none; transition: border-color 150ms ease; }
+    .prev-next a:hover { border-color: var(--accent-cyan); text-decoration: none; }
+    .prev-next .dir { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); margin-bottom: 6px; }
+    .prev-next .ttl { font-weight: 600; }
+    .prev-next .next { text-align: right; }
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      article.body h2 { font-size: 24px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Modules</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">09 · Licensing and Real Costs</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-09-licensing-economics.svg" alt="A three-step tier ladder rising from NCI Pro to NCI Ultimate to NCP Ultimate, ringed by a per-core subscription meter, sitting alongside a 5-year stacked-bar TCO panel that shows hardware capex, services, subscription, support, and operations layers across Year 1 through Year 5." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/09-licensing-economics</div>
+      <h1 class="module-title">Module 9: Licensing and Real Costs</h1>
+      <div class="meta-row">
+        <span class="chip read">~28 min read</span>
+        <span class="chip cert">NCA ~5%</span>
+        <span class="chip cert">NCP-MCI ~5%</span>
+        <span class="chip cert">NCM-MCI ~5%</span>
+        <span class="chip cert">NCP-US ~5%</span>
+      </div>
+      <div class="cert-banner">
+        <span><span class="lbl">Cert coverage</span> NCA (~5%) · NCP-MCI (~5%) · NCM-MCI (~5%) · NCP-US (~5%) · sales-relevant module, lighter cert weight, heavy customer-conversation weight</span>
+        <span><span class="lbl">SA toolkit</span> Objections #35 through #40 · Discovery Q-ECON-01 through Q-ECON-05</span>
+        <span style="color: var(--warning);"><strong>Important:</strong> Specific pricing changes between AOS versions and quarterly Nutanix updates. The BlueAlly internal pricing tools are the authoritative source for any customer-facing number; never quote pricing from this curriculum.</span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-card">
+          <div class="label">Prerequisites</div>
+          <ul>
+            <li>Modules 01 through 08</li>
+            <li>Enterprise procurement basics</li>
+            <li>Capex / opex / depreciation awareness</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <div class="label">Key terms</div>
+          <div class="terms">
+            <span class="term-chip">NCI Pro / NCI Ultimate</span>
+            <span class="term-chip">AOS Pro / Ultimate (legacy)</span>
+            <span class="term-chip">NCM Starter / Pro / Ultimate</span>
+            <span class="term-chip">NCP bundles</span>
+            <span class="term-chip">NX appliance</span>
+            <span class="term-chip">OEM partner</span>
+            <span class="term-chip">Software-only / HCIR</span>
+            <span class="term-chip">BoM</span>
+            <span class="term-chip">TCO</span>
+            <span class="term-chip">VCF</span>
+            <span class="term-chip">Per-core subscription</span>
+            <span class="term-chip">Capex vs opex</span>
+            <span class="term-chip">Multi-year term</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="body">
+
+      <h2 id="the-promise">The Promise</h2>
+      <p>By the end of this module you will:</p>
+      <ol>
+        <li><strong>Read the Nutanix licensing matrix in 60 seconds.</strong> NCI subscription tiers, NCM tiers, NCP bundles, what each includes, what falls below the line. The structure is consistent; the specific feature names shift between releases. Understand the structure, then verify the current details against the pricing guide.</li>
+        <li><strong>Build a complete BoM (Bill of Materials) for a customer scenario.</strong> Hardware (nodes, network, cables), software (NCI subscription, NCM tier, additional features), services (implementation, training, migration), support (standard vs extended). The shape of a complete BoM is what BlueAlly SAs produce and what customers act on.</li>
+        <li><strong>Run a 5-year TCO model that holds up under CFO scrutiny.</strong> Capex, opex, refresh cycles, migration costs, staff time, decommissioning. Show all the assumptions. Don't hide anything.</li>
+        <li><strong>Make the Broadcom comparison precisely.</strong> VMware's post-Broadcom licensing reorganization (per-core subscription, larger minimum commitments, bundled tier structure) genuinely changed the economics for many customers. The comparison is real and BlueAlly SAs need to walk through it without overclaiming or oversimplifying.</li>
+        <li><strong>Talk to a CFO without flinching.</strong> Capex vs opex preferences, multi-year subscription mechanics, depreciation interaction with the customer's accounting policy, when 3-year subscriptions make sense vs 5-year. If you can't have this conversation, the technical wins do not close.</li>
+        <li><strong>Recognize the hidden cost categories customers forget.</strong> Migration parallel-running periods, training, third-party tooling that interacts with the platform, decommissioning costs for old gear, one-time professional services. These show up in customer satisfaction conversations 6 months in.</li>
+      </ol>
+      <p>This is the module that turns technical wins into signed deals. After eight modules of platform depth, this is the dimension that gets things signed.</p>
+
+      <hr/>
+
+      <h2 id="foundation">Foundation: What You Already Know</h2>
+      <p>You have priced VMware. The mental model:</p>
+      <ul>
+        <li><strong>Hypervisor licensing:</strong> vSphere per-CPU (pre-Broadcom) or per-core subscription (post-Broadcom) bundled into Cloud Foundation tiers (VVF, VCF).</li>
+        <li><strong>Storage licensing:</strong> vSAN per-CPU (pre-Broadcom) or bundled into VCF (post-Broadcom).</li>
+        <li><strong>Networking licensing:</strong> NSX-T per-CPU or per-workload, separately licensed.</li>
+        <li><strong>Management licensing:</strong> Aria Suite separately, with its own per-CPU model historically.</li>
+        <li><strong>Support contracts:</strong> Production support, extended support, fees that scale with the licensing footprint.</li>
+      </ul>
+      <p>Layer the hardware on top: server vendors (Dell, HPE, Lenovo, Cisco), storage arrays (NetApp, Pure, EMC), network gear (Cisco, Arista, Juniper), cables, switches, rack power, cooling. Layer operations on top of that: power and cooling, IT labor, migration costs, training.</p>
+      <p>You have built BoMs and TCO models against this stack. You have probably been asked "show me the 5-year number" by a customer's CFO and produced a spreadsheet. The skill transfers cleanly to Nutanix; the specific cost categories are different but the methodology is the same.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The single most common BlueAlly SA mistake on pricing conversations is producing a hardware-and-license-only quote and calling it "the BoM." Customers who sign that quote and then experience the unaccounted-for costs (migration, training, parallel-running, decommissioning) become unhappy customers who blame the platform when the real problem was incomplete scoping. A complete BoM names everything: hardware, software, services, support, training, migration, and the inevitable surprise category. Customers respect the honesty and budget appropriately.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="core-content">Core Content</h2>
+
+      <h3 id="nci-tiers">NCI Subscription Tiers: The Foundation (formerly AOS)</h3>
+      <p>The platform itself is now licensed under <strong>NCI (Nutanix Cloud Infrastructure)</strong>. NCI replaces the legacy <strong>AOS Pro / AOS Ultimate</strong> SKU naming; <strong>legacy AOS licenses are no longer available for new sale or renewal</strong>, and existing AOS customers are being converted to NCI Pro / NCI Ultimate by their account teams. Both names will appear in the wild for a while: AOS in older customer contracts, current pricing tools, and customer vocabulary; NCI in net-new quotes and current Nutanix portal collateral. Internally to the platform, NCI = AOS at the version level; the rename is a packaging change, not a software change.</p>
+      <p>The current tier structure:</p>
+      <ul>
+        <li><strong>NCI Pro</strong> (formerly AOS Pro). The foundational tier. Includes AHV (the hypervisor at no extra charge), DSF, Prism Element, baseline replication (Async), basic snapshots and backup, baseline network features. This is what most customers buy.</li>
+        <li><strong>NCI Ultimate</strong> (formerly AOS Ultimate). Adds advanced features: NearSync replication, Metro Availability, advanced data services, Flow Network Security (also available as a Security Add-On for NCI Pro on a per-usable-TiB model; see Module 6), additional storage features, advanced security.</li>
+        <li><strong>NCI Compute (NCI-C)</strong> also exists as a compute-only SKU for clusters that don't need DSF storage features (rare; mostly relevant for specific edge or compute-mostly scenarios).</li>
+      </ul>
+      <p>NCI requires AOS 6.1.1 (LTS 6.5) or later, Prism Central 2022.4+, and NCC 4.5.0+ on the cluster. Customers running older AOS versions need to upgrade before converting from AOS to NCI licensing.</p>
+      <p>Licensing is <strong>per-core</strong>. The customer pays for the cores in their cluster, not for VM count. This is similar in shape to VMware's post-Broadcom per-core model.</p>
+      <p><strong>Multi-year subscription terms</strong> (1, 3, or 5 years) are standard. Longer terms typically come with discount tiers. Customers who plan their compute footprint can save meaningfully on multi-year commitments.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCA · NCP-MCI</span></div>
+        <p>Tier structure is testable at a high level. Memorize: <strong>NCI Pro</strong> is the standard platform tier; <strong>NCI Ultimate</strong> adds NearSync, Metro, advanced features, and Flow Network Security. <strong>NCM tiers</strong> (Starter / Pro / Ultimate) are separately-licensed paid SKUs that add management capabilities on top of either NCI tier. Older exam material may still use the legacy "AOS Pro / Ultimate" naming; treat the two as functionally equivalent, but in current Nutanix collateral the term is NCI. Trap distractor: questions implying AHV requires a separate license fee (false; AHV is included with NCI / AOS at every tier).</p>
+      </aside>
+
+      <h3 id="ncm-tiers">NCM Tiers: The Management Layer</h3>
+      <p><strong>NCM (Nutanix Cloud Manager)</strong> is the umbrella name for the multi-cluster management capabilities that sit on top of NCI. NCM is <strong>separately licensed from NCI</strong> (do not assume "NCM Starter is bundled with Prism Central"; it is not. Basic Prism Central comes with NCI, and NCM tiers are paid add-ons). The tier structure:</p>
+      <ul>
+        <li><strong>NCM Starter.</strong> A paid tier focused on infrastructure operations: monitoring, planning, rightsizing, basic Intelligent Operations, low-code automation.</li>
+        <li><strong>NCM Pro.</strong> Adds deeper Intelligent Operations (anomaly detection, what-if planning, runway analysis), advanced reporting, more aggressive alert correlation. Aria Operations equivalent functionality.</li>
+        <li><strong>NCM Ultimate.</strong> Adds Self-Service (formerly Calm) blueprint-driven provisioning, X-Play playbook automation, cost governance, advanced multi-cloud features. Aria Automation equivalent functionality.</li>
+      </ul>
+      <p>Nutanix also packages <strong>NCP (Nutanix Cloud Platform)</strong> bundles that combine NCI and NCM at matching tiers (NCP Starter = NCI Pro + NCM Pro; NCP Pro = NCI Ultimate + NCM Pro; NCP Ultimate = NCI Ultimate + NCM Ultimate). Customers who want everything in one SKU often choose NCP rather than buying NCI and NCM separately.</p>
+      <p>For most enterprise customers, <strong>NCM Pro is the right baseline</strong> (provides the analytics that justify the investment). NCM Ultimate is for customers who plan to drive serious self-service or multi-cloud governance. <strong>What is included with basic NCI without any NCM:</strong> multi-cluster Prism Central management, Categories, Projects, baseline reporting and dashboards, RBAC, identity integration, the v4 REST API. That is the floor; NCM tiers add capability on top.</p>
+
+      <aside class="callout familiar">
+        <div class="label">Familiar</div>
+        <p>The NCM tier structure maps roughly onto the VMware Aria Suite tiers. Aria Operations (formerly vROps) maps to NCM Pro's Intelligent Operations. Aria Automation (formerly vRA) maps to NCM Ultimate's Self-Service. Aria Suite Lifecycle (the bundle) is similar in spirit to NCM as the umbrella product. Customers who priced Aria Suite have a mental model that transfers.</p>
+      </aside>
+
+      <h3 id="hardware-sourcing">Hardware Sourcing: NX, OEM, or Software-Only</h3>
+      <p>Nutanix software runs on three categories of hardware:</p>
+      <ol>
+        <li><strong>Nutanix-branded NX appliances.</strong> Hardware sold by Nutanix directly (manufactured by Super Micro under the Nutanix brand). Single-vendor support: Nutanix is the throat to choke for hardware and software. Tightly validated. Customers who want one vendor relationship typically choose NX.</li>
+        <li><strong>OEM partner hardware.</strong> Dell EMC XC, Lenovo HX, HPE DX, Cisco UCS. The customer buys hardware from their existing server vendor (Dell, Lenovo, HPE, Cisco) with Nutanix software pre-installed and validated. The customer's server-vendor relationship continues; Nutanix provides software and joint support. The most common path for customers with established server-vendor preferences.</li>
+        <li><strong>Software-only on HCIR (Hyperconverged Infrastructure-Ready) commodity hardware.</strong> Customer buys hardware separately from the HCL (Hardware Compatibility List) and licenses Nutanix software. Most flexible, requires more diligence on the hardware decision, more support boundaries to manage.</li>
+      </ol>
+
+      <table>
+        <thead><tr><th>Sourcing Option</th><th>Single-vendor support</th><th>Customer's existing relationship</th><th>Cost flexibility</th></tr></thead>
+        <tbody>
+          <tr><td>NX</td><td>Yes (Nutanix)</td><td>New relationship if not already in place</td><td>Standardized</td></tr>
+          <tr><td>OEM (Dell, Lenovo, HPE, Cisco)</td><td>Joint Nutanix + OEM</td><td>Preserves existing vendor relationship</td><td>Standard with negotiated discounts</td></tr>
+          <tr><td>Software-only / HCIR</td><td>Multi-vendor (customer manages)</td><td>Maximum flexibility</td><td>Most flexible; customer handles hardware sourcing</td></tr>
+        </tbody>
+      </table>
+
+      <p>The choice depends on the customer's organizational preferences. There is no single "right" answer. A customer with deep Dell relationships typically chooses Dell XC. A customer who wants minimum complexity chooses NX. A customer with custom hardware preferences (or unusual workload requirements) chooses software-only.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Always ask the hardware-sourcing question early in discovery. <em>"Do you have an existing server-vendor relationship you'd like to preserve, or are you open to NX appliances or commodity hardware?"</em> The answer significantly affects the BoM and the customer's procurement workflow. BlueAlly's relationships with Dell, Lenovo, HPE, and Cisco mean the OEM-partner path is typically smooth; verify the customer's current contract status with their preferred vendor before pricing.</p>
+      </aside>
+
+      <aside class="callout different">
+        <div class="label">Different</div>
+        <p>Unlike most enterprise infrastructure, Nutanix's hardware sourcing flexibility is real. The customer is not locked into a specific hardware vendor by the platform choice. This is operationally important: it preserves the customer's negotiating leverage with hardware vendors and lets them adapt the platform to their existing procurement patterns. Compare to platforms that bundle hardware tightly (some hyperconverged vendors require specific appliances). Nutanix's openness is a real differentiator.</p>
+      </aside>
+
+      <h3 id="diagram-tier-matrix">Diagram: NCI and NCM Tier Feature Matrix</h3>
+      <figure class="diagram" id="tier-feature-matrix">
+        <div class="badges">
+          <span class="badge cert">NCA</span>
+          <span class="badge cert">NCP-MCI</span>
+          <span class="badge cert">sales-relevant</span>
+        </div>
+        <svg id="diagram-tier-matrix-svg" viewBox="0 0 1000 620" role="img" aria-label="A feature-by-tier matrix with rows of capabilities (AHV, DSF core, NearSync, Metro, Prism Element, Prism Central baseline, Categories and Projects, Intelligent Operations, Self-Service, X-Play, cost governance, Files and Objects add-on) and columns for NCI Pro, NCI Ultimate, NCM Starter, NCM Pro, NCM Ultimate, and Add-on, with inclusion marks per cell."></svg>
+        <figcaption>Feature mapping across NCI and NCM tiers, with NCP bundle and add-on columns. Use it for first-pass quoting; verify specific feature inclusion against the current Nutanix price book before producing a customer-facing quote. AHV is included at every NCI tier; Files / Objects are typically separately licensed.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="cycle-2">The Cycle, Frame Two: The Broadcom Math</h3>
+      <p>The post-Broadcom VMware licensing reorganization is the elephant in the 2026 enterprise infrastructure conversation. The honest summary:</p>
+      <ul>
+        <li><strong>Per-core subscription.</strong> VMware moved from per-CPU (per-socket) to per-core licensing. Combined with minimum-cores-per-CPU floors (often 16 cores per CPU minimum, with rounding), this materially increased licensing for many configurations.</li>
+        <li><strong>Bundled tier structure.</strong> vSphere alone became harder to buy. VVF (VMware vSphere Foundation) and VCF (VMware Cloud Foundation) bundle vSphere with vSAN, sometimes NSX, and Aria. Customers who only wanted the hypervisor often found themselves paying for storage and management features they were not using.</li>
+        <li><strong>Reduced perpetual licensing.</strong> The transition pushed customers toward subscription. Existing perpetual licenses were honored but new perpetual was constrained or unavailable in some markets.</li>
+        <li><strong>Larger minimum commitments.</strong> Multi-year subscriptions became more common; the entry point for new customers became larger.</li>
+        <li><strong>Reseller channel changes.</strong> The reseller landscape simplified, with fewer authorized partners and larger minimum customer sizes for some programs.</li>
+      </ul>
+      <p>For specific customers, the impact ranges from "modest increase, manageable" to "doubled licensing, re-evaluating." The variability depends on:</p>
+      <ul>
+        <li>Configuration density (many cores per VM = fewer cores per VM-cost; few cores per VM = more cores per VM-cost)</li>
+        <li>Whether vSAN was already licensed (if yes, the bundling is closer to neutral)</li>
+        <li>Whether Aria was already licensed (similar logic)</li>
+        <li>Multi-year commitment status</li>
+      </ul>
+      <p><strong>The Nutanix comparison is not "always cheaper."</strong> It is "the comparison favors Nutanix more often than it did pre-Broadcom, especially for customers who are paying for VVF/VCF features they don't fully use."</p>
+      <p>When making the comparison:</p>
+      <ul>
+        <li>Get the customer's actual VMware quote (or recent renewal). Don't work from rumors.</li>
+        <li>Build the equivalent Nutanix BoM honestly: NCI Pro plus the features the customer needs, equivalent NCM tier, hardware on the appropriate sourcing model.</li>
+        <li>Compare 5-year TCO with all categories included. Don't compare "NCI subscription vs vSphere subscription" alone; that's not the actual decision the customer is making.</li>
+        <li>Acknowledge what VMware does well and what customers might give up. Be honest.</li>
+      </ul>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>The Broadcom conversation requires discipline. The customer has heard the price-increase stories from peers and probably feels frustrated about it. The wrong move is to pile on with anti-Broadcom rhetoric; you sound like a vendor exploiting the moment. The right move is professional and specific: <em>"The licensing reorganization changed the economics for many customers. Whether it changes them favorably for Nutanix in your specific case depends on your configuration, your feature usage, and your refresh timing. Let me build the apples-to-apples comparison for your environment. We may find Nutanix is meaningfully cheaper; we may find the gap is smaller than you've heard. Either way, you'll know the real number."</em> That sentence wins customer trust by treating the comparison as factual rather than emotional.</p>
+      </aside>
+
+      <h3 id="diagram-broadcom">Diagram: Broadcom vs Nutanix 5-Year TCO Methodology</h3>
+      <figure class="diagram" id="broadcom-vs-nutanix">
+        <div class="badges">
+          <span class="badge wb">Whiteboard ready</span>
+          <span class="badge cert">sales-relevant</span>
+        </div>
+        <svg id="diagram-broadcom-svg" viewBox="0 0 1000 600" role="img" aria-label="A two-column comparison structure with VMware (post-Broadcom) and Nutanix headers, rows of cost categories (hypervisor, storage software, networking, management, hardware, support, power, datacenter space, migration, training, ops labor, decommissioning) and a bottom net-difference summary with the verdict that real customer numbers are required."></svg>
+        <figcaption>The methodology diagram. Walk every category, don't skip anything. Migration costs apply once; recurring costs apply for 5 years. Some categories are similar (power, cooling); don't pretend they aren't. Whiteboard it for executive conversations.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="bom">Building a Complete BoM</h3>
+      <p>A complete BoM has these sections. Hand a customer anything that's missing categories and you've underscoped the project.</p>
+
+      <p><strong>1. Hardware:</strong></p>
+      <ul>
+        <li>Nodes: count, model, CPU (cores), RAM, NVMe/SSD storage, network NICs (10/25/100 GbE)</li>
+        <li>Network switching (if BlueAlly is providing): top-of-rack, distribution</li>
+        <li>Cables, transceivers, power cords, rack rails (often ignored; real money on a multi-rack deployment)</li>
+        <li>Sourcing source: NX, OEM (specific OEM), or software-only with customer hardware</li>
+      </ul>
+
+      <p><strong>2. Software:</strong></p>
+      <ul>
+        <li>NCI subscription tier and term (typically 3 or 5 year)</li>
+        <li>Total cores covered</li>
+        <li>NCM tier and term</li>
+        <li>Files licensing (if needed; per-TB or per-FSVM model depending on packaging)</li>
+        <li>Objects licensing (if needed; per-TB capacity)</li>
+        <li>Volumes (typically included in NCI)</li>
+        <li>Flow licensing per applicable tier (NCI Ultimate or the Security Add-On for NCI Pro)</li>
+        <li>Any add-ons (NDB / Era for database lifecycle, NKE for Kubernetes management, etc.)</li>
+      </ul>
+
+      <p><strong>3. Services (BlueAlly):</strong></p>
+      <ul>
+        <li>Implementation: project hours for cluster deployment, configuration, integration with customer's environment (AD, network, storage, monitoring)</li>
+        <li>Migration assistance: planning, dry runs, cutover support</li>
+        <li>Training: BlueAlly-led sessions for the customer's team</li>
+        <li>Optional: managed services post-deployment</li>
+      </ul>
+
+      <p><strong>4. Support:</strong></p>
+      <ul>
+        <li>Standard production support (24x7 included with subscription)</li>
+        <li>Extended support tiers (faster SLAs, dedicated TAM, etc.) if applicable</li>
+        <li>Hardware support (handled by Nutanix for NX, by OEM for OEM, by customer for software-only)</li>
+      </ul>
+
+      <p><strong>5. One-time items:</strong></p>
+      <ul>
+        <li>Network upgrades if the customer's network requires changes (e.g., 10 GbE to 25/100 GbE switching)</li>
+        <li>Datacenter prep (rack space, power, cooling adjustments)</li>
+        <li>Migration tooling licensing if needed for specific complex migrations</li>
+        <li>Decommissioning costs for replaced gear (often the customer's responsibility but worth naming)</li>
+      </ul>
+
+      <p><strong>6. Recurring items:</strong></p>
+      <ul>
+        <li>Subscription renewals (years 4, 5 if not on multi-year)</li>
+        <li>Support renewals</li>
+        <li>Operational tooling subscriptions (monitoring, backup, etc., if integrated)</li>
+      </ul>
+
+      <p>A complete BoM names every item. The customer can then categorize as capex, opex, one-time, recurring, etc. according to their accounting policy.</p>
+
+      <aside class="callout exam">
+        <div class="label">On the exam <span class="badge">NCP-MCI · sales-relevant</span></div>
+        <p>BoM components are not commonly tested at deep specificity, but the awareness that subscription, services, hardware, support, and migration are separate categories is fundamental.</p>
+      </aside>
+
+      <h3 id="capex-opex">Capex vs Opex: The CFO Frame</h3>
+      <p>Customers' accounting preferences vary:</p>
+      <ul>
+        <li><strong>Capex (capital expenditure)</strong> is typically hardware. Depreciated over a useful life (3-5 years typically). Sits on the balance sheet. Some companies prefer this because it amortizes over time and matches the cash flow story their auditors expect.</li>
+        <li><strong>Opex (operating expenditure)</strong> is typically subscriptions and services. Expensed in the period incurred. Income-statement impact. Some companies prefer this for the simpler accounting and the avoidance of capex approval cycles.</li>
+      </ul>
+      <p>Nutanix subscriptions are typically opex. Hardware is typically capex. Multi-year subscription commitments may have specific accounting treatments depending on the customer's auditor.</p>
+      <p><strong>Common customer preferences:</strong></p>
+      <ul>
+        <li><strong>Public companies and growth-mode SaaS companies:</strong> opex, with multi-year commitments expensed appropriately.</li>
+        <li><strong>Capital-rich enterprises:</strong> capex preference for hardware, opex for software.</li>
+        <li><strong>Government / regulated:</strong> depends on agency; capex often preferred for certain budget cycles.</li>
+      </ul>
+      <p>The right SA-chair move is to ask early: <em>"How does your finance team prefer to account for infrastructure investments? Are you typically capex-heavy on hardware, opex on software, or a different model?"</em> The answer changes how you structure the proposal.</p>
+
+      <h3 id="tco">5-Year TCO Modeling: The Methodology</h3>
+      <p>A real TCO model has these properties:</p>
+      <ol>
+        <li><strong>Time horizon: 5 years standard.</strong> Some customers want 3 or 7; 5 is the common default.</li>
+        <li><strong>All cost categories present.</strong> Hardware, software, services, support, training, migration, operations, decommissioning. Don't skip any.</li>
+        <li><strong>Year-by-year.</strong> Show what cost falls in which year. Useful for cash-flow analysis.</li>
+        <li><strong>Assumptions called out.</strong> What did you assume about growth, refresh cycles, headcount, training? List the assumptions; the customer's CFO will check them.</li>
+        <li><strong>Sensitivity analysis.</strong> What happens if growth is higher than assumed? If migration takes longer? Show the ranges, not just point estimates.</li>
+        <li><strong>Comparison-ready.</strong> If the customer is comparing VMware vs Nutanix, the categories should align so the customer can compare apples to apples.</li>
+      </ol>
+
+      <p>Common categories per year:</p>
+
+      <table>
+        <thead><tr><th>Year</th><th>Capex (hardware)</th><th>Software subscription</th><th>Services (one-time)</th><th>Support (annual)</th><th>Training</th><th>Migration</th><th>Operations</th></tr></thead>
+        <tbody>
+          <tr><td>Year 1</td><td>Cluster purchase</td><td>Year 1 sub</td><td>Implementation</td><td>Year 1 support</td><td>Initial training</td><td>Migration project</td><td>Year 1 ops labor</td></tr>
+          <tr><td>Year 2</td><td>(refresh deferred)</td><td>Year 2 sub</td><td>(none)</td><td>Year 2 support</td><td>Refresher</td><td>(complete)</td><td>Year 2 ops</td></tr>
+          <tr><td>Year 3</td><td>(refresh deferred)</td><td>Year 3 sub</td><td>(none)</td><td>Year 3 support</td><td>Light</td><td>(n/a)</td><td>Year 3 ops</td></tr>
+          <tr><td>Year 4</td><td>(refresh deferred)</td><td>Year 4 sub or renewal</td><td>(none)</td><td>Year 4 support</td><td>Light</td><td>(n/a)</td><td>Year 4 ops</td></tr>
+          <tr><td>Year 5</td><td>(refresh approaching)</td><td>Year 5 sub</td><td>(none)</td><td>Year 5 support</td><td>Light</td><td>(n/a)</td><td>Year 5 ops</td></tr>
+          <tr><td>Year 6 (planning)</td><td>New cluster planning</td><td>n/a</td><td>Refresh project</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td></tr>
+        </tbody>
+      </table>
+
+      <p>The customer's actual TCO depends on their actual growth, their actual refresh policy, and their actual labor model. A real model uses customer-specific numbers.</p>
+
+      <h3 id="diagram-tco">Diagram: TCO Components Over Time</h3>
+      <figure class="diagram" id="tco-components-over-time">
+        <div class="badges">
+          <span class="badge cert">sales-relevant</span>
+        </div>
+        <svg id="diagram-tco-svg" viewBox="0 0 1000 540" role="img" aria-label="A 5-year stacked-bar chart with Year 1 through Year 5 columns. Each column stacks the cost components: hardware capex, services, software subscription, support, and operations labor. Year 1 is heaviest due to capex spike and one-time services. Years 2 through 5 show the durable subscription plus support plus ops run-rate. A dashed outline at Year 5 indicates the next refresh approaching."></svg>
+        <figcaption>A 5-year stacked TCO view showing cost composition year by year. The shape of the cost is informative beyond the total. Year 1 is the heaviest year due to capex and one-time services. Years 2 through 5 are the durable subscription + support + ops run-rate. Subscription customers have a more predictable year-by-year pattern than capex-heavy hardware customers.</figcaption>
+      </figure>
+
+      <hr/>
+
+      <h3 id="hidden-costs">Hidden Costs Customers Forget</h3>
+      <p>A complete TCO calls these out. Skip them and the customer gets surprised six months in.</p>
+      <ol>
+        <li><strong>Migration parallel-running periods.</strong> During migration, the customer often runs old and new platforms simultaneously. Both consume power, space, support, and team time. Plan for 1-3 months of parallel for typical migrations; longer for complex environments.</li>
+        <li><strong>Training that recurs.</strong> Customers often budget initial training and forget recurring training as products evolve. Plan for some training budget every year.</li>
+        <li><strong>Third-party tooling integration.</strong> Backup tools, monitoring tools, configuration management tools, ITSM (ServiceNow), CMDB integration. Each may require integration work; some require additional licensing.</li>
+        <li><strong>Decommissioning of old gear.</strong> Removing old arrays, filers, and servers takes time, and the customer typically owes lease or maintenance fees on old contracts that don't expire on the migration timeline.</li>
+        <li><strong>Bandwidth costs for cloud-DR (if NC2).</strong> Cloud egress fees on failback are real. Plan for them.</li>
+        <li><strong>Network upgrades if the new platform requires them.</strong> Moving from 10 GbE to 25/100 GbE switching costs money in switches and cables. Plan for it.</li>
+        <li><strong>Datacenter infrastructure changes.</strong> Power and cooling upgrades, rack space changes, KVM and console infrastructure for the new gear.</li>
+        <li><strong>Audit and compliance work.</strong> Some compliance frameworks require validation when infrastructure changes. Plan for audit-team time and possibly third-party assessments.</li>
+        <li><strong>Staff role changes.</strong> Existing staff may need new training; some roles may shift; some hiring may be required (e.g., a Nutanix specialist for a customer with no prior Nutanix experience).</li>
+      </ol>
+      <p>The professional honest BoM names all of these as line items, even if they are estimates. The customer's CFO appreciates the honesty and budgets accordingly. Customers who have been blindsided by these costs from a previous vendor are particularly receptive to seeing them upfront.</p>
+
+      <h3 id="multi-year">Multi-Year Subscription Mechanics</h3>
+      <p>Multi-year terms come with discounts and trade-offs:</p>
+      <ul>
+        <li><strong>1-year:</strong> Most flexibility, highest per-year cost, easy to walk away. Useful for evaluation periods or organizations with budget uncertainty.</li>
+        <li><strong>3-year:</strong> Common middle ground. Discount typically meaningful (5-15% off 1-year per-year cost). Reasonable commitment level.</li>
+        <li><strong>5-year:</strong> Largest discounts (10-25%+). Aligns with hardware refresh cycle. Fits customers with predictable footprint.</li>
+      </ul>
+      <p><strong>Consider before recommending multi-year:</strong></p>
+      <ul>
+        <li><strong>Growth uncertainty.</strong> If the customer plans to add many cores in year 2-3, the 5-year-at-current-cores commitment may need true-up provisions.</li>
+        <li><strong>M&amp;A activity.</strong> If acquisition or divestiture is on the horizon, lock-in is a risk.</li>
+        <li><strong>Budget cycle alignment.</strong> Some customers have firm 3-year capex/opex cycles; others have annual reviews.</li>
+      </ul>
+      <p><strong>Expansion provisions</strong> (often called "true-up" or "ramp" provisions) let the customer add cores during the term at agreed pricing. Always negotiate these for multi-year deals; they protect both parties.</p>
+
+      <aside class="callout sa">
+        <div class="label">From the SA chair</div>
+        <p>Push for multi-year only when it actually serves the customer. A 5-year deal that the customer outgrows in year 2 is worse than a 3-year deal sized appropriately. The right framing: <em>"Multi-year saves you money if your footprint is stable. Let's size for your 18-24 month plan, then decide on term length based on your confidence in that plan and your growth trajectory."</em> That respects the customer's reality and avoids the painful renegotiation conversation in year 2.</p>
+      </aside>
+
+      <hr/>
+
+      <h2 id="lab">Lab Exercise: Build a Representative TCO Model</h2>
+      <aside class="callout lab">
+        <div class="label">Lab <span class="badge">~3 hours · spreadsheet (Excel, Google Sheets, or equivalent)</span></div>
+        <p>This exercise builds a complete 5-year TCO model for a representative customer scenario. The numbers are illustrative; the methodology is the takeaway.</p>
+      </aside>
+
+      <p><strong>The scenario:</strong></p>
+      <p>A customer has 8 ESXi hosts, ~250 VMs, NetApp filer (200 TB), Pure FlashArray for iSCSI (50 TB), Data Domain backup target (100 TB). Refresh is 12 months out. Annual run-rate: roughly $400K-$500K across hardware, software subscriptions, and support for the existing environment.</p>
+
+      <p><strong>Build TCO models for two options:</strong></p>
+      <p><strong>Option A: VMware refresh (post-Broadcom).</strong> New ESXi cluster on Cloud Foundation, refresh storage arrays, refresh backup target. Baseline.</p>
+      <p><strong>Option B: Nutanix consolidation.</strong> 12-node cluster running compute + Files + Objects + Volumes. Decommission the three storage tiers over 6-9 months.</p>
+
+      <p><strong>Steps:</strong></p>
+      <ol>
+        <li><strong>Build the BoM template.</strong> Categories: hardware, software, services, support, training, migration, operations, decommissioning. Year columns: Year 1 through Year 5.</li>
+        <li><strong>Populate Option A (VMware refresh).</strong> Use representative ranges (per-core subscription estimate, hardware estimate, support estimate). Document assumptions clearly. Sum to 5-year total.</li>
+        <li><strong>Populate Option B (Nutanix).</strong> Same categories. NCI Pro per-core, NCM Pro, Files licensing, Objects licensing, hardware via OEM (Dell XC or Lenovo HX), services for migration. Document assumptions.</li>
+        <li><strong>Add recurring operational labor.</strong> Estimate FTE hours saved by consolidation (3 vendors to 1, fewer firmware upgrade cycles, single management plane). Multiply by loaded labor cost.</li>
+        <li><strong>Add migration costs to Option B.</strong> Implementation services, parallel-running for 3 months, training, decommissioning of old gear.</li>
+        <li><strong>Calculate 5-year totals.</strong> Compare Options A and B.</li>
+        <li><strong>Sensitivity analysis.</strong> Re-run with growth assumptions ±20%, migration time ±50%, labor cost ±15%. See how the comparison changes.</li>
+        <li><strong>Document the assumptions explicitly.</strong> A model without stated assumptions is an unauditable model. List every assumption with the value used.</li>
+        <li><strong>Build a one-page summary.</strong> What's the 5-year delta? What are the top 3 drivers of the difference? What are the top 3 risks?</li>
+      </ol>
+
+      <p><strong>What this teaches you:</strong></p>
+      <ul>
+        <li>How to build a model that holds up under CFO scrutiny.</li>
+        <li>The categories that matter and how to estimate them when specific quotes aren't yet available.</li>
+        <li>The importance of assumptions documentation.</li>
+        <li>Sensitivity analysis as a skill.</li>
+      </ul>
+      <p><strong>Customer-demo angle:</strong> The one-page summary from step 9 is the customer-facing deliverable. Practice producing it cleanly. CFOs respect concise, well-documented analyses.</p>
+
+      <hr/>
+
+      <section class="practice">
+        <h2 id="practice-questions">Practice Questions</h2>
+        <p>Twelve questions. Six knowledge MCQ, four scenario MCQ, two NCX-style design questions. Read each, answer in your head, then click to reveal.</p>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q1</span><span class="qrel">NCA · NCP-MCI</span></div>
+          <p class="qprompt">Which of the following is correct about AHV licensing?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>AHV requires a separate per-CPU license fee</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>AHV is included with NCI / AOS subscription at no additional licensing cost</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>AHV requires VMware vSphere licensing as a base</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>AHV is licensed only at the NCI Ultimate tier</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>AHV is included with NCI (and historically with AOS). There is no separate hypervisor licensing fee. One of the durable Nutanix economics points compared to VMware's separate hypervisor licensing.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) AHV is included; no separate fee.</li>
+              <li>C) AHV is its own hypervisor; it does not require vSphere.</li>
+              <li>D) AHV is included at all NCI tiers, not just Ultimate.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>Customers and test-takers who think in VMware-licensing models may default to "the hypervisor must be licensed separately." Memorize: AHV is included with NCI / AOS.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q2</span><span class="qrel">NCA · NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">Which feature requires NCM Ultimate licensing?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Categories and Projects</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Multi-cluster Prism Central management</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Self-Service blueprint automation (formerly Calm)</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Async replication</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Self-Service / Calm requires NCM Ultimate (or equivalent licensing tier). The highest-tier NCM feature in the standard packaging.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Categories and Projects are baseline Prism Central features.</li>
+              <li>B) Multi-cluster management is the core PC value, included.</li>
+              <li>D) Async replication is part of NCI, not gated at NCM Ultimate.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>Customers and test-takers who hear "Prism Central includes everything" miss the tier gating on advanced features.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q3</span><span class="qrel">NCP-MCI · sales-relevant</span></div>
+          <p class="qprompt">Which statement about Nutanix hardware sourcing is correct?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Nutanix software runs only on Nutanix-branded NX appliances</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Customers can run Nutanix on NX appliances, on OEM hardware (Dell XC, Lenovo HX, HPE DX, Cisco UCS), or on commodity hardware that meets the HCL (software-only deployment)</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Nutanix supports only Dell hardware for non-NX deployments</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Software-only deployments are unsupported</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Nutanix's hardware sourcing flexibility includes NX (Nutanix-branded), OEM partners (Dell XC, Lenovo HX, HPE DX, Cisco UCS), and software-only on HCL-compliant commodity hardware. Customer choice based on relationship and preference.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Multiple hardware paths exist.</li>
+              <li>C) Multiple OEM options.</li>
+              <li>D) Software-only is fully supported.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A reflects a limited mental model that may have been true years ago. The current state is multi-vendor flexibility.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q4</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer has a 5-year subscription term with growth provisions. The first year, they license 256 cores; in year 3, they grow to 384 cores. What is the typical billing structure?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>The customer pays a penalty for exceeding the original commitment</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>The customer trues up to 384 cores in year 3 at the agreed pricing per core, with the additional cores billed for the remaining contract term</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>The customer must wait until contract expiration to add cores</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>The customer is forced to renegotiate the entire contract</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Standard multi-year contracts include true-up provisions that let customers add cores during the term at the agreed pricing. The new cores are billed for the remaining term.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Penalties are not the typical mechanism; true-up at agreed pricing is.</li>
+              <li>C) Customers add cores during the term routinely.</li>
+              <li>D) Renegotiation may happen at term end; mid-term true-up is normal.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is the worst-case mental model. The actual contractual mechanic is true-up at agreed pricing.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="C">
+          <div class="qhead"><span class="qnum">Q5</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">Which of the following is the most accurate description of a complete BoM (Bill of Materials)?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Hardware list with prices</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Hardware + software subscription</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Hardware, software subscription, services (implementation, migration, training), support, one-time items, and recurring items</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>The customer's existing infrastructure inventory</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>A complete BoM names every category. Anything less leaves the customer underbudgeted and the project at risk.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Hardware-only is dramatically incomplete.</li>
+              <li>B) Adds software but still misses services, support, migration, training, etc.</li>
+              <li>D) That is a customer's current-state inventory, not a forward-looking BoM.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and B are tempting because they are simpler. The discipline is to name everything; customers respect the rigor.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q6</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">What is the typical structure of a 5-year TCO comparison between competing platforms?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Compare the highest-cost line item from each platform</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Compare 5-year totals across all categories (hardware, software, services, support, operations, migration, decommissioning) with stated assumptions and sensitivity analysis</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Compare year-1 capex only</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Compare subscription pricing only</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Real TCO comparisons require all categories, all years, stated assumptions, and sensitivity analysis. Customer CFOs evaluate models on this standard.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Cherry-picking line items doesn't represent total cost.</li>
+              <li>C) Year 1 alone misses the durable cost story.</li>
+              <li>D) Subscription alone is one cost category among many.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A, C, and D are common shortcuts that produce misleading results. The discipline is full-category, multi-year, with assumptions.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q7</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer's CFO asks: "Tell me how I should think about Nutanix subscription versus VMware Cloud Foundation subscription." What is the strongest SA response?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>"Nutanix is always cheaper than VMware."</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>"It depends on your specific configuration. The comparison favors Nutanix more often than it did pre-Broadcom for customers paying for VVF/VCF features they don't fully use, but the gap depends on your core count, your feature usage, and your refresh timing. Let me build the apples-to-apples comparison for your environment over 5 years with all categories included."</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>"VMware is too complicated to understand."</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>"Nutanix is for customers who can't afford VMware."</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>Honest, specific, ends with a concrete proposal. Acknowledges variability, names the relevant variables, and offers to do the work.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Untrue and overconfident. CFOs see through this.</li>
+              <li>C) Insulting. Costs you the room.</li>
+              <li>D) Repugnant framing.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is the seductive defensive answer. Honesty is the durable SA-chair posture.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q8</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A customer wants to consolidate their NetApp filer ($75K/year support), Data Domain ($60K/year), and Pure FlashArray ($55K/year) onto Nutanix. They are reviewing the Nutanix BoM. Which approach is correct?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Quote only the Nutanix hardware and NCI subscription; let the customer figure out the rest</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Build a complete BoM including hardware, NCI subscription, Files licensing for filer replacement, Objects licensing for backup-target replacement, NCM tier, services for migration of all three storage tiers, parallel-running cost during migration, and decommissioning estimates for the old gear</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Pretend the migration is free</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Tell the customer their existing storage was overpriced and Nutanix will be much cheaper</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>This is the complete-BoM discipline. The customer needs to see all the cost categories so they can compare to the run-rate they are eliminating.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Underscoping causes customer pain six months in.</li>
+              <li>C) Migration is real work with real cost.</li>
+              <li>D) Comparative-trash-talk is unprofessional.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and C are easier; B is correct. BlueAlly's reputation depends on the discipline.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q9</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">Which of the following best describes the difference between an OEM partner deployment (e.g., Dell XC) and a software-only / HCIR deployment?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>OEM is more expensive; software-only is always cheaper</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>OEM provides Nutanix software pre-installed on validated hardware from a major server vendor with joint Nutanix + OEM support; software-only means the customer buys hardware separately from the HCL and licenses Nutanix software, with multi-vendor support boundaries</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>OEM and software-only are the same</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Software-only is unsupported</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>OEM = pre-validated, joint support. Software-only = customer-sourced hardware, multi-vendor support model. Both are fully supported approaches; the choice depends on customer preferences.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Cost depends on configuration; not always cheaper one way or the other.</li>
+              <li>C) Distinct sourcing models.</li>
+              <li>D) Software-only is supported.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A is a common assumption that doesn't always hold. The right answer is "depends on the specific deal."</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question" data-correct="B">
+          <div class="qhead"><span class="qnum">Q10</span><span class="qrel">sales-relevant</span></div>
+          <p class="qprompt">A BlueAlly customer is comparing 3-year vs 5-year subscription terms. Their growth forecast: 256 cores year 1, 320 cores year 2, 384 cores year 3, 384 cores year 4, 384 cores year 5. What's the right SA recommendation?</p>
+          <ul class="choices">
+            <li><button class="choice" data-letter="A"><span class="letter">A</span><span>Always recommend 5-year for the discount</span></button></li>
+            <li><button class="choice" data-letter="B"><span class="letter">B</span><span>Recommend 5-year with growth provisions / true-up clauses, sized for year-3 stability, with an annual review cadence to monitor whether the assumptions hold</span></button></li>
+            <li><button class="choice" data-letter="C"><span class="letter">C</span><span>Recommend 1-year to avoid commitment</span></button></li>
+            <li><button class="choice" data-letter="D"><span class="letter">D</span><span>Recommend 3-year and then renew</span></button></li>
+          </ul>
+          <div class="reveal">
+            <h4>Why this answer</h4>
+            <p>The growth forecast suggests stability after year 3. A 5-year term with growth provisions captures the discount while protecting the customer from being locked in at year-1 sizing for the entire term. The annual review cadence catches any deviation early.</p>
+            <h4>Why not the others</h4>
+            <ul>
+              <li>A) Without growth provisions, the customer is stuck at year-1 sizing.</li>
+              <li>C) 1-year forfeits the discount unnecessarily for a stable trajectory.</li>
+              <li>D) 3-year is reasonable but 5-year with provisions captures more value.</li>
+            </ul>
+            <h4 class="trap">The trap</h4>
+            <p>A and C are extremes; B is the disciplined SA-chair answer.</p>
+          </div>
+          <button class="reveal-btn" type="button">Reveal answer</button>
+        </div>
+
+        <div class="question ncx" data-correct="ncx">
+          <div class="qhead"><span class="qnum">Q11</span><span class="qrel">NCX-MCI prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style design question. There is no single correct answer; there are stronger and weaker frames. Write your reasoning, then click to compare against the strong-answer outline.</p>
+          <div class="scenario">
+            <p>A customer's environment:</p>
+            <ul>
+              <li>16 ESXi hosts (Dell PowerEdge R750), ~500 VMs</li>
+              <li>Mix of compute-balanced and storage-heavy workloads</li>
+              <li>vSphere Cloud Foundation subscription (per-core, recently renewed for 1 year)</li>
+              <li>vSAN included in VCF</li>
+              <li>NSX-T separately licensed (per-CPU, 2 years remaining on contract)</li>
+              <li>NetApp filer ($120K/year support)</li>
+              <li>Veeam backup with Data Domain target ($95K/year support combined)</li>
+              <li>1 TB of Aria Operations data, 6 months of operational history</li>
+            </ul>
+            <p>The customer asks BlueAlly to build a 5-year TCO comparison: continue with VMware refresh in year 2, or migrate to Nutanix on Dell XC hardware.</p>
+          </div>
+          <textarea placeholder="Walk through your BoM and TCO methodology. Cover both options. Identify what you still need to know. Recommend a path."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Discovery first.</strong> Get the customer's actual VCF renewal quote, NSX-T contract details, current NetApp/DD/Veeam refresh costs and timing, growth projections, and accounting policy preference (capex vs opex).</li>
+              <li><strong>Option A: VMware refresh BoM and 5-year TCO.</strong> Hardware: refresh of 16-node Dell cluster in year 2-3 + storage refresh. Software: VCF renewal at current pricing + NSX-T renewal in year 2 + Aria continuation. Storage tier: NetApp refresh, Data Domain renewal or refresh. Services: minimal (continuation of current vendor relationships). Operational labor: continuation of current model (4 vendors, 4 management UIs, 4 refresh cycles).</li>
+              <li><strong>Option B: Nutanix on Dell XC consolidation.</strong> Hardware: 16-20 node Dell XC cluster (sized for compute + Files + Objects + Volumes consolidation). Software: NCI Pro per-core, NCM Pro, Files licensing for NetApp replacement, Objects licensing for Data Domain replacement. Networking: Flow Network Security (replaces NSX-T microsegmentation; for advanced NSX-T routing patterns, evaluate need). Services: migration project (12-15 months for full consolidation), parallel-running periods, training, decommissioning. One-time costs: NetApp/DD/Pure decommissioning costs, possible early-termination discussions on NSX-T contract. Operational labor: simplified model (1 platform, 1 management plane, 1 refresh cycle).</li>
+              <li><strong>5-year totals (illustrative methodology).</strong> Option A: $X (sum of hardware + software + storage refresh + support + ops over 5 years). Option B: $Y (sum of new cluster + NCI subscription + NCM + Files/Objects + services + reduced ops + decommissioning). Net delta: typically $200K-$800K over 5 years depending on configuration; verify with actual customer numbers.</li>
+              <li><strong>Sensitivity factors.</strong> If NSX-T routing complexity is high, the Flow gap may favor staying with NSX-T-on-VMware or NSX-T-on-Nutanix-on-ESXi pattern. If NetApp ONTAP-specific workflows are critical, Files migration cost is higher. If growth is +30% over 5 years, both options scale similarly with capex addition.</li>
+              <li><strong>Risk factors.</strong> Migration risk: 12-15 months of project work, with parallel-running and decommissioning. Vendor consolidation risk: more dependence on Nutanix (offset by Dell hardware relationship preserved). Skills risk: team needs Nutanix training; offset by AHV's similarity to vSphere operationally.</li>
+              <li><strong>Recommendation framework.</strong> If TCO delta is $300K+ over 5 years and NSX-T/NetApp complexity is moderate: recommend Option B with phased migration. If TCO delta is small and incumbent complexity is high: recommend phased evaluation, maybe migrating subset of workloads to Nutanix while keeping incumbent for complex use cases. If customer's CFO heavily prefers opex: subscription-based Nutanix model fits better. If customer's CFO heavily prefers capex stability: consider ramifications of subscription model.</li>
+              <li><strong>What you still need to know.</strong> Customer's actual VCF renewal pricing. NSX-T contract remaining term and termination provisions. NetApp ONTAP-specific workflow inventory. Customer's growth projection. Customer's accounting policy preference. Specific compliance frameworks (PCI, HIPAA, etc.) that affect either choice.</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Skipping discovery and producing TCO with assumed numbers.</li>
+              <li>Comparing VCF subscription to NCI subscription without including hardware, services, support, operations.</li>
+              <li>Forgetting NSX-T contract remaining term (early termination has cost).</li>
+              <li>Not naming the migration risk.</li>
+              <li>Producing a single-point estimate without sensitivity.</li>
+            </ul>
+            <h4 class="trap">Why this matters for NCX</h4>
+            <p>Real customer comparisons require complete BoMs and honest TCO methodology. NCX panels evaluate whether you can build a financially-credible analysis, name what you don't know, and produce an actionable recommendation.</p>
+          </div>
+        </div>
+
+        <div class="question ncx" data-correct="ncx">
+          <div class="qhead"><span class="qnum">Q12</span><span class="qrel">NCX-MCI prep · sales-relevant</span></div>
+          <p class="qprompt">NCX-style architectural defense. Respond to the customer's CFO.</p>
+          <div class="scenario">
+            <p>You are in front of a customer's CFO. He has read the Nutanix proposal. He says:</p>
+            <blockquote>"The hardware sticker price on this Nutanix proposal is roughly the same as VMware's. I save some money on the VCF subscription versus NCI subscription, sure, but only marginally. And then you've added a six-figure 'professional services' line for the migration, which is real cash. Why would I take on the disruption when the math is roughly the same?"</blockquote>
+          </div>
+          <textarea placeholder="Respond. He has done some math. He has an unfavorable framing. Address it."></textarea>
+          <button class="reveal-btn" type="button">Show strong-answer outline</button>
+          <div class="reveal">
+            <h4>A strong answer covers</h4>
+            <ul>
+              <li><strong>Acknowledge the math is more nuanced than sticker comparison.</strong> "You're right that hardware-and-license sticker isn't dramatically different. The story is in the categories beyond hardware-and-license."</li>
+              <li><strong>Storage consolidation.</strong> "Your current environment has separate storage tiers (NetApp, Data Domain, Pure). On Nutanix that's consolidated. The storage-tier line items disappear from your run-rate. Over 5 years that's $X in support, plus a $Y refresh you don't have to do."</li>
+              <li><strong>Operational simplification.</strong> "Four vendor relationships consolidate to two (Nutanix software, Dell hardware). Your team's time on firmware compatibility, vendor escalations, and quarterly upgrade dances reduces. We estimate $Z in labor savings over 5 years; not always quantifiable up front, but ask your team to estimate the time they spend coordinating across the four vendors today."</li>
+              <li><strong>Refresh cycles.</strong> "Your NetApp refreshes in year X, your Data Domain in year Y, your Pure in year Z. On Nutanix, they all refresh together. Over 5 years that's one refresh cycle instead of three."</li>
+              <li><strong>Subscription shape.</strong> "Your VCF subscription is 80%+ of your annual run-rate. On Nutanix the same shape exists but the licensing model is different. Look at year-by-year, not just totals."</li>
+              <li><strong>Address the disruption concern directly.</strong> "Migration is real work. The professional services line covers the project: planning, dry runs, parallel-running, decommissioning. The disruption is real for 12-18 months. The disruption ends; the savings continue. Most customers find the operational simplification is what makes it worthwhile, even when the BoM-line-item math is closer than they expected. Ask your team if they want to spend the next 5 years coordinating across four vendors, or one platform."</li>
+              <li><strong>Address the "sticker is roughly the same" framing.</strong> "Sticker is rarely the right comparison. Run-rate over 5 years with all categories included is the right comparison. If sticker was the only thing that mattered, every customer would buy the cheapest possible and we'd never have these conversations. The real decision is risk-adjusted run-rate over the planning horizon."</li>
+              <li><strong>Concrete next step.</strong> "Let me build the apples-to-apples 5-year TCO with your team, including all the categories I just named. If the math comes out roughly the same, you stay with VMware and we revisit at next refresh. If the math favors Nutanix by enough margin to justify the migration, you have a clean decision. Either way, you'll have the answer instead of guessing."</li>
+              <li><strong>Close with respect.</strong> "You're the right person to be skeptical here. CFOs who run the math carefully save their organizations real money. I want to do the math with you, not at you."</li>
+            </ul>
+            <h4>A weak answer misses</h4>
+            <ul>
+              <li>Arguing back without acknowledging the sticker observation.</li>
+              <li>Hand-waving on the operational simplification number.</li>
+              <li>Not naming the migration risk honestly.</li>
+              <li>Failing to offer the concrete TCO modeling exercise as the next step.</li>
+              <li>Treating the CFO as an obstacle rather than a decision-maker doing his job.</li>
+            </ul>
+            <h4 class="trap">Why this matters for NCX</h4>
+            <p>Senior financial decision-makers test whether the SA understands the customer's accounting reality. The disposition is professional, specific, honest about disruption, and oriented toward producing a defensible analysis rather than winning an argument.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr/>
+
+      <h2 id="what-you-have">What You Now Have</h2>
+      <p>You can read the Nutanix licensing matrix in 60 seconds. NCI Pro vs Ultimate. NCM Starter vs Pro vs Ultimate. NCP bundles that combine NCI and NCM. What's included with each tier and what falls below the line.</p>
+      <p>You know the hardware sourcing options: NX (Nutanix-branded, single-vendor support), OEM (Dell XC, Lenovo HX, HPE DX, Cisco UCS, preserves customer relationships), and software-only / HCIR (most flexible, multi-vendor support boundaries). You ask the sourcing question early in discovery.</p>
+      <p>You can build a complete BoM with all six sections: hardware, software, services, support, one-time items, recurring items. You name every line, even the items that are estimates.</p>
+      <p>You can run a 5-year TCO model that holds up under CFO scrutiny: all categories, all years, stated assumptions, sensitivity analysis, comparable structure for incumbent and proposed options. You produce the one-page summary that CFOs read.</p>
+      <p>You have the Broadcom comparison framing: precise, professional, customer-specific. You don't pile on; you build the apples-to-apples analysis. You know the variables that determine whether the comparison favors Nutanix marginally, significantly, or only in specific scenarios.</p>
+      <p>You know the capex vs opex frame for CFO conversations. You ask the accounting policy preference early.</p>
+      <p>You have the multi-year subscription mechanics: 1, 3, 5 year terms; growth provisions and true-ups; when to recommend each based on customer growth and confidence.</p>
+      <p>You have the hidden cost categories that customers forget: parallel running, recurring training, third-party tooling, decommissioning, network upgrades, datacenter changes, audit work, staff role changes. You name them in the BoM.</p>
+      <p>You are now ready for the synthesis module. Module 10 brings everything together: the customer-running migration playbook from VMware to Nutanix, the order of operations, the technical and commercial timing, the parallel-running patterns, the cutover decisions, and the year-2 stable state. After that, the appendices.</p>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p style="margin: 8px 0 14px; color: var(--text-secondary); font-size: 13px;">Authoritative sources verified during the technical review pass on this module. Licensing structure changes more than any other dimension; reverify against the BlueAlly internal pricing tools and the current Nutanix software-options page before quoting any specific tier or number to a customer.</p>
+        <ul>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options"><strong>Nutanix Cloud Platform Software Options</strong></a>. Authoritative source for current NCI tiers (Pro / Ultimate), NCM tiers (Starter / Pro / Ultimate), and NCP bundle structure.</li>
+          <li><a href="https://www.nutanix.com/library/datasheets/nci"><strong>Nutanix Cloud Infrastructure (NCI) Datasheet</strong></a>. Tier-by-tier feature comparison and the NCI vs NCI-Compute split.</li>
+          <li><a href="https://www.nutanix.com/library/datasheets/ncm"><strong>Nutanix Cloud Manager (NCM) Datasheet</strong></a>. NCM tier structure and Self-Service / X-Play / cost-governance gating.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=License-Manager:lmg-licmgr-pnp-licensing-requirements-r.html"><strong>License Manager · Conversion Requirements</strong></a>. AOS Pro to NCI Pro conversion requirements (AOS 6.1.1+ / PC 2022.4+ / NCC 4.5.0+).</li>
+          <li><a href="https://next.nutanix.com/ncm-nci-nus-licensing-new-licensing-183"><strong>NCM / NCI / NUS Licensing</strong></a> (Nutanix Community). Active community thread on the licensing transition; useful for current customer-side experiences.</li>
+          <li><a href="https://next.nutanix.com/ncm-nci-nus-licensing-new-licensing-183/impact-of-not-converting-aos-pro-license-to-nci-pro-before-expiry-45466"><strong>Impact of Not Converting AOS Pro to NCI Pro</strong></a>. What happens to legacy AOS licenses at renewal.</li>
+          <li><a href="https://redresscompliance.com/vcf-licensing-guide-2026.html"><strong>VCF Licensing Guide 2026</strong></a> (Redress Compliance). Current Broadcom VMware licensing structure for the VMware comparison: VCF $350/core, vSphere Foundation $190/core, 16-core CPU minimum, 72-core order minimum.</li>
+          <li><a href="https://vmwaremadesimple.com/articles/vsphere-foundation-vs-standard-2026.html"><strong>vSphere Foundation vs Standard 2026</strong></a>. Current vSphere Foundation MSRP and partner quote ranges.</li>
+          <li><a href="https://lenovopress.lenovo.com/lp1765-nutanix-software-solution-product-guide"><strong>Lenovo HX Nutanix Software Solution Product Guide</strong></a>. OEM-partner pricing structure example.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options"><strong>Flow Network Security Licensing</strong></a>. Flow ships with NCI Ultimate or as the Security Add-On for NCI Pro (per usable TiB; bundles Data-at-Rest Encryption).</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Glossary:</strong> NCI Pro · NCI Ultimate · NCM tiers · NCP bundles · NX appliance · OEM partner · HCIR · BoM · TCO · VCF · VVF · Per-core licensing · True-up <span style="color:var(--text-tertiary)">(Appendix A coming)</span></li>
+          <li><strong>Comparison Matrix:</strong> Tier feature matrix · Hardware sourcing options · TCO category structure <span style="color:var(--text-tertiary)">(Appendix B coming)</span></li>
+          <li><strong>Objections:</strong> #35 "Sticker price comparison" · #36 "Subscription vs perpetual" · #37 "Migration cost is too high" · #38 "We just renewed VMware" · #39 "Hardware vendor lock-in" · #40 "TCO claims feel inflated" <span style="color:var(--text-tertiary)">(Appendix D coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Q-ECON-01 current annual run-rate · Q-ECON-02 refresh timing · Q-ECON-03 capex vs opex preference · Q-ECON-04 hardware sourcing preference · Q-ECON-05 growth projection <span style="color:var(--text-tertiary)">(Appendix E coming)</span></li>
+          <li><strong>Sizing Rules:</strong> Per-core sizing for NCI subscription · TCO sensitivity factors <span style="color:var(--text-tertiary)">(Appendix F coming)</span></li>
+        </ul>
+      </section>
+
+      <nav class="prev-next" aria-label="Module navigation">
+        <a href="../08-unified-storage/index.html">
+          <div class="dir">← Previous</div>
+          <div class="ttl">Module 8: Unified Storage (Files, Objects, Volumes)</div>
+        </a>
+        <a href="#" class="next" aria-disabled="true" style="opacity:0.55; pointer-events:none;">
+          <div class="dir">Next →</div>
+          <div class="ttl">Module 10: Migration Path (coming)</div>
+        </a>
+      </nav>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>09-licensing-economics</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script>
+    // Practice question interactivity
+    document.querySelectorAll('.question').forEach((q) => {
+      const correct = q.dataset.correct;
+      const choices = q.querySelectorAll('.choice');
+      const revealBtn = q.querySelector('.reveal-btn');
+      choices.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (q.dataset.state === 'answered') return;
+          const picked = btn.dataset.letter;
+          q.dataset.state = 'answered';
+          choices.forEach((c) => {
+            c.disabled = true;
+            const letter = c.dataset.letter;
+            if (letter === correct) c.classList.add('correct');
+            else if (letter === picked) c.classList.add('incorrect');
+          });
+          try {
+            const key = 'nutanix:m9:progress';
+            const data = JSON.parse(localStorage.getItem(key) || '{}');
+            data[q.querySelector('.qnum').textContent] = { picked, correct, ts: Date.now() };
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) { /* ignore */ }
+        });
+      });
+      if (revealBtn) {
+        revealBtn.addEventListener('click', () => { q.dataset.state = 'answered'; });
+      }
+    });
+
+    // Diagram color palette + helpers
+    const C = {
+      ink: '#a8b8d4', label: '#e8f0ff',
+      compute: '#4a9eff', computeFill: 'rgba(74,158,255,0.10)',
+      cvm: '#b04a26', cvmFill: 'rgba(176,74,38,0.18)',
+      vm: '#6b7a9a', vmFill: 'rgba(107,122,154,0.10)',
+      disk: '#1f3a66', diskFill: 'rgba(31,58,102,0.30)',
+      net: '#3d8aa6', netFill: 'rgba(61,138,166,0.18)',
+      fabric: '#00d4ff', fabricFill: 'rgba(0,212,255,0.08)',
+      vip: '#fbbf24', vipFill: 'rgba(251,191,36,0.18)',
+      ext: '#f87171', extFill: 'rgba(248,113,113,0.12)',
+      acro: '#d97c4a', acroFill: 'rgba(217,124,74,0.18)',
+      green: '#34d399', greenFill: 'rgba(52,211,153,0.12)',
+      purple: '#c084fc', purpleFill: 'rgba(192,132,252,0.12)',
+      gray: '#6b7a9a', grayFill: 'rgba(107,122,154,0.08)',
+    };
+    const opts = (color, fill, fillStyle = 'hachure') => ({
+      stroke: color, strokeWidth: 1.2, roughness: 1.4,
+      fill, fillStyle, fillWeight: 1.2, hachureGap: 6, hachureAngle: 45,
+    });
+    const SVGNS = 'http://www.w3.org/2000/svg';
+    function txt(svg, x, y, text, opt = {}) {
+      const t = document.createElementNS(SVGNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      if (opt.anchor) t.setAttribute('text-anchor', opt.anchor);
+      t.setAttribute('font-family', opt.mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif');
+      t.setAttribute('font-size', opt.size || 12);
+      if (opt.weight) t.setAttribute('font-weight', opt.weight);
+      if (opt.spacing) t.setAttribute('letter-spacing', opt.spacing);
+      if (opt.italic) t.setAttribute('font-style', 'italic');
+      t.setAttribute('fill', opt.fill || C.ink);
+      t.textContent = text;
+      svg.appendChild(t);
+      return t;
+    }
+
+    // ===== Diagram 1: Tier Feature Matrix =====
+    (function drawTierMatrix() {
+      const svg = document.getElementById('diagram-tier-matrix-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, 'NCI · NCM · NCP TIER FEATURE MATRIX', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.10em' });
+
+      const cols = [
+        { x: 280, w: 100, label: 'NCI', sub: 'Pro', color: C.compute },
+        { x: 380, w: 100, label: 'NCI', sub: 'Ultimate', color: C.fabric },
+        { x: 480, w: 100, label: 'NCM', sub: 'Starter', color: C.acro },
+        { x: 580, w: 100, label: 'NCM', sub: 'Pro', color: C.acro },
+        { x: 680, w: 100, label: 'NCM', sub: 'Ultimate', color: C.acro },
+        { x: 780, w: 100, label: 'NCP', sub: 'Bundle', color: C.green },
+        { x: 880, w: 100, label: 'Add', sub: 'on', color: C.vip },
+      ];
+      // Column headers
+      cols.forEach((c) => {
+        svg.appendChild(rc.rectangle(c.x, 50, c.w, 50, opts(c.color, 'rgba(255,255,255,0.04)', 'solid')));
+        txt(svg, c.x + c.w/2, 70, c.label, { anchor: 'middle', size: 11, weight: '700', fill: c.color, spacing: '0.06em' });
+        txt(svg, c.x + c.w/2, 88, c.sub, { anchor: 'middle', size: 10, mono: true, fill: C.label });
+      });
+
+      const rows = [
+        { y: 110, label: 'AHV (hypervisor)',                 cells: ['Y','Y','-','-','-','Y','-'] },
+        { y: 138, label: 'DSF core (RF, snapshots, async)',  cells: ['Y','Y','-','-','-','Y','-'] },
+        { y: 166, label: 'NearSync replication',             cells: ['-','Y','-','-','-','Y','-'] },
+        { y: 194, label: 'Metro Availability',               cells: ['-','Y','-','-','-','Y','-'] },
+        { y: 222, label: 'Compression / dedup baseline',     cells: ['Y','Y','-','-','-','Y','-'] },
+        { y: 250, label: 'Erasure Coding',                   cells: ['-','Y','-','-','-','Y','-'] },
+        { y: 278, label: 'Prism Element',                    cells: ['Y','Y','-','-','-','Y','-'] },
+        { y: 306, label: 'Prism Central baseline',           cells: ['Y','Y','-','-','-','Y','-'] },
+        { y: 334, label: 'Categories / Projects',            cells: ['Y','Y','-','-','-','Y','-'] },
+        { y: 362, label: 'Intelligent Operations',           cells: ['-','-','·','Y','Y','Y','-'] },
+        { y: 390, label: 'Self-Service (formerly Calm)',     cells: ['-','-','-','-','Y','Y','-'] },
+        { y: 418, label: 'X-Play playbook automation',       cells: ['-','-','-','-','Y','Y','-'] },
+        { y: 446, label: 'Cost Governance',                  cells: ['-','-','-','-','Y','Y','-'] },
+        { y: 474, label: 'Flow Network Security',            cells: ['-','Y','-','-','-','Y','Y'] },
+        { y: 502, label: 'Files (typically separate)',       cells: ['-','-','-','-','-','-','Y'] },
+        { y: 530, label: 'Objects (typically separate)',     cells: ['-','-','-','-','-','-','Y'] },
+        { y: 558, label: 'Volumes (in NCI)',                 cells: ['Y','Y','-','-','-','Y','-'] },
+      ];
+
+      // Row labels and cells
+      rows.forEach((r) => {
+        // row label
+        txt(svg, 24, r.y + 16, r.label, { size: 11, fill: C.label });
+        // cells
+        cols.forEach((c, idx) => {
+          const v = r.cells[idx];
+          // alternating row tint
+          if ((rows.indexOf(r) % 2) === 0) {
+            const bg = document.createElementNS(SVGNS, 'rect');
+            bg.setAttribute('x', c.x); bg.setAttribute('y', r.y);
+            bg.setAttribute('width', c.w); bg.setAttribute('height', 26);
+            bg.setAttribute('fill', 'rgba(74,158,255,0.04)');
+            svg.appendChild(bg);
+          }
+          if (v === 'Y') {
+            // include marker (filled dot)
+            svg.appendChild(rc.circle(c.x + c.w/2, r.y + 13, 11, opts(c.color, 'rgba(255,255,255,0.12)', 'solid')));
+            txt(svg, c.x + c.w/2, r.y + 17, '●', { anchor: 'middle', size: 11, weight: '700', fill: c.color });
+          } else if (v === '·') {
+            txt(svg, c.x + c.w/2, r.y + 18, 'partial', { anchor: 'middle', size: 9, mono: true, italic: true, fill: C.ink });
+          } else {
+            txt(svg, c.x + c.w/2, r.y + 17, '–', { anchor: 'middle', size: 12, fill: C.disk });
+          }
+        });
+      });
+
+      // legend
+      txt(svg, 24, 600, '● included in tier  ·  partial = lower-tier subset of feature  ·  – not included  ·  verify specifics against current Nutanix price book',
+          { size: 10, mono: true, fill: C.ink });
+    })();
+
+    // ===== Diagram 2: Broadcom vs Nutanix TCO comparison structure =====
+    (function drawBroadcomCompare() {
+      const svg = document.getElementById('diagram-broadcom-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, '5-YEAR TCO METHODOLOGY · WALK EVERY CATEGORY', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+
+      // VMware column header
+      svg.appendChild(rc.rectangle(60, 60, 420, 50, opts(C.compute, C.computeFill, 'cross-hatch')));
+      txt(svg, 270, 80, 'VMware (post-Broadcom)', { anchor: 'middle', size: 14, weight: '700', fill: C.compute, spacing: '0.06em' });
+      txt(svg, 270, 96, 'VCF subscription · per-core · multi-year', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      // Nutanix column header
+      svg.appendChild(rc.rectangle(520, 60, 420, 50, opts(C.fabric, C.fabricFill, 'cross-hatch')));
+      txt(svg, 730, 80, 'Nutanix', { anchor: 'middle', size: 14, weight: '700', fill: C.fabric, spacing: '0.06em' });
+      txt(svg, 730, 96, 'NCI subscription · per-core · multi-year', { anchor: 'middle', size: 10, mono: true, fill: C.ink });
+
+      const cats = [
+        { y: 130, label: 'Hypervisor licensing',           v: 'per-core sub',           n: 'AHV included in NCI' },
+        { y: 162, label: 'Storage software',                v: 'vSAN bundled in VCF',    n: 'DSF in NCI' },
+        { y: 194, label: 'Networking software',             v: 'NSX-T separate',         n: 'Flow at NCI Ultimate / Add-on' },
+        { y: 226, label: 'Management software',             v: 'Aria Suite',             n: 'NCM tier' },
+        { y: 258, label: 'Hardware (5-yr w/ refresh)',      v: 'compute + storage array',n: 'compute + DSF (consolidated)' },
+        { y: 290, label: 'Support contracts',               v: 'standard',               n: 'standard' },
+        { y: 322, label: 'Power / cooling (similar)',       v: '$$',                     n: '$$' },
+        { y: 354, label: 'Datacenter space',                v: 'similar',                n: 'consolidation savings' },
+        { y: 386, label: 'Migration (one-time)',            v: 'n/a (incumbent)',        n: 'professional services' },
+        { y: 418, label: 'Staff training',                  v: 'minimal (incumbent)',    n: 'initial + recurring' },
+        { y: 450, label: 'Operational labor (5-yr)',        v: '4 vendors',              n: '1 platform' },
+        { y: 482, label: 'Decommissioning (one-time)',      v: 'n/a',                    n: 'old gear teardown' },
+      ];
+
+      cats.forEach((c, i) => {
+        if (i % 2 === 0) {
+          const bg = document.createElementNS(SVGNS, 'rect');
+          bg.setAttribute('x', 20); bg.setAttribute('y', c.y - 12);
+          bg.setAttribute('width', 960); bg.setAttribute('height', 32);
+          bg.setAttribute('fill', 'rgba(74,158,255,0.04)');
+          svg.appendChild(bg);
+        }
+        txt(svg, 30, c.y + 8, c.label, { size: 11, weight: '600', fill: C.label });
+        txt(svg, 270, c.y + 8, c.v, { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+        txt(svg, 730, c.y + 8, c.n, { anchor: 'middle', size: 11, mono: true, fill: C.ink });
+      });
+
+      // Bottom: net comparison
+      svg.appendChild(rc.rectangle(60, 522, 880, 60, opts(C.green, C.greenFill, 'cross-hatch')));
+      txt(svg, 500, 546, 'NET 5-YEAR DELTA · REQUIRES CUSTOMER-SPECIFIC NUMBERS', { anchor: 'middle', size: 13, weight: '700', fill: C.green, spacing: '0.10em' });
+      txt(svg, 500, 566, 'don\'t compare line items in isolation · compare 5-year totals with stated assumptions and sensitivity', { anchor: 'middle', size: 11, mono: true, italic: true, fill: C.ink });
+    })();
+
+    // ===== Diagram 3: TCO Components Over Time (5-year stacked bar) =====
+    (function drawTcoComponents() {
+      const svg = document.getElementById('diagram-tco-svg');
+      if (!svg || !window.rough) return;
+      const rc = rough.svg(svg);
+
+      txt(svg, 500, 24, '5-YEAR TCO STACKED COMPOSITION', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.10em' });
+
+      // y-axis grid
+      [120, 200, 280, 360].forEach((y) => {
+        const ln = rc.line(80, y, 920, y, { stroke: C.disk, strokeWidth: 0.6, roughness: 0.4, strokeLineDash: [2, 5] });
+        svg.appendChild(ln);
+      });
+      txt(svg, 70, 363, '$0', { anchor: 'end', size: 10, mono: true, fill: C.ink });
+      txt(svg, 70, 283, '$X', { anchor: 'end', size: 10, mono: true, fill: C.ink });
+      txt(svg, 70, 203, '$2X', { anchor: 'end', size: 10, mono: true, fill: C.ink });
+      txt(svg, 70, 123, '$3X', { anchor: 'end', size: 10, mono: true, fill: C.ink });
+      txt(svg, 70, 88, '$4X+', { anchor: 'end', size: 10, mono: true, fill: C.ink });
+
+      // x-axis baseline
+      const base = rc.line(80, 360, 920, 360, { stroke: C.label, strokeWidth: 1.2, roughness: 0.4 });
+      svg.appendChild(base);
+
+      // Year columns
+      const years = [
+        { x: 120, label: 'YEAR 1', layers: [
+          { h: 80,  c: C.purple,  pf: C.purpleFill, name: 'capex' },
+          { h: 50,  c: C.vip,     pf: C.vipFill,    name: 'services' },
+          { h: 30,  c: C.compute, pf: C.computeFill, name: 'sub' },
+          { h: 20,  c: C.green,   pf: C.greenFill,  name: 'support' },
+          { h: 30,  c: C.gray,    pf: C.grayFill,   name: 'ops' },
+        ]},
+        { x: 280, label: 'YEAR 2', layers: [
+          { h: 30,  c: C.compute, pf: C.computeFill, name: 'sub' },
+          { h: 20,  c: C.green,   pf: C.greenFill,  name: 'support' },
+          { h: 30,  c: C.gray,    pf: C.grayFill,   name: 'ops' },
+        ]},
+        { x: 440, label: 'YEAR 3', layers: [
+          { h: 30,  c: C.compute, pf: C.computeFill, name: 'sub' },
+          { h: 20,  c: C.green,   pf: C.greenFill,  name: 'support' },
+          { h: 30,  c: C.gray,    pf: C.grayFill,   name: 'ops' },
+        ]},
+        { x: 600, label: 'YEAR 4', layers: [
+          { h: 30,  c: C.compute, pf: C.computeFill, name: 'sub' },
+          { h: 20,  c: C.green,   pf: C.greenFill,  name: 'support' },
+          { h: 30,  c: C.gray,    pf: C.grayFill,   name: 'ops' },
+        ]},
+        { x: 760, label: 'YEAR 5', layers: [
+          { h: 30,  c: C.compute, pf: C.computeFill, name: 'sub' },
+          { h: 20,  c: C.green,   pf: C.greenFill,  name: 'support' },
+          { h: 30,  c: C.gray,    pf: C.grayFill,   name: 'ops' },
+        ], refresh: true},
+      ];
+
+      years.forEach((y) => {
+        let yPos = 360;
+        y.layers.forEach((L) => {
+          yPos -= L.h;
+          svg.appendChild(rc.rectangle(y.x, yPos, 100, L.h, opts(L.c, L.pf, 'solid')));
+          if (L.h >= 28) {
+            txt(svg, y.x + 50, yPos + L.h/2 + 4, L.name, { anchor: 'middle', size: 10, mono: true, weight: '600', fill: C.label });
+          }
+        });
+        // refresh hint at top of Y5
+        if (y.refresh) {
+          const r = rc.rectangle(y.x, yPos - 30, 100, 30, { stroke: C.purple, strokeWidth: 1.4, roughness: 1.2, strokeLineDash: [3, 3], fill: 'none' });
+          svg.appendChild(r);
+          txt(svg, y.x + 50, yPos - 12, 'refresh →', { anchor: 'middle', size: 9, mono: true, italic: true, fill: C.purple });
+        }
+        // x-axis label
+        txt(svg, y.x + 50, 384, y.label, { anchor: 'middle', size: 11, mono: true, weight: '600', fill: C.label });
+      });
+
+      // legend
+      const legY = 420;
+      const legend = [
+        { x: 80,  c: C.purple,  pf: C.purpleFill,  name: 'hardware capex' },
+        { x: 220, c: C.vip,     pf: C.vipFill,     name: 'services (one-time)' },
+        { x: 380, c: C.compute, pf: C.computeFill, name: 'subscription' },
+        { x: 540, c: C.green,   pf: C.greenFill,   name: 'support' },
+        { x: 660, c: C.gray,    pf: C.grayFill,    name: 'operations labor' },
+      ];
+      legend.forEach((L) => {
+        svg.appendChild(rc.rectangle(L.x, legY, 14, 14, opts(L.c, L.pf, 'solid')));
+        txt(svg, L.x + 22, legY + 11, L.name, { size: 11, mono: true, fill: C.ink });
+      });
+      txt(svg, 80, legY + 36, 'Year 1 = capex spike + one-time services. Years 2–5 = durable subscription + support + ops run-rate.', { size: 11, italic: true, fill: C.ink });
+      txt(svg, 80, legY + 52, 'Year 5 dashed outline = next refresh approaching; capex spike repeats in Year 6 planning.', { size: 11, italic: true, fill: C.ink });
+    })();
+  </script>
+</body>
+</html>
