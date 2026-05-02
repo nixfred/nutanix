@@ -1113,23 +1113,23 @@ ncc health_checks run_all</pre></li>
       <hr/>
 
       <h2 id="what-you-have">What You Now Have</h2>
-      <p>You can now draw a Nutanix node and a Nutanix cluster on a whiteboard from memory. You can name what's running on a node — hypervisor, CVM, user VMs — and you can explain why the CVM exists, what it owns, and what it costs.</p>
+      <p>You can now draw a Nutanix node and a Nutanix cluster on a whiteboard from memory. You can name what's running on a node (hypervisor, CVM, user VMs) and you can explain why the CVM exists, what it owns, and what it costs.</p>
       <p>You have four different mental models for the CVM: the storage controller in software, the boundary of the system, the architectural inversion, and the Linux distributed storage daemon set. When a customer pushes on the architecture, you have a frame ready that fits the conversation.</p>
       <p>You know the CVM tax with numbers (8-16 vCPU, 32-64 GB RAM per node, scaling with feature set) and you can defend it without flinching by reframing the comparison to total resource footprint.</p>
       <p>You know the cluster minimum (three for production, two with witness for ROBO), the consensus reason it has to be at least three, and what happens on single-node failure (HA restart + automatic re-replication).</p>
       <p>You know the operational trio: <strong>Foundation</strong> for day-zero, <strong>LCM</strong> for day-two upgrades, <strong>NCC</strong> for ongoing health.</p>
-      <p>You are now ready to look at the hypervisor question — AHV: what it is, what it does, what it lacks compared to ESXi, and when it's the right answer or the wrong one. That is Module 3.</p>
+      <p>You are now ready to look at the hypervisor question. AHV: what it is, what it does, what it lacks compared to ESXi, and when it's the right answer or the wrong one. That is Module 3.</p>
 
       <section class="references">
         <h2>References</h2>
         <p>Authoritative sources verified during the technical review pass on this module. Cite these when defending the CVM tax or cluster-sizing decisions in front of a sharp customer.</p>
         <ul>
-          <li><a href="https://www.nutanixbible.com/2f-book-of-basics-cluster-components.html">Nutanix Bible — Cluster Components</a>. Authoritative service-by-service reference for Stargate, Cassandra, Curator, Zeus, Pithos, Medusa, Acropolis.</li>
+          <li><a href="https://www.nutanixbible.com/2f-book-of-basics-cluster-components.html">Nutanix Bible · Cluster Components</a>. Authoritative service-by-service reference for Stargate, Cassandra, Curator, Zeus, Pithos, Medusa, Acropolis.</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:BP-2083-ROBO-Deployment">Two-Node ROBO Best Practices (BP-2083)</a>. Two-node cluster topology and witness placement.</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:witness-requirements.html">Witness VM Requirements</a>. 2 vCPU / 6 GB RAM / 25 GB disk minimum; ≤ 500 ms latency; not on AWS or Azure.</li>
-          <li><a href="https://www.nutanix.com/products/hardware-platforms">Nutanix Hardware Platforms — OEM Partners</a>. Authoritative list: Cisco, HPE, Lenovo, Fujitsu, Dell, plus NX and Supermicro.</li>
+          <li><a href="https://www.nutanix.com/products/hardware-platforms">Nutanix Hardware Platforms · OEM Partners</a>. Authoritative list: Cisco, HPE, Lenovo, Fujitsu, Dell, plus NX and Supermicro.</li>
           <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Command-Ref-AOS-v6_8:man-ncli-c.html">AOS 6.8 nCLI Command Reference</a>. Authoritative source for <code>ncli cluster set-external-ip-address</code> and other cluster commands.</li>
-          <li><a href="https://www.nutanixbible.com/19b-cli.html">Nutanix Bible — CLI Reference</a>. <code>cluster -s &lt;ips&gt; create</code> syntax and related operations.</li>
+          <li><a href="https://www.nutanixbible.com/19b-cli.html">Nutanix Bible · CLI Reference</a>. <code>cluster -s &lt;ips&gt; create</code> syntax and related operations.</li>
         </ul>
       </section>
 

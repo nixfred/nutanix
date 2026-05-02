@@ -1043,7 +1043,7 @@ vdisk_usage_printer -vdisk_id &lt;id&gt;</pre>
         <h2>References</h2>
         <p>Authoritative sources verified during the technical review pass on this module. Cite these when defending architecture in front of a senior storage admin.</p>
         <ul>
-          <li><a href="https://www.nutanixbible.com/4c-book-of-aos-storage.html"><strong>Nutanix Bible — AOS Storage (DSF)</strong></a>. Authoritative source for the storage hierarchy, data path (Stargate, OpLog, Extent Store, Content Cache), Cassandra metadata replication (default 3 copies, configurable up to 5), and compression-algorithm details (LZ4 inline + LZ4HC for cold).</li>
+          <li><a href="https://www.nutanixbible.com/4c-book-of-aos-storage.html"><strong>Nutanix Bible · AOS Storage (DSF)</strong></a>. Authoritative source for the storage hierarchy, data path (Stargate, OpLog, Extent Store, Content Cache), Cassandra metadata replication (default 3 copies, configurable up to 5), and compression-algorithm details (LZ4 inline + LZ4HC for cold).</li>
           <li><a href="https://polarclouds.co.uk/nutanix-storage-concepts/"><strong>Polar Clouds DSF Concepts Walkthrough</strong></a>. Independent walkthrough with the 1 MB / 4 MB extent group sizing distinction (1 MB on non-dedup containers, 4 MB on dedup-enabled).</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2032-Data-Efficiency:erasure-coding.html"><strong>Erasure Coding Solution Brief (TN-2032)</strong></a>. Authoritative source for EC-X stripe configurations, minimum cluster sizes (4+1 needs ≥ 6 nodes; 4+2 needs ≥ 7 nodes), capacity-overhead math.</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2002-Erasure-Coding:TN-2002-Erasure-Coding"><strong>Erasure Coding Reference (TN-2002)</strong></a>. Original erasure coding tech note.</li>
@@ -1186,7 +1186,7 @@ vdisk_usage_printer -vdisk_id &lt;id&gt;</pre>
       svg.appendChild(rc.rectangle(60, 222, 880, 36, opts(C.cvm, C.cvmFill, 'cross-hatch')));
       txt(svg, 500, 245, 'Extent Group  ·  1 MB (non-dedup) / 4 MB (dedup) · physical alloc unit', { anchor: 'middle', size: 12, weight: '700', fill: '#fbb091' });
 
-      // Container band (gold) — POLICY BOUNDARY
+      // Container band (gold): POLICY BOUNDARY
       svg.appendChild(rc.rectangle(60, 274, 880, 60, opts(C.vip, C.vipFill, 'cross-hatch')));
       txt(svg, 500, 295, 'Storage Container  ·  POLICY BOUNDARY', { anchor: 'middle', size: 14, weight: '700', fill: C.vip, spacing: '0.06em' });
       txt(svg, 500, 318, 'RF=2 · Compression=on · Dedup=off · EC=off · Reservation=20 TB', { anchor: 'middle', size: 11, mono: true, fill: C.ink });
@@ -1262,7 +1262,7 @@ vdisk_usage_printer -vdisk_id &lt;id&gt;</pre>
       txt(svg, 770, 425, 'CVM RAM · read path', { anchor: 'middle', size: 11, fill: C.ink });
       txt(svg, 770, 442, 'first stop on every read', { anchor: 'middle', size: 10, fill: C.ink, italic: true });
 
-      // Connections — write path (down)
+      // Connections: write path (down)
       svg.appendChild(rc.line(500, 90, 500, 110, { stroke: C.vm, strokeWidth: 1.4, roughness: 1.3 }));
       svg.appendChild(rc.line(500, 146, 500, 170, { stroke: C.compute, strokeWidth: 1.4, roughness: 1.3 }));
 
@@ -1285,7 +1285,7 @@ vdisk_usage_printer -vdisk_id &lt;id&gt;</pre>
       svg.appendChild(rc.line(620, 200, 770, 380, { stroke: C.green, strokeWidth: 0.8, roughness: 1.3, opacity: 0.5 }));
       txt(svg, 720, 360, 'read path', { anchor: 'middle', size: 10, fill: C.green, italic: true });
 
-      txt(svg, 500, 490, 'Write is acknowledged after local + remote OpLog persistence — NOT after Extent Store.',
+      txt(svg, 500, 490, 'Write is acknowledged after local + remote OpLog persistence: NOT after Extent Store.',
         { anchor: 'middle', size: 11, fill: C.label, italic: true, weight: '600' });
       txt(svg, 500, 510, 'Curator runs in background. It does not appear in the synchronous write path.',
         { anchor: 'middle', size: 11, fill: C.ink, italic: true });

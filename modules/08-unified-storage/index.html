@@ -262,7 +262,7 @@
 
   <main>
     <figure class="module-hero">
-      <img src="../../public/images/hero-08-unified-storage.svg" alt="Three protocol streams — purple SMB/NFS clients, cyan S3 clients, gold iSCSI initiators — converging onto three service-VM bands (FSVM, Object Service, Volumes) above a single six-node Nutanix cluster, with DSF as the shared substrate underneath." />
+      <img src="../../public/images/hero-08-unified-storage.svg" alt="Three protocol streams, purple SMB/NFS clients, cyan S3 clients, gold iSCSI initiators, converging onto three service-VM bands (FSVM, Object Service, Volumes) above a single six-node Nutanix cluster, with DSF as the shared substrate underneath." />
     </figure>
 
     <div class="module-title-block">
@@ -481,7 +481,7 @@
           <span class="badge cert">NCP-US</span>
         </div>
         <svg id="diagram-objects-svg" viewBox="0 0 1000 560" role="img" aria-label="S3 clients (Veeam, cloud-native applications, S3 SDKs) hit a load-balanced S3 endpoint, served by three Object Service VMs that manage buckets with WORM, versioning, and lifecycle policies, with data persisted on DSF and replication arrows to another Objects deployment or AWS S3."></svg>
-        <figcaption>S3-compatible storage running on Nutanix. Clients hit the S3 endpoint; data lives in DSF with full platform features. Standard S3 API: tools that work with AWS S3 work with Objects with endpoint-only changes. Often the answer for backup targets — replaces dedicated Data Domain or NetApp StorageGRID.</figcaption>
+        <figcaption>S3-compatible storage running on Nutanix. Clients hit the S3 endpoint; data lives in DSF with full platform features. Standard S3 API: tools that work with AWS S3 work with Objects with endpoint-only changes. Often the answer for backup targets, replaces dedicated Data Domain or NetApp StorageGRID.</figcaption>
       </figure>
 
       <hr/>
@@ -974,13 +974,13 @@ ncli filesserver status name=&lt;name&gt;</pre>
         <h2 id="references">References</h2>
         <p style="margin: 8px 0 14px; color: var(--text-secondary); font-size: 13px;">Authoritative sources verified during the technical review pass on this module. Files Analytics is in the middle of being absorbed into the broader Data Lens product; reverify product naming against the current Nutanix portal before quoting in customer proposals.</p>
         <ul>
-          <li><a href="https://www.nutanixbible.com/11b-book-of-storage-services-files.html"><strong>Nutanix Bible — Files</strong></a>. Authoritative architecture reference for File Servers, FSVMs, multi-protocol shares, distributed shares.</li>
+          <li><a href="https://www.nutanixbible.com/11b-book-of-storage-services-files.html"><strong>Nutanix Bible · Files</strong></a>. Authoritative architecture reference for File Servers, FSVMs, multi-protocol shares, distributed shares.</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2041-Nutanix-Files:tn-nutanix-files-architecture.html"><strong>TN-2041 Nutanix Files Architecture</strong></a>. Tech note covering FSVM minimum count, single-FSVM exception for small clusters, and protocol support (SMB 2/3, NFS v3/v4).</li>
-          <li><a href="https://www.nutanixbible.com/11c-book-of-storage-services-objects.html"><strong>Nutanix Bible — Objects</strong></a>. Object Service architecture, S3 API surface.</li>
+          <li><a href="https://www.nutanixbible.com/11c-book-of-storage-services-objects.html"><strong>Nutanix Bible · Objects</strong></a>. Object Service architecture, S3 API surface.</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2106-Nutanix-Objects:nutanix-objects-buckets.html"><strong>TN-2106 Nutanix Objects Buckets</strong></a>. Bucket configuration, WORM (S3 Object Lock), versioning semantics including auto-enabled versioning on WORM buckets and the 24-hour grace period.</li>
           <li><a href="https://next.nutanix.com/community-blog-154/maintaining-compliance-with-worm-for-nutanix-objects-33239"><strong>Maintaining Compliance with WORM for Nutanix Objects</strong></a>. WORM operational details (extend-but-never-reduce, grace period).</li>
           <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Objects-v3_2:v32-buckets-configuration-c.html"><strong>Objects 3.2 Bucket Policy Configuration</strong></a>. Current bucket-policy reference.</li>
-          <li><a href="https://www.nutanix.com/products/data-lens"><strong>Nutanix Data Lens — Product Page</strong></a>. Cloud-and-on-prem unified-storage analytics and ransomware-detection product that evolved from Files Analytics.</li>
+          <li><a href="https://www.nutanix.com/products/data-lens"><strong>Nutanix Data Lens · Product Page</strong></a>. Cloud-and-on-prem unified-storage analytics and ransomware-detection product that evolved from Files Analytics.</li>
           <li><a href="https://www.nutanix.com/blog/defend-your-data-proactively-with-nutanix-data-lens"><strong>Data Lens v2.0 GA Announcement</strong></a>. Confirms 2026 GA of fully on-prem Data Lens including air-gapped support.</li>
           <li><a href="https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-unified-storage-v65"><strong>NCP-US Certification Page</strong></a>. Authoritative source for the NCP-US blueprint covering Files, Objects, and Volumes.</li>
           <li><a href="https://next.nutanix.com/education-blog-153/your-roadmap-to-success-5-steps-to-prep-for-the-ncp-us-certification-exam-42945"><strong>NCP-US Exam Roadmap (Nutanix Community)</strong></a>. Preparation guidance for the specialty cert.</li>

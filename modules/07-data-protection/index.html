@@ -993,16 +993,16 @@ sudo /mnt/cdrom/installer/linux/install_ngt.py</pre>
         <h2 id="references">References</h2>
         <p style="margin: 8px 0 14px; color: var(--text-secondary); font-size: 13px;">Authoritative sources verified during the technical review pass on this module. RPO numbers, latency thresholds, and product-naming history are validated against current Nutanix documentation; reverify before quoting specifics in a customer architecture proposal.</p>
         <ul>
-          <li><a href="https://www.nutanixbible.com/4e-book-of-aos-backup-dr.html"><strong>Nutanix Bible — AOS Backup and DR</strong></a>. Authoritative source for snapshot semantics, replication modes (Async, NearSync, Metro), and the LWS / LWS-store architecture.</li>
-          <li><a href="https://www.nutanixbible.com/13a-book-of-dr-services.html"><strong>Nutanix Bible — Disaster Recovery Services</strong></a>. Recovery Plans, Protection Policies, runbook orchestration.</li>
-          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:nearsync-replication-powered-by-lightweight-snapshots.html"><strong>TN-2027 — NearSync replication powered by Light-Weight Snapshots</strong></a>. Authoritative NearSync technical reference; confirms 20-second RPO floor and LWS-on-SSD storage detail.</li>
-          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:metro-availability.html"><strong>TN-2027 — Metro Availability</strong></a>. Metro Availability technical reference.</li>
+          <li><a href="https://www.nutanixbible.com/4e-book-of-aos-backup-dr.html"><strong>Nutanix Bible · AOS Backup and DR</strong></a>. Authoritative source for snapshot semantics, replication modes (Async, NearSync, Metro), and the LWS / LWS-store architecture.</li>
+          <li><a href="https://www.nutanixbible.com/13a-book-of-dr-services.html"><strong>Nutanix Bible · Disaster Recovery Services</strong></a>. Recovery Plans, Protection Policies, runbook orchestration.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:nearsync-replication-powered-by-lightweight-snapshots.html"><strong>TN-2027 · NearSync replication powered by Light-Weight Snapshots</strong></a>. Authoritative NearSync technical reference; confirms 20-second RPO floor and LWS-on-SSD storage detail.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2027-Data-Protection-and-Disaster-Recovery:metro-availability.html"><strong>TN-2027 · Metro Availability</strong></a>. Metro Availability technical reference.</li>
           <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2009-Metro-Availability:BP-2009-Metro-Availability"><strong>BP-2009 Metro Availability Best Practices</strong></a>. 5 ms RTT ceiling, witness placement, failure-handling configurations.</li>
           <li><a href="https://www.rack2cloud.com/physics-disconnected-cloud-microbursts-metro-risk/"><strong>Metro Cluster Latency: Microbursts and RTT Risk</strong></a>. Production design guidance: ≤3.5 ms RTT target under load with 5 ms as ceiling, P99.9 vs average latency considerations.</li>
           <li><a href="https://next.nutanix.com/how-it-works-22/migrating-guest-vm-from-a-protection-domain-to-a-protection-policy-39916"><strong>Migrating a Guest VM from a Protection Domain to a Protection Policy</strong></a> (Nutanix Community). PD-to-Policy migration workflow and disruption considerations.</li>
           <li><a href="https://sostechblog.com/2024/12/22/disaster-recovery-with-nutanix-aos-6-10-and-prism-central-2024-2-pt-1/"><strong>Disaster Recovery with Nutanix AOS 6.10 and Prism Central 2024.2</strong></a> (SOSTechBlog). Walkthrough of the current Nutanix Disaster Recovery (formerly Leap) UX.</li>
           <li><a href="https://www.nutanix.com/en_au/blog/aos-5-17-is-here"><strong>AOS 5.17: NearSync 20-second RPO announcement</strong></a>. Original announcement of the 20-second NearSync RPO milestone.</li>
-          <li><a href="https://www.nutanix.com/products/nutanix-cloud-clusters/aws"><strong>NC2 on AWS — Product page</strong></a>. Cloud DR architecture reference for the NC2 section.</li>
+          <li><a href="https://www.nutanix.com/products/nutanix-cloud-clusters/aws"><strong>NC2 on AWS · Product page</strong></a>. Cloud DR architecture reference for the NC2 section.</li>
           <li><a href="https://portal.nutanix.com/docs/Prism-Element-Data-Protection-Guide-v7_3:Prism-Element-Data-Protection-Guide-v7_3"><strong>Prism Element Data Protection Guide v7.3</strong></a>. Current Protection Domain documentation in Prism Element.</li>
         </ul>
       </section>
@@ -1118,7 +1118,7 @@ sudo /mnt/cdrom/installer/linux/install_ngt.py</pre>
       if (!svg || !window.rough) return;
       const rc = rough.svg(svg);
 
-      txt(svg, 500, 24, 'ASYNC · NEARSYNC · METRO — RPO, LATENCY, OVERHEAD', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
+      txt(svg, 500, 24, 'ASYNC · NEARSYNC · METRO: RPO, LATENCY, OVERHEAD', { anchor: 'middle', size: 12, mono: true, weight: '600', spacing: '0.08em' });
 
       // ---- Panel 1: ASYNC ----
       const px = 30, py = 60, pw = 300, ph = 460;
@@ -1272,12 +1272,12 @@ sudo /mnt/cdrom/installer/linux/install_ngt.py</pre>
       txt(svg, 830, 138, 'AUTO-PROTECTED', { anchor: 'middle', size: 13, weight: '700', fill: C.green, spacing: '0.10em' });
       txt(svg, 830, 156, '5 of 10 VMs match', { anchor: 'middle', size: 11, mono: true, fill: C.label });
       svg.appendChild(rc.line(718, 174, 942, 174, { stroke: C.green, roughness: 1.2 }));
-      txt(svg, 718, 198, '✓ matching VMs auto-included', { size: 11, fill: C.label });
-      txt(svg, 718, 222, '✓ new VMs tagged Env: Prod', { size: 11, fill: C.label });
+      txt(svg, 718, 198, 'OK  matching VMs auto-included', { size: 11, fill: C.label });
+      txt(svg, 718, 222, 'OK  new VMs tagged Env: Prod', { size: 11, fill: C.label });
       txt(svg, 730, 238, '   auto-enroll within minutes', { size: 11, fill: C.ink });
-      txt(svg, 718, 262, '✓ VMs that lose the tag are', { size: 11, fill: C.label });
+      txt(svg, 718, 262, 'OK  VMs that lose the tag are', { size: 11, fill: C.label });
       txt(svg, 730, 278, '   auto-removed from policy', { size: 11, fill: C.ink });
-      txt(svg, 718, 302, '✗ no manual addition required', { size: 11, fill: C.green, weight: '600' });
+      txt(svg, 718, 302, 'NO  no manual addition required', { size: 11, fill: C.green, weight: '600' });
 
       // Bottom: Recovery Plan reference
       svg.appendChild(rc.rectangle(330, 380, 630, 110, opts(C.acro, C.acroFill, 'cross-hatch')));
