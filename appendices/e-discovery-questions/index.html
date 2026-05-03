@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix E: Discovery Questions</title>
+  <meta name="description" content="Forty-six discovery questions across eight topic areas. Open-ended kickoff and ongoing-discovery question bank for BlueAlly Solutions Architects. General, workload, management, storage, networking, DR, migration, economics. Each question with what-to-listen-for and conditional branches." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix E: Discovery Questions" />
+  <meta property="og:description" content="46 discovery questions, 8 topics, 4 meeting types. Open-ended over closed. Don't lead toward Nutanix." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/e-discovery-questions/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix E: Discovery Questions" />
+  <meta name="twitter:description" content="46 discovery questions across 8 topics; the kickoff-meeting question bank." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%), linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%); }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ol { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ol li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    /* Sticky category-jump nav */
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+
+    .q { margin: 24px 0; padding: 0; scroll-margin-top: 110px; }
+    .q h3 {
+      font-family: var(--font-display);
+      font-size: 17px; font-weight: 600; letter-spacing: -0.005em;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+      line-height: 1.35;
+    }
+    .q h3 .qid {
+      font-family: var(--font-mono);
+      font-size: 11px; color: var(--accent-purple); font-weight: 700;
+      letter-spacing: 0.06em; margin-right: 10px; vertical-align: middle;
+      padding: 2px 8px; border: 1px solid rgba(192,132,252,0.40); border-radius: 4px;
+    }
+
+    .ask, .listen, .branch, .use {
+      margin: 6px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .ask { border-left: 3px solid var(--accent-purple); background: var(--bg-elevated); }
+    .listen { border-left: 3px solid var(--text-tertiary); }
+    .branch { border-left: 3px solid var(--success); }
+    .use { border-left: 3px solid var(--accent-cyan); }
+
+    .ask .label, .listen .label, .branch .label, .use .label {
+      font-family: var(--font-mono); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+    }
+    .ask .label { color: var(--accent-purple); }
+    .listen .label { color: var(--text-tertiary); }
+    .branch .label { color: var(--success); }
+    .use .label { color: var(--accent-cyan); }
+
+    .ask blockquote {
+      margin: 0; padding: 0;
+      color: var(--text-primary);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .listen p, .branch p, .use p { margin: 0 0 6px; }
+    .listen p:last-child, .branch p:last-child, .use p:last-child { margin-bottom: 0; }
+    .branch ul, .use ul { margin: 0; padding-left: 20px; }
+    .branch li, .use li { margin-bottom: 4px; }
+    .listen strong, .branch strong, .use strong, .ask strong { color: var(--text-primary); }
+
+    .meta {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+      margin: 8px 0 0;
+    }
+    .meta a { color: var(--accent-cyan); }
+    .meta .label { color: var(--text-tertiary); margin-right: 6px; }
+
+    .how-to-use { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .how-to-use h2 { margin: 0 0 12px; font-size: 22px; }
+    .how-to-use h3 { margin: 16px 0 8px; font-size: 14px; color: var(--accent-purple); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; }
+    .how-to-use ol, .how-to-use ul { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .how-to-use ol li, .how-to-use ul li { margin-bottom: 6px; }
+    .how-to-use ol li strong, .how-to-use ul li strong { color: var(--text-primary); }
+    .how-to-use p { color: var(--text-secondary); font-size: 14px; margin: 14px 0 0; }
+
+    .references { margin-top: 36px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin: 0 0 12px; font-size: 22px; }
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      .q h3 { font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">E · Discovery Questions</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-e-discovery.svg" alt="A horizontal flow of four meeting-type columns from Kickoff through Technical Deep-Dive through Architecture Review to Commercial Review, with question count and duration per meeting, plus a strip of 8 category chips along the bottom showing question counts per category (Q-GEN 6, Q-WL 6, Q-MGMT 4, Q-STOR 9, Q-NET 5, Q-DR 5, Q-MIG 6, Q-ECON 5)." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-e-discovery-questions</div>
+      <h1 class="module-title">Appendix E · Discovery Questions</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">46 questions</span>
+        <span class="chip">8 topics</span>
+        <span class="chip">4 meeting types</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>Forty-six discovery questions across eight topic areas. Each is designed so the answer changes what BlueAlly recommends. The questions are starting points; the customer-specific follow-ups are where real discovery happens.</p>
+      <p><strong>The senior-SA mindset:</strong> customers don't trust vendors who pitch before they understand. Discovery is how trust is built. Spending the first meeting (or the first three) on discovery rather than presentation is often what distinguishes the BlueAlly engagement from competing vendors who lead with slides.</p>
+      <p><strong>Five principles across all discovery:</strong></p>
+      <ol>
+        <li><strong>Open-ended over closed.</strong> "What does your DR look like?" beats "Do you do DR?"</li>
+        <li><strong>Don't lead toward Nutanix.</strong> Surface the real situation, not the answer you want.</li>
+        <li><strong>Listen for what's not said.</strong> The unspoken concerns are often the most important.</li>
+        <li><strong>Ask follow-up questions.</strong> The first answer is rarely the complete picture.</li>
+        <li><strong>Take notes.</strong> The discovery you do today informs the proposal in 4 weeks.</li>
+      </ol>
+      <p>Don't ask all 46 in one session. Pick the 5-15 most relevant. Discovery is iterative.</p>
+    </div>
+
+    <nav class="cat-jump" aria-label="Jump to topic">
+      <a href="#gen">General · Q-GEN</a>
+      <a href="#wl">Workload · Q-WL</a>
+      <a href="#mgmt">Management · Q-MGMT</a>
+      <a href="#stor">Storage · Q-STOR</a>
+      <a href="#net">Networking · Q-NET</a>
+      <a href="#dr">Data Protection · Q-DR</a>
+      <a href="#mig">Migration · Q-MIG</a>
+      <a href="#econ">Economics · Q-ECON</a>
+    </nav>
+
+    <article class="body">
+
+      <h2 class="cat" id="gen">General Discovery (Q-GEN)</h2>
+
+      <div class="q" id="q-gen-01">
+        <h3><span class="qid">Q-GEN-01</span>Current Infrastructure Baseline</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Walk me through your current infrastructure at a high level. How many sites, how many hosts, what's the hypervisor and storage stack, what's the rough VM count?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Scale, complexity, vendor mix, age of the deployment.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>If they have a clean inventory:</strong> Great; ask for specifics. Reasonable assumption: this is a mature ops team.</li>
+            <li><strong>If they don't:</strong> That itself is information. Discovery will take longer; offer to use RVTools or similar to help inventory.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Module:</span>foundational · sets context for nearly all other objections</p>
+      </div>
+
+      <div class="q" id="q-gen-02">
+        <h3><span class="qid">Q-GEN-02</span>Pain Points and Triggers</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's prompting this conversation? What's not working today, or what's about to change?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>The actual reason they're considering Nutanix. Refresh timing. Specific pain (cost, performance, complexity, vendor relationship). Sometimes a recent incident.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>"VMware renewal pricing":</strong> Licensing-driven. Use Q-ECON questions and frame around 5-year TCO comparison.</li>
+            <li><strong>"DR doesn't work":</strong> DR-driven. Lead with NC2 conversation and Recovery Plans demo.</li>
+            <li><strong>"Storage refresh":</strong> Storage-led. Lead with consolidation story (Files / Objects / Volumes).</li>
+            <li><strong>"Just exploring":</strong> No urgency yet. Discovery-only mode for now; build relationship for next refresh.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Module:</span>foundational · understanding the trigger reframes everything</p>
+      </div>
+
+      <div class="q" id="q-gen-03">
+        <h3><span class="qid">Q-GEN-03</span>Budget Cycle and Decision-Makers</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Help me understand your decision process. Who needs to be involved, what's your fiscal year, when's the next budget cycle, and what's the approval threshold for a deal of this size?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Buying committee structure, timeline pressure, approval bureaucracy.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>If decision is concentrated:</strong> Faster cycle; engage the decision-maker directly.</li>
+            <li><strong>If decision is distributed:</strong> Plan stakeholder map; expect 6-12 month sales cycle for enterprise deals.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o36">#36 Subscription preference</a> · <a href="../d-objections/index.html#o38">#38 Recent VMware renewal</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      </div>
+
+      <div class="q" id="q-gen-04">
+        <h3><span class="qid">Q-GEN-04</span>Timeline and Refresh Windows</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's coming due in the next 12-24 months? Hardware refresh, software renewals, contract end dates, datacenter lease, anything?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Concrete timing anchors. The migration plan should align with these windows.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Hardware refresh in 6-9 months:</strong> Natural conversation timing; aligns capex flow.</li>
+            <li><strong>VMware renewal in 12+ months:</strong> Pilot now; main migration aligned with renewal end.</li>
+            <li><strong>Nothing in 18+ months:</strong> Discovery-only; revisit closer to a refresh window.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o38">#38 Recent VMware renewal</a> · <a href="../d-objections/index.html#o42">#42 Timeline pressure</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Migration</a></p>
+      </div>
+
+      <div class="q" id="q-gen-05">
+        <h3><span class="qid">Q-GEN-05</span>Team Size and Skills</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Tell me about your infrastructure team. How many people, what skill mix, who owns what?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Capacity for migration work, existing platform expertise, role concentration vs distribution.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Team is large and specialized:</strong> Migration capacity is good; coordination is harder.</li>
+            <li><strong>Team is small and generalist:</strong> Migration capacity is constrained; BlueAlly augmentation likely needed.</li>
+            <li><strong>Has Nutanix experience already:</strong> Faster ramp. Acknowledge and adapt.</li>
+            <li><strong>No Nutanix experience:</strong> Plan training (NCA, NCP-MCI) into the engagement.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o43">#43 Team capacity</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Migration</a></p>
+      </div>
+
+      <div class="q" id="q-gen-06">
+        <h3><span class="qid">Q-GEN-06</span>Compliance Frameworks</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What compliance or regulatory frameworks apply to your environment? PCI, HIPAA, SOX, FedRAMP, state regulations, industry-specific?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific frameworks, audit timing, scope of regulated data.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Heavy compliance:</strong> Plan for compliance review early; identify Nutanix's relevant certifications; expect documentation requests.</li>
+            <li><strong>Specific data sovereignty:</strong> May affect cloud DR (NC2) decisions.</li>
+            <li><strong>Tight audit calendar:</strong> Migration timing must respect audit windows.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o21">#21 Compliance approval</a> · <a href="../d-objections/index.html#o29">#29 Cloud DR compliance</a> · <a href="../c-scenarios/index.html#scenario-4">Scenario 4 · Compliance-heavy</a></p>
+      </div>
+
+
+      <h2 class="cat" id="wl">Workload Inventory (Q-WL)</h2>
+
+      <div class="q" id="q-wl-01">
+        <h3><span class="qid">Q-WL-01</span>VM Count and Distribution</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's the rough VM count, and how is it distributed: dev/test, general production, Tier-1, mission-critical?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Total scale, tier distribution, the criticality mix.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Dev/test heavy (&gt;40%):</strong> Easy migration starting point. Wave 1 candidates.</li>
+            <li><strong>Tier-0 / mission-critical heavy:</strong> Migration risk is higher; phasing more careful.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o41">#41 Migration risk</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Migration</a></p>
+      </div>
+
+      <div class="q" id="q-wl-02">
+        <h3><span class="qid">Q-WL-02</span>Critical Applications</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What are your top 5 most-critical applications? What does each one do, what's the technology stack, what's the SLA?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific dependencies, technology constraints, application owner names.</div>
+        <div class="use"><span class="label">Use the answers to</span>Identify the workloads that need the most careful migration handling, name application owners for later coordination, surface technology dependencies (Oracle RAC, SQL Always On, specific vendor certifications).</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o3">#3 Database performance</a> · <a href="../d-objections/index.html#o41">#41 Migration risk</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Wave Planning</a></p>
+      </div>
+
+      <div class="q" id="q-wl-03">
+        <h3><span class="qid">Q-WL-03</span>Workload Tier Distribution</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"How do you tier your workloads? What's the SLA, RPO, and RTO requirement for Tier-0 vs Tier-1 vs Tier-2 vs general-purpose?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Whether tiering is formal, what the actual numbers are, whether SLAs are documented vs aspirational.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>They have formal tiering:</strong> Use the tiers to drive replication mode and Recovery Plan design.</li>
+            <li><strong>They don't:</strong> Help them define tiers as part of discovery; this becomes a migration planning artifact.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o27">#27 Array-based replication</a> · <a href="../d-objections/index.html#o28">#28 DR migration</a> · <a href="../../modules/07-data-protection/index.html">Module 7 · DR</a></p>
+      </div>
+
+      <div class="q" id="q-wl-04">
+        <h3><span class="qid">Q-WL-04</span>Database Footprint</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Tell me about your database environment. SQL Server, Oracle, PostgreSQL, others? Scale of each, latency requirements, HA architecture?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Database engine mix, performance requirements, application-level HA (Always On, RAC, replica sets).</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Application-level HA in place:</strong> RF2 may be sufficient for storage replication; the application provides additional layer.</li>
+            <li><strong>No application HA:</strong> RF3 may be appropriate for the database tier.</li>
+            <li><strong>Extreme latency requirements:</strong> Plan a POC with the actual workload; don't promise without measuring.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o3">#3 Database performance</a> · <a href="../d-objections/index.html#o12">#12 Tail latency</a> · <a href="../../modules/05-dsf-storage/index.html">Module 5 · DSF</a></p>
+      </div>
+
+      <div class="q" id="q-wl-05">
+        <h3><span class="qid">Q-WL-05</span>VDI Footprint</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Are you running VDI? If so, how many sessions, what broker (Citrix / VMware Horizon / RDS), persistent or non-persistent profiles?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Scale, broker choice, profile pattern, boot-storm timing.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>VDI is significant:</strong> Strong Nutanix sweet spot; lead with VDI consolidation conversation. On-disk dedup makes sense for persistent profiles.</li>
+            <li><strong>VDI is light:</strong> Less specialized design needed.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../c-scenarios/index.html#scenario-3">Scenario 3 · VDI Deployment</a></p>
+      </div>
+
+      <div class="q" id="q-wl-06">
+        <h3><span class="qid">Q-WL-06</span>Specialty Workloads</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Are there any specialty workloads I should know about? AI/ML training, HPC, video processing, real-time analytics, anything unusual?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Workloads outside typical enterprise patterns.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>HPC at scale:</strong> Warning flag. Specialty parallel filesystems (Lustre, GPFS) may still be needed; not a Nutanix sweet spot.</li>
+            <li><strong>AI/ML training:</strong> GPU passthrough on AHV is supported; workload-specific design.</li>
+            <li><strong>Video processing or media:</strong> Possibly an Isilon / FlashBlade workload; evaluate carefully.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o1">#1 Scale skepticism</a> · <a href="../../modules/01-hci-foundations/index.html">Module 1 · Where HCI is Wrong</a> · <a href="../../modules/08-unified-storage/index.html">Module 8 · Files vs Isilon</a></p>
+      </div>
+
+
+      <h2 class="cat" id="mgmt">Management and Automation (Q-MGMT, Q-AUT)</h2>
+
+      <div class="q" id="q-mgmt-01">
+        <h3><span class="qid">Q-MGMT-01</span>Current Management Stack</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Walk me through your management plane today. vCenter version, Aria components, vSphere Lifecycle Manager, anything else?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Depth of Aria adoption, integration complexity, management-team size.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Aria is light (vCenter + vROps only):</strong> Simpler migration to NCM Pro.</li>
+            <li><strong>Aria is deep (vCenter + Aria Ops + Aria Automation + custom blueprints):</strong> Complex migration; likely NCM Ultimate; coexistence pattern with Aria for cross-vendor analytics.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o10">#10 Aria investment</a> · <a href="../../modules/04-prism-management/index.html">Module 4 · Prism</a></p>
+      </div>
+
+      <div class="q" id="q-mgmt-02">
+        <h3><span class="qid">Q-MGMT-02</span>Aria Footprint</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"How heavily are you using Aria? Specifically: how many vROps reports do you actually use, how many Aria Automation blueprints are in active use, what custom integrations exist?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Depth of actual usage vs license entitlement. Often customers have Aria licensed but use only a fraction.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Actual usage is light:</strong> NCM tier replacement is straightforward.</li>
+            <li><strong>Actual usage is deep:</strong> Migration is real engineering work; plan parallel-running.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o10">#10 Aria investment</a> · <a href="../../modules/04-prism-management/index.html">Module 4 · Prism</a></p>
+      </div>
+
+      <div class="q" id="q-mgmt-03">
+        <h3><span class="qid">Q-MGMT-03</span>Identity and SSO Requirements</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"How do you handle identity for infrastructure admin access? AD, SAML to a specific IdP, MFA requirements, role separation?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific identity provider, role-separation requirements (often compliance-driven), MFA/JIT requirements.</div>
+        <div class="use"><span class="label">Use the answers to</span>Plan Prism Central identity integration, RBAC role design, audit logging configuration.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o21">#21 Compliance approval</a> · <a href="../../modules/04-prism-management/index.html">Module 4 · Prism</a> · <a href="../c-scenarios/index.html#scenario-4">Scenario 4 · Compliance-heavy</a></p>
+      </div>
+
+      <div class="q" id="q-aut-01">
+        <h3><span class="qid">Q-AUT-01</span>Automation Tooling Inventory</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What automation tooling does your team use? PowerCLI, Terraform, Ansible, custom Python scripts, ServiceNow integration, anything else?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Tooling preferences, depth of automation, maturity of the practice.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>PowerCLI-heavy:</strong> Nutanix PowerShell module is the natural transition; emphasize compatibility.</li>
+            <li><strong>Terraform-mature:</strong> Nutanix Terraform provider; emphasize the IaC alignment.</li>
+            <li><strong>ServiceNow-integrated:</strong> Plan webhook / X-Play integration carefully; this is often the highest-risk integration.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o9">#9 PowerCLI investment</a> · <a href="../d-objections/index.html#o22">#22 PowerCLI standardization</a> · <a href="../d-objections/index.html#o23">#23 ServiceNow integration</a></p>
+      </div>
+
+
+      <h2 class="cat" id="stor">Storage (Q-STOR)</h2>
+
+      <div class="q" id="q-stor-01">
+        <h3><span class="qid">Q-STOR-01</span>Workload IOPS / Latency Profile</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's the I/O profile of your workloads? Specifically: what's your peak IOPS, what's the read/write split, and what's the p99 latency requirement on your most demanding workload?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific numbers vs vague "high performance" claims. Customers who can answer with numbers have measured; those who can't have rough estimates.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>They have specific p99 numbers:</strong> Validate against DSF capabilities; if 5ms or higher, DSF is comfortable. If &lt;2ms p99, plan POC carefully.</li>
+            <li><strong>They don't know:</strong> Offer to help measure during POC.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o3">#3 Database performance</a> · <a href="../d-objections/index.html#o12">#12 Tail latency</a> · <a href="../../modules/05-dsf-storage/index.html">Module 5 · DSF</a></p>
+      </div>
+
+      <div class="q" id="q-stor-02">
+        <h3><span class="qid">Q-STOR-02</span>Capacity Targets and Growth</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your current storage footprint, what's the growth rate, and what's the 3-year capacity target?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Current capacity, growth trajectory, refresh-cycle expectations.</div>
+        <div class="use"><span class="label">Use the answers to</span>Size cluster appropriately with growth headroom, plan multi-year subscription with growth provisions, validate consolidation case.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o19">#19 Capacity efficiency</a> · <a href="../../modules/05-dsf-storage/index.html">Module 5 · DSF</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      </div>
+
+      <div class="q" id="q-stor-03">
+        <h3><span class="qid">Q-STOR-03</span>Existing Array Dependencies</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Walk me through your existing storage tiers. What's running where, why was it chosen, what specific features do you depend on?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>ONTAP-specific features (FlexClone, FlexCache), Pure data services, Dell PowerStore features, Data Domain dedup, anything platform-specific that doesn't translate cleanly.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>They depend on specific incumbent features:</strong> Plan workflow mapping exercise; identify what migrates cleanly vs what stays.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o31">#31 NetApp investment</a> · <a href="../d-objections/index.html#o19">#19 Capacity efficiency</a> · <a href="../b-comparison-matrix/index.html#files-vs-ontap">Files vs ONTAP</a></p>
+      </div>
+
+      <div class="q" id="q-stor-04">
+        <h3><span class="qid">Q-STOR-04</span>Backup Integration</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What backup product are you using, where does the backup data land, and what's the cost of that backup infrastructure annually?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Backup vendor (Veeam / Commvault / Rubrik / Cohesity / HYCU), repository type (Data Domain, NetApp StorageGRID, etc.), annual cost.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Using S3-capable backup product with separate dedup appliance:</strong> Strong Objects consolidation conversation; one of the easier ROI wins.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o33">#33 Backup target consolidation</a> · <a href="../../modules/08-unified-storage/index.html">Module 8 · Backup-Target Consolidation</a></p>
+      </div>
+
+      <div class="q" id="q-stor-05">
+        <h3><span class="qid">Q-STOR-05</span>Compliance and Data Placement</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Are there compliance or contractual requirements around where specific data must live? Encryption, geo-restrictions, audit retention?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Encryption-at-rest requirements, key-management requirements (HSM integration), audit-log retention duration, geo-locality constraints.</div>
+        <div class="use"><span class="label">Use the answers to</span>Validate Nutanix's encryption capabilities against requirements, plan KMIP integration with HSM, configure audit-log forwarding.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o21">#21 Compliance approval</a> · <a href="../d-objections/index.html#o29">#29 Cloud DR compliance</a> · <a href="../c-scenarios/index.html#scenario-4">Scenario 4 · Compliance-heavy</a></p>
+      </div>
+
+      <div class="q" id="q-stor-06">
+        <h3><span class="qid">Q-STOR-06</span>File Workload Inventory</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What file workloads are you running? User home directories, application file shares, VDI profiles, backup repositories, anything else?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Diversity of file workloads, total capacity, AD integration depth, current filer's role.</div>
+        <div class="use"><span class="label">Use the answers to</span>Size Files appropriately, identify SMB vs NFS mix, plan any specialty workloads (Isilon-class workloads stay on Isilon).</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o31">#31 NetApp investment</a> · <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      </div>
+
+      <div class="q" id="q-stor-07">
+        <h3><span class="qid">Q-STOR-07</span>Object / S3 Use Cases</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Are you using object storage anywhere? Backup targets, application data, archive, cloud-native workloads?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Whether they have any S3 footprint (AWS or on-prem), what it's used for, scale.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>On-prem object (Cloudian, Scality, MinIO, StorageGRID):</strong> Direct consolidation conversation.</li>
+            <li><strong>AWS S3 only:</strong> Discuss complementary on-prem Objects for steady-state workloads.</li>
+            <li><strong>No object storage:</strong> Less Objects conversation, focus on Files and Volumes.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o32">#32 Objects vs S3</a> · <a href="../d-objections/index.html#o33">#33 Backup-target consolidation</a> · <a href="../../modules/08-unified-storage/index.html">Module 8 · Objects</a></p>
+      </div>
+
+      <div class="q" id="q-stor-08">
+        <h3><span class="qid">Q-STOR-08</span>iSCSI Consumer Inventory</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Do you have any iSCSI consumers that aren't running on the VMware cluster? Bare-metal servers, Oracle RAC, legacy applications, anything?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific consumer types, performance requirements, vendor dependencies.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Significant iSCSI footprint:</strong> Volumes consolidation conversation. Map specific consumers; some translate cleanly, some have specific requirements.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o34">#34 iSCSI consumers</a> · <a href="../../modules/08-unified-storage/index.html">Module 8 · Volumes</a></p>
+      </div>
+
+      <div class="q" id="q-stor-09">
+        <h3><span class="qid">Q-STOR-09</span>Backup Target Architecture</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Specifically about your backup architecture: what's the primary backup target, secondary tier, cloud archive if any? Total capacity? Retention policy?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Multi-tier backup architecture, total cost of the backup infrastructure, retention complexity.</div>
+        <div class="use"><span class="label">Use the answers to</span>Propose specific backup-target consolidation onto Objects with appropriate sizing for capacity and retention.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o33">#33 Backup-target consolidation</a> · <a href="../c-scenarios/index.html#scenario-6">Scenario 6 · Cloud DR with NC2</a></p>
+      </div>
+
+
+      <h2 class="cat" id="net">Networking and Security (Q-NET, Q-SEC)</h2>
+
+      <div class="q" id="q-net-01">
+        <h3><span class="qid">Q-NET-01</span>Physical Network Topology</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your physical network architecture? Top-of-rack switches, core, fabric vendor, link speeds, any specific topology choices?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Vendor (Cisco, Arista, Juniper), link speeds (10/25/40/100 GbE), redundancy patterns, any unusual topology.</div>
+        <div class="use"><span class="label">Use the answers to</span>Validate Nutanix networking requirements (25 GbE recommended for production, 100 GbE for high-density), plan cluster placement, identify any pre-migration network upgrades.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o17">#17 Cisco fabric tuned</a> · <a href="../d-objections/index.html#o25">#25 SDN trust</a> · <a href="../../modules/06-networking-flow/index.html">Module 6 · Networking</a></p>
+      </div>
+
+      <div class="q" id="q-net-02">
+        <h3><span class="qid">Q-NET-02</span>NSX-T Footprint</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Tell me about your NSX-T deployment. What are you using it for: distributed firewall, routing, edge services, L2VPN, federation?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Depth of NSX-T usage. Light usage (basic distributed firewall on a subset of VMs) translates cleanly to Flow. Deep usage (BGP integration, edge services, L2VPN) often requires NSX-T retention.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>NSX-T is light:</strong> Flow Network Security replacement is feasible.</li>
+            <li><strong>NSX-T is deep:</strong> Hybrid is the likely answer; map workloads to "translate to Flow" vs "keep NSX-T."</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o16">#16 NSX-T retention</a> · <a href="../d-objections/index.html#o20">#20 Existing microsegmentation</a> · <a href="../b-comparison-matrix/index.html#flow-vs-nsxt-dfw">Flow vs NSX-T DFW</a></p>
+      </div>
+
+      <div class="q" id="q-net-03">
+        <h3><span class="qid">Q-NET-03</span>Microsegmentation Requirements</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your microsegmentation strategy? Are you doing application-tier segmentation today, planning to, or treating it as future?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Current state, drivers (compliance, zero-trust, recent incident), maturity of the practice.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Mature microsegmentation:</strong> Address NSX-T retention or Flow translation per Q-NET-02.</li>
+            <li><strong>Planning microsegmentation:</strong> Strong Flow Network Security positioning.</li>
+            <li><strong>Future:</strong> Lower priority for current discussion; mention as a future capability.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o20">#20 Existing microsegmentation</a> · <a href="../../modules/06-networking-flow/index.html">Module 6 · Flow Network Security</a></p>
+      </div>
+
+      <div class="q" id="q-net-04">
+        <h3><span class="qid">Q-NET-04</span>Multi-Tenancy and VPC Needs</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Do you have multi-tenant requirements? Different business units needing isolation, service-provider tenants, projects with separate quotas?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Tenant isolation requirements, scale (a few business units vs many tenants), strictness of isolation (compliance-driven vs convention).</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Significant multi-tenancy:</strong> Flow Virtual Networking conversation; Projects in Prism Central; consider service-insertion patterns for security.</li>
+            <li><strong>Single-tenant or simple BU separation:</strong> FVN may be overkill; Categories + Projects in Prism Central often sufficient.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Module:</span><a href="../../modules/06-networking-flow/index.html">Module 6 · Flow Virtual Networking</a></p>
+      </div>
+
+      <div class="q" id="q-sec-01">
+        <h3><span class="qid">Q-SEC-01</span>Compliance Frameworks (Detail)</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"For each compliance framework you mentioned: what's the current scope, when's the next audit, and what specifically gets audited?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific scope (which workloads, which data), audit timing (don't migrate during audit windows), audit depth.</div>
+        <div class="use"><span class="label">Use the answers to</span>Plan migration timing around audit cycles, identify documentation requirements, ensure Nutanix's certifications cover the customer's scope.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o21">#21 Compliance approval</a> · <a href="../c-scenarios/index.html#scenario-4">Scenario 4 · Compliance-heavy</a></p>
+      </div>
+
+
+      <h2 class="cat" id="dr">Data Protection / DR (Q-DR)</h2>
+
+      <div class="q" id="q-dr-01">
+        <h3><span class="qid">Q-DR-01</span>RPO / RTO Targets per Tier</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your RPO and RTO target by application tier? What do you currently achieve, and is there a gap between target and reality?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Whether targets are formal or aspirational, current vs target gap, whether they've ever tested.</div>
+        <div class="use"><span class="label">Use the answers to</span>Map tiers to replication mode (Async / NearSync / Metro), design Recovery Plans, identify tiers where current DR is inadequate.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o28">#28 DR migration risk</a> · <a href="../d-objections/index.html#o30">#30 Test failover disruption</a> · <a href="../../modules/07-data-protection/index.html">Module 7 · Data Protection</a></p>
+      </div>
+
+      <div class="q" id="q-dr-02">
+        <h3><span class="qid">Q-DR-02</span>Existing DR Infrastructure</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your DR architecture today? Second site, replication mechanism, runbook, how often have you tested?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Whether DR is real (tested, validated) or paper-only.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>DR is paper-only:</strong> Strong NC2 / Recovery Plans pitch; the test-failover capability is genuine value.</li>
+            <li><strong>DR is mature with regular testing:</strong> Migration is delicate; respect the working system; coexistence may be right.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o26">#26 SRM investment</a> · <a href="../d-objections/index.html#o27">#27 Array-based replication</a> · <a href="../d-objections/index.html#o28">#28 DR migration</a> · <a href="../c-scenarios/index.html#scenario-6">Scenario 6 · Cloud DR</a></p>
+      </div>
+
+      <div class="q" id="q-dr-03">
+        <h3><span class="qid">Q-DR-03</span>SRM Footprint</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"If you're using SRM: how many VMs are orchestrated, how customized are the runbooks, when did you last run a real failover?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>SRM scale and depth of customization. The deeper the customization, the harder Recovery Plans migration.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>SRM is simple (basic runbooks, default IP remapping):</strong> Recovery Plans translation is feasible.</li>
+            <li><strong>SRM is heavily customized:</strong> Coexistence pattern likely right; SRM stays for the workloads it orchestrates well.</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o26">#26 SRM investment</a> · <a href="../../modules/07-data-protection/index.html">Module 7 · Recovery Plans vs SRM</a></p>
+      </div>
+
+      <div class="q" id="q-dr-04">
+        <h3><span class="qid">Q-DR-04</span>DR Test Cadence and History</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"How often do you test DR, and what was the result of the last test?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Honest answer (often "we should test more"), specific issues found, whether tests are real or theatrical.</div>
+        <div class="use"><span class="label">Use the answers to</span>Position Recovery Plans test failover capability, identify where current DR has known gaps.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o30">#30 Test failover disruption</a> · <a href="../../modules/07-data-protection/index.html">Module 7 · Test Failover</a></p>
+      </div>
+
+      <div class="q" id="q-dr-05">
+        <h3><span class="qid">Q-DR-05</span>Compliance and Regulatory DR Drivers</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Are any of your DR requirements compliance-driven? RPO mandates, audit requirements for DR testing, specific recovery validation?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Compliance-mandated specific RPO/RTO numbers, audit attestation requirements for DR testing.</div>
+        <div class="use"><span class="label">Use the answers to</span>Ensure replication mode meets compliance RPO, plan DR test cadence to satisfy audit requirements, configure WORM-protected archives where required.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o21">#21 Compliance approval</a> · <a href="../d-objections/index.html#o29">#29 Cloud DR compliance</a> · <a href="../c-scenarios/index.html#scenario-4">Scenario 4 · Compliance-heavy</a></p>
+      </div>
+
+
+      <h2 class="cat" id="mig">Migration (Q-MIG)</h2>
+
+      <div class="q" id="q-mig-01">
+        <h3><span class="qid">Q-MIG-01</span>Workload Tier Inventory</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"For migration planning: how would you tier your workloads from a migration-risk perspective? Easy / moderate / complex / mission-critical?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>The customer's own risk assessment of their environment. They often know which workloads are problem children.</div>
+        <div class="use"><span class="label">Use the answers to</span>Plan wave sequencing (easy first, complex last), identify the hand-holding workloads.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o41">#41 Migration risk</a> · <a href="../d-objections/index.html#o44">#44 Move tool</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Migration</a></p>
+      </div>
+
+      <div class="q" id="q-mig-02">
+        <h3><span class="qid">Q-MIG-02</span>Application Dependency Awareness</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Do you have current application dependency maps? Which VMs talk to which other VMs, what external services they depend on?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Whether dependency mapping is current, partial, or non-existent. Most customers have partial.</div>
+        <div class="branch"><span class="label">Branches</span>
+          <ul>
+            <li><strong>Dependency maps are current:</strong> Faster Phase 0; migrations sequenced well.</li>
+            <li><strong>They're not:</strong> Phase 0 includes dependency mapping work (active discovery, application owner workshops, network flow analysis).</li>
+          </ul>
+        </div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o41">#41 Migration risk</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Discovery and Dependency Mapping</a></p>
+      </div>
+
+      <div class="q" id="q-mig-03">
+        <h3><span class="qid">Q-MIG-03</span>NSX-T and SRM Footprint</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"For migration planning: what's the inventory of workloads using NSX-T microsegmentation and workloads orchestrated by SRM?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific counts; deep usage means hybrid steady-state likely.</div>
+        <div class="use"><span class="label">Use the answers to</span>Scope which workloads are migration candidates vs likely-permanent-VMware.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o16">#16 NSX-T retention</a> · <a href="../d-objections/index.html#o26">#26 SRM investment</a> · <a href="../d-objections/index.html#o45">#45 Hybrid permanence</a> · <a href="../c-scenarios/index.html#scenario-2">Scenario 2 · Enterprise Multi-Site</a></p>
+      </div>
+
+      <div class="q" id="q-mig-04">
+        <h3><span class="qid">Q-MIG-04</span>Team Capacity for Migration Work</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Realistically, how much of your team's time can go to migration work per week? What other major projects are running in parallel?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Honest capacity assessment, competing priorities.</div>
+        <div class="use"><span class="label">Use the answers to</span>Size BlueAlly augmentation, set realistic timeline expectations, identify where parallel projects might cause conflicts.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o42">#42 Timeline pressure</a> · <a href="../d-objections/index.html#o43">#43 Team overload</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Team Capacity</a></p>
+      </div>
+
+      <div class="q" id="q-mig-05">
+        <h3><span class="qid">Q-MIG-05</span>Compliance and Audit Timing</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your audit calendar over the next 18-24 months? When are SOX, PCI, internal audits scheduled?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Specific dates that constrain migration timing.</div>
+        <div class="use"><span class="label">Use the answers to</span>Schedule compliance-relevant migrations between audits, not during.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o21">#21 Compliance approval</a> · <a href="../c-scenarios/index.html#scenario-4">Scenario 4 · Compliance-heavy</a></p>
+      </div>
+
+      <div class="q" id="q-mig-06">
+        <h3><span class="qid">Q-MIG-06</span>Hardware Refresh Windows</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What hardware is coming due for refresh in the next 12-24 months? Compute, storage, network gear?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Refresh dates per asset category.</div>
+        <div class="use"><span class="label">Use the answers to</span>Align Nutanix migration with refresh windows; capex flow becomes natural.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o38">#38 Recent VMware renewal</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a> · <a href="../../modules/10-migration-path/index.html">Module 10 · Migration</a></p>
+      </div>
+
+
+      <h2 class="cat" id="econ">Economics (Q-ECON)</h2>
+
+      <div class="q" id="q-econ-01">
+        <h3><span class="qid">Q-ECON-01</span>Current Annual Run-Rate</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your current annual run-rate across infrastructure? Software subscriptions, hardware support, services, power, cooling, datacenter space?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Whether they have a clean number or have to assemble it. Most customers have to assemble.</div>
+        <div class="use"><span class="label">Use the answers to</span>Build the apples-to-apples 5-year TCO comparison; have a real baseline.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o35">#35 Sticker comparison</a> · <a href="../d-objections/index.html#o40">#40 TCO skepticism</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      </div>
+
+      <div class="q" id="q-econ-02">
+        <h3><span class="qid">Q-ECON-02</span>Refresh Timing</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's the refresh schedule for your current infrastructure? When does each component come due?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Same as Q-MIG-06 but with the financial framing.</div>
+        <div class="use"><span class="label">Use the answers to</span>Align proposal capex / opex flow with the customer's existing refresh financial plan.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o38">#38 Recent VMware renewal</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      </div>
+
+      <div class="q" id="q-econ-03">
+        <h3><span class="qid">Q-ECON-03</span>Capex vs Opex Preference</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"How does your finance team prefer to account for infrastructure investments? Capex-heavy on hardware, opex on software, or a different model?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>CFO preference, accounting policy specifics, multi-year subscription comfort level.</div>
+        <div class="use"><span class="label">Use the answers to</span>Structure the proposal appropriately; subscription terms aligned to accounting cycles.</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o36">#36 Subscription preference</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Capex vs Opex</a></p>
+      </div>
+
+      <div class="q" id="q-econ-04">
+        <h3><span class="qid">Q-ECON-04</span>Hardware Sourcing Preference</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"Do you have an existing server-vendor relationship you'd like to preserve, or are you open to NX appliances or commodity hardware?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Existing Dell / HPE / Lenovo / Cisco contracts, preference for single-throat-to-choke vs multi-vendor flexibility.</div>
+        <div class="use"><span class="label">Use the answers to</span>Choose the right sourcing path (NX vs OEM vs HCIR).</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o39">#39 Hardware lock-in</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Hardware Sourcing</a></p>
+      </div>
+
+      <div class="q" id="q-econ-05">
+        <h3><span class="qid">Q-ECON-05</span>Growth Projection</h3>
+        <div class="ask"><span class="label">Ask</span><blockquote>"What's your growth projection for compute and storage over the next 3-5 years? Linear, accelerating, declining, M&amp;A-driven volatility?"</blockquote></div>
+        <div class="listen"><span class="label">Listen for</span>Realistic growth assumptions, planned acquisitions, business growth that drives infrastructure.</div>
+        <div class="use"><span class="label">Use the answers to</span>Size cluster with appropriate headroom, recommend subscription term length (multi-year for stable; shorter with growth provisions for volatile).</div>
+        <p class="meta"><span class="label">Related:</span><a href="../d-objections/index.html#o36">#36 Subscription preference</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Multi-Year Subscription Mechanics</a></p>
+      </div>
+
+
+      <section class="how-to-use">
+        <h2 id="how-to-sequence">How to Sequence Discovery</h2>
+
+        <h3>First customer meeting (Kickoff, 60-90 min)</h3>
+        <p>Cover the foundation. Pick from:</p>
+        <ul>
+          <li><a href="#q-gen-01">Q-GEN-01</a> current infrastructure</li>
+          <li><a href="#q-gen-02">Q-GEN-02</a> pain points and triggers</li>
+          <li><a href="#q-gen-04">Q-GEN-04</a> timeline and refresh</li>
+          <li><a href="#q-wl-01">Q-WL-01</a> VM count and distribution</li>
+          <li><a href="#q-econ-01">Q-ECON-01</a> annual run-rate (light touch)</li>
+          <li><a href="#q-mgmt-01">Q-MGMT-01</a> current management stack</li>
+        </ul>
+        <p>This establishes the situation. Don't dive deep yet.</p>
+
+        <h3>Second meeting (Technical deep-dive, 2-3 hours)</h3>
+        <p>Tailor to what surfaced in kickoff. If storage was the trigger, pick from <a href="#stor">Q-STOR</a>. If DR is the trigger, pick from <a href="#dr">Q-DR</a>. If networking, <a href="#net">Q-NET</a>. If economics, <a href="#econ">Q-ECON</a>.</p>
+
+        <h3>Third meeting (Architecture review, 4-6 hours or full day)</h3>
+        <p>Comprehensive cross-domain. Pick 15-20 questions across all categories. By this meeting, you have rapport; the customer expects depth; the answers inform the proposal.</p>
+
+        <h3>Fourth meeting (Commercial / decision)</h3>
+        <p><a href="#econ">Q-ECON</a> depth. <a href="#q-gen-03">Q-GEN-03</a> (decision-makers). Refine the financial story. Surface any remaining objections.</p>
+
+        <h2 id="what-to-do" style="margin-top: 32px;">What to Do With the Answers</h2>
+        <p>After every discovery session:</p>
+        <ol>
+          <li><strong>Update the customer notes.</strong> Specific quotes are valuable; capture them.</li>
+          <li><strong>Update the risk register.</strong> What did this session surface?</li>
+          <li><strong>Update the proposal scope.</strong> What changed about what we're recommending?</li>
+          <li><strong>Identify follow-up questions.</strong> What new questions does this answer raise?</li>
+          <li><strong>Identify follow-up actions.</strong> Documents to send, references to share, technical validations to schedule.</li>
+        </ol>
+        <p>Discovery is a continuous process, not a one-time intake. The discovery you do in week 1 informs the proposal in month 3, the design in month 6, and the operational handoff in month 18.</p>
+      </section>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p>This appendix is engagement methodology (questions to ask, what to listen for, what to do with the answers); it intentionally avoids restating technical specifications. The technical content underlying the questions (RPO/RTO definitions, NSX-T footprint, SRM customization, NCI/NCM tiers, Files/Objects use cases) is sourced and verified in the per-module References sections:</p>
+        <ul>
+          <li><a href="../../modules/04-prism-management/index.html#references"><strong>Module 4 · Aria footprint, identity, automation</strong></a>. Backs the Q-MGMT and Q-AUT question domains.</li>
+          <li><a href="../../modules/05-dsf-storage/index.html#references"><strong>Module 5 · IOPS/latency profile, capacity, RF/EC</strong></a>. Backs Q-STOR-01 through Q-STOR-05.</li>
+          <li><a href="../../modules/06-networking-flow/index.html#references"><strong>Module 6 · NSX-T, microsegmentation, VPC</strong></a>. Backs Q-NET-02 through Q-NET-04.</li>
+          <li><a href="../../modules/07-data-protection/index.html#references"><strong>Module 7 · RPO/RTO, SRM, DR test cadence</strong></a>. Backs Q-DR-01 through Q-DR-05.</li>
+          <li><a href="../../modules/08-unified-storage/index.html#references"><strong>Module 8 · Files / Objects / Volumes inventories</strong></a>. Backs Q-STOR-06 through Q-STOR-09.</li>
+          <li><a href="../../modules/09-licensing-economics/index.html#references"><strong>Module 9 · Run-rate, decision-makers, refresh timing</strong></a>. Backs Q-ECON and Q-GEN-03 / Q-GEN-04.</li>
+          <li><a href="../../modules/10-migration-path/index.html#references"><strong>Module 10 · Migration discovery, dependency mapping</strong></a>. Backs Q-MIG-01 through Q-MIG-06.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each question links to the module where the topic is taught in depth.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> defines the terms used in the questions.</li>
+          <li><strong>Comparison Matrix:</strong> <a href="../b-comparison-matrix/index.html">Appendix B</a> supports the answers customers give.</li>
+          <li><strong>Scenarios:</strong> <a href="../c-scenarios/index.html">Appendix C</a> shows how discovery answers feed into design exercises.</li>
+          <li><strong>Objections:</strong> <a href="../d-objections/index.html">Appendix D</a> has the responses to objections that emerge from discovery answers.</li>
+          <li><strong>POC Playbook:</strong> Appendix J has the demo flows that often resolve technical questions faster than discussion. <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <div class="back-home">
+        <a href="../../index.html">← Back to Home · Modules and Appendices</a>
+      </div>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-e-discovery-questions</span>
+  </footer>
+
+</body>
+</html>
