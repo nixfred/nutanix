@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix G: CLI Reference</title>
+  <meta name="description" content="Command syntax and usage patterns for the Nutanix CLI surface. ncli (cluster management), acli (Acropolis VM/storage operations), NCC (health checks), OVS commands on AHV, manage_ovs, the Move CLI, and diagnostic recipes that combine commands to answer common troubleshooting questions." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix G: CLI Reference" />
+  <meta property="og:description" content="ncli, acli, NCC, OVS, manage_ovs, Move CLI, and the diagnostic recipes that combine them." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/g-cli-reference/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix G: CLI Reference" />
+  <meta name="twitter:description" content="The Nutanix CLI surface and its diagnostic recipes." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%), linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%); }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ul { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ul li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+    article.body h3 {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 600; letter-spacing: -0.005em;
+      color: var(--text-primary);
+      margin: 28px 0 8px;
+      scroll-margin-top: 110px;
+    }
+    article.body p { margin: 0 0 12px; color: var(--text-primary); max-width: 70ch; font-size: 15px; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 14px; font-size: 15px; }
+    article.body ul li, article.body ol li { margin-bottom: 6px; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body code {
+      font-family: var(--font-mono); font-size: 0.92em;
+      background: var(--bg-surface); padding: 2px 6px; border-radius: 4px;
+      border: 1px solid var(--border); color: var(--text-primary);
+    }
+    article.body pre {
+      font-family: var(--font-mono); font-size: 13px; line-height: 1.55;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 14px 16px; margin: 10px 0 14px;
+      overflow-x: auto; color: var(--text-primary);
+    }
+    article.body pre .prompt { color: var(--accent-purple); }
+    article.body pre .comment { color: var(--text-tertiary); font-style: italic; }
+
+    article.body table {
+      width: 100%; border-collapse: collapse; margin: 14px 0;
+      font-size: 14px; color: var(--text-primary);
+    }
+    article.body th, article.body td {
+      padding: 9px 12px; text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    article.body th {
+      font-family: var(--font-mono); font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary); font-weight: 600;
+      background: var(--bg-surface);
+    }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .tip {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .tip .label {
+      font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+      color: var(--accent-cyan);
+    }
+    .tip strong { color: var(--text-primary); }
+    .tip ul { margin: 0; padding-left: 18px; }
+    .tip li { margin-bottom: 4px; }
+
+    .warn {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warning);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .warn .label {
+      font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+      color: var(--warning);
+    }
+    .warn strong { color: var(--text-primary); }
+
+    .recipe {
+      margin: 14px 0;
+      padding: 14px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--success);
+      border-radius: 6px;
+    }
+    .recipe h4 {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+      letter-spacing: -0.005em;
+    }
+    .recipe h4 .icon {
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--success); margin-right: 8px;
+      letter-spacing: 0.10em; font-weight: 700;
+    }
+    .recipe p { font-size: 14px; color: var(--text-secondary); margin: 0 0 8px; }
+    .recipe pre { margin-top: 0; }
+
+    .references { margin-top: 36px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin: 0 0 12px; font-size: 22px; }
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; font-size: 14px; }
+    .references li { color: var(--text-secondary); margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body pre { font-size: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">G · CLI Reference</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-g-cli.svg" alt="A stylized SSH terminal session in the center showing a nutanix at cvm prompt running a sequence of commands (ncli cluster info, acli vm.list, ncc health_checks run_all) with sample colored output, surrounded by tool-name chips (ncli, acli, ncc, cluster status, ovs-vsctl, manage_ovs, move, allssh) and a diagnostic-recipes strip across the bottom." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-g-cli-reference</div>
+      <h1 class="module-title">Appendix G · CLI Reference</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">ncli · acli · ncc · ovs · move</span>
+        <span class="chip">always check --help</span>
+        <span class="chip">commands evolve</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>The Nutanix CLI surface is large. This appendix covers the commands BlueAlly SAs reach for most often: cluster diagnostics, VM operations during POCs, storage validation, networking verification, and Move troubleshooting. It is a working reference, not a complete man page; for full options always run <code>command --help</code> against the version you're working with.</p>
+      <p><strong>Important caveat:</strong> command syntax evolves between AOS versions. Verify against the version running in the environment. If you find this document is out of date for a specific command, defer to <code>--help</code> and the official docs at portal.nutanix.com.</p>
+      <p><strong>Three principles:</strong></p>
+      <ul>
+        <li><strong>Commands evolve.</strong> Always check <code>command --help</code> before relying on syntax from any document, including this one.</li>
+        <li><strong>Run dry-runs and read-only commands first.</strong> Mutating commands can affect production.</li>
+        <li><strong>Document what you ran.</strong> Customer environments deserve change records.</li>
+      </ul>
+    </div>
+
+    <nav class="cat-jump" aria-label="Jump to topic">
+      <a href="#ssh">SSH Access</a>
+      <a href="#ncli">ncli</a>
+      <a href="#acli">acli</a>
+      <a href="#ncc">NCC</a>
+      <a href="#ovs">OVS</a>
+      <a href="#manage-ovs">manage_ovs</a>
+      <a href="#move">Move CLI</a>
+      <a href="#recipes">Diagnostic Recipes</a>
+      <a href="#mistakes">Common Mistakes</a>
+    </nav>
+
+    <article class="body">
+
+      <h2 class="cat" id="ssh">SSH Access</h2>
+
+      <h3 id="cvm-ssh">Connecting to a CVM</h3>
+<pre>ssh nutanix@&lt;cvm-ip&gt;</pre>
+      <p>Default user is <code>nutanix</code>. Authentication via SSH key or password depending on cluster configuration. Once on a CVM, you can run cluster-wide commands like <code>ncli</code>, <code>acli</code>, and <code>cluster status</code>.</p>
+
+      <h3 id="host-ssh">Connecting to an AHV Host</h3>
+<pre>ssh root@&lt;ahv-host-ip&gt;</pre>
+      <p>Default user on AHV hosts is <code>root</code>. SSH key auth typical. Use this for host-level networking work (OVS, bonds), or when troubleshooting AHV itself.</p>
+
+      <h3 id="allssh">Running Commands Across All CVMs</h3>
+      <p>From any CVM, use <code>allssh</code> to run a command on every CVM in the cluster:</p>
+<pre>allssh "ncli cluster info"</pre>
+      <p>For host-level commands across all AHV hosts:</p>
+<pre>hostssh "ovs-vsctl show"</pre>
+      <p>These wrappers respect cluster-level connectivity and are the standard pattern for fleet-wide queries.</p>
+
+
+      <h2 class="cat" id="ncli">ncli (Cluster Management)</h2>
+      <p><code>ncli</code> is the primary CLI for cluster-level management. Operations include cluster info, host management, storage container management, network configuration, replication, and licensing.</p>
+
+      <h3 id="ncli-patterns">Common Patterns</h3>
+
+      <p><strong>Get cluster info:</strong></p>
+<pre>ncli cluster info</pre>
+      <p>Returns cluster name, ID, version, member CVM IPs, configured storage pool, redundancy factor, and similar high-level state.</p>
+
+      <p><strong>List storage containers:</strong></p>
+<pre>ncli storage-container list</pre>
+      <p>Output shows each container's name, ID, RF, compression state, dedup state, and capacity.</p>
+
+      <p><strong>Show fault tolerance status:</strong></p>
+<pre>ncli cluster get-domain-fault-tolerance-status type=node
+ncli cluster get-domain-fault-tolerance-status type=rackable_unit</pre>
+      <p>Reports cluster-wide fault tolerance per component (STATIC_CONFIGURATION, ERASURE_CODE_STRIP_SIZE, METADATA, ZOOKEEPER, EXTENT_GROUPS, OPLOG). The <code>type=</code> parameter is required: use <code>node</code> for node-level FT, <code>rackable_unit</code> for block-level FT. Older docs sometimes show this command without <code>type=</code>; current AOS requires the parameter.</p>
+
+      <p><strong>List hosts:</strong></p>
+<pre>ncli host list</pre>
+
+      <p><strong>Run a health check (canonical form):</strong></p>
+<pre>ncc health_checks run_all</pre>
+      <p>The <code>ncli</code> surface used to expose a thin health-check passthrough but the canonical command is the <code>ncc</code> form. Run from any CVM; can take several minutes on large clusters.</p>
+
+      <p><strong>Check replication state (legacy Protection Domain):</strong></p>
+<pre>ncli protection-domain list
+ncli protection-domain list-snapshots</pre>
+      <p>For Protection Policies (the modern construct), use Prism Central or the v4 API.</p>
+
+      <p><strong>Add or list licenses:</strong></p>
+<pre>ncli license list
+ncli license add file=&lt;license-file&gt;</pre>
+
+      <h3 id="ncli-objects">Key ncli Object Types</h3>
+      <table>
+        <thead><tr><th>Object</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>cluster</code></td><td>Overall cluster state</td></tr>
+          <tr><td><code>host</code></td><td>Individual nodes</td></tr>
+          <tr><td><code>storage-container</code></td><td>Datastore-equivalent</td></tr>
+          <tr><td><code>storage-pool</code></td><td>Aggregate of physical disks</td></tr>
+          <tr><td><code>network</code></td><td>Virtual networks</td></tr>
+          <tr><td><code>protection-domain</code></td><td>Legacy DR grouping</td></tr>
+          <tr><td><code>data-services-vip</code></td><td>Volumes-related IP</td></tr>
+          <tr><td><code>vm</code></td><td>Virtual machines (operations)</td></tr>
+          <tr><td><code>health-check</code></td><td>NCC integration</td></tr>
+        </tbody>
+      </table>
+      <p>Run <code>ncli help</code> for the full list.</p>
+
+      <div class="tip"><span class="label">Tips</span>
+      <ul>
+        <li>Most subcommands accept <code>--help</code> for detailed syntax.</li>
+        <li>Output is structured; pipe to <code>grep</code>, <code>awk</code>, or <code>jq</code> (after JSON conversion) for scripting.</li>
+        <li>Some commands require <code>nutanix</code> user and run on any CVM; others require explicit cluster-wide context.</li>
+      </ul>
+      </div>
+
+
+      <h2 class="cat" id="acli">acli (Acropolis Operations)</h2>
+      <p><code>acli</code> is the AHV-specific CLI for VM lifecycle, storage operations on AHV containers, and network management. It runs on the CVM.</p>
+
+      <h3 id="acli-vm">VM Operations</h3>
+      <p><strong>List VMs:</strong></p>
+<pre>acli vm.list</pre>
+      <p><strong>Get VM detail:</strong></p>
+<pre>acli vm.get &lt;vm-name&gt;</pre>
+      <p>Shows configuration, attached disks, NICs, host placement, snapshots.</p>
+      <p><strong>Create a VM:</strong></p>
+<pre>acli vm.create &lt;vm-name&gt; num_vcpus=4 num_cores_per_vcpu=1 memory=8G
+acli vm.disk_create &lt;vm-name&gt; create_size=100G container=&lt;container-name&gt;
+acli vm.nic_create &lt;vm-name&gt; network=&lt;network-name&gt;
+acli vm.on &lt;vm-name&gt;</pre>
+      <p><strong>Stop a VM:</strong></p>
+<pre>acli vm.shutdown &lt;vm-name&gt;     # graceful
+acli vm.off &lt;vm-name&gt;          # forced</pre>
+      <p><strong>Migrate (live):</strong></p>
+<pre>acli vm.migrate &lt;vm-name&gt; host=&lt;target-host&gt;</pre>
+      <p><strong>Snapshot a VM:</strong></p>
+<pre>acli vm.snapshot_create &lt;vm-name&gt; snapshot_name=&lt;name&gt;</pre>
+      <p><strong>Clone a VM:</strong></p>
+<pre>acli vm.clone &lt;new-vm-name&gt; clone_from_vm=&lt;source-vm-name&gt;</pre>
+
+      <h3 id="acli-storage">Storage Operations</h3>
+      <p><strong>List containers:</strong></p>
+<pre>acli storage_container.list</pre>
+      <p><strong>Show container detail:</strong></p>
+<pre>acli storage_container.get &lt;container-name&gt;</pre>
+      <p><strong>Create a container:</strong></p>
+<pre>acli storage_container.create &lt;name&gt; rf=2 compression_type=on dedup=off</pre>
+
+      <h3 id="acli-network">Network Operations</h3>
+      <p><strong>List virtual networks:</strong></p>
+<pre>acli net.list</pre>
+      <p><strong>Get network detail:</strong></p>
+<pre>acli net.get &lt;network-name&gt;</pre>
+      <p><strong>Create a virtual network:</strong></p>
+<pre>acli net.create &lt;network-name&gt; vlan=&lt;vlan-id&gt;</pre>
+      <p>For IPAM-managed network:</p>
+<pre>acli net.create &lt;network-name&gt; vlan=&lt;vlan-id&gt; ip_config=&lt;network&gt;/&lt;prefix&gt;</pre>
+      <p><strong>Add a DHCP range:</strong></p>
+<pre>acli net.add_dhcp_pool &lt;network-name&gt; start=&lt;ip&gt; end=&lt;ip&gt;</pre>
+
+      <div class="tip"><span class="label">Tips</span>
+      <ul>
+        <li>Tab completion works for object names; use it.</li>
+        <li><code>acli</code> parses dotted-method syntax: <code>vm.get</code>, <code>storage_container.list</code>, <code>net.create</code>.</li>
+        <li>For programmatic work, the v4 REST API is usually a better choice than parsing acli output.</li>
+      </ul>
+      </div>
+
+
+      <h2 class="cat" id="ncc">NCC (Nutanix Cluster Check)</h2>
+      <p>NCC is the cluster's built-in health-check framework. Hundreds of individual checks across hardware, software, configuration, and performance.</p>
+
+      <h3 id="ncc-patterns">Common Patterns</h3>
+      <p><strong>Run all health checks:</strong></p>
+<pre>ncc health_checks run_all</pre>
+      <p>This is the first command to run when something is wrong. Output shows PASS, INFO, WARN, FAIL per check, with explanations and recommendations.</p>
+      <p><strong>Run a specific check:</strong></p>
+<pre>ncc health_checks &lt;category&gt;_checks &lt;specific_check&gt;</pre>
+      <p>Example:</p>
+<pre>ncc health_checks hardware_checks disk_status_check</pre>
+      <p><strong>List available checks:</strong></p>
+<pre>ncc health_checks list</pre>
+      <p><strong>Get cluster log dumps for support:</strong></p>
+<pre>ncc log_collector run_all</pre>
+      <p>Creates a tarball of logs to attach to support cases.</p>
+
+      <h3 id="ncc-categories">NCC Categories</h3>
+      <ul>
+        <li><code>hardware_checks</code> (disk, NIC, memory, BMC)</li>
+        <li><code>network_checks</code> (connectivity, VLAN, OVS state)</li>
+        <li><code>cluster_checks</code> (cluster-wide consistency)</li>
+        <li><code>data_protection_checks</code> (replication, snapshots)</li>
+        <li><code>system_checks</code> (service health, version)</li>
+        <li><code>metadata_checks</code> (Cassandra, Stargate)</li>
+      </ul>
+      <p>For the full list, <code>ncc health_checks list</code> is the source of truth on the running version.</p>
+
+
+      <h2 class="cat" id="ovs">OVS Commands (Open vSwitch on AHV)</h2>
+      <p>AHV uses Open vSwitch as the kernel-level virtual switch. SSH to the AHV host (not the CVM) to run OVS commands.</p>
+
+      <h3 id="ovs-bridges">Inspecting Bridges and Ports</h3>
+      <p><strong>List bridges:</strong></p>
+<pre>ovs-vsctl show</pre>
+      <p>Output shows <code>br0</code> (data bridge), <code>br0.local</code> (management bridge), and the ports on each.</p>
+      <p><strong>List bridges concisely:</strong></p>
+<pre>ovs-vsctl list-br</pre>
+      <p><strong>List ports on a bridge:</strong></p>
+<pre>ovs-vsctl list-ports br0</pre>
+      <p><strong>Show interface details:</strong></p>
+<pre>ovs-vsctl list interface eth0</pre>
+
+      <h3 id="ovs-bond">Bond Status</h3>
+      <p><strong>Show bond state:</strong></p>
+<pre>ovs-appctl bond/show &lt;bond-name&gt;</pre>
+      <p>Reports bond mode, member status (active/standby), LACP state if applicable.</p>
+      <p><strong>Show LACP detail:</strong></p>
+<pre>ovs-appctl lacp/show &lt;bond-name&gt;</pre>
+
+      <h3 id="ovs-flows">Flow Rules</h3>
+      <p><strong>Dump flow rules on a bridge:</strong></p>
+<pre>ovs-ofctl dump-flows br0</pre>
+      <p>Shows the OpenFlow rules currently programmed; useful for verifying Flow Network Security policy enforcement.</p>
+
+      <div class="warn"><span class="label">Caveats</span>Direct OVS modification is not the typical path on AHV; use <code>manage_ovs</code> (next section) for Nutanix-aware operations. OVS commands are read-mostly during normal operations. Modification typically only during troubleshooting under support guidance.</div>
+
+
+      <h2 class="cat" id="manage-ovs">manage_ovs (Nutanix OVS Wrapper)</h2>
+      <p><code>manage_ovs</code> is the Nutanix-aware wrapper around OVS for bond and uplink management. Run on the AHV host.</p>
+
+      <h3 id="manage-ovs-patterns">Common Patterns</h3>
+      <p><strong>Show current bond config:</strong></p>
+<pre>manage_ovs --bridge_name br0 show_uplinks</pre>
+      <p><strong>Configure a bond mode:</strong></p>
+<pre>manage_ovs --bridge_name br0 --bond_name br0-up --bond_mode active-backup update_uplinks</pre>
+      <p>Bond modes:</p>
+      <ul>
+        <li><code>active-backup</code></li>
+        <li><code>balance-slb</code></li>
+        <li><code>balance-tcp</code> (LACP, requires switch coordination)</li>
+      </ul>
+      <p><strong>Add or remove uplinks:</strong> refer to current Nutanix documentation for the precise syntax for adding/removing physical NICs from a bond. The flags evolve between AOS versions.</p>
+
+      <div class="tip"><span class="label">Tips</span>
+      <ul>
+        <li>Run <code>manage_ovs --help</code> on the target host for current syntax.</li>
+        <li>Bond changes affect networking on that host; coordinate with the cluster (live migrations off, etc.) before making changes during production hours.</li>
+        <li>Always verify post-change state with <code>ovs-appctl bond/show</code>.</li>
+      </ul>
+      </div>
+
+
+      <h2 class="cat" id="move">Move CLI</h2>
+      <p>Move primarily runs as a VM with a web UI. The CLI is for programmatic use, troubleshooting, and bulk operations.</p>
+
+      <h3 id="move-patterns">Common Patterns</h3>
+      <p><strong>SSH to the Move VM:</strong></p>
+<pre>ssh admin@&lt;move-vm-ip&gt;</pre>
+      <p><strong>Show Move version and status:</strong></p>
+<pre>move version
+move status</pre>
+      <p><strong>List configured environments (sources/targets):</strong></p>
+<pre>move env list</pre>
+      <p><strong>List migration plans:</strong></p>
+<pre>move plan list</pre>
+      <p><strong>Show plan detail:</strong></p>
+<pre>move plan show &lt;plan-id&gt;</pre>
+      <p><strong>Trigger plan operations:</strong></p>
+<pre>move plan start &lt;plan-id&gt;
+move plan cutover &lt;plan-id&gt;
+move plan cancel &lt;plan-id&gt;</pre>
+
+      <div class="tip"><span class="label">Tips</span>
+      <ul>
+        <li>The web UI is the standard interface; CLI is for automation and edge cases.</li>
+        <li>Move log files (under <code>/opt/xtract-vm/logs/</code> typically) are the source for migration troubleshooting.</li>
+        <li>For large-scale migrations, scripting against the Move REST API is more typical than CLI.</li>
+      </ul>
+      </div>
+
+
+      <h2 class="cat" id="recipes">Diagnostic Recipes</h2>
+      <p>Compound CLI patterns for common troubleshooting questions.</p>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"Is the cluster healthy?"</h4>
+<pre><span class="comment"># From any CVM</span>
+ncc health_checks run_all
+ncli cluster info
+cluster status</pre>
+        <p><code>cluster status</code> reports the state of every Nutanix service on every CVM: Stargate, Cassandra, Curator, Pithos, Zeus, Genesis, etc. All should be <code>UP</code>.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"Why is storage performance bad?"</h4>
+<pre><span class="comment"># CVM-level latency observations</span>
+ncli cluster get-domain-fault-tolerance-status type=node
+ncli storage-pool list
+
+<span class="comment"># Stargate vdisk_stats page (per-node I/O metrics)</span>
+allssh "links http://127.0.0.1:2009"</pre>
+        <p>The Stargate <strong>2009</strong> page (the <code>vdisk_stats</code> page) exposes per-node I/O metrics including per-vDisk latency histograms, randomness, I/O sizes, and working-set details; hot-spotted nodes show up here. By default the page is locked down to the local CVM via iptables and is not reachable cross-subnet, which is why the recipe uses the <code>links</code> text browser from inside the CVM. The same data is also visible in Prism Element and Prism Central performance views.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"Which VMs are running on which host?"</h4>
+<pre>acli vm.list
+acli host.list</pre>
+        <p>For VMs on a specific host:</p>
+<pre>acli host.list_vms &lt;host-name&gt;</pre>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"What's the rebuild status after a failure?"</h4>
+<pre>ncli cluster get-domain-fault-tolerance-status type=node
+ncli storage-pool list</pre>
+        <p>The fault tolerance command reports current redundancy state; a node loss shows up as reduced fault tolerance with rebuild in progress.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"Did the snapshot succeed?"</h4>
+<pre>acli vm.snapshot_list &lt;vm-name&gt;
+ncli protection-domain list-snapshots</pre>
+        <p>For Protection Policies (modern construct), check via Prism Central or v4 API.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"What's wrong with my OVS bond?"</h4>
+<pre><span class="comment"># On the affected AHV host</span>
+ovs-vsctl show
+ovs-appctl bond/show br0-up
+manage_ovs --bridge_name br0 show_uplinks</pre>
+        <p>Cross-check switch-side LACP state from the network team if using LACP modes.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"Why is replication bandwidth saturated?"</h4>
+<pre><span class="comment"># CVM-level</span>
+ncli protection-domain list
+ncli protection-domain get-snapshot-progress
+
+<span class="comment"># WAN-level (from CVM, looking at outbound)</span>
+allssh "iftop -i eth0"   <span class="comment"># if iftop available</span></pre>
+        <p>Combine with monitoring at the customer's WAN edge for full visibility.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"What version of AOS is running?"</h4>
+<pre>ncli cluster info
+<span class="comment"># Look for "Cluster Version"</span>
+
+<span class="comment"># More detail</span>
+upgrade_status</pre>
+        <p><code>upgrade_status</code> shows the LCM-managed component versions cluster-wide.</p>
+      </div>
+
+      <div class="recipe">
+        <h4><span class="icon">RECIPE</span>"How do I generate a log bundle for support?"</h4>
+<pre>ncc log_collector run_all</pre>
+        <p>Output is a tarball under <code>/home/nutanix/data/log_collector/</code> typically. Upload to the support case as instructed.</p>
+      </div>
+
+
+      <h2 class="cat" id="mistakes">Common Mistakes with the CLI</h2>
+      <ol>
+        <li><strong>Running mutating commands without dry-run.</strong> Many <code>acli</code> and <code>ncli</code> commands have no undo. Read the help; consider read-only verification first.</li>
+        <li><strong>Forgetting to <code>allssh</code> for cluster-wide queries.</strong> Single-CVM queries miss cluster-wide state.</li>
+        <li><strong>SSH'ing to AHV hosts when CVM is the right target.</strong> <code>ncli</code>, <code>acli</code>, and most cluster operations are CVM-resident. AHV hosts are for host-level networking and the hypervisor itself.</li>
+        <li><strong>Editing OVS directly when <code>manage_ovs</code> exists.</strong> Direct OVS edits can break Nutanix's expected configuration.</li>
+        <li><strong>Treating CLI as the primary management surface.</strong> Prism is the customer-facing path; CLI is for break-fix, scripting, and verification.</li>
+        <li><strong>Skipping <code>--help</code>.</strong> Syntax evolves; the running version is the authority.</li>
+      </ol>
+
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p>CLI syntax evolves between AOS versions; the official command-reference docs are the authoritative source for the running version.</p>
+        <ul>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Command-Ref-AOS-v6_8:man-ncli-c.html"><strong>AOS 6.8 nCLI Command Reference</strong></a> (Nutanix Portal). Authoritative ncli reference; backs the cluster, host, storage-container, and protection-domain command sets.</li>
+          <li><a href="https://www.nutanixbible.com/19b-cli.html"><strong>Nutanix Bible · CLI Reference</strong></a>. Independent walkthrough of the cluster, ncli, ncc, and acli surfaces.</li>
+          <li><a href="https://www.nutanixbible.com/4f-book-of-aos-administration.html"><strong>Nutanix Bible · AOS Administration</strong></a>. Covers the Stargate 2009 page, vdisk_stats access patterns, and other internal status pages.</li>
+          <li><a href="https://thenextbist.wordpress.com/2014/03/05/nutanix-20092010-pages-unavailable/"><strong>Nutanix Stargate 2009 / 2010 Pages</strong></a> (community walkthrough). Background on the access patterns and the iptables / cross-subnet restrictions.</li>
+          <li><a href="https://www.joshodgers.com/2015/06/25/advanced-storage-performance-monitoring-with-nutanix/"><strong>Advanced Storage Performance Monitoring with Nutanix</strong></a> (Josh Odgers). The 2009 vdisk_stats page in operational use.</li>
+          <li><a href="https://next.nutanix.com/how-it-works-22/required-ports-for-admin-access-and-tools-33173"><strong>Required Ports for Admin Access and Tools</strong></a>. Cluster-port reference for the management surfaces.</li>
+          <li><a href="https://www.nutanix.com/products/move"><strong>Nutanix Move Product Page</strong></a>. Move CLI and REST API as the automation surface.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each command set links to the module where the underlying concept is taught.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> defines the terms used in commands.</li>
+          <li><strong>POC Playbook:</strong> Appendix J uses many of these commands for validation steps. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Reference Architectures:</strong> Appendix I names the post-deployment validation commands. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Nutanix Portal:</strong> portal.nutanix.com has the authoritative current syntax for every command.</li>
+        </ul>
+      </section>
+
+      <div class="back-home">
+        <a href="../../index.html">← Back to Home · Modules and Appendices</a>
+      </div>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-g-cli-reference</span>
+  </footer>
+
+</body>
+</html>
