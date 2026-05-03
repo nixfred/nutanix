@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NutaNIX · 404</title>
+  <meta name="description" content="No such file or directory. Try one of these: Home, Modules, Appendices, Glossary." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="/nutanix/public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628;
+      --bg-surface: #102747;
+      --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff;
+      --text-secondary: #a8b8d4;
+      --text-tertiary: #6b7a9a;
+      --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px);
+      -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 16px 32px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .wordmark {
+      font-family: var(--font-display);
+      font-weight: 700; letter-spacing: -0.02em;
+      font-size: 22px; color: var(--text-primary);
+      text-decoration: none;
+    }
+    .wordmark-nix { color: var(--accent-cyan); }
+
+    main {
+      flex: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 96px 32px 64px;
+      width: 100%;
+    }
+
+    .terminal {
+      background: #050a16;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 10px;
+      padding: 28px 32px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .terminal .prompt-host {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+    .terminal .cmd {
+      color: var(--text-primary);
+    }
+    .terminal .err {
+      color: var(--danger);
+      margin: 12px 0 0;
+    }
+    .terminal .blink {
+      display: inline-block;
+      width: 9px;
+      height: 19px;
+      background: var(--accent-cyan);
+      vertical-align: -3px;
+      margin-left: 4px;
+      animation: blink 1s steps(2, end) infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    h1.title {
+      font-size: 56px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin: 32px 0 12px;
+      line-height: 1.05;
+    }
+    h1.title .code {
+      font-family: var(--font-mono);
+      color: var(--accent-cyan);
+      letter-spacing: -0.02em;
+      font-size: 64px;
+      margin-right: 14px;
+    }
+    p.lede {
+      color: var(--text-secondary);
+      font-size: 17px;
+      margin: 0 0 24px;
+      max-width: 60ch;
+    }
+
+    .recover {
+      margin: 28px 0 0;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: var(--text-secondary);
+    }
+    .recover-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+    }
+    .recover ul {
+      list-style: none;
+      padding: 0; margin: 0;
+    }
+    .recover li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .recover li:last-child { border-bottom: 0; }
+    .recover a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .recover a:hover { color: var(--accent-purple); }
+    .recover .arrow {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+    .recover .target { font-weight: 500; }
+    .recover .desc {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      margin-left: auto;
+    }
+
+    footer.site {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px 48px;
+      width: 100%;
+      border-top: 1px solid var(--border);
+      color: var(--text-tertiary);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer.site a { color: var(--text-secondary); text-decoration: none; }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path {
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+    }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      main { padding: 56px 20px 48px; }
+      h1.title { font-size: 40px; }
+      h1.title .code { font-size: 44px; margin-right: 8px; }
+      .terminal { font-size: 14px; padding: 20px 22px; }
+      .recover .desc { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="/nutanix/index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+    </div>
+  </header>
+
+  <main>
+    <div class="terminal" role="status" aria-label="Terminal showing 404 error">
+      <div>
+        <span class="prompt-host">nutanix@cvm-01:~$</span>
+        <span class="cmd"> cd /nix/nutanix/the-page-you-wanted</span>
+      </div>
+      <div class="err">cd: no such file or directory</div>
+      <div>
+        <span class="prompt-host">nutanix@cvm-01:~$</span><span class="blink" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <h1 class="title"><span class="code">404</span>Page not found.</h1>
+    <p class="lede">The path you followed does not resolve. Common reasons: the URL was renamed during the curriculum build, an external link is stale, or someone fat-fingered the slug. The recovery options below cover the entry points worth bookmarking.</p>
+
+    <div class="recover">
+      <div class="recover-label">Try one of these</div>
+      <ul>
+        <li>
+          <a href="/nutanix/index.html">
+            <span class="arrow">&rarr;</span>
+            <span class="target">Home</span>
+            <span class="desc">curriculum landing page</span>
+          </a>
+        </li>
+        <li>
+          <a href="/nutanix/index.html#modules">
+            <span class="arrow">&rarr;</span>
+            <span class="target">Modules</span>
+            <span class="desc">all 10 modules</span>
+          </a>
+        </li>
+        <li>
+          <a href="/nutanix/index.html#appendices">
+            <span class="arrow">&rarr;</span>
+            <span class="target">Appendices</span>
+            <span class="desc">A through K</span>
+          </a>
+        </li>
+        <li>
+          <a href="/nutanix/appendices/a-glossary/index.html">
+            <span class="arrow">&rarr;</span>
+            <span class="target">Glossary</span>
+            <span class="desc">119 Nutanix terms</span>
+          </a>
+        </li>
+        <li>
+          <a href="/nutanix/appendices/g-cli-reference/index.html">
+            <span class="arrow">&rarr;</span>
+            <span class="target">CLI Reference</span>
+            <span class="desc">ncli, acli, ncc, ovs</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div>Written by Fred Nix &middot; Built for BlueAlly Solutions Architects &middot; Source on <a href="https://github.com/nixfred/nutanix">GitHub</a></div>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>404</span>
+  </footer>
+</body>
+</html>
