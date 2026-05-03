@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="ag-title ag-desc">
+  <title id="ag-title">Appendix A hero: Glossary alphabet grid</title>
+  <desc id="ag-desc">A 6x4 grid of monospace letters spanning A through Z on a deep navy background, with a handful of letter tiles glowing purple-cyan to suggest active terms, and a small selection of term cards floating in front showing example glossary entries with their cross-references and module pointers.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="tileFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a3258"/>
+      <stop offset="100%" stop-color="#0f2440"/>
+    </linearGradient>
+    <linearGradient id="tileGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d2a5c"/>
+      <stop offset="100%" stop-color="#1a1330"/>
+    </linearGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="cyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <!-- subtle grid floor lines -->
+  <g stroke="rgba(74,158,255,0.08)" stroke-width="1" fill="none">
+    <path d="M0,720 L1600,720"/>
+    <path d="M0,760 L1600,760"/>
+    <path d="M0,800 L1600,800"/>
+  </g>
+
+  <!-- mono path top-left -->
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-a-glossary
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · A → Z · ~70 TERMS</text>
+
+  <!-- ============================================================ -->
+  <!-- ALPHABET GRID                                                 -->
+  <!-- ============================================================ -->
+
+  <!-- A is 65, Z is 90; 26 letters in 7 columns x 4 rows (26 of 28). -->
+  <!-- letters present in glossary (highlighted): A B C D E F H I K L M N O P R S T V W X Z -->
+  <!-- letters not present: G J Q U Y -->
+
+  <g transform="translate(120, 200)">
+    <text x="600" y="-20" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">THE WORKING VOCABULARY</text>
+  </g>
+
+  <!-- helper: define letters with positions and "active" flag -->
+  <!-- 7 cols, 4 rows, tile size 130x100 with 16 gap, total 7*146=1022 wide, 4*116=464 tall -->
+  <!-- center horizontally: (1600-1022)/2 = 289 -->
+
+  <!-- ROW 1: A B C D E F G -->
+  <g transform="translate(289, 220)">
+    <!-- A active -->
+    <g filter="url(#purpleGlow)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileGlow)" stroke="#c084fc" stroke-width="1.4" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#c084fc" letter-spacing="0.04em">A</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">8 terms</text>
+    </g>
+    <!-- B active -->
+    <g transform="translate(146,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">B</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">3 terms</text>
+    </g>
+    <!-- C active highlight -->
+    <g transform="translate(292,0)" filter="url(#cyanGlow)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#00d4ff" stroke-width="1.6" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#00d4ff" letter-spacing="0.04em">C</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">9 terms</text>
+    </g>
+    <!-- D active -->
+    <g transform="translate(438,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">D</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">5 terms</text>
+    </g>
+    <!-- E active -->
+    <g transform="translate(584,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">E</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">3 terms</text>
+    </g>
+    <!-- F active -->
+    <g transform="translate(730,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">F</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">5 terms</text>
+    </g>
+    <!-- G empty -->
+    <g transform="translate(876,0)">
+      <rect x="0" y="0" width="130" height="100" fill="rgba(31,58,102,0.20)" stroke="rgba(31,58,102,0.60)" stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#3a4a6a" letter-spacing="0.04em">G</text>
+    </g>
+  </g>
+
+  <!-- ROW 2: H I J K L M N -->
+  <g transform="translate(289, 336)">
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">H</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">3 terms</text>
+    </g>
+    <g transform="translate(146,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">I</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">4 terms</text>
+    </g>
+    <g transform="translate(292,0)">
+      <rect x="0" y="0" width="130" height="100" fill="rgba(31,58,102,0.20)" stroke="rgba(31,58,102,0.60)" stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#3a4a6a" letter-spacing="0.04em">J</text>
+    </g>
+    <g transform="translate(438,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">K</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">1 term</text>
+    </g>
+    <g transform="translate(584,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">L</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">3 terms</text>
+    </g>
+    <g transform="translate(730,0)" filter="url(#purpleGlow)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileGlow)" stroke="#c084fc" stroke-width="1.4" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#c084fc" letter-spacing="0.04em">M</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">5 terms</text>
+    </g>
+    <g transform="translate(876,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">N</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">10 terms</text>
+    </g>
+  </g>
+
+  <!-- ROW 3: O P Q R S T V (skip Q gap, condense) -->
+  <g transform="translate(289, 452)">
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">O</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">4 terms</text>
+    </g>
+    <g transform="translate(146,0)" filter="url(#cyanGlow)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#00d4ff" stroke-width="1.6" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#00d4ff" letter-spacing="0.04em">P</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">8 terms</text>
+    </g>
+    <g transform="translate(292,0)">
+      <rect x="0" y="0" width="130" height="100" fill="rgba(31,58,102,0.20)" stroke="rgba(31,58,102,0.60)" stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#3a4a6a" letter-spacing="0.04em">Q</text>
+    </g>
+    <g transform="translate(438,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">R</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">5 terms</text>
+    </g>
+    <g transform="translate(584,0)" filter="url(#purpleGlow)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileGlow)" stroke="#c084fc" stroke-width="1.4" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#c084fc" letter-spacing="0.04em">S</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">9 terms</text>
+    </g>
+    <g transform="translate(730,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">T</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">2 terms</text>
+    </g>
+    <g transform="translate(876,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">V</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">7 terms</text>
+    </g>
+  </g>
+
+  <!-- ROW 4: U W X Y Z (last 5 letters, but U/Y are placeholders) -->
+  <g transform="translate(289, 568)">
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="130" height="100" fill="rgba(31,58,102,0.20)" stroke="rgba(31,58,102,0.60)" stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#3a4a6a" letter-spacing="0.04em">U</text>
+    </g>
+    <g transform="translate(146,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">W</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">2 terms</text>
+    </g>
+    <g transform="translate(292,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">X</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">1 term</text>
+    </g>
+    <g transform="translate(438,0)">
+      <rect x="0" y="0" width="130" height="100" fill="rgba(31,58,102,0.20)" stroke="rgba(31,58,102,0.60)" stroke-width="1" stroke-dasharray="3 3" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#3a4a6a" letter-spacing="0.04em">Y</text>
+    </g>
+    <g transform="translate(584,0)">
+      <rect x="0" y="0" width="130" height="100" fill="url(#tileFront)" stroke="#3a6cb0" stroke-width="1.2" rx="4"/>
+      <text x="65" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="48" font-weight="700" fill="#cfddff" letter-spacing="0.04em">Z</text>
+      <text x="65" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a8b8d4">1 term</text>
+    </g>
+    <!-- caption / instruction tile -->
+    <g transform="translate(730,0)">
+      <rect x="0" y="0" width="276" height="100" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="138" y="38" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#c084fc" letter-spacing="0.10em">JUMP BY LETTER</text>
+      <text x="138" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#cfeeff">A · B · C · ... · Z</text>
+      <text x="138" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">use Ctrl-F or click letters</text>
+    </g>
+  </g>
+
+  <!-- bottom-left framing line -->
+  <g transform="translate(60, 836)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#e8f0ff" letter-spacing="0.10em">A · GLOSSARY</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">tight definitions · operationally relevant · cross-linked · module pointers</text>
+  </g>
+
+  <!-- vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>

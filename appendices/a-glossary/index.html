@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix A: Glossary</title>
+  <meta name="description" content="The working vocabulary of a Nutanix Solutions Architect at BlueAlly. Every term used across the 10 modules, alphabetized A through Z, with tight operational definitions, module references, and cross-references between related entries." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix A: Glossary" />
+  <meta property="og:description" content="The working vocabulary. Every term used across the 10 modules, alphabetized, with tight definitions and cross-references." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/a-glossary/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix A: Glossary" />
+  <meta name="twitter:description" content="Every term used across the curriculum, alphabetized A through Z." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero {
+      position: relative;
+      margin: -24px calc(50% - 50vw) 0;
+      padding: 0; border: 0; border-radius: 0;
+      background: transparent; overflow: hidden;
+      isolation: isolate;
+    }
+    .module-hero img {
+      display: block;
+      width: 100%;
+      height: clamp(420px, 60vh, 680px);
+      object-fit: cover;
+      object-position: center 50%;
+    }
+    .module-hero::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,22,40,0)    0%,
+          rgba(10,22,40,0)    42%,
+          rgba(10,22,40,0.65) 78%,
+          var(--bg-base)      100%),
+        linear-gradient(to right,
+          var(--bg-base)      0%,
+          rgba(10,22,40,0)    7%,
+          rgba(10,22,40,0)    93%,
+          var(--bg-base)      100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title {
+      font-size: 48px; line-height: 1.07; letter-spacing: -0.025em;
+      font-weight: 700; margin: 0 0 20px;
+      text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85);
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 999px;
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: rgba(16, 39, 71, 0.85);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro {
+      max-width: 820px; margin: 0 auto 32px;
+      color: var(--text-primary); font-size: 17px; line-height: 1.6;
+    }
+    .intro p { margin: 0 0 12px; }
+
+    /* Sticky letter-jump nav */
+    nav.letter-jump {
+      position: sticky;
+      top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 4px 6px;
+      font-family: var(--font-mono); font-size: 14px;
+    }
+    nav.letter-jump a {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 28px; height: 28px; padding: 0 6px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.letter-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+    nav.letter-jump a.dim { opacity: 0.35; pointer-events: none; }
+
+    article.body { max-width: 880px; margin: 0 auto; }
+
+    article.body h2.letter {
+      font-family: var(--font-mono);
+      font-size: 32px; font-weight: 700; letter-spacing: 0.10em;
+      color: var(--accent-purple);
+      margin: 56px 0 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+
+    .terms { margin: 0; }
+    .term {
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(31,58,102,0.55);
+      scroll-margin-top: 110px;
+    }
+    .term:last-child { border-bottom: none; }
+    .term .name {
+      font-family: var(--font-display);
+      font-size: 19px; font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+      letter-spacing: -0.005em;
+    }
+    .term .name code {
+      font-family: var(--font-mono); font-size: 0.88em;
+      background: var(--bg-surface);
+      padding: 1px 6px; border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .term .def {
+      margin: 0 0 10px; color: var(--text-primary);
+      max-width: 70ch;
+    }
+    .term .def code {
+      font-family: var(--font-mono); font-size: 0.92em;
+      background: var(--bg-surface);
+      padding: 2px 6px; border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .term .meta {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      letter-spacing: 0.02em; margin: 0 0 6px;
+    }
+    .term .see {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      letter-spacing: 0.02em; margin: 0;
+    }
+    .term .see a { color: var(--accent-cyan); }
+    .term .see .label { color: var(--text-tertiary); margin-right: 6px; }
+
+    .references { margin-top: 64px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin: 0 0 12px; font-size: 22px; }
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home {
+      margin-top: 56px; display: flex; justify-content: center;
+    }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.letter-jump { top: 56px; font-size: 12px; }
+      nav.letter-jump a { min-width: 24px; height: 24px; padding: 0 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">A · Glossary</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-a-glossary.svg" alt="A 6x4 grid of monospace letters spanning A through Z on a deep navy background, with a handful of letter tiles glowing purple-cyan to suggest active term clusters, plus a small instruction tile in the lower right reading 'jump by letter'." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-a-glossary</div>
+      <h1 class="module-title">Appendix A · Glossary</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">~70 terms</span>
+        <span class="chip">A through Z</span>
+        <span class="chip">cross-linked from every module</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>The working vocabulary of a Nutanix Solutions Architect at BlueAlly. Every term used across the 10 modules is here. Definitions are tight and operationally relevant.</p>
+      <p>Use Ctrl-F or the letter-jump nav. Each entry's <em>Module N</em> reference points to where the term is taught in depth. The <em>See also</em> cross-references walk to related entries.</p>
+    </div>
+
+    <nav class="letter-jump" aria-label="Jump to letter">
+      <a href="#a">A</a>
+      <a href="#b">B</a>
+      <a href="#c">C</a>
+      <a href="#d">D</a>
+      <a href="#e">E</a>
+      <a href="#f">F</a>
+      <a href="#" class="dim" aria-disabled="true">G</a>
+      <a href="#h">H</a>
+      <a href="#i">I</a>
+      <a href="#" class="dim" aria-disabled="true">J</a>
+      <a href="#k">K</a>
+      <a href="#l">L</a>
+      <a href="#m">M</a>
+      <a href="#n">N</a>
+      <a href="#o">O</a>
+      <a href="#p">P</a>
+      <a href="#" class="dim" aria-disabled="true">Q</a>
+      <a href="#r">R</a>
+      <a href="#s">S</a>
+      <a href="#t">T</a>
+      <a href="#" class="dim" aria-disabled="true">U</a>
+      <a href="#v">V</a>
+      <a href="#w">W</a>
+      <a href="#x">X</a>
+      <a href="#" class="dim" aria-disabled="true">Y</a>
+      <a href="#z">Z</a>
+    </nav>
+
+    <article class="body">
+
+      <h2 class="letter" id="a">A</h2>
+      <div class="terms">
+
+        <div class="term" id="acropolis">
+          <p class="name">Acropolis</p>
+          <p class="def">The service stack on AHV that handles VM lifecycle: create, clone, migrate, snapshot, plus HA (host failure response), Live Migration, and ADS (load balancing). Acropolis is what makes AHV more than just KVM. Functional analog to vCenter's VM-control responsibilities.</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#ahv">AHV</a> · <a href="#live-migration">Live Migration</a> · <a href="#ha-high-availability">HA</a> · <a href="#ads-acropolis-dynamic-scheduling">ADS</a></p>
+        </div>
+
+        <div class="term" id="ads-acropolis-dynamic-scheduling">
+          <p class="name">ADS (Acropolis Dynamic Scheduling)</p>
+          <p class="def">The AHV equivalent of VMware DRS. Continuously monitors cluster load and rebalances VMs across hosts. Default polling interval 15 minutes (with a 30-minute backoff after a rebalance). Runs automatically; admin-tunable thresholds. Triggered by CPU contention, memory pressure, or storage hotspots. The internal service that runs ADS is named <strong>Lazan</strong>; you will see the name in logs and <code>acli</code> output. Older docs and the curriculum's earlier draft used "Distributed Scheduler"; the authoritative name is "Dynamic Scheduling."</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#acropolis">Acropolis</a> · <a href="#live-migration">Live Migration</a></p>
+        </div>
+
+        <div class="term" id="ahv">
+          <p class="name">AHV (Acropolis Hypervisor)</p>
+          <p class="def">Nutanix's KVM-based hypervisor. Included with NCI / AOS at no additional licensing cost. Runs on every Nutanix node by default. Operationally similar to ESXi for VM admins; technically a Linux+KVM stack underneath. Acropolis services provide the management plane.</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#acropolis">Acropolis</a> · <a href="#kvm">KVM</a> · <a href="#esxi-on-nutanix">ESXi-on-Nutanix</a></p>
+        </div>
+
+        <div class="term" id="anti-ransomware">
+          <p class="name">Anti-ransomware</p>
+          <p class="def">Real-time ransomware detection capability in Nutanix Files (via on-cluster Files Analytics) and the broader Data Lens product. Detects suspicious write patterns (mass encryption, mass rename, suspicious extension changes) using a 65,000+ signature library plus behavior-based anomaly detection. Alerts, optionally blocks, and snapshots the pre-attack state. One layer in a broader anti-ransomware strategy (complement with endpoint protection, network segmentation, backup hygiene).</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#files-analytics">Files Analytics</a> · <a href="#data-lens">Data Lens</a> · <a href="#nutanix-files">Nutanix Files</a></p>
+        </div>
+
+        <div class="term" id="aos-acropolis-operating-system">
+          <p class="name">AOS (Acropolis Operating System)</p>
+          <p class="def">The Nutanix platform's core software stack: AHV + DSF + Prism Element. The AOS <em>software</em> is unchanged; the <em>licensing SKU name</em> AOS has been replaced by <strong>NCI (Nutanix Cloud Infrastructure)</strong>. Legacy AOS Pro / AOS Ultimate licenses are no longer available for new sale or renewal; existing AOS customers are being converted to NCI Pro / NCI Ultimate. Per-core subscription. AHV is included at every tier at no extra fee.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nci-nutanix-cloud-infrastructure">NCI</a> · <a href="#nci-pro">NCI Pro</a> · <a href="#nci-ultimate">NCI Ultimate</a> · <a href="#dsf-distributed-storage-fabric">DSF</a></p>
+        </div>
+
+        <div class="term" id="aos-pro">
+          <p class="name">AOS Pro</p>
+          <p class="def"><strong>Legacy</strong> subscription tier name. Replaced by <strong>NCI Pro</strong>; no longer available for new sale or renewal. See <a href="#nci-pro">NCI Pro</a>.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+        </div>
+
+        <div class="term" id="aos-ultimate">
+          <p class="name">AOS Ultimate</p>
+          <p class="def"><strong>Legacy</strong> subscription tier name. Replaced by <strong>NCI Ultimate</strong>; no longer available for new sale or renewal. See <a href="#nci-ultimate">NCI Ultimate</a>.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+        </div>
+
+        <div class="term" id="application-affinity-group">
+          <p class="name">Application affinity group</p>
+          <p class="def">A logical grouping of VMs that should be considered together during migration planning, DR orchestration, or policy enforcement. Often defined by application architecture: web tier + app tier + database tier of a single application. Used in Recovery Plans for startup-order definition.</p>
+          <p class="meta">Module 10 (Migration), Module 7 (DR).</p>
+          <p class="see"><span class="label">See also:</span><a href="#recovery-plan">Recovery Plan</a> · <a href="#categories">Categories</a></p>
+        </div>
+
+        <div class="term" id="application-consistent-snapshot">
+          <p class="name">Application-consistent snapshot</p>
+          <p class="def">Snapshot taken after the application has flushed in-memory state to disk. On Windows, requires VSS (provided by NGT). On Linux, application-level quiesce coordinated through NGT. Compare to crash-consistent (default), which captures disk state without app coordination. Preferred for direct database restoration.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#crash-consistent-snapshot">Crash-consistent snapshot</a> · <a href="#ngt-nutanix-guest-tools">NGT</a> · <a href="#vss-volume-shadow-copy-service">VSS</a></p>
+        </div>
+
+        <div class="term" id="async-replication">
+          <p class="name">Async Replication</p>
+          <p class="def">Periodic snapshot-based replication between Nutanix clusters. RPO typically 1 hour, configurable down to 15 minutes. Bandwidth-efficient (delta-based). Works over WAN, no strict latency requirements. Default for general-purpose DR. Compare to NearSync (sub-15-min RPO, low-latency) and Metro (zero RPO, metro-area only).</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nearsync">NearSync</a> · <a href="#metro-availability">Metro Availability</a> · <a href="#rpo-recovery-point-objective">RPO</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="b">B</h2>
+      <div class="terms">
+
+        <div class="term" id="bond">
+          <p class="name">Bond</p>
+          <p class="def">A Linux/OVS bonding interface aggregating multiple physical NICs into a single logical link. Provides redundancy and (some modes) load balancing. Modes: active-backup (default), balance-slb (no switch config required), balance-tcp / LACP (requires switch coordination). Maps to vSphere NIC teaming policies.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#open-vswitch-ovs">Open vSwitch</a> · <a href="#lacp-link-aggregation-control-protocol">LACP</a></p>
+        </div>
+
+        <div class="term" id="bom-bill-of-materials">
+          <p class="name">BoM (Bill of Materials)</p>
+          <p class="def">The complete list of items in a customer proposal. A complete BoM has six sections: hardware, software, services, support, one-time items, recurring items. Hardware-and-license-only quotes are not BoMs; they cause customer pain six months in. BlueAlly discipline: name every item.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#tco-total-cost-of-ownership">TCO</a></p>
+        </div>
+
+        <div class="term" id="bridge-br0-br0local">
+          <p class="name">Bridge (<code>br0</code>, <code>br0.local</code>)</p>
+          <p class="def">OVS bridges in AHV. <code>br0</code> is the data bridge connected to physical NICs (via a bond), carrying user VM traffic. <code>br0.local</code> is the management bridge for CVM-hypervisor communication. The two-bridge separation is intentional and operationally meaningful.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#open-vswitch-ovs">Open vSwitch</a></p>
+        </div>
+
+        <div class="term" id="bucket">
+          <p class="name">Bucket</p>
+          <p class="def">The unit of organization in Nutanix Objects (and S3 generally). A bucket holds objects and has access policies, versioning, lifecycle policies, and optionally WORM compliance settings. Backup software targets buckets; cloud-native applications read and write to buckets.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-objects">Nutanix Objects</a> · <a href="#worm-write-once-read-many">WORM</a> · <a href="#s3">S3</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="c">C</h2>
+      <div class="terms">
+
+        <div class="term" id="capex-opex">
+          <p class="name">Capex / Opex</p>
+          <p class="def">Capex (capital expenditure) is hardware, depreciated over 3-5 years, balance-sheet item. Opex (operating expenditure) is subscriptions and services, expensed in period, income-statement impact. Customer accounting preferences vary; ask early. Nutanix subscriptions typically opex; hardware typically capex.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#tco-total-cost-of-ownership">TCO</a> · <a href="#bom-bill-of-materials">BoM</a></p>
+        </div>
+
+        <div class="term" id="cassandra">
+          <p class="name">Cassandra</p>
+          <p class="def">Distributed metadata store at the heart of DSF. A fork of Apache Cassandra optimized for the access patterns DSF needs. Tracks every extent's location, every vDisk's configuration, every cluster-wide piece of data placement. Runs in a ring across all CVMs. Stargate consults Cassandra for "where does extent X live?"</p>
+          <p class="meta">Module 2 (Architecture), Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#stargate">Stargate</a> · <a href="#curator">Curator</a> · <a href="#extent">Extent</a></p>
+        </div>
+
+        <div class="term" id="categories">
+          <p class="name">Categories</p>
+          <p class="def">Key-value tags assigned to VMs (and other entities) in Prism Central. Drive policy enforcement: backup policies, DR plans, microsegmentation rules, quotas, reporting. More powerful than vSphere tags because they are first-class policy keys. The integration point for Flow, Protection Policies, and Self-Service automation.</p>
+          <p class="meta">Module 4 (Prism), Module 6 (Networking), Module 7 (DR).</p>
+          <p class="see"><span class="label">See also:</span><a href="#projects">Projects</a> · <a href="#protection-policy">Protection Policy</a> · <a href="#flow-network-security">Flow Network Security</a></p>
+        </div>
+
+        <div class="term" id="cluster-virtual-ip-vip">
+          <p class="name">Cluster Virtual IP (VIP)</p>
+          <p class="def">The IP address that Prism Element listens on. Floats between CVMs for HA. Customers and admins access Prism Element at <code>https://&lt;VIP&gt;:9440</code>. Distinct from the Data Services IP (used for iSCSI target presentation by Volumes).</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#prism-element">Prism Element</a> · <a href="#data-services-ip">Data Services IP</a></p>
+        </div>
+
+        <div class="term" id="compression-dsf">
+          <p class="name">Compression (DSF)</p>
+          <p class="def">Inline compression applied during OpLog drain to Extent Store using <strong>LZ4</strong> (fast, modest ratios, latency-friendly). Cold-data and post-process compression uses <strong>LZ4HC</strong> (higher compression at higher CPU cost). Inline compression is selective: applies to sequential streams and large I/Os (&gt;64K) to avoid impacting random write performance. Real-world ratios for mixed enterprise workloads: 1.5-2.5x. Configured per Storage Container. Quote ranges, not marketing peaks.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#dsf-distributed-storage-fabric">DSF</a> · <a href="#oplog">OpLog</a> · <a href="#storage-container">Storage Container</a></p>
+        </div>
+
+        <div class="term" id="content-cache">
+          <p class="name">Content Cache</p>
+          <p class="def">The in-memory read cache in CVM RAM. Stargate caches recently-accessed extents here. Cache hits return immediately. The first stop in the read path before checking the local Extent Store or remote nodes.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#stargate">Stargate</a> · <a href="#extent-store">Extent Store</a> · <a href="#oplog">OpLog</a></p>
+        </div>
+
+        <div class="term" id="crash-consistent-snapshot">
+          <p class="name">Crash-consistent snapshot</p>
+          <p class="def">The default Nutanix snapshot type. Captures vDisk state at a moment without application-level quiesce. Equivalent to pulling the power cord and rebooting: file systems may need recovery, in-memory data is lost, transactions may roll back. Sufficient for most workloads.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#application-consistent-snapshot">Application-consistent snapshot</a></p>
+        </div>
+
+        <div class="term" id="curator">
+          <p class="name">Curator</p>
+          <p class="def">The background scrubbing and rebalancing service in DSF. Runs on every CVM (one master, others followers). Periodic scans walk metadata to identify operations: re-replication after failures, EC conversion, ILM/tiering, compression/dedup post-processing, capacity reclamation. Does not appear in the synchronous data path.</p>
+          <p class="meta">Module 2 (Architecture), Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#stargate">Stargate</a> · <a href="#cassandra">Cassandra</a> · <a href="#ilm-information-lifecycle-management">ILM</a></p>
+        </div>
+
+        <div class="term" id="cutover">
+          <p class="name">Cutover</p>
+          <p class="def">The moment when a workload transitions from old platform to new during migration. For Move: source VM shut down, final delta synced, target VM started. Typical cutover downtime per VM: 5-30 minutes. Scheduled in maintenance windows. The brief moment after months of preparation.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#move">Move</a> · <a href="#parallel-running">Parallel-running</a> · <a href="#pilot-wave">Pilot wave</a></p>
+        </div>
+
+        <div class="term" id="cvm-controller-vm">
+          <p class="name">CVM (Controller VM)</p>
+          <p class="def">The Nutanix-managed VM that runs on every node, hosting the storage services (Stargate, Cassandra, Curator, Pithos, Zeus) plus management services. Receives I/O from co-located user VMs, replicates across the cluster, manages metadata. The "tax" of HCI: typically 8-16 vCPU and 32-64 GB RAM per node consumed by the CVM. The price of a distributed storage layer running on the same hardware as your VMs.</p>
+          <p class="meta">Module 2 (Architecture).</p>
+          <p class="see"><span class="label">See also:</span><a href="#stargate">Stargate</a> · <a href="#cassandra">Cassandra</a> · <a href="#curator">Curator</a> · <a href="#dsf-distributed-storage-fabric">DSF</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="d">D</h2>
+      <div class="terms">
+
+        <div class="term" id="data-lens">
+          <p class="name">Data Lens</p>
+          <p class="def">Nutanix's cloud-based (and, with v2.0 GA in 2026, fully on-premises including air-gapped) data governance and ransomware-detection service for unified storage. Evolved from on-cluster Files Analytics into a broader product covering Files, Objects, and (increasingly) other unified-storage targets. Carries a 65,000+ ransomware signature library plus behavior-based anomaly detection. Detect-and-block flow watches for encrypt-at-write, mass-rename, and suspicious-extension patterns.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#files-analytics">Files Analytics</a> · <a href="#anti-ransomware">Anti-ransomware</a> · <a href="#nutanix-files">Nutanix Files</a></p>
+        </div>
+
+        <div class="term" id="data-services-ip">
+          <p class="name">Data Services IP</p>
+          <p class="def">The cluster-level IP used for external iSCSI initiators connecting to Volumes. Distinct from the Cluster VIP (which serves Prism Element). External hosts connect to the Data Services IP for iSCSI target discovery.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-volumes">Nutanix Volumes</a> · <a href="#iscsi">iSCSI</a></p>
+        </div>
+
+        <div class="term" id="deduplication">
+          <p class="name">Deduplication</p>
+          <p class="def">DSF capability to detect duplicate data blocks and store one copy with references. Two flavors: cache dedup (in-CVM-RAM, always on for compatible workloads) and on-disk dedup (per-Storage-Container, requires more CVM metadata). Most useful for VDI and similar high-data-similarity workloads. Wrong tool for low-uniqueness workloads.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#compression-dsf">Compression</a> · <a href="#dsf-distributed-storage-fabric">DSF</a> · <a href="#storage-container">Storage Container</a></p>
+        </div>
+
+        <div class="term" id="dependency-mapping">
+          <p class="name">Dependency mapping</p>
+          <p class="def">Phase 0 migration deliverable identifying which VMs talk to which other VMs, which applications depend on which services, where the firewall and load-balancer dependencies live. Active discovery tools, application owner workshops, network flow analysis. Always takes longer than budgeted.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#pilot-wave">Pilot wave</a> · <a href="#risk-register">Risk register</a></p>
+        </div>
+
+        <div class="term" id="decommissioning">
+          <p class="name">Decommissioning</p>
+          <p class="def">The process of removing old infrastructure after migration. Physical removal, contract termination, asset disposal, license reconciliation. Often the customer's responsibility but worth naming in the BoM. Real money in licenses you stop paying and rack space you reclaim.</p>
+          <p class="meta">Module 10 (Migration), Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#hybrid-steady-state">Hybrid steady-state</a> · <a href="#bom-bill-of-materials">BoM</a></p>
+        </div>
+
+        <div class="term" id="dsf-distributed-storage-fabric">
+          <p class="name">DSF (Distributed Storage Fabric)</p>
+          <p class="def">The Nutanix software-defined storage layer. Runs across all CVMs in a cluster. Pools local disks of every node, replicates writes (RF2/RF3), caches reads, compresses/dedupes/erasure-codes, tiers data, self-heals. Built on Stargate (data path), Cassandra (metadata), Curator (background work), with Pithos and Zeus completing the service set.</p>
+          <p class="meta">Module 2 (Architecture), Module 5 (DSF Deep Dive).</p>
+          <p class="see"><span class="label">See also:</span><a href="#stargate">Stargate</a> · <a href="#cassandra">Cassandra</a> · <a href="#curator">Curator</a> · <a href="#rf-replication-factor">RF</a> · <a href="#ec-x-erasure-coding">EC-X</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="e">E</h2>
+      <div class="terms">
+
+        <div class="term" id="ec-x-erasure-coding">
+          <p class="name">EC-X (Erasure Coding)</p>
+          <p class="def">DSF's erasure coding implementation. Configurable per Storage Container. Common configs: 4+1 (1-failure tolerance, 25% overhead vs RF2's 100%, requires 5+ nodes); 4+2 (2-failure tolerance, 50% overhead vs RF3's 200%, requires 7+ nodes). Trade-off: capacity savings vs write amplification on small random writes. Best for cold/archive workloads; bad for OLTP.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#rf-replication-factor">RF</a> · <a href="#storage-container">Storage Container</a> · <a href="#curator">Curator</a></p>
+        </div>
+
+        <div class="term" id="esxi-on-nutanix">
+          <p class="name">ESXi-on-Nutanix</p>
+          <p class="def">Running VMware ESXi as the hypervisor on Nutanix hardware, instead of AHV. The CVM still runs DSF; vCenter still manages ESXi; Prism manages the Nutanix-native features. The migration-friendly path: keep ESXi mental model, get DSF benefits, decide on AHV later. Common starting point for VMware-mature customers.</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#ahv">AHV</a> · <a href="#move">Move</a></p>
+        </div>
+
+        <div class="term" id="extent">
+          <p class="name">Extent</p>
+          <p class="def">The 1 MB metadata unit in DSF. Each extent has a Cassandra metadata record indicating where it physically lives. vDisks are logical entities backed by extents. Multiple extents can share an Extent Group (the physical allocation unit).</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#extent-group">Extent Group</a> · <a href="#vdisk">vDisk</a> · <a href="#cassandra">Cassandra</a></p>
+        </div>
+
+        <div class="term" id="extent-group">
+          <p class="name">Extent Group</p>
+          <p class="def">The physical allocation unit on disk in DSF holding extents. <strong>1 MB on non-deduplicated containers; 4 MB on deduplicated containers.</strong> The unit Stargate writes to the Extent Store. Compression and erasure coding operate at this level.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#extent">Extent</a> · <a href="#extent-store">Extent Store</a></p>
+        </div>
+
+        <div class="term" id="extent-store">
+          <p class="name">Extent Store</p>
+          <p class="def">The persistent backing storage on each node where DSF writes go after draining from OpLog. The "cold" tier in the data path (though on all-flash nodes everything is fast). Reads check Content Cache first, then local Extent Store, then remote.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#oplog">OpLog</a> · <a href="#content-cache">Content Cache</a> · <a href="#stargate">Stargate</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="f">F</h2>
+      <div class="terms">
+
+        <div class="term" id="file-server">
+          <p class="name">File Server</p>
+          <p class="def">The logical SMB/NFS service in Nutanix Files. Implemented as a cluster of FSVMs (typically 3+). Customers can have multiple File Servers per cluster (one for Production, one for Engineering, etc.). Integrates with AD via Kerberos and ACLs.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-files">Nutanix Files</a> · <a href="#fsvm-file-server-vm">FSVM</a></p>
+        </div>
+
+        <div class="term" id="files-analytics">
+          <p class="name">Files Analytics</p>
+          <p class="def">The on-cluster analytics service that ships inside Nutanix Files. Provides file aging, top users by capacity and I/O, file type breakdown, anomaly detection (anti-ransomware foundation), permission auditing. The 3-minute customer demo that often unlocks tiering decisions. The broader Nutanix product that evolved from Files Analytics is <strong>Data Lens</strong> (cloud-based or, with v2.0 GA in 2026, fully on-prem); the two coexist but Data Lens has the wider scope.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#data-lens">Data Lens</a> · <a href="#nutanix-files">Nutanix Files</a> · <a href="#anti-ransomware">Anti-ransomware</a></p>
+        </div>
+
+        <div class="term" id="flow-network-security">
+          <p class="name">Flow Network Security</p>
+          <p class="def">Nutanix's distributed firewall and microsegmentation product. Category-driven policy (not IP-based). Stateful rules. Distributed enforcement at OVS flow-rule level on each AHV host. Licensed via <strong>NCI Ultimate</strong> or via the <strong>Security Add-On for NCI Pro</strong> (per usable TiB; bundles Flow microsegmentation with Data-at-Rest Encryption). Not an NCM tier feature. Functional comparison to NSX-T's distributed firewall.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#microsegmentation">Microsegmentation</a> · <a href="#categories">Categories</a> · <a href="#nsx-t">NSX-T</a> · <a href="#flow-virtual-networking-fvn">Flow Virtual Networking</a> · <a href="#nci-ultimate">NCI Ultimate</a></p>
+        </div>
+
+        <div class="term" id="flow-virtual-networking-fvn">
+          <p class="name">Flow Virtual Networking (FVN)</p>
+          <p class="def">Nutanix's overlay networking product. VPC-style virtual networks with internal routing, NAT, BGP integration, service insertion. Younger than NSX-T; less mature for advanced routing patterns; sufficient for most multi-tenant use cases. Increasingly capable in 2024-2026.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#flow-network-security">Flow Network Security</a> · <a href="#vpc-virtual-private-cloud">VPC</a> · <a href="#service-insertion">Service Insertion</a></p>
+        </div>
+
+        <div class="term" id="foundation">
+          <p class="name">Foundation</p>
+          <p class="def">Nutanix's bare-metal cluster bootstrapping tool. Takes a set of new nodes and turns them into a working Nutanix cluster: imaging hypervisor, configuring CVMs, forming the cluster, validating networking. Run once per new cluster.</p>
+          <p class="meta">Module 2 (Architecture).</p>
+          <p class="see"><span class="label">See also:</span><a href="#lcm-life-cycle-manager">LCM</a> · <a href="#ncc-nutanix-cluster-check">NCC</a></p>
+        </div>
+
+        <div class="term" id="fsvm-file-server-vm">
+          <p class="name">FSVM (File Server VM)</p>
+          <p class="def">The dedicated VM running the file-services stack as part of a File Server cluster. Three FSVMs typically form a File Server (the logical share-serving entity). Real VMs running on the underlying Nutanix cluster, not abstractions.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#file-server">File Server</a> · <a href="#nutanix-files">Nutanix Files</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="h">H</h2>
+      <div class="terms">
+
+        <div class="term" id="ha-high-availability">
+          <p class="name">HA (High Availability)</p>
+          <p class="def">Acropolis-driven automatic VM restart on surviving hosts when a host fails. The AHV equivalent of vSphere HA. Triggered by host loss; affected VMs restart on cluster nodes with capacity. No additional licensing; built into AOS. Typical recovery time: 30-90 seconds for VM restart after failure detection.</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#acropolis">Acropolis</a> · <a href="#ads-acropolis-dynamic-scheduling">ADS</a></p>
+        </div>
+
+        <div class="term" id="hci-hyperconverged-infrastructure">
+          <p class="name">HCI (Hyperconverged Infrastructure)</p>
+          <p class="def">Architecture that runs compute and software-defined storage on the same x86 nodes, eliminating the separate storage array. The category Nutanix invented commercially. Compare to three-tier (separate compute/storage/network) and CI (preconfigured but still tiered). HCI's wins: simplification, scaling unit, operational consolidation. HCI's gaps: storage-imbalanced workloads, compute-imbalanced workloads.</p>
+          <p class="meta">Module 1 (HCI Foundations).</p>
+          <p class="see"><span class="label">See also:</span><a href="#dsf-distributed-storage-fabric">DSF</a> · <a href="#cvm-controller-vm">CVM</a></p>
+        </div>
+
+        <div class="term" id="hcir-hyperconverged-infrastructure-ready">
+          <p class="name">HCIR (Hyperconverged Infrastructure Ready)</p>
+          <p class="def">Commodity hardware certified to run Nutanix software. Hardware sourcing option for customers who buy servers separately and license Nutanix software (software-only deployment). Most flexible; multi-vendor support boundaries.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nx-appliance">NX appliance</a> · <a href="#oem-partner">OEM partner</a></p>
+        </div>
+
+        <div class="term" id="hybrid-steady-state">
+          <p class="name">Hybrid steady-state</p>
+          <p class="def">A successful end-state where 70-90% of workloads run on Nutanix and specific workloads remain on VMware for legitimate reasons (NSX-T routing complexity, NetApp ONTAP-specific workflows, vendor-certified-only-on-ESXi applications, regulatory constraints). Not a project failure; often the architecturally correct outcome.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#cutover">Cutover</a> · <a href="#production-wave">Production wave</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="i">I</h2>
+      <div class="terms">
+
+        <div class="term" id="ilm-information-lifecycle-management">
+          <p class="name">ILM (Information Lifecycle Management)</p>
+          <p class="def">DSF's automated data movement: promoting hot data to fast tiers, demoting cold to capacity tiers, migrating for locality after VM moves, rebalancing on cluster expansion. Driven by Curator scans. Continuous background work; not in the synchronous I/O path.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#curator">Curator</a> · <a href="#dsf-distributed-storage-fabric">DSF</a></p>
+        </div>
+
+        <div class="term" id="intelligent-operations">
+          <p class="name">Intelligent Operations</p>
+          <p class="def">The NCM Pro feature set covering capacity analytics, anomaly detection, what-if planning, runway analysis, advanced reporting. Aria Operations (vROps) functional equivalent. Available at NCM Pro tier and above.</p>
+          <p class="meta">Module 4 (Prism), Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#ncm-nutanix-cloud-manager">NCM</a> · <a href="#prism-central-pc">Prism Central</a></p>
+        </div>
+
+        <div class="term" id="ipam-ip-address-management">
+          <p class="name">IPAM (IP Address Management)</p>
+          <p class="def">Optional per-virtual-network DHCP service in AHV. When enabled, the cluster acts as DHCP server for VMs on that network. Useful for self-contained tenant networks (test/dev, VDI floating pools). Typically disabled for production networks served by corporate DHCP.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#virtual-network">Virtual Network</a></p>
+        </div>
+
+        <div class="term" id="iscsi">
+          <p class="name">iSCSI</p>
+          <p class="def">The block-storage protocol used by Nutanix Volumes to expose LUNs to external initiators (physical hosts, non-Nutanix VMs, bare-metal databases). Standard initiator software on consumers; Nutanix cluster acts as iSCSI target. Multi-pathing via multiple portal IPs.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-volumes">Nutanix Volumes</a> · <a href="#volume-group">Volume Group</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="k">K</h2>
+      <div class="terms">
+
+        <div class="term" id="kvm">
+          <p class="name">KVM (Kernel-based Virtual Machine)</p>
+          <p class="def">The Linux kernel hypervisor underlying AHV. Open-source, widely used, well-understood. AHV is KVM with the Acropolis service stack on top providing the management plane. Customers comfortable with KVM transfer their mental model directly to AHV.</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#ahv">AHV</a> · <a href="#acropolis">Acropolis</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="l">L</h2>
+      <div class="terms">
+
+        <div class="term" id="lacp-link-aggregation-control-protocol">
+          <p class="name">LACP (Link Aggregation Control Protocol)</p>
+          <p class="def">The 802.3ad standard for link aggregation. Used in some AHV bond modes (active-active LACP, balance-tcp). Requires switch-side configuration. Provides the highest throughput and load-balancing options when properly configured.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#bond">Bond</a> · <a href="#open-vswitch-ovs">Open vSwitch</a></p>
+        </div>
+
+        <div class="term" id="lcm-life-cycle-manager">
+          <p class="name">LCM (Life Cycle Manager)</p>
+          <p class="def">Prism's coordinated upgrade tool for AOS, AHV, BIOS, BMC, NIC firmware, drive firmware. One-click rolling upgrades that respect cluster availability. The integrated equivalent of vSphere LCM but with broader scope (firmware coordination across the stack).</p>
+          <p class="meta">Module 2 (Architecture), Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#foundation">Foundation</a> · <a href="#ncc-nutanix-cluster-check">NCC</a></p>
+        </div>
+
+        <div class="term" id="live-migration">
+          <p class="name">Live Migration</p>
+          <p class="def">The AHV equivalent of VMware vMotion. Move a running VM between AHV hosts in a cluster with no perceptible downtime. Triggered manually or by ADS rebalancing. Memory pre-copy plus brief switchover.</p>
+          <p class="meta">Module 3 (AHV).</p>
+          <p class="see"><span class="label">See also:</span><a href="#acropolis">Acropolis</a> · <a href="#ads-acropolis-dynamic-scheduling">ADS</a> · <a href="#move">Move</a></p>
+        </div>
+
+        <div class="term" id="lws-light-weight-snapshots">
+          <p class="name">LWS (Light-Weight Snapshots)</p>
+          <p class="def">The technical mechanism underlying NearSync replication. Frequent (sub-minute) micro-snapshots at the source cluster that flow continuously to the destination. Achieves 20-second-to-15-minute RPO. Higher cluster overhead than Async snapshots.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nearsync">NearSync</a> · <a href="#async-replication">Async Replication</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="m">M</h2>
+      <div class="terms">
+
+        <div class="term" id="metro-availability">
+          <p class="name">Metro Availability</p>
+          <p class="def">Synchronous replication between two Nutanix clusters at metro-area distance. Zero RPO. Requires &lt;5 ms RTT between sites. Witness VM at a third site for split-brain protection. Active-standby (typical) or active-active. Highest cost mode; only viable within metro distance. For long-distance DR, layer Async or NearSync to a remote third site.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#witness-vm">Witness VM</a> · <a href="#async-replication">Async Replication</a> · <a href="#nearsync">NearSync</a> · <a href="#rpo-recovery-point-objective">RPO</a></p>
+        </div>
+
+        <div class="term" id="microsegmentation">
+          <p class="name">Microsegmentation</p>
+          <p class="def">Network security pattern that enforces firewall rules between individual VMs (or VM groups) rather than just at network perimeters. Implemented by Flow Network Security via category-driven policies and OVS flow-rule enforcement. Blocks lateral movement (compromised Web tier reaching DB tier directly).</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#flow-network-security">Flow Network Security</a> · <a href="#categories">Categories</a></p>
+        </div>
+
+        <div class="term" id="move">
+          <p class="name">Move</p>
+          <p class="def">Nutanix's cross-platform VM migration tool. Supports ESXi-to-AHV, Hyper-V-to-AHV, AWS-to-NC2, Azure-to-NC2, AHV-to-AHV. Initial replication + incremental sync + brief planned cutover (5-30 min per VM). Not vMotion (no zero-downtime). Each migration scheduled in maintenance windows.</p>
+          <p class="meta">Module 3 (AHV), Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#cutover">Cutover</a> · <a href="#pilot-wave">Pilot wave</a> · <a href="#production-wave">Production wave</a></p>
+        </div>
+
+        <div class="term" id="multi-tenancy">
+          <p class="name">Multi-tenancy</p>
+          <p class="def">The capability to run multiple isolated tenants on shared infrastructure. In Prism Central: Projects with quotas and RBAC. In Flow Virtual Networking: separate VPCs per tenant. In Objects: separate object stores per tenant. The integration of these gives Nutanix multi-tenant capabilities equivalent to dedicated infrastructure for each tenant.</p>
+          <p class="meta">Module 4 (Prism), Module 6 (Networking), Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#projects">Projects</a> · <a href="#flow-virtual-networking-fvn">Flow Virtual Networking</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="n">N</h2>
+      <div class="terms">
+
+        <div class="term" id="nc2-nutanix-cloud-clusters">
+          <p class="name">NC2 (Nutanix Cloud Clusters)</p>
+          <p class="def">Nutanix software running on AWS or Azure bare-metal infrastructure. From the platform's perspective, an NC2 cluster looks like any other Nutanix cluster. Enables cloud DR without a second physical datacenter, cloud-burst capacity, hybrid-cloud parity. Cloud bare-metal pricing varies; egress fees apply.</p>
+          <p class="meta">Module 7 (DR), Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#async-replication">Async Replication</a> · <a href="#nearsync">NearSync</a></p>
+        </div>
+
+        <div class="term" id="ncc-nutanix-cluster-check">
+          <p class="name">NCC (Nutanix Cluster Check)</p>
+          <p class="def">The cluster's built-in health-check tool. Runs automated checks across hardware, software, configuration, performance. Run on demand (<code>ncc health_checks run_all</code>) or on schedule. The first place to look when something is wrong.</p>
+          <p class="meta">Module 2 (Architecture).</p>
+          <p class="see"><span class="label">See also:</span><a href="#lcm-life-cycle-manager">LCM</a> · <a href="#foundation">Foundation</a></p>
+        </div>
+
+        <div class="term" id="nci-nutanix-cloud-infrastructure">
+          <p class="name">NCI (Nutanix Cloud Infrastructure)</p>
+          <p class="def">The current platform-licensing SKU. Replaces the legacy AOS Pro / AOS Ultimate naming. Tiers: <strong>NCI Pro</strong> (foundational; AHV, DSF, Prism Element, Async replication, baseline features) and <strong>NCI Ultimate</strong> (adds NearSync, Metro Availability, Flow Network Security, advanced data services). A separate <strong>NCI-Compute (NCI-C)</strong> SKU exists for compute-only clusters that don't need DSF storage features. Per-core subscription. AHV is included at every tier. NCI requires AOS 6.1.1 (LTS 6.5+) / Prism Central 2022.4+ / NCC 4.5.0+.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nci-pro">NCI Pro</a> · <a href="#nci-ultimate">NCI Ultimate</a> · <a href="#ncm-nutanix-cloud-manager">NCM</a> · <a href="#ncp-nutanix-cloud-platform">NCP</a></p>
+        </div>
+
+        <div class="term" id="nci-pro">
+          <p class="name">NCI Pro</p>
+          <p class="def">Foundational NCI tier. Includes AHV, DSF, Prism Element, baseline replication (Async), basic snapshots, network features, baseline security. The right tier for most customers. Per-core subscription. Successor to the legacy "AOS Pro" SKU.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nci-nutanix-cloud-infrastructure">NCI</a> · <a href="#nci-ultimate">NCI Ultimate</a></p>
+        </div>
+
+        <div class="term" id="nci-ultimate">
+          <p class="name">NCI Ultimate</p>
+          <p class="def">Higher NCI tier adding NearSync replication, Metro Availability, Flow Network Security (also available as Security Add-On to NCI Pro), advanced storage features, additional security capabilities. For workloads needing advanced replication, microsegmentation, or compliance features. Successor to the legacy "AOS Ultimate" SKU.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nci-nutanix-cloud-infrastructure">NCI</a> · <a href="#nci-pro">NCI Pro</a> · <a href="#nearsync">NearSync</a> · <a href="#metro-availability">Metro Availability</a> · <a href="#flow-network-security">Flow Network Security</a></p>
+        </div>
+
+        <div class="term" id="ncm-nutanix-cloud-manager">
+          <p class="name">NCM (Nutanix Cloud Manager)</p>
+          <p class="def">The umbrella name for advanced multi-cluster management features that sit on top of NCI in Prism Central. <strong>NCM is licensed separately from NCI</strong>; do not assume "NCM Starter is bundled with Prism Central"; basic Prism Central is included with NCI, and NCM tiers are paid add-ons. Tier structure: <strong>NCM Starter</strong> (paid; basic Intelligent Operations, low-code automation), <strong>NCM Pro</strong> (deeper Intelligent Operations: anomaly detection, what-if planning, runway analysis), <strong>NCM Ultimate</strong> (Self-Service / X-Play / cost governance). Tier contents shift between releases.</p>
+          <p class="meta">Module 4 (Prism), Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nci-nutanix-cloud-infrastructure">NCI</a> · <a href="#ncp-nutanix-cloud-platform">NCP</a> · <a href="#prism-central-pc">Prism Central</a> · <a href="#intelligent-operations">Intelligent Operations</a> · <a href="#self-service-formerly-calm">Self-Service</a></p>
+        </div>
+
+        <div class="term" id="ncp-nutanix-cloud-platform">
+          <p class="name">NCP (Nutanix Cloud Platform)</p>
+          <p class="def">Bundle SKUs that combine NCI and NCM tiers at matching levels: <strong>NCP Starter</strong> (NCI Pro + NCM Pro), <strong>NCP Pro</strong> (NCI Ultimate + NCM Pro), <strong>NCP Ultimate</strong> (NCI Ultimate + NCM Ultimate). For customers who want everything in one SKU rather than buying NCI and NCM separately.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nci-nutanix-cloud-infrastructure">NCI</a> · <a href="#ncm-nutanix-cloud-manager">NCM</a></p>
+        </div>
+
+        <div class="term" id="nearsync">
+          <p class="name">NearSync</p>
+          <p class="def">Nutanix's near-synchronous replication mode. Uses Light-Weight Snapshots (LWS) to achieve 20-second-to-15-minute RPO. Requires lower-latency networking than Async (typically &lt;5 ms RTT) and adds cluster overhead at the source. For Tier-1 production with sub-15-minute RPO requirements.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#lws-light-weight-snapshots">LWS</a> · <a href="#async-replication">Async Replication</a> · <a href="#metro-availability">Metro Availability</a></p>
+        </div>
+
+        <div class="term" id="netapp">
+          <p class="name">NetApp</p>
+          <p class="def">Major storage incumbent. Customers commonly run NetApp filers (ONTAP), often alongside their VMware compute. Nutanix Files competes with ONTAP for general SMB/NFS workloads; ONTAP retains advantages in specific advanced workflows (FlexClone, FlexCache, advanced quotas, mature snapshot policies). Coexistence is often the right answer for established NetApp shops.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-files">Nutanix Files</a></p>
+        </div>
+
+        <div class="term" id="nfs-network-file-system">
+          <p class="name">NFS (Network File System)</p>
+          <p class="def">Linux-native file-sharing protocol. Supported by Nutanix Files (v3 and v4). Used by Linux clients and applications, NFS-aware backup tools, and some hypervisor-level integrations.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-files">Nutanix Files</a> · <a href="#smb-server-message-block">SMB</a></p>
+        </div>
+
+        <div class="term" id="ngt-nutanix-guest-tools">
+          <p class="name">NGT (Nutanix Guest Tools)</p>
+          <p class="def">Guest-OS agent installed in VMs running on Nutanix. Enables application-consistent snapshots (VSS coordination on Windows, application quiesce on Linux), self-service file restore, and VM mobility between hypervisors. The Nutanix equivalent of VMware Tools.</p>
+          <p class="meta">Module 3 (AHV), Module 7 (DR).</p>
+          <p class="see"><span class="label">See also:</span><a href="#application-consistent-snapshot">Application-consistent snapshot</a> · <a href="#vss-volume-shadow-copy-service">VSS</a></p>
+        </div>
+
+        <div class="term" id="nsx-t">
+          <p class="name">NSX-T</p>
+          <p class="def">VMware's overlay networking and security product. Comparison anchor for Flow Network Security (microsegmentation) and Flow Virtual Networking (overlays). NSX-T is more mature for advanced routing patterns, edge services, L2VPN, and third-party ecosystem. Coexistence pattern (NSX-T-on-Nutanix-on-ESXi) is common for established NSX-T customers.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#flow-network-security">Flow Network Security</a> · <a href="#flow-virtual-networking-fvn">Flow Virtual Networking</a></p>
+        </div>
+
+        <div class="term" id="nutanix-files">
+          <p class="name">Nutanix Files</p>
+          <p class="def">Scale-out SMB/NFS file storage running on Nutanix. Implemented as a cluster of FSVMs on top of DSF. Replaces dedicated filers (NetApp, Isilon, Pure FlashBlade) for typical enterprise workloads. Includes Files Analytics, anti-ransomware, Self-Service Restore.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#fsvm-file-server-vm">FSVM</a> · <a href="#file-server">File Server</a> · <a href="#files-analytics">Files Analytics</a> · <a href="#self-service-restore-ssr">Self-Service Restore</a></p>
+        </div>
+
+        <div class="term" id="nutanix-objects">
+          <p class="name">Nutanix Objects</p>
+          <p class="def">S3-compatible object storage running on Nutanix. Implemented as Object Service VMs on top of DSF. Replaces dedicated object storage appliances (Cloudian, Scality, MinIO, NetApp StorageGRID). Common backup-target consolidation: replaces Data Domain or similar for Veeam/Commvault/Rubrik repositories.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#bucket">Bucket</a> · <a href="#worm-write-once-read-many">WORM</a> · <a href="#s3">S3</a></p>
+        </div>
+
+        <div class="term" id="nutanix-volumes">
+          <p class="name">Nutanix Volumes</p>
+          <p class="def">iSCSI block storage service. Exposes LUNs (Virtual Volumes) over iSCSI to external initiators: physical Linux/Windows servers, bare-metal databases (Oracle RAC), legacy iSCSI consumers. Not for AHV VMs (use vDisks instead).</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#volume-group">Volume Group</a> · <a href="#iscsi">iSCSI</a> · <a href="#data-services-ip">Data Services IP</a></p>
+        </div>
+
+        <div class="term" id="nx-appliance">
+          <p class="name">NX appliance</p>
+          <p class="def">Nutanix-branded hardware. Manufactured by Super Micro under the Nutanix brand. Single-vendor support: Nutanix is the throat to choke for both hardware and software. Tightly validated. The choice for customers wanting one vendor relationship.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#oem-partner">OEM partner</a> · <a href="#hcir-hyperconverged-infrastructure-ready">HCIR</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="o">O</h2>
+      <div class="terms">
+
+        <div class="term" id="object-store">
+          <p class="name">Object Store</p>
+          <p class="def">A multi-tenant container in Nutanix Objects. Holds buckets, has IAM-style users and access policies. Multiple Object Stores enable hard tenant isolation in service-provider scenarios.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-objects">Nutanix Objects</a> · <a href="#bucket">Bucket</a></p>
+        </div>
+
+        <div class="term" id="oem-partner">
+          <p class="name">OEM partner</p>
+          <p class="def">Hardware vendors that sell Nutanix-validated hardware: Dell EMC XC, Lenovo HX, HPE DX, Cisco UCS. Customers preserve their existing server-vendor relationship while running Nutanix software. Joint Nutanix + OEM support model. Common path for established server-vendor preferences.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nx-appliance">NX appliance</a> · <a href="#hcir-hyperconverged-infrastructure-ready">HCIR</a></p>
+        </div>
+
+        <div class="term" id="open-vswitch-ovs">
+          <p class="name">Open vSwitch (OVS)</p>
+          <p class="def">The open-source kernel-level software switch in AHV. Same OVS used in OpenStack and many production Linux platforms. Provides the bridge, bonding, and VLAN functionality. Auditable, well-understood, not proprietary.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#bridge-br0-br0local">Bridge</a> · <a href="#bond">Bond</a> · <a href="#flow-network-security">Flow Network Security</a></p>
+        </div>
+
+        <div class="term" id="oplog">
+          <p class="name">OpLog</p>
+          <p class="def">The persistent write buffer in DSF. On each node's hot tier (NVMe/SSD). Receives writes from Stargate, replicates to peer node OpLogs (RF2 or RF3), acknowledges to VM after durable. Drains asynchronously to Extent Store. The source of DSF's low-latency write characteristic.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#stargate">Stargate</a> · <a href="#extent-store">Extent Store</a> · <a href="#rf-replication-factor">RF</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="p">P</h2>
+      <div class="terms">
+
+        <div class="term" id="parallel-running">
+          <p class="name">Parallel-running</p>
+          <p class="def">Period during migration when source and target platforms both operate. Common for risk-managed cutovers (run new platform alongside old, validate, switch). Costs both platforms' operational expenses simultaneously. Plan 1-3 months for typical migrations; longer for complex environments.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#cutover">Cutover</a> · <a href="#hybrid-steady-state">Hybrid steady-state</a></p>
+        </div>
+
+        <div class="term" id="per-core-licensing">
+          <p class="name">Per-core licensing</p>
+          <p class="def">Subscription model where customers pay per CPU core in their cluster (not per-VM, not per-CPU socket). Used by NCI, NCM, and post-Broadcom VMware. Multi-year terms with discount tiers. True-up provisions for mid-term core additions.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#true-up">True-up</a> · <a href="#vcf-vmware-cloud-foundation">VCF</a></p>
+        </div>
+
+        <div class="term" id="pilot-wave">
+          <p class="name">Pilot wave</p>
+          <p class="def">The first migration wave: 5-20 low-risk VMs (typically internal IT-team-owned, low criticality, representative of common patterns). Validates platform, tooling, processes. Establishes runbook for subsequent waves. Skipping pilot is the common project-failure pattern.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#production-wave">Production wave</a> · <a href="#move">Move</a></p>
+        </div>
+
+        <div class="term" id="pithos">
+          <p class="name">Pithos</p>
+          <p class="def">The DSF service that owns vDisk configuration metadata. Tracks which vDisks exist, their attributes, their associations with VMs and Storage Containers. Smaller than Cassandra but architecturally distinct.</p>
+          <p class="meta">Module 2 (Architecture), Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#cassandra">Cassandra</a> · <a href="#vdisk">vDisk</a></p>
+        </div>
+
+        <div class="term" id="prism">
+          <p class="name">Prism</p>
+          <p class="def">The umbrella name for the Nutanix management plane. Two products: Prism Element (per-cluster) and Prism Central (multi-cluster). Replaces vCenter, vSphere LCM, Aria Operations, and Aria Automation in functional scope, integrated into one management surface.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#prism-element">Prism Element</a> · <a href="#prism-central-pc">Prism Central</a> · <a href="#ncm-nutanix-cloud-manager">NCM</a></p>
+        </div>
+
+        <div class="term" id="prism-central-pc">
+          <p class="name">Prism Central (PC)</p>
+          <p class="def">The multi-cluster Nutanix management product. Deployed as a VM (single or scale-out three-VM). Aggregates multiple Prism Element clusters. Hosts Categories, Projects, Self-Service, X-Play, Intelligent Operations. The platform-wide management surface. Required for advanced features beyond per-cluster operations.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#prism-element">Prism Element</a> · <a href="#categories">Categories</a> · <a href="#projects">Projects</a> · <a href="#ncm-nutanix-cloud-manager">NCM</a></p>
+        </div>
+
+        <div class="term" id="prism-element">
+          <p class="name">Prism Element (PE)</p>
+          <p class="def">The per-cluster Nutanix management UI. Runs in-cluster (on the CVMs), no separate appliance to deploy. Accessible at the Cluster VIP on port 9440. Handles VM lifecycle, host management, storage configuration, networking, monitoring for that cluster.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#prism-central-pc">Prism Central</a> · <a href="#cluster-virtual-ip-vip">Cluster Virtual IP</a></p>
+        </div>
+
+        <div class="term" id="production-wave">
+          <p class="name">Production wave</p>
+          <p class="def">A migration wave moving production workloads. Three typical waves: Wave 1 (low-tier, Tier-2/Tier-3, 50-200 VMs), Wave 2 (Tier-1, 200-600 VMs), Wave 3 (mission-critical, Tier-0, smallest count, highest scrutiny). Risk-sequenced to build confidence wave by wave.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#pilot-wave">Pilot wave</a> · <a href="#cutover">Cutover</a></p>
+        </div>
+
+        <div class="term" id="projects">
+          <p class="name">Projects</p>
+          <p class="def">First-class multi-tenancy construct in Prism Central. Group of VMs, networks, images, and quotas with assigned users and roles. Richer than vCenter's resource pools. Used for environment separation (Dev/Test/Prod), business-unit isolation, service-provider tenancy.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#categories">Categories</a> · <a href="#multi-tenancy">Multi-tenancy</a></p>
+        </div>
+
+        <div class="term" id="protection-domain-pd">
+          <p class="name">Protection Domain (PD)</p>
+          <p class="def">Legacy DSF construct for protecting groups of VMs/vDisks together. Configured in Prism Element. Manual VM membership. Single replication and snapshot schedule per PD. Continues to work; superseded by Protection Policies for new deployments.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#protection-policy">Protection Policy</a></p>
+        </div>
+
+        <div class="term" id="protection-policy">
+          <p class="name">Protection Policy</p>
+          <p class="def">Modern protection construct in Prism Central. Category-driven membership (auto-enrollment). Multiple schedules. Tied to Recovery Plans for orchestrated failover. The recommended protection construct for new deployments.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#protection-domain-pd">Protection Domain</a> · <a href="#recovery-plan">Recovery Plan</a> · <a href="#categories">Categories</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="r">R</h2>
+      <div class="terms">
+
+        <div class="term" id="recovery-plan">
+          <p class="name">Recovery Plan (Nutanix Disaster Recovery / formerly Leap)</p>
+          <p class="def">The runbook construct inside <strong>Nutanix Disaster Recovery</strong> (the current product name; formerly branded <strong>Leap</strong>). Lives in Prism Central. Defines what VMs are protected (via category match), startup order (groups), network mapping, IP remapping, pre/post checks, and test failover capability. The SRM functional equivalent on Nutanix. "Leap" still appears in older docs and customer vocabulary; the product was renamed but the runbook construct kept the "Recovery Plan" name.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#srm-site-recovery-manager">SRM</a> · <a href="#protection-policy">Protection Policy</a> · <a href="#async-replication">Async Replication</a></p>
+        </div>
+
+        <div class="term" id="rf-replication-factor">
+          <p class="name">RF (Replication Factor)</p>
+          <p class="def">The per-Storage-Container setting determining how many copies of every write DSF stores. RF2 (two copies, 50% effective capacity, single-failure tolerance), RF3 (three copies, 33% effective capacity, two-failure tolerance). Most workloads run RF2 with backup; mission-critical or compliance-driven workloads may run RF3.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#storage-container">Storage Container</a> · <a href="#ec-x-erasure-coding">EC-X</a></p>
+        </div>
+
+        <div class="term" id="risk-register">
+          <p class="name">Risk register</p>
+          <p class="def">Living document tracking identified migration risks, mitigations, ownership, and status. Reviewed weekly with project lead, monthly with executive sponsor. New risks added as discovered. Categories: technical, operational, commercial, relationship.</p>
+          <p class="meta">Module 10 (Migration).</p>
+          <p class="see"><span class="label">See also:</span><a href="#pilot-wave">Pilot wave</a> · <a href="#dependency-mapping">Dependency mapping</a></p>
+        </div>
+
+        <div class="term" id="rpo-recovery-point-objective">
+          <p class="name">RPO (Recovery Point Objective)</p>
+          <p class="def">The maximum acceptable data loss measured in time. RPO 1-hour means up to 1 hour of data may be lost in a disaster. Drives replication mode choice: zero RPO (Metro Availability), sub-15-minute (NearSync), 1-hour-plus (Async).</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#rto-recovery-time-objective">RTO</a> · <a href="#async-replication">Async Replication</a> · <a href="#nearsync">NearSync</a> · <a href="#metro-availability">Metro Availability</a></p>
+        </div>
+
+        <div class="term" id="rto-recovery-time-objective">
+          <p class="name">RTO (Recovery Time Objective)</p>
+          <p class="def">The maximum acceptable downtime during recovery. RTO 30-minute means service must be restored within 30 minutes of disaster. Drives orchestration design: Recovery Plan automation, startup order, validation checks. Works alongside RPO; the two together define DR requirements.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#rpo-recovery-point-objective">RPO</a> · <a href="#recovery-plan">Recovery Plan</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="s">S</h2>
+      <div class="terms">
+
+        <div class="term" id="s3">
+          <p class="name">S3</p>
+          <p class="def">The de-facto standard object storage API, originated by AWS. Nutanix Objects is S3-compatible: standard S3 endpoints, signatures, requests. Tools that work with AWS S3 work with Objects with endpoint-only changes (Veeam, Commvault, custom applications, AWS SDKs).</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-objects">Nutanix Objects</a> · <a href="#bucket">Bucket</a></p>
+        </div>
+
+        <div class="term" id="saml">
+          <p class="name">SAML</p>
+          <p class="def">Security Assertion Markup Language, the standard for identity federation. Prism Central supports SAML 2.0 for SSO with major identity providers (Azure AD/Entra ID, Okta, Ping, etc.). Configured once in Prism Central; applies across the platform.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#prism-central-pc">Prism Central</a></p>
+        </div>
+
+        <div class="term" id="self-service-formerly-calm">
+          <p class="name">Self-Service (formerly Calm)</p>
+          <p class="def">The application blueprint and provisioning automation in NCM Ultimate. Define application stacks as blueprints with parameters; users self-provision through a service catalog. Aria Automation (vRA) functional equivalent. Brand renamed from "Calm" to "Self-Service."</p>
+          <p class="meta">Module 4 (Prism), Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#ncm-nutanix-cloud-manager">NCM</a> · <a href="#x-play">X-Play</a></p>
+        </div>
+
+        <div class="term" id="self-service-restore-ssr">
+          <p class="name">Self-Service Restore (SSR)</p>
+          <p class="def">The end-user-facing recovery feature in Nutanix Files. Snapshots exposed via the Windows "Previous Versions" tab. Users restore deleted files or earlier versions without IT involvement. Eliminates routine help-desk tickets for file recovery.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-files">Nutanix Files</a> · <a href="#application-consistent-snapshot">Application-consistent snapshot</a></p>
+        </div>
+
+        <div class="term" id="service-insertion">
+          <p class="name">Service Insertion</p>
+          <p class="def">The Flow Virtual Networking capability to insert third-party network services (firewalls, load balancers, IDS/IPS) into traffic flow. Common pattern: Palo Alto VM-Series, Check Point, Fortinet inserted for deep packet inspection while Flow Network Security handles VM-tier microsegmentation.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#flow-virtual-networking-fvn">Flow Virtual Networking</a> · <a href="#flow-network-security">Flow Network Security</a></p>
+        </div>
+
+        <div class="term" id="smb-server-message-block">
+          <p class="name">SMB (Server Message Block)</p>
+          <p class="def">The Windows-native file-sharing protocol. Nutanix Files supports SMB 2.x and 3.x with full Active Directory integration (Kerberos, ACLs, ABE, DFS-N).</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-files">Nutanix Files</a> · <a href="#nfs-network-file-system">NFS</a></p>
+        </div>
+
+        <div class="term" id="srm-site-recovery-manager">
+          <p class="name">SRM (Site Recovery Manager)</p>
+          <p class="def">VMware's DR orchestration product. Comparison anchor for Recovery Plans. SRM has 15+ years of maturity with deep VMware integration. Recovery Plans is younger, integrated, and capable for typical use. Coexistence pattern (SRM on ESXi-on-Nutanix) is common for established SRM deployments.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#recovery-plan">Recovery Plan</a> · <a href="#esxi-on-nutanix">ESXi-on-Nutanix</a></p>
+        </div>
+
+        <div class="term" id="stargate">
+          <p class="name">Stargate</p>
+          <p class="def">The DSF data-path service. Runs on every CVM. Receives I/O from local hypervisor, writes to local OpLog, replicates to peer OpLogs (RF2/RF3), acknowledges to VM. Manages reads from Content Cache, Extent Store, or remote nodes. The "controller" of the distributed storage layer.</p>
+          <p class="meta">Module 2 (Architecture), Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#cassandra">Cassandra</a> · <a href="#curator">Curator</a> · <a href="#oplog">OpLog</a> · <a href="#content-cache">Content Cache</a></p>
+        </div>
+
+        <div class="term" id="storage-container">
+          <p class="name">Storage Container</p>
+          <p class="def">The logical "datastore equivalent" carved from the Storage Pool. The policy boundary in DSF: RF, compression, deduplication, erasure coding, advertised capacity, reservations are configured per-container. A cluster typically has multiple containers with different policies.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#storage-pool">Storage Pool</a> · <a href="#vdisk">vDisk</a> · <a href="#rf-replication-factor">RF</a></p>
+        </div>
+
+        <div class="term" id="storage-pool">
+          <p class="name">Storage Pool</p>
+          <p class="def">The aggregate of all physical disks in a cluster. Each cluster has one Storage Pool by default. Storage Containers are carved from the pool. Almost never manipulated directly.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#storage-container">Storage Container</a> · <a href="#dsf-distributed-storage-fabric">DSF</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="t">T</h2>
+      <div class="terms">
+
+        <div class="term" id="tco-total-cost-of-ownership">
+          <p class="name">TCO (Total Cost of Ownership)</p>
+          <p class="def">The complete cost of an infrastructure decision over a time horizon (typically 5 years). Categories: hardware, software, services, support, training, migration, operations, decommissioning. A real TCO has all categories, year-by-year breakdown, stated assumptions, and sensitivity analysis. CFOs evaluate models on this standard.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#bom-bill-of-materials">BoM</a> · <a href="#capex-opex">Capex / Opex</a></p>
+        </div>
+
+        <div class="term" id="true-up">
+          <p class="name">True-up</p>
+          <p class="def">Contractual provision in multi-year subscriptions allowing customers to add cores during the term at agreed pricing. Protects customers from being locked at year-1 sizing for the entire term. Always negotiate true-up clauses for multi-year deals.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#per-core-licensing">Per-core licensing</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="v">V</h2>
+      <div class="terms">
+
+        <div class="term" id="v4-api">
+          <p class="name">v4 API</p>
+          <p class="def">The unified Nutanix REST API. JSON-based. URL pattern <code>https://&lt;pc-or-pe-ip&gt;:9440/api/&lt;namespace&gt;/&lt;version&gt;/&lt;path&gt;</code> (e.g., <code>/api/vmm/v4.0/ahv/config/vms</code>). Single authentication, consistent schema across compute, storage, networking, automation. GA shipped with Prism Central 2024.3 / AOS 7.0. Officially supports a PowerShell module, Python SDK (<code>ntnx-&lt;namespace&gt;-py-client</code> per namespace), Terraform provider (<code>nutanix/nutanix</code>), and Ansible collection (<code>nutanix.ansible</code>). A community-maintained Pulumi provider exists but is not officially supported by Nutanix. Earlier API versions (v0.8, v1, v2, v3) are deprecating starting Q4 2026.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#prism-central-pc">Prism Central</a> · <a href="#x-play">X-Play</a></p>
+        </div>
+
+        <div class="term" id="vdisk">
+          <p class="name">vDisk</p>
+          <p class="def">The virtual disk attached to a VM in Nutanix. Logical entity backed by extents (1 MB units). Cassandra tracks every extent's location. From the VM's perspective, vDisk looks like a SCSI or virtio block device.</p>
+          <p class="meta">Module 5 (DSF).</p>
+          <p class="see"><span class="label">See also:</span><a href="#extent">Extent</a> · <a href="#extent-group">Extent Group</a> · <a href="#cassandra">Cassandra</a></p>
+        </div>
+
+        <div class="term" id="vcf-vmware-cloud-foundation">
+          <p class="name">VCF (VMware Cloud Foundation)</p>
+          <p class="def">VMware's bundled subscription including vSphere, vSAN, NSX-T, and Aria. Post-Broadcom licensing tier that customers must often buy to get vSphere. Per-core subscription. Comparison anchor for the Broadcom math.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#vvf-vmware-vsphere-foundation">VVF</a> · <a href="#per-core-licensing">Per-core licensing</a> · <a href="#nsx-t">NSX-T</a></p>
+        </div>
+
+        <div class="term" id="virtual-network">
+          <p class="name">Virtual Network</p>
+          <p class="def">The Nutanix equivalent of a vSphere port group. Carries a VLAN tag (or none), optional IPAM, connection to a bridge (typically <code>br0</code>). VMs attach to virtual networks. Configured in Prism Element or Prism Central.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#vlan">VLAN</a> · <a href="#ipam-ip-address-management">IPAM</a> · <a href="#bridge-br0-br0local">Bridge</a></p>
+        </div>
+
+        <div class="term" id="vlan">
+          <p class="name">VLAN</p>
+          <p class="def">Standard 802.1Q virtual LAN tagging. Configured per Nutanix Virtual Network. AHV's OVS handles the tagging on <code>br0</code>. Inter-VLAN traffic exits via the bond uplink to the physical network for routing.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#virtual-network">Virtual Network</a> · <a href="#open-vswitch-ovs">Open vSwitch</a></p>
+        </div>
+
+        <div class="term" id="volume-group">
+          <p class="name">Volume Group</p>
+          <p class="def">The management unit in Nutanix Volumes. Logical grouping of one or more LUNs presented together over iSCSI. Useful for application-aware grouping (e.g., all the disks for a SQL Server cluster instance).</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-volumes">Nutanix Volumes</a> · <a href="#iscsi">iSCSI</a></p>
+        </div>
+
+        <div class="term" id="vpc-virtual-private-cloud">
+          <p class="name">VPC (Virtual Private Cloud)</p>
+          <p class="def">Isolated multi-subnet network environment with its own IP space and policies. Provided by Flow Virtual Networking. Concept similar to AWS VPC. Multiple VPCs per cluster enable hard tenant isolation; routing rules enable controlled inter-VPC communication.</p>
+          <p class="meta">Module 6 (Networking).</p>
+          <p class="see"><span class="label">See also:</span><a href="#flow-virtual-networking-fvn">Flow Virtual Networking</a> · <a href="#multi-tenancy">Multi-tenancy</a></p>
+        </div>
+
+        <div class="term" id="vss-volume-shadow-copy-service">
+          <p class="name">VSS (Volume Shadow Copy Service)</p>
+          <p class="def">Microsoft Windows feature for application-consistent snapshots. Coordinates application quiesce (databases, Exchange, AD) so the snapshot captures a consistent state. NGT provides the integration; Nutanix snapshots leverage VSS when application-consistent mode is requested.</p>
+          <p class="meta">Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#application-consistent-snapshot">Application-consistent snapshot</a> · <a href="#ngt-nutanix-guest-tools">NGT</a></p>
+        </div>
+
+        <div class="term" id="vvf-vmware-vsphere-foundation">
+          <p class="name">VVF (VMware vSphere Foundation)</p>
+          <p class="def">VMware subscription tier including vSphere and vSAN. The level below VCF (which adds NSX-T and Aria). Post-Broadcom packaging change. Per-core subscription.</p>
+          <p class="meta">Module 9 (Licensing).</p>
+          <p class="see"><span class="label">See also:</span><a href="#vcf-vmware-cloud-foundation">VCF</a> · <a href="#per-core-licensing">Per-core licensing</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="w">W</h2>
+      <div class="terms">
+
+        <div class="term" id="witness-vm">
+          <p class="name">Witness VM</p>
+          <p class="def">Small VM at a third failure domain that provides quorum during partition events for Metro Availability and two-node ROBO cluster deployments. <strong>Minimum spec: 2 vCPU, 6 GB RAM, 25 GB disk.</strong> Network latency between cluster and Witness should be ≤ 500 ms. Witness VMs <strong>cannot run on AWS or Azure cloud platforms</strong>. When the protected sites lose connectivity, the Witness arbitrates which site continues operation.</p>
+          <p class="meta">Module 2 (Architecture), Module 7 (Data Protection).</p>
+          <p class="see"><span class="label">See also:</span><a href="#metro-availability">Metro Availability</a></p>
+        </div>
+
+        <div class="term" id="worm-write-once-read-many">
+          <p class="name">WORM (Write Once Read Many)</p>
+          <p class="def">Immutability feature in Nutanix Objects. Once written, objects cannot be modified or deleted until the retention period expires. Used for compliance archives: financial records, healthcare data, legal archives. Regulatory-grade protection.</p>
+          <p class="meta">Module 8 (Unified Storage).</p>
+          <p class="see"><span class="label">See also:</span><a href="#nutanix-objects">Nutanix Objects</a> · <a href="#bucket">Bucket</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="x">X</h2>
+      <div class="terms">
+
+        <div class="term" id="x-play">
+          <p class="name">X-Play</p>
+          <p class="def">Event-driven automation engine in Prism Central (NCM Ultimate tier typically). Playbooks have triggers (alerts, events, schedules) and actions (notifications, API calls, snapshots, external scripts). Common patterns: alert-to-Slack, threshold-to-snapshot, event-to-ServiceNow ticket.</p>
+          <p class="meta">Module 4 (Prism).</p>
+          <p class="see"><span class="label">See also:</span><a href="#self-service-formerly-calm">Self-Service</a> · <a href="#v4-api">v4 API</a> · <a href="#ncm-nutanix-cloud-manager">NCM</a></p>
+        </div>
+
+      </div>
+
+      <h2 class="letter" id="z">Z</h2>
+      <div class="terms">
+
+        <div class="term" id="zeus">
+          <p class="name">Zeus</p>
+          <p class="def">The cluster-consensus service in DSF. Uses Apache Zookeeper underneath. Maintains cluster state, coordinates cluster-wide decisions (leader election, configuration consensus). Lightweight but architecturally critical.</p>
+          <p class="meta">Module 2 (Architecture).</p>
+          <p class="see"><span class="label">See also:</span><a href="#cassandra">Cassandra</a> · <a href="#curator">Curator</a></p>
+        </div>
+
+      </div>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p>The glossary entries are derived from and verified against the per-module References sections. The most cross-cutting authorities used here:</p>
+        <ul>
+          <li><a href="https://www.nutanixbible.com/"><strong>Nutanix Bible</strong></a>. The single most useful Nutanix-architecture reference; cited from nearly every glossary entry.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options"><strong>Nutanix Cloud Platform Software Options</strong></a>. Authoritative source for the NCI / NCM / NCP licensing structure that replaced AOS Pro / Ultimate.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/list"><strong>Nutanix Portal Tech Notes</strong></a> (TN series). TN-2027 (data protection), TN-2032 (data efficiency), TN-2041 (Files), TN-2106 (Objects), TN-2094 (Flow) are referenced from many entries.</li>
+          <li><a href="https://www.nutanix.dev/"><strong>Nutanix Developer Portal</strong></a>. v4 API reference, SDKs, automation tooling.</li>
+          <li><a href="https://www.nutanix.com/library/datasheets/nci"><strong>Nutanix Cloud Infrastructure (NCI) Datasheet</strong></a>. NCI Pro / Ultimate tier comparison; backs the AOS-to-NCI rename throughout.</li>
+          <li><a href="https://www.nutanix.com/library/datasheets/ncm"><strong>Nutanix Cloud Manager (NCM) Datasheet</strong></a>. NCM tier structure and what is NOT bundled with NCI.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2083-ROBO-Deployment:witness-requirements.html"><strong>BP-2083 ROBO Deployment · Witness Requirements</strong></a>. Authoritative Witness VM specs (2 vCPU / 6 GB / 25 GB / ≤500 ms / not on AWS or Azure).</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each entry's "Module N" reference points back to where the term is taught in depth.</li>
+          <li><strong>See also:</strong> Internal links walk between related entries within this glossary.</li>
+          <li><strong>Comparison Matrix:</strong> Appendix B has feature-by-feature comparisons (Nutanix vs VMware, Nutanix vs NetApp). <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Objections:</strong> Appendix D has response scripts for common customer pushbacks. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>CLI Reference:</strong> Appendix G has command syntax for the operational terms (<code>ncli</code>, <code>acli</code>, <code>manage_ovs</code>, <code>curator_cli</code>). <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <div class="back-home">
+        <a href="../../index.html">← Back to Home · Modules and Appendices</a>
+      </div>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-a-glossary</span>
+  </footer>
+
+</body>
+</html>
