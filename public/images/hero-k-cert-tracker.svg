@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="k-title k-desc">
+  <title id="k-title">Appendix K hero: Nutanix cert ladder</title>
+  <desc id="k-desc">A four-tier cert ladder rendered as ascending platforms: NCA Associate at the bottom, four NCP Professional certs (MCI, NS, US, MCA) in the middle, NCM-MCI Master above, NCX-MCI Expert at the top. Each tier shows typical prep time, format, and prerequisite arrow. Mono path top-left. Purple appendix accent.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="ladderGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="40%" stop-color="#00d4ff"/>
+      <stop offset="80%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-k-cert-tracker
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · CERT LADDER · BLUEPRINT COVERAGE · STUDY SEQUENCE</text>
+
+  <text x="800" y="146" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">THE NUTANIX CERT LADDER</text>
+
+  <!-- Vertical ladder rail (gradient) -->
+  <rect x="794" y="200" width="12" height="500" rx="6" fill="url(#ladderGrad)" opacity="0.45"/>
+
+  <!-- TIER 4: NCX (Expert) -->
+  <g transform="translate(540, 180)" filter="url(#purpleGlow)">
+    <rect x="0" y="0" width="520" height="80" rx="10" fill="rgba(251,191,36,0.16)" stroke="#fbbf24" stroke-width="2"/>
+    <text x="20" y="32" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#fbbf24" letter-spacing="0.04em">NCX-MCI · Expert</text>
+    <text x="20" y="56" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8f0ff">panel defense · ~50% pass rate · 6-12 months active prep</text>
+    <text x="500" y="56" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">live oral exam</text>
+  </g>
+
+  <!-- arrow up -->
+  <text x="800" y="290" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#c084fc">↑</text>
+
+  <!-- TIER 3: NCM (Master) -->
+  <g transform="translate(540, 300)" filter="url(#purpleGlow)">
+    <rect x="0" y="0" width="520" height="80" rx="10" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="2"/>
+    <text x="20" y="32" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#c084fc" letter-spacing="0.04em">NCM-MCI · Master</text>
+    <text x="20" y="56" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8f0ff">100-150 hr · 6+ months production exp · perf-based + MCQ</text>
+    <text x="500" y="56" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">~4 hrs proctored</text>
+  </g>
+
+  <text x="800" y="410" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#c084fc">↑</text>
+
+  <!-- TIER 2: NCP family (4 certs side-by-side) -->
+  <g transform="translate(120, 420)">
+    <text x="680" y="0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">NCP · PROFESSIONAL · 60-100 HR EACH · 60 QUESTIONS · ~120 MIN</text>
+
+    <g transform="translate(0, 18)">
+      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.16)" stroke="#00d4ff" stroke-width="1.6"/>
+      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-MCI</text>
+      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Multicloud Infrastructure</text>
+      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">core HCI · target first</text>
+    </g>
+
+    <g transform="translate(340, 18)">
+      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-NS</text>
+      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Network Security</text>
+      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">Flow + OVS + VPC overlays</text>
+    </g>
+
+    <g transform="translate(680, 18)">
+      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-US</text>
+      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Unified Storage</text>
+      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">Files · Objects · Volumes</text>
+    </g>
+
+    <g transform="translate(1020, 18)">
+      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-MCA</text>
+      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Multicloud Automation</text>
+      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">v4 API · Self-Service · X-Play</text>
+    </g>
+  </g>
+
+  <text x="800" y="546" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#c084fc">↑</text>
+
+  <!-- TIER 1: NCA -->
+  <g transform="translate(540, 560)" filter="url(#purpleGlow)">
+    <rect x="0" y="0" width="520" height="80" rx="10" fill="rgba(52,211,153,0.16)" stroke="#34d399" stroke-width="2"/>
+    <text x="20" y="32" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#34d399" letter-spacing="0.04em">NCA · Associate</text>
+    <text x="20" y="56" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8f0ff">20-40 hr · 75 MCQ · ~90 min · entry-level concepts</text>
+    <text x="500" y="56" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">online proctored</text>
+  </g>
+
+  <!-- Year markers on the side -->
+  <g transform="translate(80, 230)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">YEAR 5+</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">expert</text>
+  </g>
+  <g transform="translate(80, 350)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">YEAR 3</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">mastery</text>
+  </g>
+  <g transform="translate(80, 470)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">YEAR 1-2</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">specialization</text>
+  </g>
+  <g transform="translate(80, 600)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">MONTH 1-2</text>
+    <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">foundation</text>
+  </g>
+
+  <!-- Right-side: Free-exam + discipline strip -->
+  <g transform="translate(1180, 230)">
+    <rect x="0" y="0" width="320" height="100" rx="10" fill="rgba(251,191,36,0.10)" stroke="#fbbf24" stroke-width="1.4"/>
+    <text x="20" y="28" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#fbbf24" letter-spacing="0.10em">FREE-EXAM PROGRAM</text>
+    <text x="20" y="50" font-family="JetBrains Mono, monospace" font-size="11" fill="#e8f0ff">runs through Jun 30, 2026</text>
+    <text x="20" y="72" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">verify at</text>
+    <text x="20" y="88" font-family="JetBrains Mono, monospace" font-size="10" fill="#00d4ff">university.nutanix.com</text>
+  </g>
+
+  <g transform="translate(1180, 360)">
+    <rect x="0" y="0" width="320" height="120" rx="10" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1.4"/>
+    <text x="20" y="28" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">THREE PRINCIPLES</text>
+    <text x="20" y="50" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">cert is the proof</text>
+    <text x="20" y="68" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">knowledge is the goal</text>
+    <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">hands-on beats reading</text>
+    <text x="20" y="104" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">verify the blueprint</text>
+  </g>
+
+  <g transform="translate(1180, 510)">
+    <rect x="0" y="0" width="320" height="100" rx="10" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+    <text x="20" y="28" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">RECOMMENDED ORDER</text>
+    <text x="20" y="50" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">NCA → NCP-MCI → NCP-US</text>
+    <text x="20" y="68" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">→ NCP-NS → NCP-MCA</text>
+    <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">→ NCM-MCI → NCX-MCI</text>
+  </g>
+
+  <!-- Bottom: closing strip -->
+  <g transform="translate(120, 770)">
+    <text x="680" y="0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">PASS THE CERTS · BUILD THE CREDENTIALS · NEVER CONFUSE THE CERT FOR COMPETENCE</text>
+  </g>
+
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
