@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
   <title>NutaNIX · A Field Guide for BlueAlly Solutions Architects</title>
   <meta name="description" content="A learning and reference site built from a complete 10-module Nutanix curriculum. Cert prep, customer-conversation language, whiteboard-ready diagrams. Built for working Solutions Architects." />
   <meta name="color-scheme" content="dark" />
@@ -250,6 +251,68 @@
       margin-top: 4px;
     }
 
+    /* Appendices grid: same shape as modules, distinct lettering and accent. */
+    section.appendices {
+      margin: 64px 0 0;
+    }
+    section.appendices h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    section.appendices .lead {
+      color: var(--text-tertiary);
+      font-size: 14px;
+      margin: 0 0 16px;
+      max-width: 70ch;
+    }
+    .appendix-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 980px) {
+      .appendix-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    }
+    @media (max-width: 420px) {
+      .appendix-grid { grid-template-columns: 1fr; }
+    }
+    .appendix-card {
+      padding: 14px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192, 132, 252, 0.55);
+      border-radius: 6px;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms ease, transform 150ms ease;
+    }
+    a.appendix-card:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); transform: translateY(-1px); }
+    .appendix-card.disabled { opacity: 0.7; }
+    .appendix-card .letter {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #c084fc;
+      letter-spacing: 0.10em;
+      font-weight: 600;
+    }
+    .appendix-card .title {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 4px;
+    }
+    .appendix-card .lede {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
     /* Closing image: sits between .page and footer.
        Full-bleed; fades into bg-base on TOP (handoff from page content)
        and on BOTTOM (handoff to footer text). */
@@ -363,6 +426,24 @@
         <a class="module-card" href="modules/08-unified-storage/index.html"><span class="num">08</span><span class="title">Unified Storage</span><span class="lede">Files, Objects, Volumes.</span></a>
         <a class="module-card" href="modules/09-licensing-economics/index.html"><span class="num">09</span><span class="title">Licensing and Economics</span><span class="lede">The conversation customers want to have.</span></a>
         <a class="module-card" href="modules/10-migration-path/index.html"><span class="num">10</span><span class="title">Migration Path</span><span class="lede">Move, design tradeoffs, what goes wrong.</span></a>
+      </div>
+    </section>
+
+    <section class="appendices">
+      <h2>Eleven appendices</h2>
+      <p class="lead">Reference toolkit. Pull these up between meetings: definitions, comparisons, objection framings, sizing math, CLI, and the cert blueprints in one place.</p>
+      <div class="appendix-grid">
+        <div class="appendix-card disabled"><span class="letter">A</span><span class="title">Glossary</span><span class="lede">Every term, hover-card linked from every module.</span></div>
+        <div class="appendix-card disabled"><span class="letter">B</span><span class="title">Comparison Matrix</span><span class="lede">Side-by-side vs VMware, NetApp, Pure, Cisco.</span></div>
+        <div class="appendix-card disabled"><span class="letter">C</span><span class="title">Scenarios</span><span class="lede">Final-assessment design exercises.</span></div>
+        <div class="appendix-card disabled"><span class="letter">D</span><span class="title">Objections Handbook</span><span class="lede">45 objections with honest framings.</span></div>
+        <div class="appendix-card disabled"><span class="letter">E</span><span class="title">Discovery Questions</span><span class="lede">What to ask in the first 60 minutes.</span></div>
+        <div class="appendix-card disabled"><span class="letter">F</span><span class="title">Sizing Rules</span><span class="lede">Per-core, per-TB, capacity math you can run live.</span></div>
+        <div class="appendix-card disabled"><span class="letter">G</span><span class="title">CLI Reference</span><span class="lede">ncli, acli, afs, manage_ovs, curator_cli.</span></div>
+        <div class="appendix-card disabled"><span class="letter">H</span><span class="title">Competitive Matrix</span><span class="lede">HCI vs HCI deep dive: VxRail, SimpliVity, more.</span></div>
+        <div class="appendix-card disabled"><span class="letter">I</span><span class="title">Reference Architectures</span><span class="lede">Multi-site DR, backup consolidation, ROBO, edge.</span></div>
+        <div class="appendix-card disabled"><span class="letter">J</span><span class="title">POC Playbook</span><span class="lede">Demo flows, success criteria, customer scripts.</span></div>
+        <div class="appendix-card disabled"><span class="letter">K</span><span class="title">Cert Tracker</span><span class="lede">Blueprint coverage map across all 10 modules.</span></div>
       </div>
     </section>
 
