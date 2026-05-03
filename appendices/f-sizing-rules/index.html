@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix F: Sizing Rules</title>
+  <meta name="description" content="Back-of-envelope sizing rules for initial customer conversations. Cluster fundamentals, compute density, raw-to-usable storage math, network sizing, replication bandwidth, workload-specific rules (VDI, databases, containers, AI/ML), Files / Objects / Volumes, DR cluster sizing, Prism Central tiers. Always run Sizer for the proposal." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix F: Sizing Rules" />
+  <meta property="og:description" content="Back-of-envelope sizing rules. Quote ranges, plan for failure, reserve headroom. Sizer is the source of truth." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/f-sizing-rules/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix F: Sizing Rules" />
+  <meta name="twitter:description" content="Sizing rules for early customer conversations. Always run Sizer for the proposal." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%), linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%); }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ul { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ul li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+    article.body h3 {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 600; letter-spacing: -0.005em;
+      color: var(--text-primary);
+      margin: 28px 0 8px;
+      scroll-margin-top: 110px;
+    }
+
+    article.body p { margin: 0 0 12px; color: var(--text-primary); max-width: 70ch; font-size: 15px; }
+    article.body ul, article.body ol { color: var(--text-primary); padding-left: 22px; margin: 0 0 14px; font-size: 15px; }
+    article.body ul li, article.body ol li { margin-bottom: 6px; }
+    article.body strong { color: var(--text-primary); font-weight: 600; }
+    article.body em { color: var(--text-primary); font-style: italic; }
+    article.body code { font-family: var(--font-mono); font-size: 0.92em; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-primary); }
+    article.body pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; color: var(--text-primary); }
+
+    article.body table {
+      width: 100%; border-collapse: collapse; margin: 14px 0;
+      font-size: 14px; color: var(--text-primary);
+    }
+    article.body th, article.body td {
+      padding: 9px 12px; text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    article.body th {
+      font-family: var(--font-mono); font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary); font-weight: 600;
+      background: var(--bg-surface);
+    }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .rule {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--success);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .rule .label {
+      font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+      color: var(--success);
+    }
+    .rule strong { color: var(--text-primary); }
+
+    .sizer-note {
+      margin: 8px 0 16px;
+      padding: 10px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .sizer-note .label {
+      color: var(--accent-purple); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.10em; font-size: 10px;
+      display: inline-block; margin-right: 8px;
+    }
+
+    .references { margin-top: 36px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin: 0 0 12px; font-size: 22px; }
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; font-size: 14px; }
+    .references li { color: var(--text-secondary); margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body table { font-size: 12px; }
+      article.body th, article.body td { padding: 7px 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">F · Sizing Rules</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-f-sizing.svg" alt="A storage-math waterfall on the left showing 100 TB raw stepping down through RF2 (50 TB) and compression (~85 TB) and a 15-percent reservation to ~72 TB effective usable, alongside a VM-density bar chart on the right showing VDI sessions per node by user profile (Task 180, Knowledge 120, Power user 80, Developer 50). Practical-ceiling and failure-tolerance strips at the bottom." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-f-sizing-rules</div>
+      <h1 class="module-title">Appendix F · Sizing Rules</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">back-of-envelope</span>
+        <span class="chip">~25% accuracy for early conversations</span>
+        <span class="chip">Sizer is the source of truth</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>These are rules of thumb for initial sizing conversations. They get you within roughly 25% for early planning. Final sizing requires Nutanix Sizer with actual workload data, and that's the number that goes into the proposal. When in doubt, run Sizer.</p>
+      <p><strong>The discipline at a glance:</strong></p>
+      <ul>
+        <li><strong>Quote ranges.</strong> "8-12 nodes" is honest; "10 nodes" implies precision you don't have.</li>
+        <li><strong>Plan for failure.</strong> RF2 means you need at least N+1 nodes; RF3 needs N+2. Don't size for the happy path.</li>
+        <li><strong>Reserve headroom.</strong> Practical utilization ceiling is 70-80%. Above that, performance degrades and growth headroom evaporates.</li>
+        <li><strong>Sizer is the source of truth.</strong> These rules accelerate the conversation; they don't replace formal sizing.</li>
+      </ul>
+    </div>
+
+    <nav class="cat-jump" aria-label="Jump to topic">
+      <a href="#fundamentals">Fundamentals</a>
+      <a href="#compute">Compute</a>
+      <a href="#storage">Storage</a>
+      <a href="#network">Network</a>
+      <a href="#workloads">Workloads</a>
+      <a href="#services">Files / Objects / Volumes</a>
+      <a href="#dr">DR</a>
+      <a href="#prism-central">Prism Central</a>
+      <a href="#sizer">Sizer + Mistakes</a>
+    </nav>
+
+    <article class="body">
+
+      <h2 class="cat" id="fundamentals">Cluster Sizing Fundamentals</h2>
+
+      <h3 id="cluster-min">Minimum and Recommended Cluster Sizes</h3>
+      <ul>
+        <li><strong>Production minimum:</strong> 3 nodes. RF2 is supported; rebuild after a node loss runs at degraded redundancy.</li>
+        <li><strong>Production recommended baseline:</strong> 4-5 nodes. Provides N+1 redundancy with margin during rebuild.</li>
+        <li><strong>Production sweet spot:</strong> 6-12 nodes for typical mid-market workloads. Performance scales linearly; rebuild times stay reasonable; failure tolerance is solid.</li>
+        <li><strong>Larger clusters:</strong> 16-32 nodes for enterprise. Beyond ~32 nodes, evaluate splitting into multiple clusters for blast-radius management.</li>
+        <li><strong>ROBO / edge:</strong> 1-node and 2-node clusters supported with specific licensing and feature limitations. Used for retail stores, branch offices, edge sites where datacenter-class redundancy isn't required.</li>
+      </ul>
+      <div class="sizer-note"><span class="label">For final sizing</span>Nutanix Sizer factors workload mix, growth, and failure-tolerance targets into the recommended cluster size.</div>
+
+      <h3 id="failure-tolerance">Failure-Tolerance Math</h3>
+      <table>
+        <thead><tr><th>Scheme</th><th>Failures Tolerated</th><th>Minimum Nodes</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>RF2</strong></td><td>1</td><td>3 (N+1)</td><td>Rebuild at degraded redundancy; second failure during window can cause data loss</td></tr>
+          <tr><td><strong>RF3</strong></td><td>2 simultaneous</td><td>5 (N+2)</td><td>Survives one more failure during rebuild</td></tr>
+          <tr><td><strong>EC-X 4+1</strong></td><td>1</td><td>6 recommended</td><td>Stripe technically requires 5 nodes; Nutanix recommends 6+ for rebuild headroom (per TN-2032)</td></tr>
+          <tr><td><strong>EC-X 4+2</strong></td><td>2</td><td>7+</td><td>Two-failure tolerance with capacity savings vs RF3</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>Don't run RF3 unless you genuinely need it. Most enterprise workloads run RF2 with proper backup. RF3 is for compliance-mandated, mission-critical, or workloads without external backup.</div>
+
+
+      <h2 class="cat" id="compute">Compute Sizing</h2>
+
+      <h3 id="vm-density">VM Density per Node</h3>
+      <p><strong>Typical mid-market mixed VMs (2 vCPU, 8 GB RAM average):</strong></p>
+      <ul>
+        <li>All-NVMe nodes with 32-48 cores, 768 GB-1 TB RAM: 50-100 VMs per node depending on density assumptions</li>
+        <li>Account for the CVM tax (8-16 vCPU, 32-64 GB RAM consumed per node)</li>
+        <li>Practical ceiling: target 70% CPU utilization at peak; leave 30% for spike absorption and rebalancing</li>
+      </ul>
+      <p><strong>Heavier VMs (4-8 vCPU, 16-32 GB RAM):</strong> 20-40 VMs per node typical. More memory-bound than CPU-bound for typical mixed workloads.</p>
+      <p><strong>VDI density:</strong></p>
+      <ul>
+        <li>Persistent: 80-150 desktops per node depending on user profile</li>
+        <li>Non-persistent / pooled: 100-200 per node</li>
+        <li>Driver: RAM, not CPU, for typical knowledge-worker desktops</li>
+      </ul>
+      <div class="sizer-note"><span class="label">For final sizing</span>Sizer takes per-VM specs as input and produces node count.</div>
+
+      <h3 id="cvm-tax">CVM Tax Planning</h3>
+      <p>Every Nutanix node runs a Controller VM. Reserve compute for it:</p>
+      <table>
+        <thead><tr><th>Workload Profile</th><th>CVM vCPU</th><th>CVM RAM</th></tr></thead>
+        <tbody>
+          <tr><td>Light (low IOPS, small cluster)</td><td>8</td><td>32 GB</td></tr>
+          <tr><td>Standard (typical enterprise)</td><td>12</td><td>48 GB</td></tr>
+          <tr><td>Heavy (high IOPS, larger cluster)</td><td>16</td><td>64 GB</td></tr>
+          <tr><td>Very heavy (dense IOPS, large cluster)</td><td>20+</td><td>96+ GB</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>Reserve 10-15% of node compute for the CVM. Sizer is more precise.</div>
+
+      <h3 id="headroom">Headroom Recommendations</h3>
+      <table>
+        <thead><tr><th>Resource</th><th>Practical Ceiling</th><th>Reasoning</th></tr></thead>
+        <tbody>
+          <tr><td>CPU</td><td>70% peak utilization</td><td>Spike absorption, rebalancing, growth</td></tr>
+          <tr><td>RAM</td><td>75-85%</td><td>Memory ballooning is degraded performance</td></tr>
+          <tr><td>Storage</td><td>75%</td><td>Capacity for snapshots, growth, rebalancing</td></tr>
+          <tr><td>Network bandwidth</td><td>60-70% peak</td><td>Replication and rebuild traffic compete</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>Size for 18-24 months of growth at the projected rate. Beyond that, plan for cluster expansion (add nodes).</div>
+
+
+      <h2 class="cat" id="storage">Storage Sizing</h2>
+
+      <h3 id="raw-to-usable">Raw to Usable Conversion</h3>
+      <p>The path from "how much disk are we buying" to "how much can the customer actually store":</p>
+      <table>
+        <thead><tr><th>Step</th><th>Multiplier</th><th>Example (100 TB raw)</th></tr></thead>
+        <tbody>
+          <tr><td>Raw drive capacity</td><td>1.00</td><td>100 TB</td></tr>
+          <tr><td>Replication Factor 2</td><td>0.50</td><td>50 TB</td></tr>
+          <tr><td>Replication Factor 3</td><td>0.33</td><td>33 TB</td></tr>
+          <tr><td>EC-X 4+1 (instead of RF2)</td><td>0.80</td><td>80 TB</td></tr>
+          <tr><td>EC-X 4+2 (instead of RF3)</td><td>0.67</td><td>67 TB</td></tr>
+          <tr><td>Compression (typical 1.5-2.0× effective)</td><td>1.5-2.0×</td><td>75-100 TB after RF2</td></tr>
+          <tr><td>Dedup (workload-dependent, 1.0-1.5×)</td><td>1.0-1.5×</td><td>additional savings on high-similarity data</td></tr>
+          <tr><td>Free-space reservation</td><td>0.85</td><td>reduce by 15% for headroom</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb (mixed enterprise)</span>RF2 + compression + 15% headroom: ~70-80% effective usable vs raw before dedup. RF2 + compression + dedup on VDI: ~110-150% effective vs raw (higher than 100% due to dedup). RF3 + compression: ~50-55% effective vs raw.</div>
+
+      <h3 id="compression">Compression Reduction Ratios</h3>
+      <p>Quote ranges, not marketing peaks:</p>
+      <table>
+        <thead><tr><th>Workload Type</th><th>Typical Compression Ratio</th></tr></thead>
+        <tbody>
+          <tr><td>OS images (Windows, Linux)</td><td>1.5-2.5×</td></tr>
+          <tr><td>General application data</td><td>1.2-1.8×</td></tr>
+          <tr><td>Already-compressed (video, images, encrypted)</td><td>1.0-1.1×</td></tr>
+          <tr><td>Database (varies)</td><td>1.3-2.0×</td></tr>
+          <tr><td>Backup data</td><td>1.0-1.2× (already-compressed by backup software)</td></tr>
+          <tr><td>Logs</td><td>2-4×</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>Plan on 1.5-2.0× effective compression for mixed enterprise. Anything above 2× is a bonus. Watch out for customer expectations primed by marketing 4-6× claims; reset early.</div>
+
+      <h3 id="dedup">Deduplication Ratios</h3>
+      <table>
+        <thead><tr><th>Workload Type</th><th>Typical Dedup Ratio</th></tr></thead>
+        <tbody>
+          <tr><td>VDI persistent profiles</td><td>2-3×</td></tr>
+          <tr><td>VDI non-persistent (similar OS images)</td><td>3-5×</td></tr>
+          <tr><td>General-purpose VMs</td><td>1.0-1.3×</td></tr>
+          <tr><td>Application data</td><td>1.0-1.2×</td></tr>
+          <tr><td>Backup data</td><td>1.0× (already deduped by backup software)</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>Enable on-disk dedup for VDI; leave disabled for general workloads unless POC shows ratio above 1.3×. Dedup adds metadata overhead; not free.</div>
+
+
+      <h2 class="cat" id="network">Network Sizing</h2>
+
+      <h3 id="link-speed">Link Speed Recommendations</h3>
+      <table>
+        <thead><tr><th>Cluster Profile</th><th>Recommended Link</th></tr></thead>
+        <tbody>
+          <tr><td>Small ROBO (1-3 nodes, light workload)</td><td>10 GbE</td></tr>
+          <tr><td>Mid-market production (4-8 nodes)</td><td>25 GbE</td></tr>
+          <tr><td>Enterprise production (8+ nodes)</td><td>25 GbE minimum, 100 GbE for high-density</td></tr>
+          <tr><td>All-NVMe / very-high-IOPS</td><td>100 GbE</td></tr>
+          <tr><td>VDI at scale</td><td>25 GbE acceptable, 100 GbE for &gt;2,000 sessions</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>25 GbE is the sweet spot for new deployments. 10 GbE is sufficient for small clusters and many ROBO sites. 100 GbE matters when you're saturating 25 GbE on east-west traffic. 2 NICs minimum for redundancy; 4 NICs typical for separating data, management, replication.</div>
+
+      <h3 id="bond-mode">Bond Mode Selection</h3>
+      <table>
+        <thead><tr><th>Bond Mode</th><th>Use Case</th><th>Switch Coordination</th></tr></thead>
+        <tbody>
+          <tr><td><strong>active-backup</strong></td><td>Simplest; good for most ROBO and small production</td><td>None</td></tr>
+          <tr><td><strong>balance-slb</strong></td><td>Active-active without LACP; good throughput, no switch config</td><td>None</td></tr>
+          <tr><td><strong>balance-tcp / LACP</strong></td><td>Best throughput and load distribution</td><td>Required (LACP on switch side)</td></tr>
+          <tr><td><strong>active-active LACP</strong></td><td>Maximum performance, MC-LAG capable</td><td>Required, advanced switch features</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>active-backup for ROBO and small clusters where simplicity matters. balance-slb for production where switch coordination is hard. LACP for production where the network team controls the switch and can configure it. Nutanix has historically cautioned against LACP without disciplined switch-side validation.</div>
+
+      <h3 id="repl-bw">Replication Bandwidth Estimation</h3>
+      <p>For DR planning, estimate WAN bandwidth needed for replication:</p>
+      <p><strong>Async replication (1-hour RPO):</strong></p>
+      <ul>
+        <li>Sustained bandwidth ≈ daily change rate / 86,400 seconds × 8 (for bits)</li>
+        <li>Typical mid-market environment changes 2-5% of total capacity per day</li>
+        <li>Example: 50 TB cluster, 3% daily change = 1.5 TB/day = ~150 Mbps sustained</li>
+        <li>Plus 50% headroom for catch-up after WAN outages</li>
+      </ul>
+      <p><strong>NearSync (sub-15-min RPO):</strong> bandwidth must support continuous change rate plus burst handling. Typically 2-3× the Async sustained number. Plus low-latency requirement (&lt;5 ms RTT typical).</p>
+      <p><strong>Metro Availability:</strong> synchronous; must support write throughput in both directions. Plan for full peak write bandwidth, not average.</p>
+
+
+      <h2 class="cat" id="workloads">Workload-Specific Sizing</h2>
+
+      <h3 id="vdi">VDI</h3>
+      <p><strong>Baseline density assumption:</strong> 100 sessions per node for typical knowledge workers, all-NVMe configuration with 768+ GB RAM.</p>
+      <table>
+        <thead><tr><th>Profile</th><th>Sessions per Node</th></tr></thead>
+        <tbody>
+          <tr><td>Task worker (light apps, browser)</td><td>120-180</td></tr>
+          <tr><td>Knowledge worker (Office, browser, light specialty)</td><td>80-120</td></tr>
+          <tr><td>Power user (specialty apps, multiple tools)</td><td>50-80</td></tr>
+          <tr><td>Developer / heavy workload</td><td>30-50</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Storage:</strong> persistent profiles 30-80 GB per user before dedup; non-persistent share base image plus delta. Plan capacity for the full population, not the concurrent count, if persistent.</p>
+      <div class="rule"><span class="label">Boot-storm planning</span>All-NVMe handles boot storms gracefully; spinning-disk configurations don't. For VDI at scale, all-NVMe is non-negotiable.</div>
+
+      <h3 id="databases">Databases</h3>
+      <p><strong>SQL Server / Oracle (typical OLTP):</strong></p>
+      <ul>
+        <li>All-NVMe required for predictable performance</li>
+        <li>Plan p99 read latency under 2-3 ms; validate during POC</li>
+        <li>RF2 typical; RF3 for compliance-mandated tier-0</li>
+        <li>Storage IOPS: 5,000-50,000 per database typical, validate against current array metrics</li>
+      </ul>
+      <table>
+        <thead><tr><th>DB Size</th><th>Cluster Size Suggestion</th></tr></thead>
+        <tbody>
+          <tr><td>Up to 5 TB</td><td>Fits in any production cluster</td></tr>
+          <tr><td>5-20 TB</td><td>6+ nodes for I/O distribution</td></tr>
+          <tr><td>20-50 TB</td><td>8+ nodes; consider dedicated database cluster</td></tr>
+          <tr><td>50+ TB</td><td>Dedicated database cluster; specialty design</td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="containers">Containers and Kubernetes</h3>
+      <ul>
+        <li>3-5 worker nodes for small Kubernetes clusters</li>
+        <li>Scales to 100+ worker nodes for large platforms</li>
+        <li>Storage via Nutanix CSI driver (persistent volumes)</li>
+        <li>Containers vary widely; size by total CPU/RAM/storage demand from the workload, then add 20-30% for Kubernetes overhead</li>
+      </ul>
+
+      <h3 id="ai-ml">AI / ML Training</h3>
+      <ul>
+        <li>AHV supports GPU passthrough</li>
+        <li>Density: 1-8 GPUs per node typical</li>
+        <li>Network bandwidth becomes critical for distributed training (100 GbE recommended)</li>
+        <li>Storage: balance fast scratch (local NVMe) with capacity (DSF for datasets)</li>
+      </ul>
+      <div class="rule"><span class="label">Rule of thumb</span>AI training is rarely a Nutanix-only workload at scale; customers often combine on-prem (steady-state datasets) with cloud GPU (burst training). Hybrid is the typical pattern.</div>
+
+
+      <h2 class="cat" id="services">Files / Objects / Volumes Sizing</h2>
+
+      <h3 id="files">Files</h3>
+      <p><strong>FSVM count and capacity:</strong></p>
+      <table>
+        <thead><tr><th>File Server Size</th><th>FSVM Count</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Up to 50 TB</td><td>3 FSVMs</td><td>Default baseline</td></tr>
+          <tr><td>50-200 TB</td><td>3-5 FSVMs</td><td>Scale per workload</td></tr>
+          <tr><td>200 TB+</td><td>5+ FSVMs, possibly multiple File Servers</td><td>Scale and isolation</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Reservations and overhead:</strong> DSF storage container backing Files uses the same RF and compression rules as general DSF. Plan 20% overhead for snapshots, file system metadata, growth headroom.</p>
+      <p><strong>Use cases:</strong></p>
+      <ul>
+        <li>User home directories: many small files; dedup may not help; size by capacity</li>
+        <li>Application file shares: varies by application</li>
+        <li>Backup repositories: large sequential writes; compression helps; consider Objects instead</li>
+      </ul>
+      <div class="rule"><span class="label">Rule of thumb</span>Start with 3 FSVMs (the HA minimum); scale up if performance metrics show saturation. Single-FSVM File Servers exist for 1-2 node small environments per TN-2041, but give up HA-across-FSVMs.</div>
+
+      <h3 id="objects">Objects</h3>
+      <ul>
+        <li>Minimum 3 Object Service VMs per Object Store for HA</li>
+        <li>More Object Service VMs = more concurrent S3 throughput</li>
+        <li>Capacity bounded by underlying cluster's available storage container space</li>
+      </ul>
+      <p><strong>By use case:</strong></p>
+      <ul>
+        <li>Backup target: capacity-driven sizing; throughput is moderate</li>
+        <li>Active application data (logs, intermediate results): throughput-driven; more Object Service VMs</li>
+        <li>Archive: capacity-driven; minimal Object Service VMs sufficient</li>
+      </ul>
+
+      <h3 id="volumes">Volumes</h3>
+      <ul>
+        <li><strong>Per LUN:</strong> up to 64 TB practical (verify against current Nutanix limits at design time)</li>
+        <li><strong>Per Volume Group:</strong> multiple LUNs grouped; limits are generous</li>
+        <li><strong>Per cluster:</strong> thousands of LUNs supported</li>
+        <li><strong>Multi-pathing:</strong> plan multiple iSCSI portal IPs (one per node typical) for path redundancy</li>
+      </ul>
+
+
+      <h2 class="cat" id="dr">DR Cluster Sizing</h2>
+
+      <h3 id="dr-pattern">Primary-to-DR Sizing Relationship</h3>
+      <table>
+        <thead><tr><th>DR Pattern</th><th>DR Cluster Size</th></tr></thead>
+        <tbody>
+          <tr><td>Cold DR (rebuild from backup)</td><td>None / minimal</td></tr>
+          <tr><td>Warm DR (Async replication, restart on failover)</td><td>50-100% of primary capacity</td></tr>
+          <tr><td>Hot DR (active-passive Metro)</td><td>100% of primary capacity</td></tr>
+          <tr><td>Active-Active Metro</td><td>Both sites size for full load if other fails</td></tr>
+        </tbody>
+      </table>
+      <div class="rule"><span class="label">Rule of thumb</span>DR cluster typically sized for 60-80% of primary if running steady-state DR; 100% for active-active. NC2 cloud DR sizes for failover capacity (Tier-1 + Tier-2 typically); use cloud's elastic provisioning to scale up only at failover time.</div>
+
+      <h3 id="bandwidth-calc">Replication Bandwidth Quick Calculation</h3>
+      <p><strong>Step 1:</strong> Estimate daily change rate. Typical mid-market: 2-5% of total capacity per day.</p>
+      <p><strong>Step 2:</strong> Convert to per-second sustained bandwidth.</p>
+<pre>Daily change (TB) × 8,000 (Gbits per TB) / 86,400 (seconds per day) = sustained Gbps</pre>
+      <p><strong>Step 3:</strong> Apply replication-mode multiplier:</p>
+      <table>
+        <thead><tr><th>Mode</th><th>Multiplier on Sustained</th></tr></thead>
+        <tbody>
+          <tr><td>Async (1+ hour RPO)</td><td>1.0× plus 50% catchup headroom</td></tr>
+          <tr><td>NearSync</td><td>2.0-3.0× for burst handling</td></tr>
+          <tr><td>Metro</td><td>Sized for peak write throughput, not average</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Step 4:</strong> Add WAN compression benefit if applicable. Native compression in Nutanix replication often provides 1.3-1.7× effective bandwidth multiplier.</p>
+      <p><strong>Worked example:</strong></p>
+      <ul>
+        <li>50 TB cluster, 3% daily change = 1.5 TB/day</li>
+        <li>Sustained: 1.5 × 8,000 / 86,400 = 0.139 Gbps = 139 Mbps</li>
+        <li>Async with catchup headroom: 200 Mbps</li>
+        <li>After native compression: ~130-150 Mbps effective</li>
+      </ul>
+      <div class="rule"><span class="label">Rule of thumb</span>For mid-market, plan 200-500 Mbps WAN for typical Async DR; more for NearSync; full peak write rate for Metro.</div>
+
+
+      <h2 class="cat" id="prism-central">Prism Central Sizing</h2>
+
+      <h3 id="pc-tiers">Single PC vs Scale-Out</h3>
+      <p><strong>X-Small PC VM</strong> (introduced for smaller environments):</p>
+      <ul>
+        <li>Suitable for up to <strong>5 clusters, 50 hosts, 500 VMs</strong></li>
+        <li>Lowest footprint option; appropriate for ROBO, edge, and small-environment central management</li>
+        <li>Strict scale ceiling: exceeding the X-Small limits results in an unsupported configuration</li>
+      </ul>
+      <p><strong>Single PC VM (Small / Standard):</strong> typical mid-market through enterprise deployments. Single VM; simpler operations. Single point of failure for management plane (clusters continue running if PC is down).</p>
+      <p><strong>Scale-out PC (3 VMs):</strong> required for the largest deployments and production-grade PC HA. Distributed across hosts. Recommended for enterprise deployments at scale.</p>
+      <p><strong>PC VM resource specs</strong> (verify against current Prism Central sizing guide; numbers evolve):</p>
+      <table>
+        <thead><tr><th>PC Mode</th><th>vCPU</th><th>RAM</th><th>Storage</th></tr></thead>
+        <tbody>
+          <tr><td>X-Small</td><td>4</td><td>18 GB</td><td>100 GB</td></tr>
+          <tr><td>Small</td><td>6</td><td>26 GB</td><td>500 GB</td></tr>
+          <tr><td>Large (3-VM scale-out)</td><td>6 per VM (× 3)</td><td>28 GB per VM (× 3)</td><td>500 GB per VM</td></tr>
+        </tbody>
+      </table>
+      <div class="sizer-note"><span class="label">For final sizing</span>Verify against the current Nutanix Prism Central sizing guide at design time. The size tiers and their VM-count ceilings shift between PC versions; exceeding documented limits results in an unsupported configuration.</div>
+
+
+      <h2 class="cat" id="sizer">When to Use These Rules vs Sizer</h2>
+
+      <h3 id="when-rules">Use these rules</h3>
+      <ul>
+        <li>Discovery and early proposal conversations</li>
+        <li>Whiteboard sessions</li>
+        <li>Rough TCO estimates for first-pass evaluation</li>
+        <li>"Will this fit on 8 nodes or 12?" judgment calls</li>
+      </ul>
+
+      <h3 id="when-sizer">Switch to formal Sizer when</h3>
+      <ul>
+        <li>Customer wants a binding proposal</li>
+        <li>Specific performance targets need validation</li>
+        <li>Workload has unusual patterns (specialty databases, AI training, HPC-adjacent)</li>
+        <li>Multi-cluster or multi-site designs need coordination</li>
+        <li>DR sizing where bandwidth matters</li>
+      </ul>
+
+      <h3 id="sizer-flow">The Sizer workflow</h3>
+      <ol>
+        <li>Customer provides workload data: VM list, resource consumption, growth assumptions.</li>
+        <li>Sizer produces node count, model recommendations, capacity calculations.</li>
+        <li>Output is the basis for the proposal BoM.</li>
+        <li>Sizer output gets validated during POC and refined before order.</li>
+      </ol>
+      <p>The rules in this appendix accelerate the conversation; Sizer produces the number that goes in the contract. Don't conflate the two.</p>
+
+      <h3 id="mistakes">Common Sizing Mistakes to Avoid</h3>
+      <ol>
+        <li><strong>Sizing for the average, not the peak.</strong> Workloads have spikes; size for peak with headroom.</li>
+        <li><strong>Ignoring the CVM tax.</strong> Reserve compute for the CVM; it's not free.</li>
+        <li><strong>Forgetting failure-tolerance math.</strong> RF2 needs N+1; RF3 needs N+2.</li>
+        <li><strong>Quoting marketing compression ratios.</strong> 1.5-2.5× is the honest range for mixed workloads.</li>
+        <li><strong>Skipping the headroom reservation.</strong> 100% utilization is theoretical; 70-80% is the practical ceiling.</li>
+        <li><strong>Underestimating replication bandwidth.</strong> Async DR is rarely the smallest WAN bill.</li>
+        <li><strong>Missing growth headroom.</strong> Size for 18-24 months; expand cluster after.</li>
+        <li><strong>Trusting customer's "typical" without validation.</strong> Their typical is often a peak; their peak is often catastrophic. Measure during POC.</li>
+        <li><strong>Forgetting that Files, Objects, Volumes consume the same DSF capacity.</strong> Size the cluster for total demand, not per-service.</li>
+        <li><strong>Skipping PC sizing.</strong> Prism Central is part of the design, not an afterthought.</li>
+      </ol>
+
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p>The sizing rules in this appendix are heuristics for early conversations; the authoritative source is Nutanix Sizer for binding sizing, and the public sources below for tier-by-tier specifics:</p>
+        <ul>
+          <li><a href="../../modules/02-nutanix-architecture/index.html#references"><strong>Module 2 · CVM resource sizing</strong></a>. Backs the CVM tax table.</li>
+          <li><a href="../../modules/05-dsf-storage/index.html#references"><strong>Module 5 · RF / EC / compression / dedup math</strong></a>. Backs the storage-sizing section. TN-2032 confirms the EC 4+1 recommended minimum of 6 nodes.</li>
+          <li><a href="../../modules/06-networking-flow/index.html#references"><strong>Module 6 · Bond modes, link-speed recommendations</strong></a>. Backs the network-sizing section, including Nutanix's official caution on LACP coordination.</li>
+          <li><a href="../../modules/07-data-protection/index.html#references"><strong>Module 7 · Async / NearSync / Metro replication, change-rate planning</strong></a>. Backs the replication-bandwidth section.</li>
+          <li><a href="../../modules/08-unified-storage/index.html#references"><strong>Module 8 · Files, Objects, Volumes sizing constraints</strong></a>. Backs the FSVM count guidance (single-FSVM exception per TN-2041).</li>
+          <li><a href="https://next.nutanix.com/intelligent-operations-26/resource-requirements-for-prism-central-38237"><strong>Resource Requirements for Prism Central</strong></a> (Nutanix Community). Authoritative current PC vCPU / RAM / disk per tier.</li>
+          <li><a href="https://www.nutanix.com/tech-center/blog/introducing-x-small-prism-central-a-low-footprint-option-for-smaller-environments"><strong>Introducing X-Small Prism Central</strong></a> (Nutanix Tech Center). X-Small PC ceiling: 5 clusters / 50 hosts / 500 VMs.</li>
+          <li><a href="https://portal.nutanix.com/page/documents/details?targetId=Prism-Central-Guide-vpc_7_3:upg-pc-upgrade-limitations-c.html"><strong>Limitations of Prism Central Deployment</strong></a> (Nutanix Portal v7.3). Strict-ceiling-equals-unsupported framing.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each section links back to the module where the topic is taught in depth.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> defines the terms used.</li>
+          <li><strong>Comparison Matrix:</strong> <a href="../b-comparison-matrix/index.html">Appendix B</a> helps with competitive sizing comparisons.</li>
+          <li><strong>Reference Architectures:</strong> Appendix I has fully-sized reference designs. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>POC Playbook:</strong> Appendix J has the validation steps that confirm sizing during proof-of-concept. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Nutanix Sizer:</strong> the official tool for binding sizing. Always run Sizer for the proposal.</li>
+        </ul>
+      </section>
+
+      <div class="back-home">
+        <a href="../../index.html">← Back to Home · Modules and Appendices</a>
+      </div>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-f-sizing-rules</span>
+  </footer>
+
+</body>
+</html>
