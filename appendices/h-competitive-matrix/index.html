@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix H: Competitive Matrix</title>
+  <meta name="description" content="HCI-vs-HCI competitive playbook. Nine competitors with quick-read briefings, discovery questions, kill questions, win and loss conditions, and what-not-to-say guardrails. Read before competitive engagements; use to disqualify deals that don't fit, and to surface real situation through questions instead of feature-list theater." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix H: Competitive Matrix" />
+  <meta property="og:description" content="HCI-vs-HCI playbook · 9 competitors · discovery, kill questions, win/loss conditions. Honest framings, not feature-list theater." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/h-competitive-matrix/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix H: Competitive Matrix" />
+  <meta name="twitter:description" content="HCI-vs-HCI competitive playbook with 9 competitors, discovery questions, and win/loss conditions." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%),
+        linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ol { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ol li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+    article.body h2.cat .num {
+      font-family: var(--font-mono);
+      font-size: 13px; color: var(--accent-purple); font-weight: 700;
+      letter-spacing: 0.04em; margin-right: 12px; vertical-align: middle;
+      padding: 3px 9px; border: 1px solid rgba(192,132,252,0.45); border-radius: 4px;
+    }
+
+    article.body h3.sub {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 600; color: var(--text-secondary);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      margin: 24px 0 8px;
+    }
+
+    article.body p { color: var(--text-secondary); }
+    article.body p strong { color: var(--text-primary); }
+
+    .quickread, .when-they, .when-we, .ask, .kill, .nope, .position, .win, .loss, .disqualify {
+      margin: 8px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .quickread  { border-left: 3px solid var(--accent-purple); }
+    .when-they  { border-left: 3px solid var(--warning); }
+    .when-we    { border-left: 3px solid var(--success); }
+    .ask        { border-left: 3px solid var(--accent-cyan); }
+    .kill       { border-left: 3px solid var(--accent-purple); background: var(--bg-elevated); }
+    .nope       { border-left: 3px solid var(--danger); }
+    .position   { border-left: 3px solid var(--text-secondary); }
+    .win        { border-left: 3px solid var(--success); }
+    .loss       { border-left: 3px solid var(--danger); }
+    .disqualify { border-left: 3px solid var(--warning); background: var(--bg-elevated); }
+
+    .quickread .label, .when-they .label, .when-we .label, .ask .label, .kill .label,
+    .nope .label, .position .label, .win .label, .loss .label, .disqualify .label {
+      font-family: var(--font-mono); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+    }
+    .quickread .label  { color: var(--accent-purple); }
+    .when-they .label  { color: var(--warning); }
+    .when-we .label    { color: var(--success); }
+    .ask .label        { color: var(--accent-cyan); }
+    .kill .label       { color: var(--accent-purple); }
+    .nope .label       { color: var(--danger); }
+    .position .label   { color: var(--text-secondary); }
+    .win .label        { color: var(--success); }
+    .loss .label       { color: var(--danger); }
+    .disqualify .label { color: var(--warning); }
+
+    .quickread p, .position p, .win p, .loss p, .disqualify p { margin: 0; }
+    .quickread strong, .when-they strong, .when-we strong, .ask strong, .kill strong,
+    .nope strong, .position strong, .win strong, .loss strong, .disqualify strong { color: var(--text-primary); }
+
+    .quickread ul, .when-they ul, .when-we ul, .ask ol, .kill ol, .nope ul {
+      margin: 0; padding-left: 20px;
+    }
+    .quickread li, .when-they li, .when-we li, .ask li, .kill li, .nope li { margin-bottom: 4px; }
+
+    .ask li, .kill li {
+      font-family: var(--font-mono); font-size: 13px; color: var(--text-primary);
+      line-height: 1.55;
+    }
+    .kill li { color: var(--text-primary); }
+    .ask li::marker, .kill li::marker { color: var(--accent-purple); }
+
+    .grid-two {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin: 8px 0;
+    }
+    @media (max-width: 760px) {
+      .grid-two { grid-template-columns: 1fr; }
+    }
+
+    .see-also {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+      margin: 12px 0 0;
+    }
+    .see-also a { color: var(--accent-cyan); }
+    .see-also .label { color: var(--text-tertiary); margin-right: 6px; }
+
+    .how-to-use, .references, .crossrefs, .common-mistakes, .landscape {
+      margin-top: 36px; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .how-to-use h2, .references h2, .common-mistakes h2, .landscape h2 { margin: 0 0 12px; font-size: 22px; }
+    .how-to-use h3, .common-mistakes h3, .landscape h3 { margin: 16px 0 8px; font-size: 14px; color: var(--accent-purple); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; }
+    .how-to-use ol, .common-mistakes ol { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .how-to-use ol li, .common-mistakes ol li { margin-bottom: 8px; }
+    .how-to-use ol li strong, .common-mistakes ol li strong, .landscape strong { color: var(--text-primary); }
+    .how-to-use p, .landscape p { color: var(--text-secondary); font-size: 14px; margin: 14px 0 0; }
+    .landscape ul { padding-left: 20px; color: var(--text-secondary); font-size: 14px; }
+    .landscape li { margin-bottom: 6px; }
+
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body h2.cat { font-size: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">H · Competitive Matrix</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-h-competitive.svg" alt="A central Nutanix node ringed by nine competitor chips connected by purple dashed lines, each labeled with the competitive verb (compete, transition, mixed, consumption, ecosystem, edge, niche, DIY, gravity), with a five-principle strip at the bottom." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-h-competitive-matrix</div>
+      <h1 class="module-title">Appendix H · Competitive Matrix</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">9 competitors</span>
+        <span class="chip">discovery + kill questions</span>
+        <span class="chip">win/loss conditions</span>
+        <span class="chip">post-Broadcom era</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>This is the competitive playbook for head-to-head HCI evaluations. <a href="../b-comparison-matrix/index.html">Appendix B</a> has the feature comparisons; this appendix covers positioning, discovery questions, win and loss conditions, and the conversational moves that work or backfire.</p>
+      <p>Senior SAs win competitive deals by understanding the customer's actual situation better than the competition, not by claiming feature superiority that any vendor can claim. The questions you ask matter more than the slides you present.</p>
+      <p><strong>Five principles for competitive engagements:</strong></p>
+      <ol>
+        <li><strong>Disqualify early.</strong> Some deals you should not chase. Naming the loss conditions saves time.</li>
+        <li><strong>Acknowledge the competitor's genuine strengths.</strong> Customers test honesty.</li>
+        <li><strong>Surface the real situation through questions, not assertions.</strong></li>
+        <li><strong>Sell the customer outcome, not the platform comparison.</strong></li>
+        <li><strong>Invite the head-to-head POC where you're confident. Avoid where you're not.</strong></li>
+      </ol>
+    </div>
+
+    <nav class="cat-jump" aria-label="Competitor jump nav">
+      <a href="#vmware">VMware / VxRail</a>
+      <a href="#hyperflex">Cisco HyperFlex</a>
+      <a href="#hpe">HPE</a>
+      <a href="#apex">Dell APEX</a>
+      <a href="#azure">Azure Stack HCI</a>
+      <a href="#scale">Scale Computing</a>
+      <a href="#stormagic">StorMagic</a>
+      <a href="#sds">Ceph / SDS</a>
+      <a href="#status-quo">Status Quo</a>
+      <a href="#landscape">2026 Landscape</a>
+      <a href="#mistakes">Common Mistakes</a>
+    </nav>
+
+    <article class="body">
+
+      <!-- ===== VMware ===== -->
+      <h2 class="cat" id="vmware"><span class="num">1</span>VMware (VxRail and vSAN ReadyNodes)</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> VxRail is Dell + VMware's tightly integrated HCI appliance: ESXi + vSAN on Dell hardware, jointly engineered. vSAN ReadyNodes is the broader category of certified hardware running vSAN.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> The leading HCI category historically, especially in mature VMware environments. Post-Broadcom changes have shifted some momentum toward Nutanix and Azure Stack HCI.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When VMware genuinely wins</span>
+          <ul>
+            <li>Customer is deeply committed to long-term VMware strategy and willing to pay post-Broadcom pricing</li>
+            <li>NSX-T is integral to the network architecture and the team isn't ready to evaluate replacements</li>
+            <li>vSphere-only operational discipline is high; cross-platform tolerance is low</li>
+            <li>Specific application stack is VMware-certified-only with no equivalent path</li>
+            <li>Long-term VMware ELA provides protection against per-core changes</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix genuinely wins</span>
+          <ul>
+            <li>Customer is reconsidering the VMware relationship post-Broadcom</li>
+            <li>Cross-hypervisor flexibility (AHV included; ESXi-on-Nutanix supported) is valued</li>
+            <li>Storage consolidation across multiple tiers is in scope (not just compute)</li>
+            <li>DR using NC2 to cloud is in scope</li>
+            <li>Customer wants single-vendor coordination across hypervisor, storage, management</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"What's your VMware renewal trajectory looking like? When does the current term end, and what pricing have you been quoted?"</li>
+          <li>"How heavily are you using NSX-T today, and how do you see it 3 years from now?"</li>
+          <li>"How much of your storage is on vSAN today vs separate arrays? What's the refresh story for the arrays?"</li>
+          <li>"Are you happy with VxRail Manager as the lifecycle layer, or is the multi-product upgrade coordination causing friction?"</li>
+        </ol>
+      </div>
+
+      <div class="kill">
+        <span class="label">Kill questions that turn the conversation</span>
+        <ol>
+          <li>"Beyond the hypervisor, what's your 5-year story for storage consolidation, DR modernization, and management plane simplification? Does VxRail address those, or are they separate workstreams?"</li>
+          <li>"If you stay on VMware, what's your post-Broadcom plan for the next renewal cycle? What's your ceiling on per-core pricing increases?"</li>
+          <li>"What does cross-hypervisor flexibility cost you to have, and what does it cost you not to have? Is keeping AHV as an option valuable to your strategy?"</li>
+        </ol>
+      </div>
+
+      <div class="nope">
+        <span class="label">What NOT to say</span>
+        <ul>
+          <li><strong>"VMware is dying."</strong> Untrue and tactically wrong. VMware retains a massive installed base.</li>
+          <li><strong>"VxRail is just Dell hardware."</strong> The Dell-VMware integration is real and worth acknowledging.</li>
+          <li><strong>"Broadcom is going to destroy VMware."</strong> Speculative; customers see through it.</li>
+        </ul>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Broadcom pricing creates real budget pressure, the customer wants storage consolidation beyond just HCI compute, the customer is open to AHV as a default, the cross-vendor support model appeals (vs Dell-VMware joint), and you bring an honest TCO comparison.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>Customer has a long-term VMware ELA protecting them from post-Broadcom changes, NSX-T is deeply integrated and the team won't evaluate replacements, vCenter / Aria operational expertise is the team's primary skill set, leadership has explicitly committed to VMware as the long-term platform.</p>
+        </div>
+      </div>
+
+      <div class="disqualify">
+        <span class="label">Disqualification signal</span>
+        <p>If all five loss conditions are true, the deal is unlikely to close on Nutanix's timeline. Stay relationship-warm; revisit at next refresh.</p>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../b-comparison-matrix/index.html#ahv-vs-vmware-esxi">B · AHV vs ESXi</a> · <a href="../b-comparison-matrix/index.html#nutanix-dsf-vs-vmware-vsan">B · DSF vs vSAN</a> · <a href="../b-comparison-matrix/index.html#nutanix-vs-dell-vxrail">B · Nutanix vs VxRail</a></p>
+
+      <!-- ===== HyperFlex ===== -->
+      <h2 class="cat" id="hyperflex"><span class="num">2</span>Cisco HyperFlex (Post-EOL Migration)</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> Cisco's HCI platform built on UCS hardware with the HX Data Platform (HXDP) storage layer. Cisco announced HXDP end-of-life in 2024 with a defined runway: <strong>last order date Sep 11, 2024; last bug-fix maintenance Sep 11, 2025; last subscription renewal Feb 28, 2029</strong>. The recommended Cisco-led migration path is <strong>Cisco Compute Hyperconverged with Nutanix</strong>, the joint Cisco-Nutanix partnership product. Existing HyperFlex customers preserve their UCS hardware investment and swap the HCI software stack to Nutanix.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> Active customer base evaluating alternatives. The conversation is rarely "HyperFlex vs Nutanix" anymore; it's "what do we replace HyperFlex with?"</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When Cisco still tries to compete</span>
+          <ul>
+            <li>Cisco proposes a transition path to a different Cisco-led approach (UCS X-Series + non-HX storage, partner solutions)</li>
+            <li>Customer values the existing Cisco relationship and wants Cisco-led whatever-comes-next</li>
+            <li>Compute Cisco UCS is staying; only the HCI piece is changing</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer wants a graceful exit from HyperFlex with minimal disruption</li>
+            <li>The Cisco UCS hardware can stay (Nutanix supports Cisco UCS as an OEM partner); only the software layer changes</li>
+            <li>Customer wants the consolidation story (storage tiers, DR, management) Nutanix offers vs HyperFlex's narrower compute-and-storage focus</li>
+            <li>Customer is evaluating multiple alternatives and wants honest comparison</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"What's your HyperFlex roadmap timeline? Are you planning to stay until end-of-support, or accelerate the transition?"</li>
+          <li>"Is the Cisco UCS hardware staying, or is the hardware getting replaced too?"</li>
+          <li>"What does Cisco's recommended transition path look like, and how does it compare to alternatives?"</li>
+          <li>"What did you originally value about HyperFlex that you'd want to preserve in the next platform?"</li>
+        </ol>
+      </div>
+
+      <div class="kill">
+        <span class="label">Kill questions that turn the conversation</span>
+        <ol>
+          <li>"If your existing UCS hardware can continue running, would migrating just the software layer to Nutanix be operationally simpler than a full hardware-and-software transition?"</li>
+          <li>"What's your appetite for evaluating alternatives that aren't Cisco-led? Is the Cisco relationship the constraint, or the technology choice?"</li>
+          <li>"How does the consolidation conversation sound: replacing HyperFlex plus your separate storage tiers with one Nutanix platform on existing UCS hardware?"</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>This is one of the easier competitive scenarios because the incumbent has a known end-of-life. The senior-SA move is <em>not</em> to gloat about HyperFlex's EOL; it's to be the constructive transition partner. Talk about how to migrate gracefully, preserve hardware investment via the UCS OEM partnership, and capture broader consolidation value beyond what HyperFlex offered.</p>
+      </div>
+
+      <div class="nope">
+        <span class="label">What NOT to say</span>
+        <ul>
+          <li>Anything that disparages Cisco. The customer has a Cisco relationship and likely respects it; preserve that relationship while adding Nutanix.</li>
+          <li><strong>"HyperFlex was always a bad choice."</strong> Doesn't matter now; insulting in retrospect.</li>
+          <li>Pressure-selling the urgency of the EOL date. Customers are aware; trust them to act on their own timeline.</li>
+        </ul>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Customer values preserving UCS hardware, evaluating broader consolidation, and finding a transition partner who respects the existing Cisco relationship. The Nutanix-on-UCS OEM positioning is critical.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>Customer's CIO has committed to a Cisco-led transition path that explicitly excludes Nutanix, or the customer is migrating away from UCS hardware entirely (in which case the UCS-preservation argument doesn't apply).</p>
+        </div>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../b-comparison-matrix/index.html#nutanix-vs-cisco-hyperflex">B · Nutanix vs HyperFlex</a></p>
+
+      <!-- ===== HPE ===== -->
+      <h2 class="cat" id="hpe"><span class="num">3</span>HPE (SimpliVity, Alletra dHCI, GreenLake HCI)</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> HPE has multiple HCI offerings:</p>
+        <ul style="margin-top:6px;">
+          <li><strong>SimpliVity:</strong> legacy acquisition (2017). Inline dedup-and-compression at the storage layer. Smaller installed base; HPE has shifted focus toward Alletra and GreenLake.</li>
+          <li><strong>Alletra dHCI:</strong> disaggregated HCI on HPE hardware with HPE Alletra storage. Different architecture from classic HCI (separate compute and storage tiers managed as one platform).</li>
+          <li><strong>GreenLake HCI:</strong> consumption-based offering combining HPE hardware + various software stacks (including Nutanix on GreenLake).</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>Market position:</strong> HPE's HCI story is fragmented across these offerings. The competitive engagement depends on which one is in play.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When HPE tries to compete</span>
+          <ul>
+            <li>Customer has an existing HPE server-vendor relationship and HPE leads with their integrated stack</li>
+            <li>Customer wants consumption-based / opex-style infrastructure (GreenLake)</li>
+            <li>SimpliVity dedup-and-compression story aligns with the customer's data type</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer wants the broader Nutanix software stack (Files, Objects, Volumes, Flow, NC2) that HPE's HCI offerings don't fully match</li>
+            <li>The HPE relationship can be preserved through the HPE OEM partnership (Nutanix on HPE DX hardware) rather than HPE's own HCI software</li>
+            <li>Cross-hypervisor flexibility is valued</li>
+            <li>Customer wants Nutanix software regardless of hardware vendor</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"Which HPE HCI offering is in scope: SimpliVity, Alletra dHCI, GreenLake?" (The right competitive response differs by offering.)</li>
+          <li>"What's the role of your HPE relationship: hardware-vendor preference, software ecosystem, or both?"</li>
+          <li>"Is the Nutanix-on-HPE-DX option (where you keep the HPE hardware relationship and run Nutanix software) on the table, or is HPE pushing their own software stack?"</li>
+        </ol>
+      </div>
+
+      <div class="kill">
+        <span class="label">Kill questions that turn the conversation</span>
+        <ol>
+          <li>"Are you evaluating the storage consolidation conversation (Files, Objects, Volumes), or just compute-tier HCI? HPE's HCI offerings don't fully address the broader storage consolidation."</li>
+          <li>"Have you considered Nutanix software on HPE hardware (DX appliances) as a way to preserve your HPE relationship and get the Nutanix capabilities you want?"</li>
+          <li>"What's HPE's roadmap commitment to each of their HCI offerings? Are you confident the one you choose has long-term investment?"</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>The HPE OEM partnership (Nutanix-on-HPE-DX) is a genuine competitive position. You can offer the customer Nutanix software with HPE hardware. This often resolves the "keep our HPE relationship" objection cleanly.</p>
+        <p style="margin-top:8px;">For SimpliVity specifically: HPE's investment has clearly slowed. Discovery should surface whether the customer perceives this and is motivated to look at alternatives.</p>
+        <p style="margin-top:8px;">For GreenLake: opex / consumption-based is a real customer preference. Nutanix offers similar consumption models; engage on the financial model rather than the technology.</p>
+      </div>
+
+      <div class="nope">
+        <span class="label">What NOT to say</span>
+        <ul>
+          <li>Disparaging HPE generally; they're a credible hardware vendor and a Nutanix OEM partner.</li>
+          <li>Predictions about SimpliVity's specific future; let the customer draw their own conclusions from HPE's roadmap signals.</li>
+        </ul>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Customer wants broader consolidation beyond HCI compute, or wants Nutanix software on HPE hardware, or perceives HPE's HCI fragmentation as a roadmap risk.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>HPE has a long-term consumption commitment via GreenLake that the customer is satisfied with, or the customer is committed to a single HPE-led infrastructure strategy with no openness to mixed-vendor approaches.</p>
+        </div>
+      </div>
+
+      <!-- ===== Dell APEX ===== -->
+      <h2 class="cat" id="apex"><span class="num">4</span>Dell APEX</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> Dell's consumption-based / as-a-service infrastructure offering. Includes APEX HCI (which can include VxRail underneath) and APEX storage variants.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> Growing footprint as customers move toward opex-style infrastructure consumption. Often positioned by Dell as the answer to capex fatigue.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When Dell APEX competes</span>
+          <ul>
+            <li>Customer wants opex / consumption-based infrastructure</li>
+            <li>Existing strong Dell relationship</li>
+            <li>VxRail underneath APEX gives the VMware-mature customer continuity</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer wants the consumption model but is platform-agnostic about what runs underneath</li>
+            <li>Nutanix's own consumption / subscription options meet the financial requirements</li>
+            <li>Customer wants the Nutanix software stack regardless of consumption vs purchase</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"What's driving the consumption-model interest: capex avoidance, predictable opex, scale-on-demand, or something else?"</li>
+          <li>"Are you committed to the consumption model regardless of underlying platform, or is the platform choice independent of the financing model?"</li>
+          <li>"Have you compared APEX TCO over 5 years against an equivalent purchased platform? The math depends on growth assumptions and discount levels."</li>
+        </ol>
+      </div>
+
+      <div class="kill">
+        <span class="label">Kill questions that turn the conversation</span>
+        <ol>
+          <li>"If you're optimizing for opex predictability, Nutanix's multi-year subscription with consumption-based options can deliver similar financial shape. Want to compare side-by-side?"</li>
+          <li>"Does APEX's underlying VxRail commitment lock you into long-term VMware, even if you wanted to change later?"</li>
+          <li>"How does the APEX commercial structure compare to the operational simplicity benefits? Sometimes consumption simplicity comes with operational complexity (lifecycle managed by vendor vs by you)."</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>Don't fight the consumption-model preference; meet it. Nutanix can be sold via subscription, multi-year commit, even some consumption options. The deal can match APEX's financial shape with Nutanix's technical advantages.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Customer is open to consumption financing on multiple platforms; wants Nutanix's broader capabilities; not strictly committed to Dell as the consumption-vendor.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>Customer has executive-level commitment to Dell APEX as the strategic infrastructure approach; or operations team strictly wants vendor-managed lifecycle that Nutanix's consumption models don't fully match.</p>
+        </div>
+      </div>
+
+      <!-- ===== Azure Stack HCI ===== -->
+      <h2 class="cat" id="azure"><span class="num">5</span>Microsoft Azure Stack HCI</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> Microsoft's HCI offering: Hyper-V + Storage Spaces Direct + Windows Admin Center / Azure portal. Tight Azure cloud integration.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> Strong in Microsoft-aligned shops. Growing footprint as Microsoft pushes the Azure-hybrid story.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When Azure Stack HCI genuinely wins</span>
+          <ul>
+            <li>Customer is heavily invested in Microsoft ecosystem (AD, Entra, M365, Azure)</li>
+            <li>Hyper-V is the established hypervisor and switching costs are high</li>
+            <li>Azure cloud integration is part of the strategy (Azure Arc, Azure Backup, Azure Monitor)</li>
+            <li>Customer's developers and admins are Microsoft-skill-aligned</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer runs both Windows and Linux workloads with first-class needs for both</li>
+            <li>Cross-cloud flexibility (AWS as well as Azure) matters; NC2 supports both</li>
+            <li>Storage consolidation across multiple tiers (file, object, block) is in scope</li>
+            <li>Customer wants broader hypervisor and platform flexibility</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"How heavily Microsoft-aligned is your environment? AD, Entra ID, M365, Azure cloud usage?"</li>
+          <li>"What's your Linux workload footprint? First-class production, or smaller / contained?"</li>
+          <li>"Is your cloud strategy Azure-only, multi-cloud, or hybrid with on-prem priority?"</li>
+          <li>"How important is Hyper-V as a hypervisor commitment vs being open to alternatives?"</li>
+        </ol>
+      </div>
+
+      <div class="kill">
+        <span class="label">Kill questions that turn the conversation</span>
+        <ol>
+          <li>"How comfortable are you locking your hypervisor decision to your cloud-vendor decision? Azure Stack HCI ties Hyper-V tightly to Azure cloud direction."</li>
+          <li>"What's your Linux production strategy? AHV is first-class for Linux; Hyper-V is more Windows-centric."</li>
+          <li>"Are you optimizing for Microsoft ecosystem depth, or for general-purpose flexibility?"</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>Don't fight the Microsoft alignment. Acknowledge that Azure Stack HCI is a strong choice for deeply Microsoft-aligned customers. Engage where Nutanix's flexibility is genuinely valuable: mixed Linux/Windows, multi-cloud strategy, broader storage consolidation.</p>
+      </div>
+
+      <div class="nope">
+        <span class="label">What NOT to say</span>
+        <ul>
+          <li><strong>"Hyper-V is inferior to AHV."</strong> Untrue for Microsoft-aligned workloads; loses credibility.</li>
+          <li>Disparage Azure or Microsoft's cloud strategy. Many customers are happily Microsoft-aligned.</li>
+        </ul>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Customer values multi-cloud flexibility, runs significant Linux workloads, wants broader storage consolidation, or has explicit reasons to keep hypervisor decisions independent of cloud-vendor decisions.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>Customer is deeply Microsoft-aligned across the stack, has executive commitment to Azure Stack HCI as part of broader Azure strategy, or has Hyper-V operational expertise that they don't want to redirect.</p>
+        </div>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../b-comparison-matrix/index.html#nutanix-vs-microsoft-azure-stack-hci">B · Nutanix vs Azure Stack HCI</a></p>
+
+      <!-- ===== Scale Computing ===== -->
+      <h2 class="cat" id="scale"><span class="num">6</span>Scale Computing HC3</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> Scale Computing's HCI platform aimed at small-to-mid businesses, edge sites, and ROBO deployments. KVM-based hypervisor with their own storage layer (SCRIBE).</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> Strong in small business, ROBO at scale, and edge computing. Often wins on simplicity and price for small deployments.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When Scale Computing wins</span>
+          <ul>
+            <li>Genuinely small deployments (1-3 nodes per site, no need for enterprise feature depth)</li>
+            <li>Distributed-edge customer with hundreds or thousands of small sites</li>
+            <li>Cost-sensitive segment where Nutanix's enterprise pricing is overkill</li>
+            <li>Customer wants the simplest possible HCI experience</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer has enterprise-scale workloads alongside any edge deployments</li>
+            <li>Scale Computing's feature depth is insufficient (advanced replication, microsegmentation, multi-tenancy, broad storage consolidation)</li>
+            <li>Customer wants single platform for both datacenter and edge (Nutanix has 1-2 node options for edge)</li>
+            <li>Long-term scaling beyond Scale Computing's typical envelope is anticipated</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"What's the scale of the deployment? Single site, distributed edge, mixed datacenter and edge?"</li>
+          <li>"What enterprise features matter to you: advanced replication, microsegmentation, broad storage consolidation, multi-tenancy?"</li>
+          <li>"Where do you see this platform in 5 years? Stable scale, growing significantly, or unsure?"</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>Scale Computing genuinely fits some customer profiles. Senior SAs disqualify deals where Scale Computing is the right answer rather than forcing a Nutanix sale. The Nutanix sweet spot is enterprise (or growing-to-enterprise) deployments where the broader platform and feature depth matters.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Customer's deployment is enterprise-scale or trending toward enterprise; needs feature depth beyond Scale Computing; wants unified datacenter-and-edge platform.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose / disqualify when</span>
+          <p>Genuinely small deployments (1-3 nodes total, single site, no enterprise growth path) are often better served by Scale Computing or similar SMB-focused platforms. Don't force a Nutanix sale where the customer profile doesn't fit; the loss is often disguised.</p>
+        </div>
+      </div>
+
+      <!-- ===== StorMagic ===== -->
+      <h2 class="cat" id="stormagic"><span class="num">7</span>StorMagic and Specialized Small-Footprint</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> StorMagic SvSAN and similar specialized products targeting very-small-footprint HCI (often 2-node) for retail, manufacturing, and remote-edge deployments.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> Niche but real. Often wins specific edge / industrial / retail deployments.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When they win</span>
+          <ul>
+            <li>Very small per-site footprint (often 2 nodes)</li>
+            <li>Industrial / OT environments with specific certifications</li>
+            <li>Customer wants extreme simplicity for non-IT-staffed sites</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer wants to consolidate edge management with their datacenter platform (single Prism Central across all sites)</li>
+            <li>Edge sites need broader features beyond basic HCI</li>
+            <li>Long-term platform unification is valued</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="position">
+        <span class="label">Quick positioning</span>
+        <p>For the right customer profile, StorMagic-class products are appropriate. Nutanix's edge story (1 and 2 node clusters, central management via Prism Central, OEM partner hardware including ruggedized options) often wins when the customer values fleet-wide consistency.</p>
+      </div>
+
+      <!-- ===== Ceph / SDS ===== -->
+      <h2 class="cat" id="sds"><span class="num">8</span>Software-Defined Storage on Commodity (Ceph, SDS)</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> Open-source SDS (most often Ceph) deployed on commodity hardware, sometimes assembled by the customer's team or by an integrator.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> Mostly large enterprises with deep platform-engineering teams, hyperscalers, or specific cost-optimization scenarios.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When SDS-on-commodity wins</span>
+          <ul>
+            <li>Customer has a strong platform-engineering team that can operate Ceph-class systems</li>
+            <li>Cost optimization is paramount and the customer accepts operational complexity in exchange</li>
+            <li>Specific use cases (massive object storage, HPC scratch, very-large archive) where Ceph genuinely fits</li>
+            <li>Existing investment in Ceph operations is significant</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When Nutanix wins</span>
+          <ul>
+            <li>Customer wants the integrated platform experience (HCI, management, lifecycle, support)</li>
+            <li>Operating Ceph at production reliability is more cost than the licensing savings</li>
+            <li>Customer is mid-market (where Ceph operational complexity rarely justifies)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"Do you have current Ceph (or similar SDS) operational experience on the team? At what scale?"</li>
+          <li>"What's your tolerance for operational complexity in exchange for licensing savings?"</li>
+          <li>"How important is single-vendor support across the platform?"</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>Don't disparage Ceph or open-source SDS; they're legitimate technologies in the right environment. Engage on the total cost of operations, not just licensing. Many customers underestimate the operational burden of SDS-on-commodity.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Mid-market customer; operations team is not platform-engineering depth; wants integrated experience with single-vendor support.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>Large enterprise with strong platform-engineering team; cost-optimization is the primary driver; specific use case where Ceph genuinely excels (massive Ceph-Object archive, for example).</p>
+        </div>
+      </div>
+
+      <!-- ===== Status Quo ===== -->
+      <h2 class="cat" id="status-quo"><span class="num">9</span>The "Do Nothing / Extend Current Platform" Competitor</h2>
+
+      <div class="quickread">
+        <span class="label">Quick read</span>
+        <p><strong>What it is:</strong> Not a vendor; the customer's option to extend their current platform (refresh existing hardware, renew current software) instead of changing platforms.</p>
+        <p style="margin-top:8px;"><strong>Market position:</strong> The most common "competitor" in any sales cycle. Status quo has gravity.</p>
+      </div>
+
+      <div class="grid-two">
+        <div class="when-they">
+          <span class="label">When status quo wins</span>
+          <ul>
+            <li>Current platform is meeting needs adequately</li>
+            <li>No specific pain triggering the conversation</li>
+            <li>Refresh costs comparable to migration costs over the relevant timeframe</li>
+            <li>Team has capacity and skills aligned with current platform</li>
+            <li>Switching costs and operational disruption exceed the benefits</li>
+          </ul>
+        </div>
+        <div class="when-we">
+          <span class="label">When change wins</span>
+          <ul>
+            <li>Specific pain (cost, performance, complexity) is unsustainable</li>
+            <li>Current platform's roadmap creates risk (EOL, vendor changes, pricing trajectory)</li>
+            <li>Consolidation opportunity captures real value</li>
+            <li>Competitive landscape is moving in ways that make change strategic</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask">
+        <span class="label">Discovery questions</span>
+        <ol>
+          <li>"What's the cost of doing nothing? If you extend your current platform for 3 more years, what's the run-rate, what changes for you, what risks exist?"</li>
+          <li>"What specifically isn't working today? Be honest with yourself; vague dissatisfaction isn't enough to justify migration disruption."</li>
+          <li>"What would have to be true for you to stay on your current platform? Is the door already closed, or genuinely open?"</li>
+        </ol>
+      </div>
+
+      <div class="kill">
+        <span class="label">Kill questions that turn the conversation</span>
+        <ol>
+          <li>"What's the trigger event that's prompting this conversation now? Refresh timing, cost, incident, executive direction, competitive pressure?"</li>
+          <li>"If you extend the current platform, what's the financial trajectory over 5 years? Often the post-Broadcom or aging-array math is what makes change inevitable."</li>
+          <li>"What would it cost not to change? Sometimes the hidden cost of extending is larger than the obvious cost of changing."</li>
+        </ol>
+      </div>
+
+      <div class="position">
+        <span class="label">Positioning approach</span>
+        <p>Status quo is often the right answer. Senior SAs name this honestly. The conversation is most productive when both parties acknowledge that "do nothing" is a real option being evaluated alongside the change. The customer trusts the SA who says <em>"if these conditions don't hold, you should stay; here's how to know."</em></p>
+      </div>
+
+      <div class="nope">
+        <span class="label">What NOT to say</span>
+        <ul>
+          <li><strong>"You can't afford to stay where you are."</strong> Often untrue.</li>
+          <li><strong>"Migration is always worth it."</strong> Untrue.</li>
+          <li><strong>"This is a 'now' decision."</strong> Pressure-selling that backfires.</li>
+        </ul>
+      </div>
+
+      <div class="grid-two">
+        <div class="win">
+          <span class="label">Win when</span>
+          <p>Specific, named pain that's unsustainable. Refresh window aligning with change. Math that favors change over a 5-year horizon. Executive sponsorship for the change.</p>
+        </div>
+        <div class="loss">
+          <span class="label">Lose when</span>
+          <p>No specific trigger; just exploration. Recent refresh or renewal that hasn't paid back. Team or executive resistance that isn't soluble in the timeframe. Status quo math that holds up.</p>
+        </div>
+      </div>
+
+      <div class="disqualify">
+        <span class="label">Disqualification signal</span>
+        <p>If the customer has no trigger event, no specific pain, recent investment in the current platform, and a team that's happy where they are, the right BlueAlly response is to stay relationship-warm and revisit at a future trigger point. Forcing the deal wastes everyone's time.</p>
+      </div>
+
+      <!-- ===== Landscape ===== -->
+      <section class="landscape" id="landscape">
+        <h2>How to Read the Competitive Landscape in 2026</h2>
+        <p>The post-Broadcom era has shifted competitive dynamics. Patterns visible in the field:</p>
+
+        <h3>The customer is generally aware of</h3>
+        <ul>
+          <li>Post-Broadcom pricing changes and the per-core trajectory</li>
+          <li>Cisco HyperFlex EOL and the migration urgency</li>
+          <li>The rise of Azure Stack HCI in Microsoft-aligned shops</li>
+          <li>The general direction of HCI consolidation and cloud-extension stories</li>
+        </ul>
+
+        <h3>What customers often haven't done yet</h3>
+        <ul>
+          <li>Built a real 5-year TCO comparing alternatives</li>
+          <li>Mapped their workload-by-workload migration complexity</li>
+          <li>Talked to peers running each alternative at production scale</li>
+          <li>Done a head-to-head POC with the specific workloads that matter to them</li>
+        </ul>
+
+        <h3>The senior-SA opportunity</h3>
+        <p>Be the partner who helps with what they haven't done. Build the TCO. Map the workloads. Connect them with peer references. Run the POC. The customer who does this work with you (vs with a competitor) chooses you for it.</p>
+      </section>
+
+      <!-- ===== Mistakes ===== -->
+      <section class="common-mistakes" id="mistakes">
+        <h2>Common Competitive Mistakes to Avoid</h2>
+        <ol>
+          <li><strong>Treating every deal as winnable.</strong> Some deals genuinely fit competitors better. Disqualify and stay relationship-warm.</li>
+          <li><strong>Disparaging competitors.</strong> Loses credibility; customers respect honesty more than sales energy.</li>
+          <li><strong>Feature-by-feature comparison theater.</strong> Customers can read your slide deck; they want to know how it actually applies to their situation.</li>
+          <li><strong>Skipping the consolidation story.</strong> HCI vs HCI is just the tip; storage tiers, DR, management plane consolidation are usually the bigger story.</li>
+          <li><strong>Forgetting the human dimension.</strong> The team's existing skills, the executive sponsor's preferences, the operational team's preferences all matter as much as the technical comparison.</li>
+          <li><strong>Not naming "do nothing" as a competitor.</strong> Most lost deals lose to status quo, not to another vendor.</li>
+          <li><strong>Avoiding head-to-head POCs.</strong> If you're confident, invite them; if you're not, address why first.</li>
+          <li><strong>Pressure-selling timing.</strong> Customers act on their timeline; pretending otherwise backfires.</li>
+        </ol>
+      </section>
+
+      <!-- ===== References ===== -->
+      <section class="references">
+        <h2>References</h2>
+        <p>This appendix is competitive engagement methodology and positioning. The technical claims it does make (HyperFlex EOL dates, the Cisco-Nutanix partnership product, Azure Stack HCI architecture, Scale Computing positioning) are sourced from the Comparison Matrix appendix and the modules. Highlights specific to this appendix:</p>
+        <ul>
+          <li><strong>Cisco HyperFlex Data Platform End-of-Life Announcement.</strong> Authoritative HXDP EOL dates used in the HyperFlex section. <a href="https://www.cisco.com/c/en/us/products/collateral/hyperconverged-infrastructure/hyperflex-hx-series/hyperflex-data-platform-eol.html">cisco.com</a></li>
+          <li><strong>Cisco Discontinues HyperFlex to Focus on Nutanix-Based HCI (Futurum Group).</strong> Industry coverage of the Cisco-Nutanix migration partnership. <a href="https://futurumgroup.com/insights/cisco-discontinues-hyperflex-to-focus-on-nutanix-based-hci/">futurumgroup.com</a></li>
+          <li><strong>Comparison Matrix references.</strong> Source for the broader feature-by-feature tables backing this appendix's positioning conversations. <a href="../b-comparison-matrix/index.html">Appendix B</a></li>
+          <li><strong>Module 09 References.</strong> Source for the post-Broadcom pricing references used in the VMware section. <a href="../../modules/09-licensing-economics/index.html">Module 9</a></li>
+          <li><strong>Module 06 References.</strong> Flow vs NSX-T positioning, Flow Network Security licensing. <a href="../../modules/06-networking-flow/index.html">Module 6</a></li>
+        </ul>
+      </section>
+
+      <!-- ===== Cross-references ===== -->
+      <section class="crossrefs">
+        <h3>Cross-references</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each section links to the module where the underlying technology is taught.</li>
+          <li><strong>Comparison Matrix:</strong> <a href="../b-comparison-matrix/index.html">Appendix B</a> has the feature-by-feature tables that support these positioning conversations.</li>
+          <li><strong>Objections:</strong> <a href="../d-objections/index.html">Appendix D</a> has the response scripts for the objections that surface in competitive engagements.</li>
+          <li><strong>Discovery Questions:</strong> <a href="../e-discovery-questions/index.html">Appendix E</a> has the kickoff questions that surface the competitive landscape.</li>
+          <li><strong>POC Playbook:</strong> Appendix J has the head-to-head POC framework. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Scenarios:</strong> <a href="../c-scenarios/index.html">Appendix C</a> has design exercises for the customer profiles where these competitors are most relevant.</li>
+        </ul>
+      </section>
+
+    </article>
+
+    <div class="back-home">
+      <a href="../../index.html">← back to home</a>
+    </div>
+
+  </main>
+
+  <footer class="site">
+    <div>Written by Fred Nix · Built for BlueAlly Solutions Architects · Source on <a href="https://github.com/nixfred/nutanix">GitHub</a></div>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-h-competitive-matrix</span>
+  </footer>
+
+</body>
+</html>

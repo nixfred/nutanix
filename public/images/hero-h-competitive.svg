@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="h-title h-desc">
+  <title id="h-title">Appendix H hero: HCI competitive landscape map</title>
+  <desc id="h-desc">A central Nutanix node ringed by nine competitor chips (VMware/VxRail, Cisco HyperFlex, HPE, Dell APEX, Azure Stack HCI, Scale Computing, StorMagic, Ceph/SDS, Status Quo) connected by purple lines, each labeled with the competitive verb (compete, transition, mixed, consumption, ecosystem, edge, niche, DIY, gravity). Mono path top-left. Purple appendix accent.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#1a3258"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="rgba(0,212,255,0.42)"/>
+      <stop offset="60%" stop-color="rgba(0,212,255,0.10)"/>
+      <stop offset="100%" stop-color="rgba(0,212,255,0)"/>
+    </radialGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <g stroke="rgba(74,158,255,0.06)" stroke-width="1" fill="none">
+    <circle cx="800" cy="470" r="220"/>
+    <circle cx="800" cy="470" r="320"/>
+    <circle cx="800" cy="470" r="420"/>
+  </g>
+
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-h-competitive-matrix
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · COMPETITIVE LANDSCAPE · POSITIONING PLAYBOOKS</text>
+
+  <text x="800" y="146" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">THE HCI COMPETITIVE MAP</text>
+
+  <!-- Center: Nutanix node -->
+  <circle cx="800" cy="470" r="260" fill="url(#centerGlow)"/>
+
+  <!-- Spoke lines (drawn first, behind chips) -->
+  <g stroke="rgba(192,132,252,0.40)" stroke-width="1.4" stroke-dasharray="4 6" fill="none">
+    <line x1="800" y1="470" x2="220" y2="270"/>   <!-- VMware -->
+    <line x1="800" y1="470" x2="220" y2="470"/>   <!-- HyperFlex -->
+    <line x1="800" y1="470" x2="220" y2="670"/>   <!-- HPE -->
+    <line x1="800" y1="470" x2="500" y2="780"/>   <!-- Dell APEX -->
+    <line x1="800" y1="470" x2="800" y2="780"/>   <!-- Azure Stack HCI -->
+    <line x1="800" y1="470" x2="1100" y2="780"/>  <!-- Scale Computing -->
+    <line x1="800" y1="470" x2="1380" y2="670"/>  <!-- StorMagic -->
+    <line x1="800" y1="470" x2="1380" y2="470"/>  <!-- Ceph / SDS -->
+    <line x1="800" y1="470" x2="1380" y2="270"/>  <!-- Status Quo -->
+  </g>
+
+  <!-- Center Nutanix chip -->
+  <g transform="translate(680, 410)" filter="url(#purpleGlow)">
+    <rect x="0" y="0" width="240" height="120" rx="10" fill="rgba(0,212,255,0.14)" stroke="#00d4ff" stroke-width="2"/>
+    <text x="120" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#a8b8d4" letter-spacing="0.18em">YOU ARE HERE</text>
+    <text x="120" y="76" text-anchor="middle" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#e8f0ff" letter-spacing="-0.01em">Nuta<tspan fill="#00d4ff">NIX</tspan></text>
+    <text x="120" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">consolidated HCI platform</text>
+  </g>
+
+  <!-- Competitor chips around the center -->
+  <g font-family="Inter, sans-serif">
+    <!-- VMware (top-left) -->
+    <g transform="translate(120, 240)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">VMware · VxRail</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">post-Broadcom math</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: incumbent</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#fbbf24">verb: compete</text>
+    </g>
+
+    <!-- Cisco HyperFlex (left) -->
+    <g transform="translate(120, 440)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">Cisco HyperFlex</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">EOL · Sep 2025 bug-fix</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: legacy</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#34d399">verb: transition</text>
+    </g>
+
+    <!-- HPE (bottom-left) -->
+    <g transform="translate(120, 640)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">HPE · SimpliVity / dHCI</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">DX OEM · GreenLake</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: fragmented</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#4a9eff">verb: mixed</text>
+    </g>
+
+    <!-- Dell APEX (lower) -->
+    <g transform="translate(400, 750)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">Dell APEX</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">consumption · opex</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: financial-shape</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#fbbf24">verb: consumption</text>
+    </g>
+
+    <!-- Azure Stack HCI (bottom-center) -->
+    <g transform="translate(700, 750)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">Azure Stack HCI</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">Hyper-V · Azure Arc</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: ecosystem</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#4a9eff">verb: ecosystem</text>
+    </g>
+
+    <!-- Scale Computing (lower-right) -->
+    <g transform="translate(1000, 750)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">Scale Computing</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">SMB · ROBO · edge</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: SMB / edge</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#34d399">verb: edge</text>
+    </g>
+
+    <!-- StorMagic (bottom-right) -->
+    <g transform="translate(1280, 640)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">StorMagic</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">2-node · industrial</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: small-footprint</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#fbbf24">verb: niche</text>
+    </g>
+
+    <!-- Ceph / SDS (right) -->
+    <g transform="translate(1280, 440)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#c084fc">Ceph · SDS</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">commodity hardware</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: DIY / hyperscale</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#f87171">verb: DIY</text>
+    </g>
+
+    <!-- Status Quo (top-right) -->
+    <g transform="translate(1280, 240)">
+      <rect x="0" y="0" width="200" height="84" rx="6" fill="rgba(168,184,212,0.14)" stroke="#a8b8d4" stroke-width="1.6" stroke-dasharray="4 4"/>
+      <text x="14" y="24" font-size="14" font-weight="700" fill="#a8b8d4">Status Quo</text>
+      <text x="14" y="44" font-size="11" fill="#e8f0ff">do nothing / refresh</text>
+      <text x="14" y="62" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">role: most lost deals</text>
+      <text x="14" y="76" font-family="JetBrains Mono, monospace" font-size="10" fill="#f87171">verb: gravity</text>
+    </g>
+  </g>
+
+  <!-- Bottom: five-principle strip -->
+  <g transform="translate(120, 850)">
+    <text x="680" y="0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">FIVE PRINCIPLES</text>
+    <text x="680" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#cfeeff">disqualify early · acknowledge strengths · ask, don't assert · sell outcomes · invite POCs you'll win</text>
+  </g>
+
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
