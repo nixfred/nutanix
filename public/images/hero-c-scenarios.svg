@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="cs-title cs-desc">
+  <title id="cs-title">Appendix C hero: 10 capstone scenarios</title>
+  <desc id="cs-desc">Ten numbered scenario tiles arranged in a grid, escalating in complexity from Scenario 1 (mid-market consolidation) to Scenario 10 (senior architect lock-in defense), each tile showing the scenario number, a short title, and a difficulty band that grows more intense from left to right and top to bottom. Mono path top-left. Purple appendix accent.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="tile1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a3258"/>
+      <stop offset="100%" stop-color="#0f2440"/>
+    </linearGradient>
+    <linearGradient id="tile2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#244a82"/>
+      <stop offset="100%" stop-color="#173461"/>
+    </linearGradient>
+    <linearGradient id="tile3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d2a5c"/>
+      <stop offset="100%" stop-color="#1a1330"/>
+    </linearGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <!-- subtle grid -->
+  <g stroke="rgba(74,158,255,0.08)" stroke-width="1" fill="none">
+    <path d="M0,720 L1600,720"/>
+    <path d="M0,760 L1600,760"/>
+    <path d="M0,800 L1600,800"/>
+  </g>
+
+  <!-- mono path top-left -->
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-c-scenarios
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · 10 SCENARIOS · ESCALATING COMPLEXITY</text>
+
+  <!-- HEADLINE -->
+  <text x="800" y="156" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">CAPSTONE DESIGN EXERCISES</text>
+  <text x="800" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#a8b8d4">read · write your reasoning · compare · re-read · repeat</text>
+
+  <!-- ============================================================ -->
+  <!-- 10 scenario tiles: 5 cols x 2 rows                             -->
+  <!-- escalating intensity: row 1 simpler, row 2 complex             -->
+  <!-- ============================================================ -->
+
+  <!-- Tile dimensions: 260 x 260, gap 20, total 5*280=1400 wide -->
+  <!-- center horizontally: (1600-1400)/2 = 100 -->
+
+  <!-- ROW 1: scenarios 1-5 -->
+  <g transform="translate(100, 220)">
+    <!-- Scenario 1 -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile1)" stroke="#4a9eff" stroke-width="1.4"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#4a9eff" letter-spacing="-0.02em">01</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#4a9eff" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Mid-Market</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Consolidation</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">~180 VMs · 8 ESXi</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">12-mo migration</text>
+      <!-- complexity bar: 2/5 -->
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 2 -->
+    <g transform="translate(280, 0)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile2)" stroke="#4a9eff" stroke-width="1.4"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#4a9eff" letter-spacing="-0.02em">02</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#4a9eff" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Deep-Incumbent</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Multi-Site Enterprise</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">1,800 VMs · NSX-T + ONTAP</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">hybrid is the answer</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 3 -->
+    <g transform="translate(560, 0)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile1)" stroke="#4a9eff" stroke-width="1.4"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#4a9eff" letter-spacing="-0.02em">03</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#4a9eff" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">VDI Deployment</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">on Citrix + HIPAA</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">1,200 sessions · boot storm</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">healthcare compliance</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 4 -->
+    <g transform="translate(840, 0)" filter="url(#purpleGlow)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile3)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#c084fc" letter-spacing="-0.02em">04</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#c084fc" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Compliance-Heavy</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Financial Services</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">SOX · PCI · FFIEC</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">HSM · 7-yr audit</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 5 -->
+    <g transform="translate(1120, 0)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile1)" stroke="#4a9eff" stroke-width="1.4"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#4a9eff" letter-spacing="-0.02em">05</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#4a9eff" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">ROBO and</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Distributed Sites</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">200 stores · retail</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">central management</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- ROW 2: scenarios 6-10 -->
+  <g transform="translate(100, 500)">
+    <!-- Scenario 6 -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile2)" stroke="#4a9eff" stroke-width="1.4"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#4a9eff" letter-spacing="-0.02em">06</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#4a9eff" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Cloud DR with</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">NC2</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">no second datacenter</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">tape DR replacement</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 7 -->
+    <g transform="translate(280, 0)" filter="url(#purpleGlow)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile3)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#c084fc" letter-spacing="-0.02em">07</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#c084fc" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">The CFO Cost</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Defense</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">"why am I doing this?"</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">VMware +35% renewal</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 8 -->
+    <g transform="translate(560, 0)" filter="url(#purpleGlow)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile3)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#c084fc" letter-spacing="-0.02em">08</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#c084fc" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Mid-Engagement</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Crisis</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">600 of 1,500 done</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">new CIO · honest call</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      </g>
+    </g>
+
+    <!-- Scenario 9 -->
+    <g transform="translate(840, 0)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile1)" stroke="#4a9eff" stroke-width="1.4"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#4a9eff" letter-spacing="-0.02em">09</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#4a9eff" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Greenfield</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Deployment</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">startup · AWS today</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">on-prem cost predictable</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      </g>
+    </g>
+
+    <!-- Scenario 10: most intense -->
+    <g transform="translate(1120, 0)" filter="url(#strongGlow)">
+      <rect x="0" y="0" width="260" height="260" rx="6" fill="url(#tile3)" stroke="#c084fc" stroke-width="2"/>
+      <text x="20" y="42" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.10em" fill="#6b7a9a">SCENARIO</text>
+      <text x="20" y="92" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#c084fc" letter-spacing="-0.02em">10</text>
+      <line x1="20" y1="112" x2="80" y2="112" stroke="#c084fc" stroke-width="2"/>
+      <text x="20" y="142" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Senior Architect</text>
+      <text x="20" y="160" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#e8f0ff">Lock-In Defense</text>
+      <text x="20" y="190" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">20-yr platform engineer</text>
+      <text x="20" y="206" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">real architectural argument</text>
+      <g transform="translate(20, 226)">
+        <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="132" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+        <rect x="176" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- bottom strip: complexity legend -->
+  <g transform="translate(120, 800)">
+    <rect x="0" y="0" width="1360" height="56" rx="6" fill="rgba(192,132,252,0.06)" stroke="rgba(192,132,252,0.40)" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="40" y="34" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">DIFFICULTY</text>
+    <g transform="translate(180, 26)">
+      <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="44" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      <rect x="88" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      <text x="226" y="6" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">approachable</text>
+    </g>
+    <g transform="translate(560, 26)">
+      <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="132" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      <rect x="176" y="0" width="40" height="4" rx="2" fill="rgba(192,132,252,0.20)"/>
+      <text x="226" y="6" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">enterprise design</text>
+    </g>
+    <g transform="translate(980, 26)">
+      <rect x="0" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="44" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="88" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="132" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <rect x="176" y="0" width="40" height="4" rx="2" fill="#c084fc"/>
+      <text x="226" y="6" font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">NCX-MCI panel-style</text>
+    </g>
+  </g>
+
+  <!-- vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
