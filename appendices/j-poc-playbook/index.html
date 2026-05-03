@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix J: POC Playbook</title>
+  <meta name="description" content="Complete framework for running customer proofs-of-concept: qualification, scoping, hardware sourcing, test plans, ten demo scripts, the 30-day cadence, success-criteria templates, the final POC report, common pitfalls, and when to recommend against a POC. Run POCs that produce decisions, not feature shows." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix J: POC Playbook" />
+  <meta property="og:description" content="Complete POC framework · qualify · scope · 10 demo scripts · 30-day cadence · final report · pitfalls. Run POCs that produce decisions." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/j-poc-playbook/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix J: POC Playbook" />
+  <meta name="twitter:description" content="Customer-centered POC framework with 10 demo scripts and a 30-day cadence." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%),
+        linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ol { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ol li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+    article.body h2.cat .num {
+      font-family: var(--font-mono);
+      font-size: 13px; color: var(--accent-purple); font-weight: 700;
+      letter-spacing: 0.04em; margin-right: 12px; vertical-align: middle;
+      padding: 3px 9px; border: 1px solid rgba(192,132,252,0.45); border-radius: 4px;
+    }
+
+    article.body h3.sub {
+      font-family: var(--font-mono);
+      font-size: 13px; font-weight: 600; color: var(--accent-purple);
+      letter-spacing: 0.10em; text-transform: uppercase;
+      margin: 22px 0 8px;
+    }
+    article.body h4 {
+      font-size: 16px; font-weight: 600; color: var(--text-primary);
+      margin: 16px 0 4px;
+    }
+
+    article.body p { color: var(--text-secondary); }
+    article.body p strong, article.body li strong { color: var(--text-primary); }
+    article.body ul, article.body ol { color: var(--text-secondary); padding-left: 22px; }
+    article.body ul li, article.body ol li { margin-bottom: 4px; }
+
+    /* Boxes */
+    .checklist, .demo, .week, .pitfall, .pros, .cons, .right-for, .recommend-against, .principle {
+      margin: 8px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .checklist        { border-left: 3px solid var(--accent-cyan); }
+    .demo             { border-left: 3px solid var(--accent-purple); background: var(--bg-elevated); }
+    .week             { border-left: 3px solid var(--success); }
+    .pitfall          { border-left: 3px solid var(--danger); }
+    .pros             { border-left: 3px solid var(--success); }
+    .cons             { border-left: 3px solid var(--warning); }
+    .right-for        { border-left: 3px solid var(--accent-cyan); }
+    .recommend-against{ border-left: 3px solid var(--danger); background: var(--bg-elevated); }
+    .principle        { border-left: 3px solid var(--accent-purple); }
+
+    .checklist .label, .demo .label, .week .label, .pitfall .label, .pros .label,
+    .cons .label, .right-for .label, .recommend-against .label, .principle .label {
+      font-family: var(--font-mono); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+    }
+    .checklist .label        { color: var(--accent-cyan); }
+    .demo .label             { color: var(--accent-purple); }
+    .week .label             { color: var(--success); }
+    .pitfall .label          { color: var(--danger); }
+    .pros .label             { color: var(--success); }
+    .cons .label             { color: var(--warning); }
+    .right-for .label        { color: var(--accent-cyan); }
+    .recommend-against .label{ color: var(--danger); }
+    .principle .label        { color: var(--accent-purple); }
+
+    .checklist p, .demo p, .week p, .pitfall p, .pros p, .cons p, .right-for p, .recommend-against p, .principle p {
+      margin: 0 0 6px;
+    }
+    .checklist strong, .demo strong, .week strong, .pitfall strong, .pros strong, .cons strong, .right-for strong, .recommend-against strong, .principle strong {
+      color: var(--text-primary);
+    }
+
+    .checklist ul, .demo ul, .demo ol, .week ul, .pitfall ul, .pros ul, .cons ul, .right-for ul, .recommend-against ul, .principle ul {
+      margin: 0; padding-left: 20px;
+    }
+
+    /* Custom checkbox list */
+    .checklist .checks {
+      list-style: none; padding-left: 0; margin: 0;
+    }
+    .checklist .checks li {
+      position: relative; padding-left: 26px; margin-bottom: 8px; color: var(--text-primary);
+      font-size: 14px; line-height: 1.45;
+    }
+    .checklist .checks li::before {
+      content: ""; position: absolute; left: 0; top: 4px;
+      width: 14px; height: 14px;
+      border: 1px solid var(--accent-cyan); border-radius: 3px;
+      background: rgba(0,212,255,0.10);
+    }
+    .checklist .checks li strong { color: var(--accent-cyan); }
+
+    /* Demo block detailed */
+    .demo h4 { color: var(--accent-purple); font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; margin: 10px 0 4px; }
+    .demo h4:first-of-type { margin-top: 0; }
+    .demo .demo-head {
+      font-size: 16px; font-weight: 600; color: var(--text-primary);
+      margin: 0 0 8px;
+    }
+    .demo .demo-head .num {
+      font-family: var(--font-mono); font-size: 12px; color: var(--accent-purple);
+      font-weight: 700; letter-spacing: 0.04em; margin-right: 10px;
+      padding: 2px 8px; border: 1px solid rgba(192,132,252,0.45); border-radius: 4px;
+    }
+
+    /* Pre / template blocks */
+    pre.template {
+      margin: 12px 0;
+      padding: 16px 18px;
+      background: #050a16;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #cfeeff;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Pros/Cons grid */
+    .pros-cons-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin: 8px 0;
+    }
+    @media (max-width: 760px) { .pros-cons-grid { grid-template-columns: 1fr; } }
+
+    /* Tables */
+    table.std {
+      width: 100%; border-collapse: collapse; margin: 12px 0;
+      font-family: var(--font-display); font-size: 14px;
+    }
+    table.std th, table.std td {
+      padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top;
+    }
+    table.std th { color: var(--accent-purple); font-family: var(--font-mono); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-size: 11px; }
+    table.std td { color: var(--text-secondary); }
+    table.std td:first-child { color: var(--text-primary); width: 36%; }
+
+    /* See also */
+    .see-also {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+      margin: 16px 0 0;
+    }
+    .see-also a { color: var(--accent-cyan); }
+    .see-also .label { color: var(--text-tertiary); margin-right: 6px; }
+
+    /* Big section blocks */
+    .how-to-use, .references, .crossrefs, .common-mistakes, .final-word {
+      margin-top: 36px; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .how-to-use h2, .references h2, .common-mistakes h2, .final-word h2 { margin: 0 0 12px; font-size: 22px; }
+    .how-to-use h3, .common-mistakes h3, .final-word h3 { margin: 16px 0 8px; font-size: 14px; color: var(--accent-purple); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; }
+    .how-to-use ol, .common-mistakes ol { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .how-to-use ol li, .common-mistakes ol li { margin-bottom: 8px; }
+    .how-to-use ol li strong, .common-mistakes ol li strong { color: var(--text-primary); }
+    .final-word p { color: var(--text-secondary); font-size: 14.5px; margin: 0 0 12px; line-height: 1.65; }
+    .final-word ul { padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+    .final-word li { margin-bottom: 6px; }
+    .final-word strong { color: var(--text-primary); }
+
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body h2.cat { font-size: 22px; }
+      pre.template { font-size: 11px; padding: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">J · POC Playbook</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-j-poc.svg" alt="A horizontal four-week timeline showing the POC cadence with Week 1 setup, Week 2 core validations, Week 3 advanced validations, Week 4 closeout, terminating in a green DECIDE arrow. An eight-item qualification checklist runs above; ten demo-script cards plus a scope-boundary tile and a final-report tile run below. A five-principle strip closes the bottom." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-j-poc-playbook</div>
+      <h1 class="module-title">Appendix J · POC Playbook</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">qualify · scope · test · report</span>
+        <span class="chip">10 demo scripts</span>
+        <span class="chip">30-day cadence</span>
+        <span class="chip">final-report template</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>The POC is often the buying decision. Get it right and the customer commits; get it wrong and you've spent weeks confirming a "no." This appendix is the framework BlueAlly SAs use to run POCs that produce decisions.</p>
+      <p><strong>Five principles for POCs:</strong></p>
+      <ol>
+        <li><strong>Qualify before committing.</strong> POCs cost both sides; not every opportunity warrants one.</li>
+        <li><strong>Define success criteria with the customer, in writing, before the POC starts.</strong> Without this, POCs have no end.</li>
+        <li><strong>Test what matters to the customer,</strong> not what showcases the platform.</li>
+        <li><strong>Get the customer's hands on the platform.</strong> Operational validation matters as much as technical validation.</li>
+        <li><strong>Document everything.</strong> The final report is the artifact that converts POC results into a decision.</li>
+      </ol>
+    </div>
+
+    <nav class="cat-jump" aria-label="POC playbook jump nav">
+      <a href="#types">Engagement Types</a>
+      <a href="#qualify">Qualify</a>
+      <a href="#scoping">Scoping Doc</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#test-plan">Test Plan</a>
+      <a href="#demos">10 Demos</a>
+      <a href="#cadence">30-Day Cadence</a>
+      <a href="#criteria">Success Criteria</a>
+      <a href="#report">Final Report</a>
+      <a href="#pitfalls">Pitfalls</a>
+      <a href="#against">Recommend Against</a>
+      <a href="#variations">By Profile</a>
+    </nav>
+
+    <article class="body">
+
+      <!-- ===== Engagement Types ===== -->
+      <h2 class="cat" id="types"><span class="num">1</span>POC vs Other Engagement Types</h2>
+
+      <h3 class="sub">POC (Proof of Concept)</h3>
+      <p><strong>Definition:</strong> Deploy actual Nutanix hardware (or NC2 cloud cluster) at the customer site or in BlueAlly's lab; customer team participates in deployment, configuration, workload migration, and operational validation; runs typically 2-6 weeks; produces a documented validation against agreed success criteria.</p>
+      <div class="pros-cons-grid">
+        <div class="right-for">
+          <span class="label">When right</span>
+          <ul>
+            <li>Customer is in active evaluation with budget and timeline</li>
+            <li>Specific technical questions need empirical answers</li>
+            <li>Customer team needs hands-on validation before committing</li>
+            <li>Decision authority is engaged and ready to act on POC results</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <span class="label">When wrong</span>
+          <ul>
+            <li>Customer is in early discovery without trigger or budget</li>
+            <li>Specific feature questions could be answered in a 2-hour demo</li>
+            <li>Decision authority isn't engaged</li>
+            <li>Success criteria can't be agreed upon</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="sub">Evaluation</h3>
+      <p><strong>Definition:</strong> Lighter than a POC. Often a guided demo plus customer hands-on time in a BlueAlly-hosted lab; days to a week; doesn't require dedicated hardware deployment.</p>
+      <div class="right-for">
+        <span class="label">When right</span>
+        <ul>
+          <li>Customer wants validation before deciding to invest in a full POC</li>
+          <li>Specific feature questions to answer</li>
+          <li>Customer team wants familiarity, not full operational validation</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Proof of Value (POV)</h3>
+      <p><strong>Definition:</strong> Combines technical validation with business outcome demonstration. May include TCO analysis, parallel-running of workloads, or measured operational benefits. Often spans longer than a POC.</p>
+      <div class="right-for">
+        <span class="label">When right</span>
+        <ul>
+          <li>Customer needs financial validation alongside technical</li>
+          <li>CFO or executive sponsor needs business case evidence</li>
+          <li>Multiple stakeholder groups need different forms of validation</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Choosing the right engagement type</h3>
+      <table class="std">
+        <thead><tr><th>Signal</th><th>Recommend</th></tr></thead>
+        <tbody>
+          <tr><td>Active eval, budget approved, want hands-on</td><td>POC</td></tr>
+          <tr><td>Early eval, want to see capability before committing</td><td>Evaluation</td></tr>
+          <tr><td>Need financial + technical validation</td><td>POV</td></tr>
+          <tr><td>Just shopping; no trigger</td><td>Demo, build relationship; no POC</td></tr>
+          <tr><td>Specific feature question</td><td>Demo or evaluation</td></tr>
+        </tbody>
+      </table>
+      <div class="principle">
+        <span class="label">Default rule</span>
+        <p>When in doubt, recommend an evaluation first; upgrade to POC if customer wants deeper validation. Skip the POC entirely if the customer profile suggests it won't produce a decision.</p>
+      </div>
+
+      <!-- ===== Qualification ===== -->
+      <h2 class="cat" id="qualify"><span class="num">2</span>POC Qualification Checklist</h2>
+      <p>Before committing to a POC, verify each of these. <strong>If 6+ items check, proceed with POC scoping. If fewer, recommend a different engagement type or hold the conversation until conditions improve.</strong></p>
+
+      <div class="checklist">
+        <span class="label">Eight-item qualification checklist</span>
+        <ul class="checks">
+          <li><strong>Trigger event identified.</strong> Refresh, contract end, performance issue, or strategic initiative driving urgency.</li>
+          <li><strong>Budget approved or in approval process.</strong> Real budget for the next 12 months covering the in-scope opportunity.</li>
+          <li><strong>Decision authority engaged.</strong> The person who will sign the contract is involved and aware of the POC.</li>
+          <li><strong>Success criteria can be agreed.</strong> Customer is willing to define what success looks like in writing.</li>
+          <li><strong>Timeline is realistic.</strong> 4-6 weeks for typical POC; the customer's timeline accommodates this.</li>
+          <li><strong>Customer team has bandwidth.</strong> Resources allocated to participate in the POC, not just observe.</li>
+          <li><strong>Specific technical questions to answer.</strong> Generic "evaluate Nutanix" is not specific enough.</li>
+          <li><strong>Disqualifying conditions absent.</strong> Customer hasn't already chosen another platform; recent renewal isn't blocking; political dynamics aren't fatal.</li>
+        </ul>
+      </div>
+
+      <!-- ===== Scoping ===== -->
+      <h2 class="cat" id="scoping"><span class="num">3</span>POC Scoping Document</h2>
+      <p>Every POC starts with a written scoping document agreed by both BlueAlly and customer. Both parties sign. <strong>This is the contract that bounds the POC.</strong></p>
+
+<pre class="template">POC SCOPING DOCUMENT
+
+Customer: &lt;customer name&gt;
+BlueAlly SA: &lt;SA name&gt;
+Customer Sponsor: &lt;name and role&gt;
+Customer Technical Lead: &lt;name and role&gt;
+POC Start Date: &lt;date&gt;
+POC End Date: &lt;date&gt;
+Final Report Due: &lt;date&gt;
+
+OBJECTIVES
+1. &lt;specific question to answer&gt;
+2. &lt;specific question to answer&gt;
+3. &lt;specific question to answer&gt;
+
+SUCCESS CRITERIA
+For each objective, define what "success" means:
+  - Objective 1: &lt;measurable success definition&gt;
+  - Objective 2: &lt;measurable success definition&gt;
+  - Objective 3: &lt;measurable success definition&gt;
+
+SCOPE INCLUDED
+  - Hardware: &lt;specifics&gt;
+  - Software stack: &lt;NCI tier (Pro / Ultimate; formerly AOS Pro / Ultimate),
+                     NCM tier (Starter / Pro / Ultimate),
+                     Security Add-On for NCI Pro if Flow microsegmentation in scope,
+                     Files / Objects / Volumes if in scope&gt;
+  - Workloads to test: &lt;specific list&gt;
+  - Integrations to validate: &lt;specific list&gt;
+
+SCOPE EXCLUDED
+  - &lt;items explicitly not in scope to prevent scope creep&gt;
+
+DELIVERABLES
+  - POC environment provisioned and validated
+  - Documented test results against success criteria
+  - Final POC report with recommendation
+
+CUSTOMER COMMITMENTS
+  - Hardware power, cooling, rack space, network drops
+  - Customer team time: estimated &lt;hours&gt;/week
+  - Test workload data: &lt;specific items&gt;
+
+BLUEALLY COMMITMENTS
+  - POC hardware loaner (if applicable)
+  - SA on-site or remote support: &lt;hours&gt;/week
+  - Final report within &lt;X&gt; days of POC end
+
+DECISION TIMELINE POST-POC
+  - Review meeting: &lt;date&gt;
+  - Decision target: &lt;date&gt;</pre>
+
+      <!-- ===== Hardware ===== -->
+      <h2 class="cat" id="hardware"><span class="num">4</span>POC Hardware Sourcing</h2>
+
+      <h3 class="sub">1 · BlueAlly lab POC</h3>
+      <p>POC runs in BlueAlly's lab on BlueAlly hardware. Customer accesses remotely.</p>
+      <div class="pros-cons-grid">
+        <div class="pros">
+          <span class="label">Pros</span>
+          <ul>
+            <li>No customer hardware logistics</li>
+            <li>Faster to start</li>
+            <li>Consistent environment</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <span class="label">Cons</span>
+          <ul>
+            <li>Customer can't do real workload migration</li>
+            <li>Limited operational validation</li>
+            <li>Less applicable to specific customer environment</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right-for"><span class="label">Right for</span><p>Evaluations, feature validations, customer team familiarization.</p></div>
+
+      <h3 class="sub">2 · Loaner hardware at customer site</h3>
+      <p>Nutanix-branded NX or OEM partner (Dell, HPE, Lenovo, Cisco) loaner hardware shipped to customer site for the POC duration.</p>
+      <div class="pros-cons-grid">
+        <div class="pros">
+          <span class="label">Pros</span>
+          <ul>
+            <li>Real customer environment</li>
+            <li>Real workload migration possible</li>
+            <li>Full operational validation</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <span class="label">Cons</span>
+          <ul>
+            <li>Hardware logistics (rack space, power, cooling, network)</li>
+            <li>Coordination with customer's facilities and network teams</li>
+            <li>Loaner availability constraints</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right-for"><span class="label">Right for</span><p>Full POCs producing buying decisions; customers who need to validate in their environment.</p></div>
+
+      <h3 class="sub">3 · NC2 cloud POC</h3>
+      <p>Spin up a Nutanix cluster in AWS or Azure via NC2 for the POC duration.</p>
+      <div class="pros-cons-grid">
+        <div class="pros">
+          <span class="label">Pros</span>
+          <ul>
+            <li>Fast deployment (hours, not weeks)</li>
+            <li>No on-site logistics</li>
+            <li>Customer pays cloud bare-metal pricing or BlueAlly absorbs as POC cost</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <span class="label">Cons</span>
+          <ul>
+            <li>Cloud bare-metal POC costs money</li>
+            <li>Not all customers want their workloads in cloud during POC</li>
+            <li>Some integrations (specific on-prem systems) may not test cleanly from cloud</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right-for"><span class="label">Right for</span><p>Customers evaluating NC2 specifically; customers without lab infrastructure; rapid POCs.</p></div>
+
+      <h3 class="sub">Hardware sizing for POCs</h3>
+      <p>Right-size for the test plan, not the full production deployment:</p>
+      <ul>
+        <li><strong>3-4 nodes minimum</strong> for any meaningful POC (production minimum + margin for testing failure scenarios)</li>
+        <li><strong>All-NVMe</strong> unless explicitly testing capacity tiering</li>
+        <li><strong>Networking</strong> matching customer's intended production setup (25 GbE typical)</li>
+      </ul>
+      <p>POCs that size too small don't validate at relevant scale; POCs that size too large waste loaner inventory and add complexity.</p>
+
+      <!-- ===== Test Plan ===== -->
+      <h2 class="cat" id="test-plan"><span class="num">5</span>Test Plan Construction</h2>
+      <p>The test plan operationalizes the success criteria.</p>
+
+<pre class="template">TEST PLAN
+
+TEST 1: &lt;NAME OF VALIDATION&gt;
+  Maps to Objective: &lt;1, 2, or 3&gt;
+  Description: &lt;what we're testing&gt;
+  Procedure: &lt;step-by-step&gt;
+  Success Criteria: &lt;measurable result that defines pass&gt;
+  Customer Participation: &lt;what the customer team does&gt;
+  Estimated Time: &lt;hours or days&gt;
+
+TEST 2: ...
+TEST 3: ...</pre>
+
+      <div class="principle">
+        <span class="label">Tests are not feature demos</span>
+        <p>A test demonstrates that a specific success criterion is met. <strong>"Show snapshots"</strong> is a feature demo. <strong>"Take an application-consistent snapshot of the customer's SQL Server, restore from snapshot, verify application functionality post-restore"</strong> is a test.</p>
+      </div>
+
+      <p>A typical POC includes 8-15 tests across:</p>
+      <ul>
+        <li>Cluster deployment and configuration</li>
+        <li>Workload migration (1-3 representative workloads)</li>
+        <li>Performance under representative load</li>
+        <li>Failure scenarios (node loss, drive failure, network partition)</li>
+        <li>Data protection (snapshot, replication, recovery)</li>
+        <li>Integration validation (backup software, identity provider, network)</li>
+        <li>Operational tasks (cluster expansion, software upgrade, capacity reporting)</li>
+      </ul>
+
+      <!-- ===== Demos ===== -->
+      <h2 class="cat" id="demos"><span class="num">6</span>Ten Demo Scripts</h2>
+      <p>Starting points. Adapt to the specific customer environment and tools.</p>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">01</span>Cluster Deployment (Foundation)</h3>
+        <h4>Objective</h4>
+        <p>Validate the deployment experience.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Customer team observes (or participates in) Foundation-based cluster bootstrap on the loaner hardware</li>
+          <li>Cluster comes up; CVMs initialize; storage pool forms</li>
+          <li>Validate cluster status: <code>cluster status</code> from any CVM should show all services UP</li>
+          <li>Run NCC: <code>ncc health_checks run_all</code>; capture output</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Cluster bootstrapped within expected timeframe (Foundation typically completes in 2-4 hours for typical clusters); all services healthy; NCC clean.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team watches Foundation run; sees the level of automation; experiences first cluster log-in via Prism.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">02</span>Live VM Migration (vMotion-Equivalent)</h3>
+        <h4>Objective</h4>
+        <p>Validate Live Migration works as expected.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Create a test VM with a sustained workload (e.g., a database with active queries, or a video stream)</li>
+          <li>Note the host the VM is running on</li>
+          <li>Trigger Live Migration to a different host via Prism</li>
+          <li>Observe: VM continues running; brief network blip during switchover; sustained workload continues uninterrupted</li>
+          <li>Validate the VM is now on the new host</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Live migration completes; workload continues uninterrupted; no data loss; switchover time matches customer expectations.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team selects a VM, triggers the migration, observes the result.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">03</span>Snapshot and Restore</h3>
+        <h4>Objective</h4>
+        <p>Validate snapshot operations.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Take a snapshot of a test VM (Prism: VMs &gt; select VM &gt; Take Snapshot; or <code>acli vm.snapshot_create</code>)</li>
+          <li>Modify data on the VM (write some test data)</li>
+          <li>Restore the snapshot</li>
+          <li>Verify data state matches the snapshot point</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Snapshot completes within expected time (typically seconds for crash-consistent); restore returns VM to snapshot state; no data loss; customer's application functions post-restore.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team takes the snapshot, modifies data, performs the restore.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">04</span>Replication and Failover</h3>
+        <h4>Objective</h4>
+        <p>Validate replication to DR (cluster-to-cluster, or cluster-to-NC2).</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Configure Async replication between primary cluster and DR cluster (or NC2)</li>
+          <li>Create a Protection Policy with a test VM as a member</li>
+          <li>Initial replication completes; subsequent replications run on schedule</li>
+          <li>Trigger a test failover via Recovery Plans (into isolated network)</li>
+          <li>Verify VM starts at DR site; application reachable</li>
+          <li>Tear down test failover; verify primary cluster unchanged</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Replication completes within RPO target; test failover succeeds without affecting primary; VM operational at DR site.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team configures the protection policy, observes replication, triggers and validates the test failover.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">05</span>Failure Tolerance</h3>
+        <h4>Objective</h4>
+        <p>Validate the cluster handles a node failure.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Note the cluster's current state via <code>ncli cluster get-domain-fault-tolerance-status type=node</code> (the <code>type=</code> parameter is required in current AOS)</li>
+          <li>Simulate a node loss (in a POC environment, this might be done by powering off a node)</li>
+          <li>Verify VMs on the failed node restart on surviving nodes (HA event)</li>
+          <li>Observe rebuild starting (Curator reconstructing the failed node's data on remaining nodes)</li>
+          <li>Power the node back on; verify it rejoins the cluster</li>
+          <li>Verify rebuild completes; cluster returns to full redundancy</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>VMs restart on surviving nodes within expected time (typically 60-90 seconds); rebuild progresses; cluster recovers full redundancy after rebuild.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team triggers the simulated failure (with appropriate caution), observes the recovery.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">06</span>Workload Migration with Move</h3>
+        <h4>Objective</h4>
+        <p>Validate workload migration from existing VMware environment to AHV.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Deploy Move VM in customer environment (or use cluster-shipped Move)</li>
+          <li>Add source environment (vCenter) and target environment (AHV)</li>
+          <li>Create a migration plan for 1-3 test VMs (representative of customer workloads)</li>
+          <li>Execute initial replication; verify progress</li>
+          <li>Schedule cutover; verify VM is shut down at source, started at target</li>
+          <li>Validate VM operation at target; customer's application accessible</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Move executes initial replication and cutover within expected time; VM is operational at target; data integrity preserved; customer's application validates.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team selects the migration candidates, executes the plan, validates the result.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">07</span>Microsegmentation with Flow</h3>
+        <h4>Objective</h4>
+        <p>Validate Flow Network Security policy enforcement.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Create a category structure (e.g., <code>AppTier: Web</code>, <code>AppTier: App</code>, <code>AppTier: DB</code>)</li>
+          <li>Tag test VMs with appropriate categories</li>
+          <li>Create a Flow policy: Web can talk to App; App can talk to DB; Web cannot talk to DB directly</li>
+          <li>Validate from a Web VM: traffic to App VM succeeds; traffic to DB VM fails</li>
+          <li>Modify the policy to allow Web-to-DB; revalidate</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Flow policies enforce as configured; traffic flows match the policy; policy changes take effect quickly.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team configures the categories and policies, performs the connectivity tests.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">08</span>Files Performance and Operations</h3>
+        <h4>Objective</h4>
+        <p>Validate Nutanix Files for the customer's file workloads.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Deploy Files cluster with appropriate sizing</li>
+          <li>Create a File Server; configure a SMB share with AD integration</li>
+          <li>Mount the share from a customer-owned client (Windows or Mac)</li>
+          <li>Perform representative file operations (large copy, many-small-files copy, random access)</li>
+          <li>Take a snapshot of the share; verify Self-Service Restore works (Previous Versions tab in Windows)</li>
+          <li>Configure replication to a second Files cluster</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Files performance matches customer expectations for the workload pattern; AD integration works correctly; SSR works as expected; replication completes.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team configures Files, runs the test workloads, validates results.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">09</span>Objects as Backup Target</h3>
+        <h4>Objective</h4>
+        <p>Validate Objects as backup target for customer's backup software.</p>
+        <h4>Procedure</h4>
+        <ol>
+          <li>Deploy Objects cluster</li>
+          <li>Create an Object Store; create a bucket for backup data</li>
+          <li>Configure customer's backup software (Veeam, Commvault, Rubrik, etc.) to use the bucket as a backup target</li>
+          <li>Run a test backup</li>
+          <li>Restore from the backup; verify data integrity</li>
+          <li>Optionally: configure WORM on the bucket and verify immutability</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Backup completes successfully; restore validates data integrity; backup software treats Objects as functionally equivalent to S3 or other supported targets.</p>
+        <h4>Customer participation</h4>
+        <p>Customer's backup admin configures the backup software, runs the test backup and restore.</p>
+      </div>
+
+      <div class="demo">
+        <span class="label">Demo</span>
+        <h3 class="demo-head"><span class="num">10</span>Operational Workflows</h3>
+        <h4>Objective</h4>
+        <p>Validate day-2 operations the customer team will perform.</p>
+        <h4>Procedure</h4>
+        <p>Walk the customer team through:</p>
+        <ol>
+          <li>Adding a new VM via Prism</li>
+          <li>Resizing a VM (add CPU, RAM, disk)</li>
+          <li>Cloning a VM</li>
+          <li>Reviewing performance metrics in Prism Element and Prism Central</li>
+          <li>Capacity reporting (Intelligent Operations in NCM Pro)</li>
+          <li>Triggering an LCM upgrade dry-run</li>
+          <li>Reviewing audit logs</li>
+        </ol>
+        <h4>Success criteria</h4>
+        <p>Customer team can perform each operation without difficulty; the operations match (or improve on) the customer's current workflow.</p>
+        <h4>Customer participation</h4>
+        <p>Customer team performs the operations themselves; SA observes and provides guidance.</p>
+      </div>
+
+      <!-- ===== Cadence ===== -->
+      <h2 class="cat" id="cadence"><span class="num">7</span>The 30-Day POC Cadence</h2>
+
+      <div class="week">
+        <span class="label">Week 1 · Setup and Familiarization</span>
+        <ul>
+          <li><strong>Day 1-2:</strong> Hardware install, network configuration, cluster bootstrap (Foundation)</li>
+          <li><strong>Day 3-4:</strong> Customer team onboarding to Prism; tour of the platform; initial demos</li>
+          <li><strong>Day 5:</strong> Test plan walkthrough; refinement of success criteria; agreement on week-by-week milestones</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <span class="label">Week 2 · Core Validations</span>
+        <ul>
+          <li>Live migration, snapshots, basic operational workflows</li>
+          <li>First workload migration via Move (small test VM)</li>
+          <li>Initial performance baseline establishment</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <span class="label">Week 3 · Advanced Validations</span>
+        <ul>
+          <li>Failure tolerance testing</li>
+          <li>Replication and DR validation</li>
+          <li>Files / Objects / Volumes specific testing (whichever are in scope)</li>
+          <li>Integration testing (backup software, identity, ServiceNow if applicable)</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <span class="label">Week 4 · Operational Validation and Closeout</span>
+        <ul>
+          <li>Customer team performs operational tasks independently</li>
+          <li>Review of test results against success criteria</li>
+          <li>Final report drafted and reviewed with customer</li>
+          <li>Decision meeting scheduled</li>
+        </ul>
+      </div>
+
+      <div class="principle">
+        <span class="label">Adjustments</span>
+        <p><strong>For 6-week POCs:</strong> add a week between Week 2 and Week 3 for additional workload migration; add a week at the end for extended operational validation.</p>
+        <p><strong>For shorter POCs (2-3 weeks):</strong> trim Week 3 advanced validations to the customer's specific priorities; Week 4 is closeout.</p>
+      </div>
+
+      <!-- ===== Success Criteria ===== -->
+      <h2 class="cat" id="criteria"><span class="num">8</span>Success Criteria Templates</h2>
+      <p>Common patterns. Customize per customer.</p>
+
+      <h3 class="sub">Performance</h3>
+      <ul>
+        <li>"Database X demonstrates p99 read latency under &lt;X&gt; ms under sustained load of &lt;Y&gt; IOPS"</li>
+        <li>"VDI deployment supports &lt;N&gt; sessions with login storm completing within &lt;X&gt; minutes"</li>
+        <li>"Backup window for &lt;data set&gt; completes within &lt;X&gt; hours"</li>
+      </ul>
+
+      <h3 class="sub">Availability</h3>
+      <ul>
+        <li>"Live migration of running VM completes without application-level disruption"</li>
+        <li>"Node failure simulation results in VM restart within 90 seconds"</li>
+        <li>"Cluster rebuild after node failure completes within &lt;X&gt; hours"</li>
+      </ul>
+
+      <h3 class="sub">DR</h3>
+      <ul>
+        <li>"Replication of test VMs achieves RPO of &lt;X minutes&gt;"</li>
+        <li>"Test failover of &lt;N&gt; VMs completes within &lt;X minutes&gt;"</li>
+        <li>"Recovery validates application functionality at DR site"</li>
+      </ul>
+
+      <h3 class="sub">Operational</h3>
+      <ul>
+        <li>"Customer team can independently perform &lt;listed operations&gt; with limited SA guidance"</li>
+        <li>"LCM-managed upgrade of cluster completes without VM downtime"</li>
+        <li>"Capacity reporting matches customer's expected metrics"</li>
+      </ul>
+
+      <h3 class="sub">Integration</h3>
+      <ul>
+        <li>"Backup software successfully writes to and restores from Objects bucket"</li>
+        <li>"AD integration enables expected access controls for Files shares"</li>
+        <li>"ServiceNow integration creates expected change tickets via X-Play webhooks"</li>
+      </ul>
+
+      <div class="principle">
+        <span class="label">The form</span>
+        <p>Each criterion is <strong>specific, measurable, and binary</strong> (passes or fails). Vague criteria like "performance is good" produce arguments at the end of the POC; specific criteria produce decisions.</p>
+      </div>
+
+      <!-- ===== Final Report ===== -->
+      <h2 class="cat" id="report"><span class="num">9</span>The Final POC Report</h2>
+      <p>The report converts POC results into a buying decision document.</p>
+
+<pre class="template">POC FINAL REPORT
+
+CUSTOMER: &lt;name&gt;
+POC DATES: &lt;start&gt; to &lt;end&gt;
+REPORT DATE: &lt;date&gt;
+PREPARED BY: &lt;BlueAlly SA name&gt;
+REVIEWED WITH CUSTOMER: &lt;date and attendees&gt;
+
+EXECUTIVE SUMMARY
+&lt;3-5 sentence summary of POC scope, key findings, and recommendation&gt;
+
+POC OBJECTIVES (from scoping document)
+1. &lt;objective 1&gt;: PASSED / PASSED-WITH-CAVEATS / NOT-MET
+2. &lt;objective 2&gt;: PASSED / PASSED-WITH-CAVEATS / NOT-MET
+3. &lt;objective 3&gt;: PASSED / PASSED-WITH-CAVEATS / NOT-MET
+
+DETAILED FINDINGS
+For each objective:
+  - What was tested
+  - Results (with measurements, screenshots, or output)
+  - Comparison to success criteria
+  - Any caveats or context
+
+PERFORMANCE OBSERVATIONS
+  - Key performance metrics from POC
+  - How they compare to customer's current baseline
+  - Implications for sizing the production deployment
+
+OPERATIONAL OBSERVATIONS
+  - Customer team feedback on platform usability
+  - Items that worked well
+  - Items that required adjustment or learning
+
+ITEMS NOT VALIDATED IN POC
+  - Capabilities or scenarios out of POC scope
+  - Recommended next-step validations if applicable
+
+RECOMMENDED NEXT STEPS
+  - If POC met objectives: recommended path forward (proposal, sizing, contract)
+  - If POC raised concerns: recommended additional validation or alternative paths
+  - If POC did not validate Nutanix as the right fit: honest assessment
+
+APPENDICES
+  - Raw test results
+  - Configuration documentation
+  - Photos / screenshots
+  - POC team list (BlueAlly + customer)</pre>
+
+      <div class="principle">
+        <span class="label">Audience</span>
+        <p>The report is written for the buying decision meeting. The customer's executive sponsor reads the executive summary; the technical team reads the detailed findings; the CFO reads the performance and operational observations relevant to TCO.</p>
+      </div>
+
+      <!-- ===== Pitfalls ===== -->
+      <h2 class="cat" id="pitfalls"><span class="num">10</span>Common POC Pitfalls</h2>
+
+      <div class="pitfall">
+        <span class="label">10 pitfalls to avoid</span>
+        <ol>
+          <li><strong>Skipping the scoping document.</strong> POCs without written success criteria drift; the customer remembers different objectives than the SA; results are arguable.</li>
+          <li><strong>Letting scope creep.</strong> Customer asks for "one more test"; SA agrees; week 4 becomes week 8; POC loses momentum. The scoping document is the boundary; in-scope tests run, out-of-scope tests are documented for follow-up.</li>
+          <li><strong>SA-driven, not customer-driven.</strong> SA performs all the tests; customer observes. The customer learns the platform but doesn't develop operational confidence. Wrong outcome. The customer needs hands-on experience to commit.</li>
+          <li><strong>Testing the platform's strengths, not the customer's needs.</strong> SA naturally gravitates to demos that highlight Nutanix's best features. Customer's actual needs may not align. Test plan should target customer needs first.</li>
+          <li><strong>No failure scenarios.</strong> Customers who haven't seen failure recovery in POC discover it in production. Always include node loss, network partition, and similar tests.</li>
+          <li><strong>Generic workloads, not customer workloads.</strong> Synthetic benchmarks don't validate the customer's actual workload. Use customer's data and applications where possible (with appropriate copies, not production).</li>
+          <li><strong>No final report.</strong> POC ends with verbal "looks good"; weeks pass; the buying decision stalls. The written report is the artifact that converts results into decision.</li>
+          <li><strong>Pushing for decision before report is reviewed.</strong> Asking "ready to buy?" right after the POC ends, before the written report is reviewed, comes across as pressure-selling.</li>
+          <li><strong>Underestimating customer team time.</strong> POCs require customer team participation; assuming they have unlimited time produces frustrated stakeholders. Realistic time estimates in the scoping document help both sides plan.</li>
+          <li><strong>Treating the POC as the sale.</strong> The POC validates the platform; the proposal, contract, and decision happen after. Don't confuse them.</li>
+        </ol>
+      </div>
+
+      <!-- ===== Recommend Against ===== -->
+      <h2 class="cat" id="against"><span class="num">11</span>When to Recommend Against a POC</h2>
+
+      <div class="recommend-against">
+        <span class="label">Don't run a POC when</span>
+        <p>The senior-SA disposition: not every customer should run a POC. Recommend against when:</p>
+        <ul>
+          <li>Customer has no specific technical questions (a POC won't surface questions they haven't articulated)</li>
+          <li>Decision authority is not engaged (POC results won't convert to decision without sponsor)</li>
+          <li>Customer's profile genuinely doesn't fit Nutanix (don't run a POC to confirm what should be obvious)</li>
+          <li>Recent platform investment makes a buying decision unlikely in the timeframe</li>
+          <li>Political dynamics make a fair evaluation impossible (incumbent vendor has executive lock; the POC will be evaluated against rigged criteria)</li>
+        </ul>
+      </div>
+
+      <div class="principle">
+        <span class="label">The credibility move</span>
+        <p>Tell the customer when a POC isn't the right next step. Recommend an alternative (evaluation, demo, peer reference call, design workshop). Customers respect SAs who decline POCs that won't produce decisions.</p>
+      </div>
+
+      <!-- ===== Variations ===== -->
+      <h2 class="cat" id="variations"><span class="num">12</span>POC Variations by Customer Profile</h2>
+
+      <h3 class="sub">Mid-market POC</h3>
+      <ul>
+        <li>4-week duration typical</li>
+        <li>3-4 node loaner cluster</li>
+        <li>5-8 tests focused on consolidation story (compute + storage + DR)</li>
+        <li>Customer team of 2-4 participates</li>
+        <li>Final report: 10-15 pages</li>
+      </ul>
+
+      <h3 class="sub">Enterprise POC</h3>
+      <ul>
+        <li>6-8 week duration typical</li>
+        <li>6-8 node cluster (often customer-procured for the POC and retained for production)</li>
+        <li>10-15 tests covering the full stack including advanced features</li>
+        <li>Customer team of 5-15 participates across multiple roles</li>
+        <li>Final report: 20-40 pages with detailed appendices</li>
+      </ul>
+
+      <h3 class="sub">Compliance-heavy POC</h3>
+      <ul>
+        <li>6-8 week duration typical</li>
+        <li>Includes compliance-specific validations (encryption, HSM integration, audit logging, microsegmentation)</li>
+        <li>Compliance team participates</li>
+        <li>Documentation rigor is higher (audit-grade evidence)</li>
+        <li>Final report: 30+ pages with compliance attestation appendices</li>
+      </ul>
+
+      <h3 class="sub">Cloud DR POC (NC2-focused)</h3>
+      <ul>
+        <li>4-week duration typical</li>
+        <li>NC2 cluster in customer's chosen cloud region</li>
+        <li>Tests focused on replication, failover, recovery validation</li>
+        <li>Customer's WAN to cloud is part of the test</li>
+        <li>Final report includes cloud-cost projections</li>
+      </ul>
+
+      <h3 class="sub">VDI POC</h3>
+      <ul>
+        <li>4-6 week duration typical</li>
+        <li>All-NVMe cluster sized for representative session count (often a fraction of full production)</li>
+        <li>Tests include boot storm, login storm, sustained-load, profile-storage validation</li>
+        <li>Citrix or Horizon team participates</li>
+        <li>Final report includes performance graphs from representative load</li>
+      </ul>
+
+      <!-- ===== Final Word ===== -->
+      <section class="final-word">
+        <h2>A Final Word</h2>
+        <p>The POC is a high-leverage moment in the sales cycle. Customers commit to vendors who run professional, customer-centered POCs. Customers walk away from vendors who treat POCs as feature shows.</p>
+        <p>The discipline matters more than the specific demos:</p>
+        <ul>
+          <li>Qualified scope, not over-broad</li>
+          <li>Customer-defined success criteria, not vendor-imposed</li>
+          <li>Customer hands on the keys, not just observation</li>
+          <li>Honest results, including caveats and items that didn't validate</li>
+          <li>Written final report, not verbal "looks good"</li>
+          <li>Recommendation that respects what the POC actually showed, not what BlueAlly hoped to show</li>
+        </ul>
+        <p><strong>Run POCs that produce decisions. The customers who say yes after a professionally-run POC become 10-year BlueAlly customers.</strong></p>
+      </section>
+
+      <!-- ===== References ===== -->
+      <section class="references">
+        <h2>References</h2>
+        <p>POC engagement methodology (qualification, scoping, demo scripts, success criteria, final-report structure). Technical content underlying the demos is sourced and verified in the per-module References sections plus Appendix G.</p>
+        <ul>
+          <li><strong>Module 02 References.</strong> Foundation deployment, NCC commands used in Demo 1. <a href="../../modules/02-nutanix-architecture/index.html">Module 2</a></li>
+          <li><strong>Module 03 References.</strong> Live Migration semantics, Move tool used in Demo 2 and Demo 6. <a href="../../modules/03-ahv-hypervisor/index.html">Module 3</a></li>
+          <li><strong>Module 06 References.</strong> Flow Network Security used in Demo 7 (NCI Ultimate or Security Add-On for NCI Pro). <a href="../../modules/06-networking-flow/index.html">Module 6</a></li>
+          <li><strong>Module 07 References.</strong> Recovery Plans and replication used in Demo 4. <a href="../../modules/07-data-protection/index.html">Module 7</a></li>
+          <li><strong>Module 08 References.</strong> Files and Objects used in Demos 8 and 9. <a href="../../modules/08-unified-storage/index.html">Module 8</a></li>
+          <li><strong>Module 09 References.</strong> NCI / NCM / NCP tier structure for the POC scoping document. <a href="../../modules/09-licensing-economics/index.html">Module 9</a></li>
+          <li><strong>Appendix G References.</strong> CLI command syntax (ncli, acli, ncc) used across demo procedures, including the corrected <code>ncli cluster get-domain-fault-tolerance-status type=node</code> syntax. <a href="../g-cli-reference/index.html">Appendix G</a></li>
+        </ul>
+      </section>
+
+      <!-- ===== Cross-references ===== -->
+      <section class="crossrefs">
+        <h3>Cross-references</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each demo script links to the module where the underlying capability is taught.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> defines the terms used.</li>
+          <li><strong>CLI Reference:</strong> <a href="../g-cli-reference/index.html">Appendix G</a> has the commands referenced in demo scripts.</li>
+          <li><strong>Discovery Questions:</strong> <a href="../e-discovery-questions/index.html">Appendix E</a> has the questions that surface POC scope.</li>
+          <li><strong>Sizing Rules:</strong> <a href="../f-sizing-rules/index.html">Appendix F</a> for POC hardware sizing.</li>
+          <li><strong>Reference Architectures:</strong> <a href="../i-reference-architectures/index.html">Appendix I</a> for the production architectures POCs validate against.</li>
+          <li><strong>Objections:</strong> <a href="../d-objections/index.html">Appendix D</a> has responses to objections that often surface during POCs.</li>
+        </ul>
+      </section>
+
+    </article>
+
+    <div class="back-home">
+      <a href="../../index.html">← back to home</a>
+    </div>
+
+  </main>
+
+  <footer class="site">
+    <div>Written by Fred Nix · Built for BlueAlly Solutions Architects · Source on <a href="https://github.com/nixfred/nutanix">GitHub</a></div>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-j-poc-playbook</span>
+  </footer>
+
+</body>
+</html>

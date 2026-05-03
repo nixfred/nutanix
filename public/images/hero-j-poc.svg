@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="j-title j-desc">
+  <title id="j-title">Appendix J hero: 30-day POC cadence and decision arrow</title>
+  <desc id="j-desc">A horizontal four-week timeline showing the POC cadence (Week 1 setup, Week 2 core validations, Week 3 advanced validations, Week 4 closeout), with checklist boxes above (qualification) and below (demo categories), terminating in a green DECISION arrow on the right. Mono path top-left. Purple appendix accent.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="timelineGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="50%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-j-poc-playbook
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · POC FRAMEWORK · QUALIFY · SCOPE · TEST · REPORT · DECIDE</text>
+
+  <text x="800" y="146" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">THE 30-DAY POC CADENCE</text>
+
+  <!-- Top row: Qualification checklist -->
+  <g transform="translate(120, 200)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">QUALIFY FIRST · 8-ITEM CHECKLIST</text>
+    <g font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">
+      <g transform="translate(0, 22)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Trigger event identified</text>
+      </g>
+      <g transform="translate(0, 44)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Budget approved or in approval</text>
+      </g>
+      <g transform="translate(0, 66)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Decision authority engaged</text>
+      </g>
+      <g transform="translate(0, 88)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Success criteria agreeable</text>
+      </g>
+
+      <g transform="translate(360, 22)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Realistic 4-6 week timeline</text>
+      </g>
+      <g transform="translate(360, 44)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Customer team has bandwidth</text>
+      </g>
+      <g transform="translate(360, 66)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">Specific technical questions</text>
+      </g>
+      <g transform="translate(360, 88)">
+        <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(52,211,153,0.30)" stroke="#34d399" stroke-width="1"/>
+        <path d="M3,8 L6,11 L11,4" stroke="#34d399" stroke-width="1.6" fill="none"/>
+        <text x="22" y="11" fill="#e8f0ff">No disqualifying conditions</text>
+      </g>
+
+      <g transform="translate(720, 22)">
+        <text x="0" y="11" fill="#c084fc" font-weight="700">RULE</text>
+        <text x="0" y="34" fill="#cfeeff">6+ checks → proceed</text>
+        <text x="0" y="58" fill="#cfeeff">fewer → recommend</text>
+        <text x="0" y="78" fill="#cfeeff">an evaluation, demo,</text>
+        <text x="0" y="98" fill="#cfeeff">or peer reference call</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Center: 4-week timeline -->
+  <g transform="translate(120, 380)">
+    <!-- Timeline rail -->
+    <rect x="0" y="44" width="1360" height="6" rx="3" fill="url(#timelineGrad)" opacity="0.55"/>
+
+    <!-- Week markers -->
+    <g font-family="Inter, sans-serif">
+      <!-- Week 1 -->
+      <g transform="translate(0, 0)" filter="url(#purpleGlow)">
+        <rect x="0" y="0" width="320" height="40" rx="6" fill="rgba(192,132,252,0.18)" stroke="#c084fc" stroke-width="1.4"/>
+        <text x="14" y="18" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">WEEK 1</text>
+        <text x="14" y="32" font-size="12" fill="#e8f0ff">Setup · Foundation · Onboarding</text>
+        <circle cx="160" cy="47" r="8" fill="#c084fc" stroke="#0a1628" stroke-width="2"/>
+      </g>
+      <!-- Week 2 -->
+      <g transform="translate(340, 0)">
+        <rect x="0" y="0" width="320" height="40" rx="6" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" stroke-width="1.4"/>
+        <text x="14" y="18" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">WEEK 2</text>
+        <text x="14" y="32" font-size="12" fill="#e8f0ff">Core validations · Live mig · Snap</text>
+        <circle cx="160" cy="47" r="8" fill="#00d4ff" stroke="#0a1628" stroke-width="2"/>
+      </g>
+      <!-- Week 3 -->
+      <g transform="translate(680, 0)">
+        <rect x="0" y="0" width="320" height="40" rx="6" fill="rgba(74,158,255,0.18)" stroke="#4a9eff" stroke-width="1.4"/>
+        <text x="14" y="18" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#4a9eff" letter-spacing="0.10em">WEEK 3</text>
+        <text x="14" y="32" font-size="12" fill="#e8f0ff">Advanced · Failure · DR · Files / Obj</text>
+        <circle cx="160" cy="47" r="8" fill="#4a9eff" stroke="#0a1628" stroke-width="2"/>
+      </g>
+      <!-- Week 4 -->
+      <g transform="translate(1020, 0)">
+        <rect x="0" y="0" width="320" height="40" rx="6" fill="rgba(52,211,153,0.18)" stroke="#34d399" stroke-width="1.4"/>
+        <text x="14" y="18" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#34d399" letter-spacing="0.10em">WEEK 4</text>
+        <text x="14" y="32" font-size="12" fill="#e8f0ff">Closeout · Customer ops · Report</text>
+        <circle cx="160" cy="47" r="8" fill="#34d399" stroke="#0a1628" stroke-width="2"/>
+      </g>
+    </g>
+
+    <!-- Decision arrow -->
+    <g transform="translate(1380, 28)">
+      <path d="M0,18 L60,0 L60,12 L120,12 L120,24 L60,24 L60,36 Z" fill="#34d399" opacity="0.85"/>
+      <text x="62" y="22" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#0a1628" letter-spacing="0.10em">DECIDE</text>
+    </g>
+  </g>
+
+  <!-- Bottom row: Demo categories -->
+  <g transform="translate(120, 540)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">10 DEMO SCRIPTS · TEST WHAT MATTERS, NOT WHAT SHOWCASES</text>
+    <g font-family="JetBrains Mono, monospace" font-size="11">
+      <g transform="translate(0, 22)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">01 · Foundation</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">cluster bootstrap · NCC</text>
+      </g>
+      <g transform="translate(220, 22)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">02 · Live Migration</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">running VM · no disruption</text>
+      </g>
+      <g transform="translate(440, 22)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">03 · Snapshot / Restore</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">crash-consistent · app verify</text>
+      </g>
+      <g transform="translate(660, 22)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">04 · Replication / Failover</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">Recovery Plans · isolated net</text>
+      </g>
+      <g transform="translate(880, 22)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">05 · Failure Tolerance</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">node loss · HA · rebuild</text>
+      </g>
+      <g transform="translate(1100, 22)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">06 · Move to AHV</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">real customer workload</text>
+      </g>
+
+      <g transform="translate(0, 90)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">07 · Flow Microseg</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">categories · enforce</text>
+      </g>
+      <g transform="translate(220, 90)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">08 · Files</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">SMB · AD · SSR · replication</text>
+      </g>
+      <g transform="translate(440, 90)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">09 · Objects (backup tgt)</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">Veeam · WORM · S3</text>
+      </g>
+      <g transform="translate(660, 90)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(192,132,252,0.10)" stroke="#c084fc" stroke-width="1"/>
+        <text x="14" y="22" fill="#c084fc">10 · Operational Workflows</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">customer hands on keys</text>
+      </g>
+
+      <g transform="translate(880, 90)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(251,191,36,0.10)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="14" y="22" fill="#fbbf24">SCOPE BOUNDARY</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">in writing · both sign</text>
+      </g>
+      <g transform="translate(1100, 90)">
+        <rect x="0" y="0" width="200" height="56" rx="4" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1"/>
+        <text x="14" y="22" fill="#00d4ff">FINAL REPORT</text>
+        <text x="14" y="42" font-size="10" fill="#a8b8d4">the buying-decision artifact</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom: five principles strip -->
+  <g transform="translate(120, 800)">
+    <text x="680" y="0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="0.10em">FIVE PRINCIPLES</text>
+    <text x="680" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#cfeeff">qualify before committing · success criteria in writing · test what matters · customer hands on keys · document everything</text>
+  </g>
+
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
