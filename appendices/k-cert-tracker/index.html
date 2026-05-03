@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix K: Cert Tracker</title>
+  <meta name="description" content="Blueprint coverage map for the Nutanix cert ladder: NCA, NCP-MCI, NCP-NS, NCP-US, NCP-MCA, NCM-MCI, NCX-MCI. Each cert has overview, blueprint domain weights mapped to curriculum modules, study sequence, hands-on recommendations, and common pitfalls. Plus exam logistics, free-exam programs, recommended cert-ladder progression for BlueAlly SAs, and 10 common cert-prep mistakes. Verify against the official Nutanix blueprint at exam time." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix K: Cert Tracker" />
+  <meta property="og:description" content="Cert ladder blueprint map · NCA → NCP family → NCM-MCI → NCX-MCI. Study sequence, hands-on, pitfalls. Verify the blueprint at exam time." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/k-cert-tracker/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix K: Cert Tracker" />
+  <meta name="twitter:description" content="Cert ladder map: NCA, NCP family, NCM-MCI, NCX-MCI." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%),
+        linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ol { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ol li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+    article.body h2.cat .num {
+      font-family: var(--font-mono);
+      font-size: 13px; color: var(--accent-purple); font-weight: 700;
+      letter-spacing: 0.04em; margin-right: 12px; vertical-align: middle;
+      padding: 3px 9px; border: 1px solid rgba(192,132,252,0.45); border-radius: 4px;
+    }
+
+    article.body h3.sub {
+      font-family: var(--font-mono);
+      font-size: 13px; font-weight: 600; color: var(--accent-purple);
+      letter-spacing: 0.10em; text-transform: uppercase;
+      margin: 22px 0 8px;
+    }
+
+    article.body p { color: var(--text-secondary); }
+    article.body p strong, article.body li strong { color: var(--text-primary); }
+    article.body ul, article.body ol { color: var(--text-secondary); padding-left: 22px; }
+    article.body ul li, article.body ol li { margin-bottom: 4px; }
+
+    /* Boxes */
+    .overview, .study, .hands-on, .pitfalls, .ladder, .principle, .free-exam, .audience, .pass, .fail {
+      margin: 8px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .overview   { border-left: 3px solid var(--accent-purple); background: var(--bg-elevated); }
+    .study      { border-left: 3px solid var(--accent-cyan); }
+    .hands-on   { border-left: 3px solid var(--warning); }
+    .pitfalls   { border-left: 3px solid var(--danger); }
+    .ladder     { border-left: 3px solid var(--accent-purple); }
+    .principle  { border-left: 3px solid var(--accent-purple); }
+    .free-exam  { border-left: 3px solid var(--warning); background: var(--bg-elevated); }
+    .audience   { border-left: 3px solid var(--text-secondary); }
+    .pass       { border-left: 3px solid var(--success); }
+    .fail       { border-left: 3px solid var(--danger); }
+
+    .overview .label, .study .label, .hands-on .label, .pitfalls .label, .ladder .label,
+    .principle .label, .free-exam .label, .audience .label, .pass .label, .fail .label {
+      font-family: var(--font-mono); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+    }
+    .overview .label   { color: var(--accent-purple); }
+    .study .label      { color: var(--accent-cyan); }
+    .hands-on .label   { color: var(--warning); }
+    .pitfalls .label   { color: var(--danger); }
+    .ladder .label     { color: var(--accent-purple); }
+    .principle .label  { color: var(--accent-purple); }
+    .free-exam .label  { color: var(--warning); }
+    .audience .label   { color: var(--text-secondary); }
+    .pass .label       { color: var(--success); }
+    .fail .label       { color: var(--danger); }
+
+    .overview p, .study p, .hands-on p, .pitfalls p, .ladder p, .principle p, .free-exam p, .audience p, .pass p, .fail p {
+      margin: 0 0 6px;
+    }
+    .overview strong, .study strong, .hands-on strong, .pitfalls strong, .ladder strong, .principle strong, .free-exam strong, .audience strong, .pass strong, .fail strong {
+      color: var(--text-primary);
+    }
+
+    .overview ul, .overview ol, .study ul, .study ol, .hands-on ul, .pitfalls ul, .pitfalls ol, .ladder ul, .principle ul, .audience ul, .pass ul, .fail ul {
+      margin: 0; padding-left: 20px;
+    }
+
+    .overview ul li, .study ol li, .hands-on ul li, .pitfalls ol li, .ladder ul li, .pass ul li, .fail ul li {
+      margin-bottom: 4px;
+    }
+
+    /* Ladder pre-formatted */
+    pre.ladder-art {
+      margin: 8px 0;
+      padding: 16px 18px;
+      background: #050a16;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.55;
+      color: #cfeeff;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Tables */
+    table.std, table.bp {
+      width: 100%; border-collapse: collapse; margin: 12px 0;
+      font-family: var(--font-display); font-size: 14px;
+    }
+    table.std th, table.std td, table.bp th, table.bp td {
+      padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top;
+    }
+    table.std th, table.bp th { color: var(--accent-purple); font-family: var(--font-mono); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-size: 11px; }
+    table.std td, table.bp td { color: var(--text-secondary); }
+    table.std td:first-child { color: var(--text-primary); width: 22%; }
+
+    table.bp td:first-child { color: var(--text-primary); width: 50%; }
+    table.bp td:nth-child(2) {
+      width: 18%; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      color: var(--accent-cyan);
+    }
+
+    .pass-fail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin: 8px 0;
+    }
+    @media (max-width: 760px) {
+      .pass-fail-grid { grid-template-columns: 1fr; }
+    }
+
+    /* See also */
+    .see-also {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+      margin: 16px 0 0;
+    }
+    .see-also a { color: var(--accent-cyan); }
+    .see-also .label { color: var(--text-tertiary); margin-right: 6px; }
+
+    /* Big section blocks */
+    .how-to-use, .references, .crossrefs, .common-mistakes, .final-word, .logistics {
+      margin-top: 36px; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .how-to-use h2, .references h2, .common-mistakes h2, .final-word h2, .logistics h2 { margin: 0 0 12px; font-size: 22px; }
+    .how-to-use h3, .common-mistakes h3, .final-word h3, .logistics h3 { margin: 16px 0 8px; font-size: 14px; color: var(--accent-purple); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; }
+    .how-to-use ol, .common-mistakes ol, .logistics ol, .logistics ul { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .how-to-use ol li, .common-mistakes ol li, .logistics li { margin-bottom: 8px; }
+    .how-to-use ol li strong, .common-mistakes ol li strong, .logistics strong { color: var(--text-primary); }
+    .final-word p { color: var(--text-secondary); font-size: 14.5px; margin: 0 0 12px; line-height: 1.65; }
+    .final-word strong { color: var(--text-primary); }
+
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .caveat {
+      margin: 18px 0;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warning);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--text-primary);
+    }
+    .caveat strong { color: var(--warning); }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body h2.cat { font-size: 22px; }
+      pre.ladder-art { font-size: 11px; padding: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">K · Cert Tracker</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-k-cert-tracker.svg" alt="A four-tier cert ladder rendered as ascending platforms: NCA Associate at the bottom, four NCP Professional certs (MCI, NS, US, MCA) in the middle, NCM-MCI Master above, NCX-MCI Expert at the top. Each tier shows typical prep time, format, and a year-marker timeline on the left. Right side strips show the free-exam program (through June 30, 2026), three principles (cert is the proof, knowledge is the goal, hands-on beats reading, verify the blueprint), and the recommended order." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-k-cert-tracker</div>
+      <h1 class="module-title">Appendix K · Cert Tracker</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">7 certs</span>
+        <span class="chip">blueprint coverage map</span>
+        <span class="chip">study sequence</span>
+        <span class="chip">verify-the-blueprint discipline</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>The Nutanix cert ladder is the credentialing path BlueAlly SAs walk to demonstrate platform expertise. This appendix maps the curriculum to each cert's blueprint, recommends study sequencing, and provides realistic time-and-effort expectations for each level.</p>
+      <p><strong>Three principles for cert preparation:</strong></p>
+      <ol>
+        <li><strong>The cert is the proof; the knowledge is the goal.</strong> Don't optimize for passing the exam at the expense of understanding the material.</li>
+        <li><strong>Hands-on practice beats reading.</strong> Use the Lab Exercises in each module.</li>
+        <li><strong>Verify blueprints.</strong> Nutanix updates exam content; the official blueprint at the time you sit the exam is the authoritative source.</li>
+      </ol>
+      <div class="caveat">
+        <strong>Important caveat:</strong> Nutanix updates exam blueprints periodically. The mapping in this appendix reflects approximate coverage at the time of writing (early 2026). Always verify against the official blueprint published on <a href="https://university.nutanix.com">university.nutanix.com</a> when planning your exam date. If a blueprint has changed materially, the modules still teach the underlying concepts; question patterns and weighting may have shifted.
+      </div>
+    </div>
+
+    <nav class="cat-jump" aria-label="Cert tracker jump nav">
+      <a href="#ladder">Cert Ladder</a>
+      <a href="#nca">NCA</a>
+      <a href="#ncp-mci">NCP-MCI</a>
+      <a href="#ncp-ns">NCP-NS</a>
+      <a href="#ncp-us">NCP-US</a>
+      <a href="#ncp-mca">NCP-MCA</a>
+      <a href="#ncm-mci">NCM-MCI</a>
+      <a href="#ncx-mci">NCX-MCI</a>
+      <a href="#sequence">Study Sequence</a>
+      <a href="#logistics">Exam Logistics</a>
+      <a href="#mistakes">Common Mistakes</a>
+    </nav>
+
+    <article class="body">
+
+      <!-- ===== Ladder Overview ===== -->
+      <h2 class="cat" id="ladder"><span class="num">0</span>The Nutanix Cert Ladder</h2>
+
+      <h3 class="sub">Hierarchy overview</h3>
+<pre class="ladder-art">NCX-MCI    Expert         (panel defense, ~50% pass rate, 12+ months prep typical)
+   ↑
+NCM-MCI    Master         (deep multi-cluster design, 6+ months experience needed)
+   ↑
+NCP-MCI    Professional   (the core HCI cert, the one most SAs target first)
+NCP-NS     Professional   (Network Security specialization)
+NCP-US     Professional   (Unified Storage specialization)
+NCP-MCA    Professional   (Multicloud Automation specialization)
+   ↑
+NCA        Associate      (entry-level, foundational concepts)</pre>
+
+      <p>Each NCP specialization is independent (NCP-MCI does not require NCP-NS or NCP-US), but most SAs progress through them in the order shown. NCM and NCX both build on NCP-MCI as the foundation.</p>
+
+      <h3 class="sub">Time and effort expectations</h3>
+      <table class="std">
+        <thead><tr><th>Cert</th><th>Typical prep time</th><th>Hands-on required</th><th>Format</th></tr></thead>
+        <tbody>
+          <tr><td>NCA</td><td>20-40 hours</td><td>Light</td><td>Multiple choice, 75 questions</td></tr>
+          <tr><td>NCP-MCI</td><td>60-100 hours</td><td>Significant</td><td>Multiple choice + scenario, 60 questions</td></tr>
+          <tr><td>NCP-NS / NCP-US / NCP-MCA</td><td>40-80 hours each</td><td>Moderate-significant</td><td>Multiple choice + scenario</td></tr>
+          <tr><td>NCM-MCI</td><td>100-150 hours</td><td>Deep operational experience</td><td>Performance-based + multiple choice</td></tr>
+          <tr><td>NCX-MCI</td><td>6-12 months active prep</td><td>Production deployment experience</td><td>Panel defense (live oral exam with senior architects)</td></tr>
+        </tbody>
+      </table>
+      <p>These are typical for someone with relevant infrastructure background (VMware, Linux, networking). Faster ramps are possible; slower ramps are common for those building infrastructure foundations alongside cert prep.</p>
+
+      <div class="free-exam">
+        <span class="label">Free-exam programs</span>
+        <p>Nutanix runs periodic free-exam promotions. Verify current promotional availability at <a href="https://university.nutanix.com">university.nutanix.com</a> when planning your exam timing. <strong>As of writing, a free-exam program runs through June 30, 2026.</strong></p>
+        <p><strong>The discipline:</strong> don't rush a cert just because the exam is free. Pass it because you're ready, not because the timing is convenient.</p>
+      </div>
+
+      <!-- ===== NCA ===== -->
+      <h2 class="cat" id="nca"><span class="num">1</span>NCA · Nutanix Certified Associate</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>The entry-level cert. Validates foundational understanding of Nutanix concepts: HCI principles, the platform's components, basic operations.</p>
+        <ul>
+          <li><strong>Format:</strong> ~75 multiple-choice questions, ~90 minutes, online proctored</li>
+          <li><strong>Audience:</strong> anyone new to Nutanix who needs to demonstrate baseline competence. SAs, sales engineers, junior infrastructure team members, customer-side staff during evaluation.</li>
+          <li><strong>Realistic prep:</strong> 20-40 hours for someone with general infrastructure background</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint domain</th><th>Weight</th><th>Curriculum coverage</th></tr></thead>
+        <tbody>
+          <tr><td>HCI Fundamentals</td><td>~15%</td><td><a href="../../modules/01-hci-foundations/index.html">Module 1: HCI Foundations</a></td></tr>
+          <tr><td>Nutanix Platform Architecture</td><td>~20%</td><td><a href="../../modules/02-nutanix-architecture/index.html">Module 2: Architecture</a></td></tr>
+          <tr><td>AHV Hypervisor Basics</td><td>~15%</td><td><a href="../../modules/03-ahv-hypervisor/index.html">Module 3: AHV</a> (foundational sections)</td></tr>
+          <tr><td>Prism Element Basics</td><td>~15%</td><td><a href="../../modules/04-prism-management/index.html">Module 4: Prism</a> (PE sections)</td></tr>
+          <tr><td>DSF Storage Basics</td><td>~15%</td><td><a href="../../modules/05-dsf-storage-deep-dive/index.html">Module 5: DSF</a> (foundational sections)</td></tr>
+          <tr><td>Networking Basics</td><td>~10%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6: Networking</a> (foundational sections)</td></tr>
+          <tr><td>Data Protection Basics</td><td>~10%</td><td><a href="../../modules/07-data-protection/index.html">Module 7: Data Protection</a> (foundational sections)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>Read Modules 1-4 in order (HCI, Architecture, AHV, Prism)</li>
+          <li>Skim Modules 5-7 for foundational concepts (don't dive deep yet)</li>
+          <li>Complete Lab Exercises in Modules 1-4</li>
+          <li>Review the practice questions in those modules (target 80%+ on the knowledge MCQs)</li>
+          <li>Read <a href="../a-glossary/index.html">Appendix A: Glossary</a> end-to-end</li>
+          <li>Take the Nutanix-provided practice exam if available</li>
+          <li>Schedule the exam when consistently scoring 80%+ on practice material</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>Use the Nutanix Community Edition (free download) or a small lab cluster to perform basic operations: VM lifecycle, storage container creation, network configuration, snapshot/restore. The hands-on muscle memory matters even at the Associate level.</p>
+      </div>
+
+      <div class="pitfalls">
+        <span class="label">Common pitfalls</span>
+        <ul>
+          <li><strong>Cramming Modules 5-7 details for an Associate exam.</strong> NCA tests foundations; depth comes at NCP level.</li>
+          <li><strong>Skipping the glossary.</strong> Many NCA questions test definitions and terminology directly.</li>
+          <li><strong>No hands-on practice.</strong> Pure reading prep often fails on operational questions.</li>
+        </ul>
+      </div>
+
+      <!-- ===== NCP-MCI ===== -->
+      <h2 class="cat" id="ncp-mci"><span class="num">2</span>NCP-MCI · Multicloud Infrastructure</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>The core Professional cert. The one most BlueAlly SAs target first after NCA. Validates competence in deploying, configuring, and operating Nutanix Multicloud Infrastructure (AHV + DSF + Prism + foundational data protection and networking).</p>
+        <ul>
+          <li><strong>Format:</strong> ~60 questions mixing multiple-choice and scenario-based, ~120 minutes, online proctored</li>
+          <li><strong>Audience:</strong> SAs running customer engagements; infrastructure engineers operating Nutanix clusters; consultants deploying Nutanix</li>
+          <li><strong>Realistic prep:</strong> 60-100 hours for someone with NCA and 3+ months of hands-on experience</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint domain</th><th>Weight</th><th>Curriculum coverage</th></tr></thead>
+        <tbody>
+          <tr><td>Cluster Architecture &amp; Components</td><td>~15%</td><td><a href="../../modules/02-nutanix-architecture/index.html">Module 2: Architecture</a> (deep)</td></tr>
+          <tr><td>AHV Hypervisor Deep</td><td>~15%</td><td><a href="../../modules/03-ahv-hypervisor/index.html">Module 3: AHV</a> (full module)</td></tr>
+          <tr><td>Prism Element &amp; Central</td><td>~15%</td><td><a href="../../modules/04-prism-management/index.html">Module 4: Prism</a> (full module)</td></tr>
+          <tr><td>DSF Storage &amp; Performance</td><td>~20%</td><td><a href="../../modules/05-dsf-storage-deep-dive/index.html">Module 5: DSF</a> (full module)</td></tr>
+          <tr><td>Networking &amp; VLANs</td><td>~10%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6: Networking</a> (foundational + Flow basics)</td></tr>
+          <tr><td>Data Protection (snapshot, replication)</td><td>~15%</td><td><a href="../../modules/07-data-protection/index.html">Module 7: Data Protection</a> (full module)</td></tr>
+          <tr><td>Cluster Operations &amp; Lifecycle</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4: Prism § LCM</a>, <a href="../../modules/02-nutanix-architecture/index.html">Module 2 § Foundation</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>Confirm NCA-level foundations are solid; review NCA modules briefly</li>
+          <li>Deep-read Modules 2-7 (NCP-MCI's core territory)</li>
+          <li>Complete every Lab Exercise in Modules 2-7</li>
+          <li>Use <a href="../g-cli-reference/index.html">Appendix G: CLI Reference</a> to practice operational commands</li>
+          <li>Work through every practice question in Modules 2-7 (target 85%+)</li>
+          <li>Review <a href="../b-comparison-matrix/index.html">Appendix B: Comparison Matrix</a> for VMware-comparison questions</li>
+          <li>Complete 2-3 of the <a href="../c-scenarios/index.html">Appendix C: Scenarios</a> end-to-end as integration practice</li>
+          <li>Take the Nutanix-provided practice exam</li>
+          <li>Schedule the exam when consistently scoring 85%+</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>Real cluster experience is essential for NCP-MCI. Use Nutanix CE on a 3-node lab if customer access isn't available. Practice cluster deployment with Foundation, perform LCM upgrades, simulate failures and observe recovery, configure replication between two clusters.</p>
+      </div>
+
+      <div class="pitfalls">
+        <span class="label">Common pitfalls</span>
+        <ul>
+          <li><strong>Memorizing without understanding.</strong> NCP-MCI scenario questions test judgment, not recall.</li>
+          <li><strong>Skipping the operational depth.</strong> NCP-MCI tests "what would you do if X happened" patterns; without operational experience, these are guesses.</li>
+          <li><strong>Underestimating the storage section.</strong> DSF accounts for ~20% of the exam; deep understanding is required.</li>
+        </ul>
+      </div>
+
+      <!-- ===== NCP-NS ===== -->
+      <h2 class="cat" id="ncp-ns"><span class="num">3</span>NCP-NS · Network Security</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>Specialization cert for networking and security on Nutanix. Validates competence in configuring AHV networking, Flow Network Security (microsegmentation), and Flow Virtual Networking (overlays).</p>
+        <ul>
+          <li><strong>Format:</strong> ~60 questions mixing multiple-choice and scenario-based</li>
+          <li><strong>Audience:</strong> SAs serving customers with significant networking/security focus; network and security engineers operating Nutanix</li>
+          <li><strong>Realistic prep:</strong> 40-80 hours for someone with NCP-MCI and networking background</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint domain</th><th>Weight</th><th>Curriculum coverage</th></tr></thead>
+        <tbody>
+          <tr><td>AHV Networking Architecture</td><td>~15%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6: Networking</a> (foundational sections)</td></tr>
+          <tr><td>Open vSwitch &amp; Bridges</td><td>~15%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6 § OVS</a></td></tr>
+          <tr><td>Bonds &amp; Uplinks</td><td>~10%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6 § Bond Modes</a>, <a href="../g-cli-reference/index.html">Appendix G § OVS Commands</a></td></tr>
+          <tr><td>Virtual Networks &amp; VLANs</td><td>~15%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6 § Virtual Networks</a></td></tr>
+          <tr><td>Flow Network Security</td><td>~25%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6 § Flow Network Security</a></td></tr>
+          <tr><td>Flow Virtual Networking</td><td>~15%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6 § Flow Virtual Networking</a></td></tr>
+          <tr><td>Categories &amp; Policy Enforcement</td><td>~5%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § Categories</a>, <a href="../../modules/06-networking-flow/index.html">Module 6</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>NCP-MCI as prerequisite (confirm Module 6 foundations are solid)</li>
+          <li>Deep-read Module 6 in full</li>
+          <li>Complete the Lab Exercises in Module 6</li>
+          <li>Practice OVS commands from <a href="../g-cli-reference/index.html">Appendix G § OVS</a></li>
+          <li>Configure Flow Network Security policies in a lab; verify enforcement</li>
+          <li>Configure Flow Virtual Networking VPCs and routing</li>
+          <li>Review <a href="../b-comparison-matrix/index.html">Comparison Matrix § Flow vs NSX-T</a></li>
+          <li>Work through Module 6 practice questions</li>
+          <li>Take the Nutanix-provided practice exam</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>Configure Flow Network Security policies and verify they enforce as expected. Use the lab to simulate the customer scenarios from <a href="../c-scenarios/index.html">Scenarios 4 (Compliance-Heavy)</a> and <a href="../c-scenarios/index.html">10 (Senior Architect Defense)</a> which involve detailed networking decisions.</p>
+      </div>
+
+      <!-- ===== NCP-US ===== -->
+      <h2 class="cat" id="ncp-us"><span class="num">4</span>NCP-US · Unified Storage</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>Specialization cert for Nutanix Unified Storage: Files (SMB/NFS), Objects (S3), Volumes (iSCSI). Validates competence in deploying, configuring, and operating these services.</p>
+        <ul>
+          <li><strong>Format:</strong> ~60 questions mixing multiple-choice and scenario-based</li>
+          <li><strong>Audience:</strong> SAs serving customers with significant storage consolidation focus; storage engineers operating Nutanix</li>
+          <li><strong>Realistic prep:</strong> 40-80 hours for someone with NCP-MCI and storage background</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint domain</th><th>Weight</th><th>Curriculum coverage</th></tr></thead>
+        <tbody>
+          <tr><td>Unified Storage Architecture</td><td>~10%</td><td><a href="../../modules/08-unified-storage/index.html">Module 8: Unified Storage</a> (overview)</td></tr>
+          <tr><td>Nutanix Files (SMB/NFS)</td><td>~30%</td><td><a href="../../modules/08-unified-storage/index.html">Module 8 § Files</a> (full section)</td></tr>
+          <tr><td>File Server Configuration</td><td>~10%</td><td><a href="../../modules/08-unified-storage/index.html">Module 8 § Files Configuration</a></td></tr>
+          <tr><td>Files Analytics &amp; Anti-Ransomware</td><td>~10%</td><td><a href="../../modules/08-unified-storage/index.html">Module 8 § Files Analytics</a></td></tr>
+          <tr><td>Nutanix Objects (S3)</td><td>~20%</td><td><a href="../../modules/08-unified-storage/index.html">Module 8 § Objects</a></td></tr>
+          <tr><td>Nutanix Volumes (iSCSI)</td><td>~15%</td><td><a href="../../modules/08-unified-storage/index.html">Module 8 § Volumes</a></td></tr>
+          <tr><td>Sizing &amp; Operations</td><td>~5%</td><td><a href="../f-sizing-rules/index.html">Appendix F § Files / Objects / Volumes Sizing</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>NCP-MCI as foundation (foundational DSF understanding)</li>
+          <li>Deep-read Module 8 in full</li>
+          <li>Complete the Lab Exercises in Module 8</li>
+          <li>Configure a Files cluster with AD integration; mount shares; configure SSR</li>
+          <li>Configure an Objects cluster; create buckets; integrate with backup software</li>
+          <li>Configure Volumes; present LUNs to an external Linux or Windows host</li>
+          <li>Review <a href="../b-comparison-matrix/index.html">Comparison Matrix § File Storage</a> (Files vs ONTAP / Isilon, Objects vs S3)</li>
+          <li>Review <a href="../f-sizing-rules/index.html">Sizing Rules § Files / Objects / Volumes</a></li>
+          <li>Work through Module 8 practice questions</li>
+          <li>Take the Nutanix-provided practice exam</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>Files configuration with AD integration is the most operationally complex piece; practice it. Backup-target integration with Objects (Veeam or similar) is also commonly tested through scenarios.</p>
+      </div>
+
+      <!-- ===== NCP-MCA ===== -->
+      <h2 class="cat" id="ncp-mca"><span class="num">5</span>NCP-MCA · Multicloud Automation</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>Specialization cert for Nutanix automation. Covers NCM Self-Service (formerly branded Calm), X-Play, the v4 API, Terraform / Ansible integration, and IaC patterns.</p>
+        <ul>
+          <li><strong>Format:</strong> ~60 questions mixing multiple-choice and scenario-based</li>
+          <li><strong>Audience:</strong> SAs and engineers focused on automation and platform engineering on Nutanix</li>
+          <li><strong>Realistic prep:</strong> 40-80 hours for someone with NCP-MCI and automation background</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint domain</th><th>Weight</th><th>Curriculum coverage</th></tr></thead>
+        <tbody>
+          <tr><td>v4 API Architecture &amp; Authentication</td><td>~15%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § v4 API</a></td></tr>
+          <tr><td>NCM Self-Service (formerly Calm) Blueprints</td><td>~25%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § Self-Service</a></td></tr>
+          <tr><td>X-Play Event-Driven Automation</td><td>~15%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § X-Play</a></td></tr>
+          <tr><td>Terraform Provider</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § IaC Tools</a></td></tr>
+          <tr><td>Ansible Collection</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § IaC Tools</a></td></tr>
+          <tr><td>PowerShell Module</td><td>~5%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § PowerShell</a></td></tr>
+          <tr><td>Categories &amp; Tagging Strategy</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § Categories</a></td></tr>
+          <tr><td>Multi-cluster Operations</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4 § Prism Central</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>NCP-MCI as foundation</li>
+          <li>Deep-read <a href="../../modules/04-prism-management/index.html">Module 4</a>, focusing on the automation sections</li>
+          <li>Get hands-on with the v4 API: list VMs, create snapshots, query categories via API calls</li>
+          <li>Build a Self-Service blueprint for a representative application stack</li>
+          <li>Build an X-Play playbook for a representative event-driven scenario (alert-to-Slack, threshold-to-snapshot)</li>
+          <li>Practice the Terraform Nutanix provider against a lab cluster</li>
+          <li>Review category-driven policy patterns in <a href="../../modules/06-networking-flow/index.html">Module 6 § Flow</a> and <a href="../../modules/07-data-protection/index.html">Module 7 § Protection Policies</a></li>
+          <li>Work through Module 4 practice questions on automation</li>
+          <li>Take the Nutanix-provided practice exam</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>Automation cert is hands-on heavy. The exam will test specific blueprint construction, API usage patterns, and X-Play playbook design. Don't take this without lab time building actual automations.</p>
+      </div>
+
+      <!-- ===== NCM-MCI ===== -->
+      <h2 class="cat" id="ncm-mci"><span class="num">6</span>NCM-MCI · Master</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>The Master-level cert. Validates expert-level competence in design, sizing, and operating Nutanix at scale. Performance-based components plus written exam.</p>
+        <ul>
+          <li><strong>Format:</strong> combination of performance-based hands-on tasks and multiple-choice questions; approximately 4 hours; online proctored or in-person at testing centers</li>
+          <li><strong>Audience:</strong> senior SAs, principal engineers, architects with significant Nutanix design and operational responsibility</li>
+          <li><strong>Realistic prep:</strong> 100-150 hours plus 6+ months of production-grade Nutanix experience</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint domain</th><th>Weight</th><th>Curriculum coverage</th></tr></thead>
+        <tbody>
+          <tr><td>Design Methodology</td><td>~15%</td><td><a href="../c-scenarios/index.html">Appendix C: Scenarios</a>, <a href="../i-reference-architectures/index.html">Appendix I: Reference Architectures</a></td></tr>
+          <tr><td>Cluster Sizing &amp; Performance</td><td>~15%</td><td><a href="../f-sizing-rules/index.html">Appendix F: Sizing Rules</a>, <a href="../../modules/05-dsf-storage-deep-dive/index.html">Module 5 deep</a></td></tr>
+          <tr><td>Multi-Cluster Architecture</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4: Prism Central</a>, <a href="../i-reference-architectures/index.html">Appendix I § Large</a></td></tr>
+          <tr><td>Data Protection Design</td><td>~15%</td><td><a href="../../modules/07-data-protection/index.html">Module 7</a>, <a href="../i-reference-architectures/index.html">Appendix I</a></td></tr>
+          <tr><td>Networking &amp; Microsegmentation Design</td><td>~10%</td><td><a href="../../modules/06-networking-flow/index.html">Module 6</a></td></tr>
+          <tr><td>Storage Architecture (DSF, Files, Objects, Volumes)</td><td>~15%</td><td>Modules 5 and 8 deep</td></tr>
+          <tr><td>Migration Planning</td><td>~10%</td><td><a href="../../modules/10-migration-path/index.html">Module 10: Migration Path</a></td></tr>
+          <tr><td>Operations &amp; Lifecycle</td><td>~10%</td><td><a href="../../modules/04-prism-management/index.html">Module 4</a>, <a href="../g-cli-reference/index.html">Appendix G</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>NCP-MCI as prerequisite (must be solid)</li>
+          <li>Reread the entire curriculum (Modules 1-10) with focus on design rationale, not just feature recall</li>
+          <li>Work through every <a href="../c-scenarios/index.html">Appendix C: Scenario</a> end-to-end without looking at the strong-answer framework first</li>
+          <li>Study every <a href="../i-reference-architectures/index.html">Appendix I: Reference Architecture</a>; understand why each architecture has the shape it does</li>
+          <li>Master <a href="../f-sizing-rules/index.html">Appendix F: Sizing Rules</a> for design conversations</li>
+          <li>Run <a href="../j-poc-playbook/index.html">Appendix J: POC scenarios</a> in lab to validate design choices empirically</li>
+          <li>Get hands-on with multi-cluster Prism Central operations at scale</li>
+          <li>Take Nutanix's NCM-MCI practice materials when available</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>NCM-MCI tests the integration of multiple modules into design judgment. Lab time alone is insufficient; production-grade operational experience is the differentiator. SAs without production-grade exposure should pair the cert prep with engagements where they can observe real customer environments.</p>
+      </div>
+
+      <div class="pitfalls">
+        <span class="label">Common pitfalls</span>
+        <ul>
+          <li><strong>Treating it as NCP-MCI Plus.</strong> NCM-MCI tests integration and judgment; pure feature recall (NCP-MCI's strength) doesn't carry through.</li>
+          <li><strong>Skipping multi-cluster design.</strong> Single-cluster thinking fails NCM-MCI scenarios.</li>
+          <li><strong>Underestimating performance-based components.</strong> Hands-on tasks are part of the exam.</li>
+        </ul>
+      </div>
+
+      <!-- ===== NCX-MCI ===== -->
+      <h2 class="cat" id="ncx-mci"><span class="num">7</span>NCX-MCI · Expert</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>The Expert-level cert. Live oral panel defense by a panel of senior Nutanix architects. Tests comprehensive design integration, customer-engagement disposition, and the willingness to recommend honestly even when honesty cuts against commercial interest.</p>
+        <ul>
+          <li><strong>Format:</strong> Live oral defense (videoconference or in-person) with a panel of 2-3 senior architects. Typically 2-4 hours. Includes scenario presentation, design defense, technical deep-dive, and Q&amp;A on areas the panel probes.</li>
+          <li><strong>Audience:</strong> the small set of architects committed to expert-level credentials. Senior principal SAs, distinguished engineers, customer-facing chief architects.</li>
+          <li><strong>Realistic prep:</strong> 6-12 months of active prep in addition to multiple years of production design and operational experience.</li>
+          <li><strong>Pass rate:</strong> historically around 50%. Failure on first attempt is common and not a reflection of poor preparation; the bar is high.</li>
+        </ul>
+      </div>
+
+      <div class="principle">
+        <span class="label">Preparation approach</span>
+        <p>NCX-MCI is not exam-question-bank study. It's preparation for a live oral defense of design judgment.</p>
+        <p><strong>The senior-SA disposition tested:</strong></p>
+        <ul>
+          <li>Acknowledge competitor strengths</li>
+          <li>Recommend hybrid steady-state when right</li>
+          <li>Recommend against migration when math doesn't work</li>
+          <li>Engage seriously with senior architect arguments</li>
+          <li>Maintain calm under panel pressure</li>
+          <li>Show the integrated thinking that pulls from multiple modules</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Curriculum coverage map</h3>
+      <p>The full curriculum prepares for NCX-MCI; specific high-value sections:</p>
+      <ul>
+        <li><strong>Every NCX-style question (Q11 and Q12)</strong> in Modules 1-10 is similar in shape to panel defense scenarios. Re-read these.</li>
+        <li><a href="../c-scenarios/index.html">Appendix C: Scenarios</a>, especially Scenarios 2 (Enterprise Multi-Site), 4 (Compliance-Heavy), 7 (CFO Defense), 8 (Mid-Engagement Crisis), and 10 (Senior Architect Lock-In Defense)</li>
+        <li><a href="../b-comparison-matrix/index.html">Appendix B: Comparison Matrix</a> for the depth of competitor knowledge</li>
+        <li><a href="../i-reference-architectures/index.html">Appendix I: Reference Architectures</a> for design patterns</li>
+        <li><a href="../d-objections/index.html">Appendix D: Objections</a> for the disposition that responds well under pressure</li>
+        <li><a href="../h-competitive-matrix/index.html">Appendix H: Competitive Matrix</a> for the depth of competitive understanding</li>
+      </ul>
+
+      <div class="study">
+        <span class="label">Study approach</span>
+        <ol>
+          <li>Pass NCM-MCI first (NCX builds on it)</li>
+          <li>Accumulate 1-2+ years of production design experience</li>
+          <li>Work through every Appendix C scenario without notes; record yourself defending the design; review for clarity, honesty, and panel-readiness</li>
+          <li>Practice with a study partner who plays the senior architect role; defend designs against pressure</li>
+          <li>Submit application materials per Nutanix's NCX program guidance</li>
+          <li>Schedule the panel after 6+ months of focused prep</li>
+        </ol>
+      </div>
+
+      <h3 class="sub">What distinguishes pass from fail</h3>
+      <p>Panel feedback patterns from NCX-MCI cohorts:</p>
+
+      <div class="pass-fail-grid">
+        <div class="pass">
+          <span class="label">Pass disposition</span>
+          <ul>
+            <li>Calmly acknowledges what the candidate doesn't know</li>
+            <li>Recommends honestly even when it costs commercial value</li>
+            <li>Engages with the panel's pushback as legitimate, not as attack</li>
+            <li>Shows the integration across modules naturally</li>
+            <li>Maintains composure under sustained scrutiny</li>
+          </ul>
+        </div>
+        <div class="fail">
+          <span class="label">Fail patterns</span>
+          <ul>
+            <li>Bluffs through unfamiliar territory</li>
+            <li>Pushes Nutanix-favorable answers when honesty would point elsewhere</li>
+            <li>Treats panel pushback as obstacles</li>
+            <li>Recall-heavy answers without integration</li>
+            <li>Loses composure or becomes defensive</li>
+          </ul>
+        </div>
+      </div>
+      <p>The disposition is teachable but takes time. Most NCX-MCI candidates report that the prep itself made them better SAs, regardless of pass/fail.</p>
+
+      <!-- ===== Recommended Sequence ===== -->
+      <h2 class="cat" id="sequence"><span class="num">8</span>Recommended Study Sequence (The Cert Ladder)</h2>
+
+      <h3 class="sub">Year 1 · Foundation</h3>
+      <ul>
+        <li><strong>Months 1-2:</strong> NCA prep and exam</li>
+        <li><strong>Months 3-6:</strong> NCP-MCI prep with hands-on lab work and customer engagements</li>
+        <li><strong>Month 6-7:</strong> NCP-MCI exam</li>
+        <li><strong>Months 7-12:</strong> Specialization choice (NCP-NS, NCP-US, or NCP-MCA) based on customer focus</li>
+      </ul>
+
+      <h3 class="sub">Year 2 · Specialization</h3>
+      <ul>
+        <li><strong>Months 1-6:</strong> Complete remaining NCP specializations relevant to your customer engagements</li>
+        <li><strong>Months 6-12:</strong> Begin NCM-MCI preparation alongside production design work</li>
+      </ul>
+
+      <h3 class="sub">Year 3+ · Mastery</h3>
+      <ul>
+        <li><strong>Year 3:</strong> NCM-MCI exam</li>
+        <li><strong>Years 3-5:</strong> Build the experience base for NCX-MCI; iterate on design judgment through customer work</li>
+        <li><strong>Year 5+:</strong> NCX-MCI panel attempt when ready</li>
+      </ul>
+
+      <p>This is the standard pace. Faster progression is possible for full-time platform engineers; slower progression is normal for SAs balancing cert prep with active customer work.</p>
+
+      <div class="ladder">
+        <span class="label">Recommended for BlueAlly SAs specifically</span>
+        <p>Most BlueAlly SAs find this sequence aligns with customer-engagement reality:</p>
+        <ol>
+          <li><strong>NCA</strong> in first 2 months (foundational; demonstrates Nutanix commitment to customers)</li>
+          <li><strong>NCP-MCI</strong> in months 3-7 (the cert that opens most customer conversations)</li>
+          <li><strong>NCP-US</strong> as the typical second specialization (storage consolidation is a common customer trigger)</li>
+          <li><strong>NCP-NS</strong> if customer engagements run heavy on networking/security</li>
+          <li><strong>NCP-MCA</strong> for SAs supporting automation-focused customers</li>
+          <li><strong>NCM-MCI</strong> at month 18-24 once design experience accumulates</li>
+          <li><strong>NCX-MCI</strong> as a multi-year goal for senior SAs targeting expert-level credentials</li>
+        </ol>
+      </div>
+
+      <!-- ===== Logistics ===== -->
+      <section class="logistics" id="logistics">
+        <h2>Exam Logistics</h2>
+
+        <h3>Registration</h3>
+        <p>All Nutanix exams register through <a href="https://university.nutanix.com">university.nutanix.com</a>. Requires a MyNutanix account (free).</p>
+
+        <h3>Online proctoring</h3>
+        <p>Most NCA, NCP, and NCM-MCI exams support online proctoring via Pearson VUE or similar. Requires:</p>
+        <ul>
+          <li>Quiet, well-lit room</li>
+          <li>Webcam and microphone</li>
+          <li>Stable internet</li>
+          <li>Government-issued photo ID</li>
+          <li>Cleared workspace (no notes, no second monitor, no unauthorized devices)</li>
+        </ul>
+        <p>The proctoring is strict; technical glitches with the proctoring software are a known frustration. Schedule with margin.</p>
+
+        <h3>Test centers</h3>
+        <p>In-person testing at Pearson VUE centers is also available for most exams. May be required for NCM-MCI's performance-based components depending on current Nutanix policy.</p>
+
+        <h3>NCX-MCI logistics</h3>
+        <p>NCX-MCI is panel defense via videoconference (typically) or in-person. Logistics handled directly with Nutanix's NCX program team. Less standardized than the lower-tier exams.</p>
+
+        <h3>Cost</h3>
+        <ul>
+          <li><strong>NCA:</strong> free in many cases (entry-level promotion); otherwise modest</li>
+          <li><strong>NCP exams:</strong> each ~$200-300 USD historically; verify current pricing</li>
+          <li><strong>NCM-MCI:</strong> ~$400-500 USD historically</li>
+          <li><strong>NCX-MCI:</strong> separate program with its own application and fee structure</li>
+        </ul>
+        <p>Free exam programs run periodically; verify availability when planning.</p>
+
+        <h3>Retakes</h3>
+        <p>If you fail, Nutanix typically requires a waiting period before retake (often 14-30 days). Don't rush back; use the wait to address the gaps the failed exam revealed.</p>
+      </section>
+
+      <!-- ===== Common Mistakes ===== -->
+      <section class="common-mistakes" id="mistakes">
+        <h2>Common Cert-Prep Mistakes</h2>
+        <ol>
+          <li><strong>Cramming for the exam without building real understanding.</strong> Passing without understanding helps you check the box but doesn't make you a better SA.</li>
+          <li><strong>Skipping hands-on practice.</strong> Reading prep alone fails on operational and scenario questions.</li>
+          <li><strong>Using outdated study materials.</strong> Nutanix updates blueprints; old material may test concepts that aren't current. Verify against the official blueprint at exam time.</li>
+          <li><strong>Taking specializations out of order.</strong> NCP-MCI before specializations is the standard sequence; some customers and SAs find the specializations approachable without NCP-MCI but it's harder.</li>
+          <li><strong>Rushing NCM-MCI without NCP-MCI mastery.</strong> NCM-MCI assumes solid NCP-MCI foundations; without them, the integration questions are guesses.</li>
+          <li><strong>Assuming NCX-MCI is just "harder NCM-MCI."</strong> NCX-MCI tests disposition and judgment that recall-heavy study doesn't develop.</li>
+          <li><strong>Underestimating NCP-MCA.</strong> Automation cert tests hands-on patterns; pure reading prep often fails it.</li>
+          <li><strong>Letting cert prep distract from customer work.</strong> Certs validate competence; customer engagements develop it. Both matter; don't sacrifice one for the other.</li>
+          <li><strong>Treating practice exam scores as the bar.</strong> Practice exams test recall; real exams test scenario judgment. 95% on practice exams doesn't guarantee passing.</li>
+          <li><strong>Not scheduling the exam.</strong> Many SAs perpetually prepare and never sit. The cert that matters is the one you've passed; schedule and sit.</li>
+        </ol>
+      </section>
+
+      <!-- ===== References ===== -->
+      <section class="references">
+        <h2>References</h2>
+        <p>The blueprint percentages and exam-format details in this appendix are estimates based on Nutanix's published exam blueprint guides at the time of curriculum production. <strong>Always reverify against the current Nutanix University blueprint PDF for the version of the exam you are taking.</strong> Nutanix updates blueprints periodically and the percentages shift between versions.</p>
+        <ul>
+          <li><strong>Nutanix University Certification Catalog.</strong> The starting point for current exam blueprints, registration, and pricing. <a href="https://www.nutanix.com/support-services/training-certification/certifications">nutanix.com</a></li>
+          <li><strong>NCA Exam Blueprint Guide (NCA 6.5).</strong> Source for the NCA blueprint domain weights. <a href="https://www.nutanix.com/content/dam/nutanix/en/resources/misc/ebg-nca-6-5.pdf">nutanix.com (PDF)</a></li>
+          <li><strong>NCP-MCI Certification Page.</strong> Current NCP-MCI blueprint reference. <a href="https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-multicloud-infrastructure-v65">nutanix.com</a></li>
+          <li><strong>NCP-NS 7.5 Announcement (Nutanix University blog).</strong> NCP-NS 7.5 opened for scheduling April 4, 2026. <a href="https://en.vmik.net/2026/03/whats-new-at-nutanix-university-15/">en.vmik.net</a></li>
+          <li><strong>NCP-US Certification Page.</strong> Current NCP-US blueprint reference. <a href="https://www.nutanix.com/support-services/training-certification/certifications/certification-details-nutanix-certified-professional-unified-storage-v65">nutanix.com</a></li>
+          <li><strong>NCP-US Exam Roadmap (Nutanix Community).</strong> Useful study-sequence guidance. <a href="https://next.nutanix.com/education-blog-153/your-roadmap-to-success-5-steps-to-prep-for-the-ncp-us-certification-exam-42945">next.nutanix.com</a></li>
+          <li><strong>Module 03 References · NCM Self-Service rename.</strong> Backs the Calm to NCM Self-Service naming used in the NCP-MCA section. <a href="../../modules/03-ahv-hypervisor/index.html">Module 3</a></li>
+          <li><strong>Module 09 References · NCI / NCM / NCP licensing.</strong> The current paid-tier structure that NCP-MCA and NCM-MCI candidates need to understand for exam scenarios. <a href="../../modules/09-licensing-economics/index.html">Module 9</a></li>
+        </ul>
+        <p style="margin-top:14px;"><strong>Phase TR note:</strong> The cert-blueprint percentage estimates throughout the curriculum (see also Modules 01, 03, 06, 08) are directionally reasonable but were not reconciled to specific published EBG PDFs because most are gated on the Nutanix Support Portal. A finalization pass with portal access can refine the percentages; the structural mapping (which modules teach which exam domains) is independent of the exact percentage and remains accurate.</p>
+      </section>
+
+      <!-- ===== Cross-references ===== -->
+      <section class="crossrefs">
+        <h3>Cross-references</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each cert maps back to the modules that teach the underlying material.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> for terminology.</li>
+          <li><strong>Comparison Matrix:</strong> <a href="../b-comparison-matrix/index.html">Appendix B</a> for VMware-comparison questions on every NCP exam.</li>
+          <li><strong>Scenarios:</strong> <a href="../c-scenarios/index.html">Appendix C</a> for NCM-MCI design judgment and NCX-MCI panel preparation.</li>
+          <li><strong>Discovery Questions:</strong> <a href="../e-discovery-questions/index.html">Appendix E</a> for the customer-facing skills tested in NCM-MCI and NCX-MCI.</li>
+          <li><strong>Sizing Rules:</strong> <a href="../f-sizing-rules/index.html">Appendix F</a> for sizing-and-design questions on NCM-MCI.</li>
+          <li><strong>CLI Reference:</strong> <a href="../g-cli-reference/index.html">Appendix G</a> for hands-on operational questions across all NCP exams.</li>
+          <li><strong>Reference Architectures:</strong> <a href="../i-reference-architectures/index.html">Appendix I</a> for NCM-MCI design and NCX-MCI integrated thinking.</li>
+          <li><strong>Nutanix University:</strong> <a href="https://university.nutanix.com">university.nutanix.com</a> is the authoritative source for current blueprints, exam scheduling, and free-exam program availability.</li>
+        </ul>
+      </section>
+
+      <!-- ===== Final Word ===== -->
+      <section class="final-word">
+        <h2>A Final Word</h2>
+        <p>The certs are credentials; the knowledge is the goal. BlueAlly SAs who pass certs and apply the knowledge in customer engagements become the architects customers trust. SAs who pass certs without applying the knowledge become the architects customers tolerate.</p>
+        <p>Pass the certs. Build the credentials. <strong>But never confuse the cert for the competence.</strong> The customer call where you walk through hybrid steady-state recommendations honestly, where you defend a design under senior-architect pressure, where you tell the customer not to migrate because the math doesn't work; that's where the cert becomes meaningful.</p>
+        <p>Good luck on the ladder.</p>
+      </section>
+
+    </article>
+
+    <div class="back-home">
+      <a href="../../index.html">← back to home</a>
+    </div>
+
+  </main>
+
+  <footer class="site">
+    <div>Written by Fred Nix · Built for BlueAlly Solutions Architects · Source on <a href="https://github.com/nixfred/nutanix">GitHub</a></div>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-k-cert-tracker</span>
+  </footer>
+
+</body>
+</html>
