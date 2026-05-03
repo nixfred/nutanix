@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix I: Reference Architectures</title>
+  <meta name="description" content="Eight fully-sized reference designs for the most common BlueAlly deployment patterns: Small, Medium, Large, VDI, Hybrid+NC2, ROBO Fleet, Greenfield, and Compliance-Heavy. Each architecture has profile, sizing, network topology, software stack, DR approach, design rationale, trade-offs accepted, and variations. Starting points for proposal architecture; always run Sizer for binding numbers." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix I: Reference Architectures" />
+  <meta property="og:description" content="8 reference architectures · Small, Medium, Large, VDI, Hybrid+NC2, ROBO, Greenfield, Compliance. Starting points; run Sizer for binding numbers." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/i-reference-architectures/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix I: Reference Architectures" />
+  <meta name="twitter:description" content="Eight reference architectures: Small, Medium, Large, VDI, Hybrid+NC2, ROBO, Greenfield, Compliance." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%),
+        linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ol { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ol li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px; margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+    article.body h2.cat .num {
+      font-family: var(--font-mono);
+      font-size: 13px; color: var(--accent-purple); font-weight: 700;
+      letter-spacing: 0.04em; margin-right: 12px; vertical-align: middle;
+      padding: 3px 9px; border: 1px solid rgba(192,132,252,0.45); border-radius: 4px;
+    }
+
+    article.body h3.sub {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 600; color: var(--accent-purple);
+      letter-spacing: 0.10em; text-transform: uppercase;
+      font-family: var(--font-mono);
+      margin: 22px 0 8px;
+    }
+
+    article.body p { color: var(--text-secondary); }
+    article.body p strong, article.body li strong { color: var(--text-primary); }
+    article.body ul, article.body ol { color: var(--text-secondary); padding-left: 22px; }
+    article.body ul li, article.body ol li { margin-bottom: 4px; }
+
+    .profile-stats {
+      margin: 8px 0 12px;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .profile-stats ul { margin: 0; padding-left: 20px; }
+    .profile-stats li { margin-bottom: 4px; }
+
+    .rationale, .tradeoffs, .variations, .stack, .dr {
+      margin: 8px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .rationale  { border-left: 3px solid var(--accent-purple); }
+    .tradeoffs  { border-left: 3px solid var(--danger); background: var(--bg-elevated); }
+    .variations { border-left: 3px solid var(--warning); }
+    .stack      { border-left: 3px solid var(--success); }
+    .dr         { border-left: 3px solid var(--accent-primary); }
+
+    .rationale .label, .tradeoffs .label, .variations .label, .stack .label, .dr .label, .profile-stats .label {
+      font-family: var(--font-mono); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      font-weight: 600; display: block; margin-bottom: 6px;
+    }
+    .rationale .label  { color: var(--accent-purple); }
+    .tradeoffs .label  { color: var(--danger); }
+    .variations .label { color: var(--warning); }
+    .stack .label      { color: var(--success); }
+    .dr .label         { color: var(--accent-primary); }
+    .profile-stats .label { color: var(--accent-cyan); }
+
+    .rationale p, .tradeoffs p, .variations p, .stack p, .dr p { margin: 0 0 6px; }
+    .rationale strong, .tradeoffs strong, .variations strong, .stack strong, .dr strong { color: var(--text-primary); }
+
+    .rationale ul, .tradeoffs ul, .variations ul, .stack ul, .dr ul {
+      margin: 0; padding-left: 20px;
+    }
+    .rationale li, .tradeoffs li, .variations li, .stack li, .dr li { margin-bottom: 4px; }
+
+    table.sizing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+    table.sizing-table th, table.sizing-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+    table.sizing-table th {
+      color: var(--accent-purple);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    table.sizing-table td { color: var(--text-secondary); }
+    table.sizing-table td:first-child { color: var(--text-primary); width: 30%; }
+
+    .see-also {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+      margin: 16px 0 0;
+    }
+    .see-also a { color: var(--accent-cyan); }
+    .see-also .label { color: var(--text-tertiary); margin-right: 6px; }
+
+    .how-to-use, .references, .crossrefs, .common-mistakes {
+      margin-top: 36px; padding: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .how-to-use h2, .references h2, .common-mistakes h2 { margin: 0 0 12px; font-size: 22px; }
+    .how-to-use h3, .common-mistakes h3 { margin: 16px 0 8px; font-size: 14px; color: var(--accent-purple); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; }
+    .how-to-use ol, .common-mistakes ol, .how-to-use ul { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .how-to-use ol li, .common-mistakes ol li, .how-to-use ul li { margin-bottom: 8px; }
+    .how-to-use ol li strong, .common-mistakes ol li strong { color: var(--text-primary); }
+    .how-to-use p { color: var(--text-secondary); font-size: 14px; margin: 14px 0 0; }
+
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .sizer-note {
+      margin: 24px 0;
+      padding: 14px 18px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 6px;
+      font-family: var(--font-mono); font-size: 13px;
+      color: var(--text-primary);
+    }
+    .sizer-note strong { color: var(--accent-purple); }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body h2.cat { font-size: 22px; }
+      table.sizing-table { font-size: 11px; }
+      table.sizing-table th, table.sizing-table td { padding: 6px 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">I · Reference Architectures</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-i-reference-arch.svg" alt="Eight architecture profile cards arranged in a 4-by-2 grid: Small, Medium, Large, VDI on the top row; Hybrid+NC2, ROBO, Greenfield, Compliance on the bottom row. Each card shows node-count silhouette, VM range, and license tier. A three-principle strip at the bottom reads: starting points, run Sizer for binding numbers, name the trade-offs." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-i-reference-architectures</div>
+      <h1 class="module-title">Appendix I · Reference Architectures</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">8 architectures</span>
+        <span class="chip">profile + sizing + stack</span>
+        <span class="chip">trade-offs explicit</span>
+        <span class="chip">starting points</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>Eight reference architectures covering the most common BlueAlly deployment patterns. Each is a starting point; customize per customer. Always run <strong>Sizer</strong> for the binding numbers in the proposal.</p>
+      <p><strong>Three principles:</strong></p>
+      <ol>
+        <li><strong>Reference architectures are starting points, not deliverables.</strong> Customize per customer.</li>
+        <li><strong>Always run Sizer</strong> for the binding numbers in the proposal.</li>
+        <li><strong>Name the trade-offs explicitly.</strong> Every architecture sacrifices something.</li>
+      </ol>
+      <p>The format for each architecture: customer profile, sizing with cluster shape and hardware recommendations, network topology, software stack (NCI / NCM / Files / Objects / Volumes / Flow), DR approach, design rationale, trade-offs accepted, variations for common customer requests, and cross-references.</p>
+    </div>
+
+    <nav class="cat-jump" aria-label="Architecture jump nav">
+      <a href="#small">1 · Small</a>
+      <a href="#medium">2 · Medium</a>
+      <a href="#large">3 · Large</a>
+      <a href="#vdi">4 · VDI</a>
+      <a href="#hybrid">5 · Hybrid + NC2</a>
+      <a href="#robo">6 · ROBO Fleet</a>
+      <a href="#greenfield">7 · Greenfield</a>
+      <a href="#compliance">8 · Compliance-Heavy</a>
+      <a href="#how-to-use">How to Use</a>
+      <a href="#mistakes">Common Mistakes</a>
+    </nav>
+
+    <article class="body">
+
+      <!-- ===== Small ===== -->
+      <h2 class="cat" id="small"><span class="num">1</span>Small Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Mid-market, ~150-300 employees in IT-relevant roles, single primary datacenter, secondary site for DR (often a colo or smaller office).</p>
+        <ul>
+          <li><strong>VM count:</strong> 100-250</li>
+          <li><strong>Storage:</strong> 30-100 TB usable</li>
+          <li><strong>Workloads:</strong> general-purpose VMs, file shares, perhaps a small VDI deployment</li>
+          <li><strong>Compliance:</strong> standard (no PCI Level 1, no FedRAMP)</li>
+          <li><strong>Team:</strong> 3-6 person infrastructure team</li>
+          <li><strong>Annual run-rate today:</strong> $150-400K across hardware, software, support</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Cluster shape</th><th>Hardware</th><th>Capacity / network</th></tr></thead>
+        <tbody>
+          <tr><td>Production</td><td>6-8 nodes</td><td>Dell XC, HPE DX, or NX appliances · all-NVMe · 768 GB-1 TB RAM · 32-48 cores per node</td><td>60-120 TB raw → 30-60 TB usable (RF2 + compression) · 25 GbE · 4 NICs per node minimum</td></tr>
+          <tr><td>DR</td><td>4 nodes</td><td>Same node spec for operational consistency</td><td>~70-80% of primary capacity</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Network topology</h3>
+      <ul>
+        <li>Top-of-rack switches: customer's preferred vendor (Cisco Nexus, Arista, Juniper); 2x ToR per cluster for redundancy</li>
+        <li>Link speeds: 25 GbE for production data; 10 GbE acceptable for management</li>
+        <li>Bond mode: balance-slb or LACP depending on switch capability</li>
+        <li>Replication WAN: 200-500 Mbps between sites for typical Async DR</li>
+      </ul>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> AHV (default) or ESXi-on-Nutanix (if customer is mid-VMware-migration)</li>
+          <li><strong>NCI:</strong> Pro tier (formerly AOS Pro). Add the <strong>Security Add-On for NCI Pro</strong> if Flow Network Security microsegmentation is in scope (per usable TiB; bundles Data-at-Rest Encryption); otherwise upgrade to NCI Ultimate where Flow is bundled.</li>
+          <li><strong>NCM:</strong> Pro tier (Intelligent Operations: capacity analytics, anomaly detection, runway analysis)</li>
+          <li><strong>Files:</strong> sized for existing file workloads (typically 20-50 TB)</li>
+          <li><strong>Objects:</strong> sized for backup target consolidation (typically 30-80 TB)</li>
+          <li><strong>Volumes:</strong> as needed for any iSCSI consumers</li>
+          <li><strong>Flow Network Security:</strong> licensed via the Security Add-On for NCI Pro (or NCI Ultimate); baseline microsegmentation policies</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li>Async replication to DR site (1-hour RPO typical)</li>
+          <li>Recovery Plans for orchestrated failover</li>
+          <li>Quarterly test failover into isolated network at DR site</li>
+          <li>Backup target replication via Veeam (or equivalent) to Objects at primary, replicated to DR</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>Calibrated for the BlueAlly mid-market sweet spot. Captures the consolidation story across compute, storage tiers, DR, and management without overprovisioning for enterprise-scale features the customer doesn't need.</p>
+        <p>8-node primary provides N+1 redundancy with margin during rebuild; supports growth to ~200 VMs comfortably; allows 150-VM workload to run with healthy headroom.</p>
+        <p>NCM Pro tier is the practical sweet spot for management features: it includes Intelligent Operations (capacity analytics, anomaly detection, runway analysis), which most mid-market customers want. NCM Ultimate is overkill unless the customer specifically needs Self-Service or X-Play depth. <strong>Flow Network Security is separately licensed</strong>: it ships with NCI Ultimate or as a Security Add-On to NCI Pro (per usable TiB; bundles Data-at-Rest Encryption). Don't conflate the NCM management tiers with the NCI-side Flow licensing; that confusion bites in customer pricing conversations.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>No NearSync or Metro (Async-only DR; sub-15-min RPO not in scope)</li>
+          <li>No NCM Ultimate (no Self-Service blueprints, no X-Play automation depth)</li>
+          <li>Single-cluster production (no multi-cluster blast-radius management)</li>
+          <li>25 GbE rather than 100 GbE (sufficient for the workload; 100 GbE is overprovisioning)</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>Heavily Linux/Containers:</strong> add Kubernetes-on-Nutanix consideration; cluster shape unchanged</li>
+          <li><strong>Higher RPO:</strong> upgrade to NCI Ultimate (formerly AOS Ultimate) for NearSync on Tier-1 workloads. NCI Ultimate also bundles Flow Network Security, which removes the Security Add-On per-TiB cost.</li>
+          <li><strong>Starting smaller (50-100 VMs):</strong> scale down to 4-5 node primary</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 1 (Mid-Market Consolidation)</a> · <a href="../f-sizing-rules/index.html">F · Cluster Sizing Fundamentals</a> · <a href="../../modules/09-licensing-economics/index.html">M9 · Pricing Construction</a></p>
+
+      <!-- ===== Medium ===== -->
+      <h2 class="cat" id="medium"><span class="num">2</span>Medium Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Larger mid-market or smaller enterprise, ~500-1,000 employees in IT-relevant roles, primary datacenter plus dedicated DR site, possibly some ROBO sites.</p>
+        <ul>
+          <li><strong>VM count:</strong> 400-800</li>
+          <li><strong>Storage:</strong> 100-300 TB usable</li>
+          <li><strong>Workloads:</strong> general-purpose VMs, file shares, VDI (~500-1,000 sessions), databases, possibly small object storage needs</li>
+          <li><strong>Compliance:</strong> industry-standard (HIPAA, PCI DSS Level 2, SOC 2)</li>
+          <li><strong>Team:</strong> 6-12 person infrastructure team</li>
+          <li><strong>Annual run-rate today:</strong> $400K-1M</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Cluster shape</th><th>Hardware</th><th>Capacity / network</th></tr></thead>
+        <tbody>
+          <tr><td>Production</td><td>12-16 nodes</td><td>OEM partner (Dell XC, HPE DX, Lenovo HX, or Cisco UCS) · all-NVMe · 1-1.5 TB RAM · 48-64 cores per node</td><td>200-400 TB raw → 100-200 TB usable · 25 GbE production · 100 GbE optional spine · 4-6 NICs/node</td></tr>
+          <tr><td>DR</td><td>8-10 nodes</td><td>Same hardware family</td><td>~75% of primary capacity</td></tr>
+          <tr><td>Files/Objects (optional)</td><td>4-6 nodes</td><td>Dedicated cluster for file/object workloads</td><td>Tuned independently from general VM workload</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Network topology</h3>
+      <ul>
+        <li>2x ToR per cluster (redundant)</li>
+        <li>25 GbE production, 100 GbE for spine if east-west traffic justifies</li>
+        <li>Bond mode: LACP with switch coordination</li>
+        <li>Replication WAN: 500 Mbps-2 Gbps depending on change rate</li>
+        <li>Dedicated replication VLAN or QoS lane</li>
+      </ul>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> AHV with possible ESXi-on-Nutanix subset</li>
+          <li><strong>NCI:</strong> Pro tier for general workloads (NCI Ultimate for tier-1 workloads needing NearSync; NCI Ultimate also bundles Flow Network Security at no incremental per-TiB cost)</li>
+          <li><strong>NCM:</strong> Pro tier (Intelligent Operations); Ultimate if Self-Service / X-Play depth is needed</li>
+          <li><strong>Files:</strong> dedicated File Server for user shares + application file storage; 50-150 TB</li>
+          <li><strong>Objects:</strong> dedicated Object Store for backup targets and on-prem analytics; 100-200 TB</li>
+          <li><strong>Volumes:</strong> as needed</li>
+          <li><strong>Flow Network Security:</strong> category-based microsegmentation; PCI scope boundary enforcement</li>
+          <li><strong>Flow Virtual Networking:</strong> if multi-tenancy is in scope</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li><strong>Tier-1</strong> (~50-100 VMs): NearSync replication, 15-minute RPO, Recovery Plans orchestration</li>
+          <li><strong>Tier-2</strong> (~200-300 VMs): Async hourly, 1-hour RPO</li>
+          <li><strong>Tier-3</strong> (~150-300 VMs): Async daily or redeploy from gold image</li>
+          <li>Quarterly test failover; SRM coexistence if customer has deep SRM investment</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>Sized for the consolidation story across compute, file/object/block storage, DR with tiered SLAs, and microsegmentation. The split between general-purpose cluster and dedicated Files/Objects cluster (when warranted) lets each cluster tune for its workload pattern; this is one of Nutanix's strengths over single-cluster-with-everything designs.</p>
+        <p>NCM Pro is the typical choice; upgrade to Ultimate when the customer needs Self-Service blueprints or X-Play event-driven automation for ServiceNow/SIEM integration.</p>
+        <p>Tiered DR matches infrastructure investment to workload criticality; not every workload needs NearSync.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Multi-cluster operational complexity (more clusters means more upgrade coordination, more management surface)</li>
+          <li>Some workloads stay on hybrid (ESXi-on-Nutanix subset for NSX-T-deep or SRM-deep workloads)</li>
+          <li>Not pursuing extreme-scale features (Metro Availability typically not in scope unless metro-area DR is required)</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>Multi-site Metro Availability needed:</strong> add witness VM at third site, tune for synchronous replication, network &lt;5ms RTT</li>
+          <li><strong>Heavy NSX-T retention:</strong> plan permanent ESXi-on-Nutanix subset; map workloads to AHV vs ESXi-on-Nutanix</li>
+          <li><strong>Deep SRM customization:</strong> keep SRM for SRM-orchestrated workloads, Recovery Plans for new</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 1 + 2</a> · <a href="../../modules/07-data-protection/index.html">M7 · Data Protection</a></p>
+
+      <!-- ===== Large ===== -->
+      <h2 class="cat" id="large"><span class="num">3</span>Large Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Enterprise customer, 2,000+ employees in IT-relevant roles, multiple datacenters (often 2+ production, 1+ DR, possibly cloud-extended), significant footprint of mixed workloads.</p>
+        <ul>
+          <li><strong>VM count:</strong> 1,500-5,000+</li>
+          <li><strong>Storage:</strong> 500 TB-2 PB usable</li>
+          <li><strong>Workloads:</strong> full enterprise mix; tier-0 mission-critical, multi-tenant business units, VDI at scale, large databases, significant file and object storage</li>
+          <li><strong>Compliance:</strong> heavy (SOX, PCI DSS Level 1, HIPAA, FedRAMP, industry-specific)</li>
+          <li><strong>Team:</strong> 15-30+ person infrastructure team</li>
+          <li><strong>Annual run-rate today:</strong> $1M-5M+</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <p>Multiple production clusters, workload-aligned. Single-cluster-with-everything fails at this scale due to blast radius, upgrade coordination, and workload-specific tuning needs.</p>
+      <table class="sizing-table">
+        <thead><tr><th>Cluster role</th><th>Shape</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>General-purpose</td><td>16-32 nodes each (multiple clusters)</td><td>Workload-aligned blast-radius management</td></tr>
+          <tr><td>Database</td><td>8-12 nodes</td><td>All-NVMe, sized for database performance specifically</td></tr>
+          <tr><td>VDI</td><td>12-24 nodes</td><td>If VDI is significant; tuned for boot-storm patterns</td></tr>
+          <tr><td>Files</td><td>6-12 nodes</td><td>Dedicated for file workloads</td></tr>
+          <tr><td>Objects</td><td>6-12 nodes</td><td>Dedicated for object storage</td></tr>
+          <tr><td>DR</td><td>Mirrored topology at DR site</td><td>Full failover capacity for tier-1 / tier-2; tier-3 redeploys</td></tr>
+          <tr><td>NC2 cloud DR (optional)</td><td>8-12 NC2 nodes</td><td>Cloud-extended DR; compliance-acceptable workloads</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Cluster splitting rationale:</strong> blast-radius management. A 32-node cluster failing causes more impact than 4x 8-node clusters failing one. Multiple smaller clusters also enable independent upgrade cadences.</p>
+
+      <h3 class="sub">Network topology</h3>
+      <ul>
+        <li>Spine-leaf architecture with 100 GbE spine</li>
+        <li>25 GbE leaf-to-server (or 100 GbE for high-density)</li>
+        <li>Dedicated network fabric for Nutanix replication if change rate justifies</li>
+        <li>WAN: 5-20+ Gbps for replication between sites</li>
+        <li>Multi-tenant network isolation via VLAN or VPC overlays (Flow Virtual Networking)</li>
+      </ul>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> mixed AHV + ESXi-on-Nutanix; AHV for new workloads; ESXi for NSX-T-deep / SRM-deep</li>
+          <li><strong>NCI:</strong> Pro for general; <strong>Ultimate</strong> for tier-1 (NearSync, Metro Availability, bundled Flow Network Security). Many large enterprises standardize on NCI Ultimate cluster-wide for the simpler licensing posture and the Flow bundling.</li>
+          <li><strong>NCM:</strong> Ultimate (Self-Service blueprints, X-Play, Cost Governance)</li>
+          <li><strong>Prism Central:</strong> scale-out (3 VMs) for HA and &gt;10K VM management</li>
+          <li><strong>Files:</strong> multiple File Servers for tenant or workload separation</li>
+          <li><strong>Objects:</strong> multiple Object Stores for tenant or use-case separation; WORM-enabled buckets for regulatory archives</li>
+          <li><strong>Volumes:</strong> as needed for bare-metal databases, legacy iSCSI consumers</li>
+          <li><strong>Flow Network Security:</strong> comprehensive category-based microsegmentation; PCI / SOX scope boundary enforcement</li>
+          <li><strong>Flow Virtual Networking:</strong> multi-tenant VPC overlays; service insertion for advanced security</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li><strong>Tier-0 mission-critical:</strong> Metro Availability between primary datacenters where applicable; NearSync to remote DR</li>
+          <li><strong>Tier-1 production:</strong> NearSync replication, 15-min RPO</li>
+          <li><strong>Tier-2 production:</strong> Async hourly, 1-hour RPO</li>
+          <li><strong>Tier-3 / non-production:</strong> Async daily or redeploy</li>
+          <li>Quarterly test failover at minimum, with audit attestation</li>
+          <li>SRM coexistence indefinite; Recovery Plans for new</li>
+          <li>Compliance-driven WORM archives in Objects with multi-year retention</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>Multi-cluster architecture is the differentiator for large enterprise. Single-cluster-with-everything fails at this scale due to blast radius, upgrade coordination, and workload-specific tuning needs. Workload-aligned clusters allow each to be tuned for its pattern (database, VDI, file/object) while the central Prism Central provides the unified management view.</p>
+        <p>NCM Ultimate enables the platform-level value (Self-Service for tenant onboarding, X-Play for event-driven automation, Cost Governance for chargeback) that large enterprise environments require.</p>
+        <p>Mixed-hypervisor architecture is the honest answer at this scale. Pure AHV migration is rare for enterprise customers with deep NSX-T / SRM / specific-application investments. Hybrid steady-state is the typical successful end state, possibly indefinite.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Multi-cluster operational complexity is unavoidable; addressed via Prism Central centralization and disciplined upgrade-coordination</li>
+          <li>Multi-vendor (Nutanix + remaining VMware) is the steady state; full consolidation rarely achieved</li>
+          <li>Highest licensing cost tier (Ultimate everywhere); justified by enterprise feature needs</li>
+          <li>Significant network investment (spine-leaf, 100 GbE)</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>NC2 cloud DR in scope:</strong> add cloud cluster as third site; align replication topology</li>
+          <li><strong>Financial-services compliance:</strong> add HSM integration, more rigorous audit logging, more frequent test failover</li>
+          <li><strong>Multi-region (international):</strong> plan cross-region replication carefully; bandwidth and latency become critical design constraints</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 2 + 4</a> · <a href="../../modules/09-licensing-economics/index.html">M9 · Licensing Tier Selection</a></p>
+
+      <!-- ===== VDI ===== -->
+      <h2 class="cat" id="vdi"><span class="num">4</span>VDI Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">VDI-centric deployment for healthcare, financial services, education, or contact centers. VDI is the primary workload (not a side use case).</p>
+        <ul>
+          <li><strong>Sessions:</strong> 1,000-3,000 typical; can extend to 5,000+</li>
+          <li><strong>VDI broker:</strong> Citrix CVAD or VMware Horizon</li>
+          <li><strong>Profile:</strong> persistent or non-persistent depending on use case</li>
+          <li><strong>Compliance:</strong> typically HIPAA (healthcare), PCI (financial), or FERPA (education)</li>
+          <li><strong>Team:</strong> dedicated VDI team plus infrastructure support</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Cluster shape</th><th>Hardware / capacity</th></tr></thead>
+        <tbody>
+          <tr><td>VDI primary</td><td>12-24 nodes (by session count)</td><td>All-NVMe required (boot-storm I/O); high RAM density (1-1.5 TB/node) for VM density; 25 GbE minimum / 100 GbE for &gt;2K sessions</td></tr>
+          <tr><td>Capacity (persistent)</td><td>30-80 GB per user before dedup</td><td>On-disk dedup typically 2-3x for similar-OS profiles</td></tr>
+          <tr><td>Capacity (non-persistent)</td><td>Smaller per-user</td><td>Higher density</td></tr>
+          <tr><td>VDI DR</td><td>Smaller than primary</td><td>Broker-tier first; profiles second; rebuild from gold image</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Network topology</h3>
+      <ul>
+        <li>Dedicated VDI VLAN with appropriate microsegmentation</li>
+        <li>25 GbE minimum; 100 GbE recommended for boot storm</li>
+        <li>Multi-pathing for storage traffic</li>
+        <li>WAN to DR sized for profile replication (typically modest)</li>
+      </ul>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> AHV (Citrix CVAD has good AHV support)</li>
+          <li><strong>NCI:</strong> Pro tier (formerly AOS Pro). Add Security Add-On for Flow if VDI-tier microsegmentation is in scope, or upgrade to NCI Ultimate for the bundled Flow + DARE.</li>
+          <li><strong>NCM:</strong> Pro tier (Intelligent Operations)</li>
+          <li><strong>Files:</strong> dedicated File Server for persistent profile storage if not using broker-managed profile management</li>
+          <li><strong>Volumes:</strong> as needed for VDI infrastructure components</li>
+          <li><strong>Flow Network Security:</strong> category-based microsegmentation isolating VDI tier from back-end services (licensed via NCI Ultimate or Security Add-On for NCI Pro)</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li>Broker tier: Async replication, fast recovery (RTO 30-60 min)</li>
+          <li>Persistent profiles: Async replication daily; restore from backup if lost</li>
+          <li>VDI sessions are not preserved across DR; users re-authenticate on DR site</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>VDI is one of Nutanix's strongest sweet spots. The architectural advantages of distributed I/O (boot storms handled gracefully across all nodes vs centralized array bottleneck) plus on-disk dedup (significant capacity savings on similar OS images) plus AHV included in AOS (no separate hypervisor licensing) combine to win VDI deals consistently.</p>
+        <p>All-NVMe is non-negotiable. Spinning-disk VDI causes boot-storm pain that no amount of caching fully solves.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Higher per-node hardware cost (all-NVMe, high RAM density) than general-purpose clusters</li>
+          <li>Dedicated VDI cluster vs general-purpose blend (purposeful, for tuning)</li>
+          <li>VDI DR is "infrastructure DR" not "session DR"; users restart sessions</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>Non-persistent / pooled deployment:</strong> lower capacity needs; higher density per node</li>
+          <li><strong>Extreme scale (5,000+ sessions):</strong> multi-cluster VDI; partition by department or region</li>
+          <li><strong>GPU-enabled (engineering / design):</strong> add GPU-equipped nodes; AHV supports GPU passthrough</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 3 (VDI)</a> · <a href="../f-sizing-rules/index.html">F · VDI Sizing</a> · <a href="../../modules/05-dsf-storage-deep-dive/index.html">M5 · DSF Performance</a></p>
+
+      <!-- ===== Hybrid + NC2 ===== -->
+      <h2 class="cat" id="hybrid"><span class="num">5</span>Hybrid Nutanix + NC2 Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Customer with on-prem Nutanix and cloud-extended capabilities via NC2. Use cases: cloud DR (no second physical datacenter), cloud burst capacity, hybrid-cloud workload mobility.</p>
+        <ul>
+          <li><strong>On-prem footprint:</strong> any size</li>
+          <li><strong>Cloud workload:</strong> typically 20-30% of on-prem at steady state; can scale up dramatically during failover or burst</li>
+          <li><strong>Cloud platform:</strong> AWS or Azure</li>
+          <li><strong>Compliance:</strong> must allow for data in chosen cloud region</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Sizing</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>On-prem cluster</td><td>Per general reference (Small / Medium / Large)</td><td>Sized for on-prem workload</td></tr>
+          <tr><td>NC2 cluster</td><td>4-8 nodes steady state · scales to full failover at DR time</td><td>Hibernation strategy if cloud bare-metal pricing supports</td></tr>
+          <tr><td>Network</td><td>AWS Direct Connect or Azure ExpressRoute</td><td>1-10 Gbps depending on replication / workload volume; IPSec VPN as backup</td></tr>
+        </tbody>
+      </table>
+
+      <div class="stack">
+        <span class="label">Software stack (same on both sides)</span>
+        <ul>
+          <li><strong>NCI:</strong> Pro tier on both (Ultimate if NearSync to NC2 is in scope or if Flow microsegmentation is needed cluster-wide without the Security Add-On)</li>
+          <li><strong>NCM:</strong> Pro or Ultimate; Prism Central manages both clusters as one fleet</li>
+          <li><strong>Files / Objects:</strong> can run in either location depending on workload locality</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li>Async replication (1-hour RPO) for tier-1 and tier-2 from on-prem to NC2</li>
+          <li>NearSync for tier-1 if bandwidth supports</li>
+          <li>Recovery Plans orchestration for failover</li>
+          <li>Quarterly test failover into isolated network at NC2</li>
+          <li>Replicate backup target (Objects) for off-cloud archive copies</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>NC2 makes cloud DR practical for customers without a second datacenter. The platform parity (same Nutanix on both sides) means runbooks transfer; failover doesn't require translation between platforms; the operational model is consistent.</p>
+        <p>Hibernation strategies (where supported) reduce steady-state cloud cost; the cluster scales up only when needed for test or actual failover.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Cloud bare-metal cost is higher than on-prem at steady state; the value is in elimination of second-datacenter capex and the on-demand failover capability</li>
+          <li>Cloud egress fees apply for replication direction</li>
+          <li>Compliance constraints around data residency must be satisfied; cloud region selection critical</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>Burst capacity (not DR):</strong> size NC2 cluster for typical burst rather than full failover</li>
+          <li><strong>Multi-cloud (AWS + Azure):</strong> complexity increases; NC2 in both with separate replication topologies</li>
+          <li><strong>True cloud-native hybrid (Kubernetes cross-cloud):</strong> broader cloud strategy beyond NC2</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 6 (Cloud DR)</a> · <a href="../../modules/07-data-protection/index.html">M7 · NC2</a> · <a href="../b-comparison-matrix/index.html#nutanix-nc2-vs-vmware-cloud-vmc-on-aws">B · NC2 vs VMware Cloud</a></p>
+
+      <!-- ===== ROBO ===== -->
+      <h2 class="cat" id="robo"><span class="num">6</span>ROBO Fleet Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Customer with a primary datacenter plus many distributed sites (retail stores, branch offices, manufacturing plants, oil-and-gas remote sites).</p>
+        <ul>
+          <li><strong>Sites:</strong> 50-1,000+</li>
+          <li><strong>Per-site footprint:</strong> small (1-3 servers per site)</li>
+          <li><strong>Per-site workloads:</strong> POS, inventory, surveillance, basic application services</li>
+          <li><strong>WAN:</strong> variable per site; some on cable internet, some on dedicated MPLS or SD-WAN</li>
+          <li><strong>Critical data:</strong> replicated to central; non-critical local-only</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Cluster shape</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Per-site cluster</td><td>1-node or 2-node Nutanix (small-footprint)</td><td>5-20 VMs per site; OEM hardware; ruggedized for harsh environments</td></tr>
+          <tr><td>Central cluster (datacenter)</td><td>Per Small or Medium reference</td><td>Central management hub, central backup target, central replication destination</td></tr>
+          <tr><td>Network (per site)</td><td>50-200 Mbps WAN</td><td>Sized for change rate; SD-WAN for multi-site routing</td></tr>
+          <tr><td>Network (central)</td><td>Aggregated WAN sized for sum of sites</td><td>Concentration point</td></tr>
+        </tbody>
+      </table>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> AHV everywhere</li>
+          <li><strong>NCI:</strong> Pro on edge sites (formerly AOS Pro); NCI Pro or Ultimate on central based on workload and whether Flow Network Security or NearSync are needed centrally</li>
+          <li><strong>Prism Central at central datacenter:</strong> manages all sites as one fleet</li>
+          <li><strong>Categories:</strong> <code>Site: Store-001</code> through <code>Site: Store-NNN</code> for fleet-wide policy</li>
+          <li><strong>Async replication:</strong> critical data from each site to central</li>
+          <li><strong>Objects (central):</strong> backup target for fleet, with appropriate retention</li>
+          <li><strong>Flow Network Security:</strong> consistent policy across fleet via category-based rules</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li><strong>Per-site failure:</strong> critical data is at central; redeploy from gold image on replacement hardware; restore site-specific state from central</li>
+          <li><strong>Central failure:</strong> business continuity for HQ; remote sites continue operating with cached data; degraded mode for cross-site workflows</li>
+          <li>No site-to-site replication (would exponentially complicate the topology)</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>The central Prism Central pattern is the differentiator. Managing 200+ sites individually is operationally impossible; managing them as a fleet through one Prism Central is workable. Categories-based policy enforcement applies the same security and operational rules across the fleet automatically.</p>
+        <p>Local-only workloads run on local cluster (POS, inventory cache); critical data replicates to central (transaction logs, customer data); the split optimizes for WAN bandwidth.</p>
+        <p>Per-site small footprint (1-2 nodes) is cost-efficient; full 3-node clusters at every site is cost-prohibitive at fleet scale.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Single-node sites have no local redundancy (per-site failure means restore from central)</li>
+          <li>2-node sites have limited redundancy</li>
+          <li>Central WAN aggregation is a single point of concentration</li>
+          <li>LCM upgrade coordination across hundreds of sites is a real operational discipline</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>Higher per-site availability:</strong> scale to 3-node per-site clusters (higher cost)</li>
+          <li><strong>Extreme distributed (1,000+ sites):</strong> consider sub-aggregation by region; multiple central hubs</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 5 (ROBO)</a> · <a href="../f-sizing-rules/index.html">F · Cluster Sizing</a></p>
+
+      <!-- ===== Greenfield ===== -->
+      <h2 class="cat" id="greenfield"><span class="num">7</span>Greenfield Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Newly-funded company, no existing infrastructure, hybrid-cloud-native development model.</p>
+        <ul>
+          <li><strong>Employees:</strong> 50-500 in IT-relevant roles, scaling rapidly</li>
+          <li><strong>VM workload:</strong> SaaS application backend, internal tools, dev/test environments</li>
+          <li><strong>Cloud presence:</strong> significant AWS or Azure footprint</li>
+          <li><strong>Steady-state target:</strong> hybrid (on-prem for predictable, cloud for variable)</li>
+          <li><strong>Team:</strong> small, often 2-5 infrastructure engineers</li>
+          <li><strong>Cost-sensitivity:</strong> high</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Cluster shape</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Production</td><td>4-node cluster initially</td><td>HCIR commodity hardware for cost flexibility, or OEM partner; all-NVMe; balanced compute/capacity; scales by adding nodes</td></tr>
+          <tr><td>Dev/test</td><td>2-3 nodes</td><td>Smaller node spec acceptable</td></tr>
+          <tr><td>Network</td><td>25 GbE production</td><td>VPN or cloud direct-connect to AWS/Azure VPC for hybrid integration; modest WAN</td></tr>
+        </tbody>
+      </table>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> AHV</li>
+          <li><strong>NCI:</strong> Pro tier (formerly AOS Pro). Add Security Add-On if Flow Network Security is needed for greenfield-tier microsegmentation; otherwise upgrade to NCI Ultimate as scale justifies.</li>
+          <li><strong>NCM:</strong> Pro (Ultimate optional based on growth)</li>
+          <li><strong>Files:</strong> sized for application file storage and development shares (smaller than enterprise scale)</li>
+          <li><strong>Objects:</strong> for steady-state object workloads on-prem complementing cloud S3</li>
+          <li><strong>Volumes:</strong> as needed</li>
+          <li><strong>Flow Network Security:</strong> baseline microsegmentation (licensed via NCI Ultimate or Security Add-On for NCI Pro)</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li>Initial: rely on AWS for cloud-resident data; on-prem critical data replicated to cloud Objects via Async</li>
+          <li>As scale grows: consider NC2 cloud DR for full Nutanix-platform DR</li>
+          <li>Avoid building out a second physical datacenter; cloud is the elasticity and the DR</li>
+        </ul>
+      </div>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>Greenfield deployments should optimize for cost flexibility, growth, and avoiding premature commitments. HCIR or OEM hardware (rather than NX) preserves sourcing flexibility. Initial 4-node cluster is sized for current needs plus 6-month growth; scale by adding nodes as needed.</p>
+        <p>3-year subscription term (rather than 5-year) preserves flexibility given growth uncertainty. Subscription growth provisions ensure mid-term core additions are pre-priced.</p>
+        <p>Hybrid-cloud-native is the architecture, not on-prem replacing cloud. Steady-state predictable workloads on-prem; variable / elastic workloads in cloud. The split optimizes both cost and elasticity.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Smaller initial cluster means less headroom for spikes (acceptable for greenfield)</li>
+          <li>Cloud dependency for elasticity (intentional)</li>
+          <li>Less mature operational tooling than enterprise environments (small team)</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>Purely on-prem strategy:</strong> scale on-prem cluster sooner; no cloud burst plan</li>
+          <li><strong>Primarily cloud strategy:</strong> smaller on-prem footprint; on-prem only for steady-state</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 9 (Greenfield)</a> · <a href="../f-sizing-rules/index.html">F · Cluster Sizing</a> · <a href="../../modules/09-licensing-economics/index.html">M9 · Subscription Terms</a></p>
+
+      <!-- ===== Compliance ===== -->
+      <h2 class="cat" id="compliance"><span class="num">8</span>Compliance-Heavy Reference Architecture</h2>
+
+      <h3 class="sub">Profile</h3>
+      <div class="profile-stats">
+        <span class="label">Customer profile</span>
+        <p style="margin:0 0 6px; color:var(--text-primary);">Financial services, healthcare provider, or government contractor. Compliance is the central design driver.</p>
+        <ul>
+          <li><strong>Compliance:</strong> PCI DSS Level 1, HIPAA, FedRAMP, SOX, FFIEC, or similar</li>
+          <li><strong>Workload sensitivity:</strong> regulated data alongside general-purpose</li>
+          <li><strong>Audit cadence:</strong> frequent (quarterly external, monthly internal)</li>
+          <li><strong>Identity rigor:</strong> SSO, MFA, separation of duties, JIT elevation</li>
+          <li><strong>Encryption:</strong> at-rest with HSM-backed keys, in-transit</li>
+          <li><strong>Audit retention:</strong> 7-year typical for financial; 6-year HIPAA; varies by jurisdiction</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Sizing</h3>
+      <table class="sizing-table">
+        <thead><tr><th>Tier</th><th>Sizing</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Production clusters</td><td>Per Large or Medium reference</td><td>May split into compliance-scoped vs general for blast-radius and audit-scope management</td></tr>
+          <tr><td>Encryption</td><td>HSM (Vault, customer's HSM, or cloud HSM)</td><td>KMIP integration with Nutanix cluster encryption</td></tr>
+          <tr><td>Audit</td><td>SIEM (Splunk, Elastic, Sentinel)</td><td>Receives Prism audit logs; 7-year log retention at SIEM tier</td></tr>
+          <tr><td>WORM storage</td><td>Dedicated Objects buckets, WORM-enabled</td><td>Retention policies aligned with regulatory requirements</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Network topology</h3>
+      <ul>
+        <li>Strict network segmentation with VLAN or VPC isolation per compliance scope</li>
+        <li>Flow Network Security enforcing PCI / SOX / HIPAA scope boundaries</li>
+        <li>Service insertion of customer's IDS/IPS for deep packet inspection</li>
+        <li>Audit-grade network logging</li>
+        <li>Encrypted in-transit for replication and management</li>
+      </ul>
+
+      <div class="stack">
+        <span class="label">Software stack</span>
+        <ul>
+          <li><strong>Hypervisor:</strong> AHV</li>
+          <li><strong>NCI:</strong> Ultimate (formerly AOS Ultimate). Bundles NearSync, Metro, Flow Network Security, Data-at-Rest Encryption capabilities; the right tier for compliance environments.</li>
+          <li><strong>NCM:</strong> Ultimate (Self-Service with approval workflows, X-Play for compliance-driven automation)</li>
+          <li><strong>Files:</strong> with anti-ransomware enabled; SMB encryption mandatory</li>
+          <li><strong>Objects:</strong> WORM-enabled buckets for archives</li>
+          <li><strong>Volumes:</strong> encrypted; HSM-backed keys</li>
+          <li><strong>Flow Network Security:</strong> comprehensive category-driven enforcement; default-deny posture</li>
+          <li><strong>Cluster encryption:</strong> enabled with HSM key management</li>
+        </ul>
+      </div>
+
+      <div class="dr">
+        <span class="label">DR approach</span>
+        <ul>
+          <li>RF3 for tier-0 financial systems (compliance often mandates)</li>
+          <li>Metro Availability between primary datacenters where applicable</li>
+          <li>NearSync to remote DR (typically same compliance zone)</li>
+          <li>Recovery Plans with audit-attested test failover quarterly</li>
+          <li>DR runbook documentation maintained per compliance requirements</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Identity and access</h3>
+      <ul>
+        <li>SAML to customer's IdP (typically Entra ID, Okta, or Ping)</li>
+        <li>Separation of duties: distinct operational and audit roles</li>
+        <li>JIT (Just-In-Time) elevation for sensitive operations</li>
+        <li>MFA mandatory for all administrative access</li>
+        <li>Audit log of every administrative action</li>
+      </ul>
+
+      <div class="rationale">
+        <span class="label">Design rationale</span>
+        <p>Compliance is the central design driver, not an overlay. Architecture choices (cluster splitting for audit scope, network segmentation, encryption everywhere, audit logging end-to-end) all flow from compliance requirements.</p>
+        <p>NCM Ultimate is the typical license tier; the Self-Service approval workflows and X-Play automation are operationally valuable for compliance regimes that require change-control evidence.</p>
+        <p>WORM Objects buckets are the durable answer for regulatory archives; the multi-year immutability requirement is satisfied by Objects' Object Lock equivalent.</p>
+      </div>
+
+      <div class="tradeoffs">
+        <span class="label">Trade-offs accepted</span>
+        <ul>
+          <li>Highest licensing cost tier</li>
+          <li>Operational complexity from compliance-scoped cluster splitting</li>
+          <li>HSM integration adds vendor relationship and operational dependency</li>
+          <li>Documentation overhead for compliance evidence is real</li>
+        </ul>
+      </div>
+
+      <div class="variations">
+        <span class="label">Variations</span>
+        <ul>
+          <li><strong>FedRAMP:</strong> validate Nutanix's specific FedRAMP authorization status; some features may have different availability in FedRAMP environments</li>
+          <li><strong>Multi-region with sovereignty:</strong> plan replication topology carefully; cloud DR may not be available if data residency is strict</li>
+        </ul>
+      </div>
+
+      <p class="see-also"><span class="label">SEE ALSO:</span> <a href="../c-scenarios/index.html">C · Scenario 4 (Compliance)</a> · <a href="../../modules/07-data-protection/index.html">M7 · Encryption and Compliance</a> · <a href="../../modules/08-unified-storage/index.html">M8 · WORM Objects</a></p>
+
+      <div class="sizer-note">
+        <strong>Reminder:</strong> these are starting points. The binding numbers in any proposal come from the official Nutanix Sizer, with Sizer-output as the single source of truth for the customer-facing sizing.
+      </div>
+
+      <!-- ===== How to Use ===== -->
+      <section class="how-to-use" id="how-to-use">
+        <h2>How to Use These Reference Architectures</h2>
+
+        <h3>For initial proposal sketching</h3>
+        <ol>
+          <li>Identify which reference matches the customer's profile (Small / Medium / Large / VDI / Hybrid+NC2 / ROBO / Greenfield / Compliance-Heavy)</li>
+          <li>Use it as the starting-point architecture</li>
+          <li>Adjust per customer specifics</li>
+          <li>Run Sizer for binding numbers before submitting</li>
+        </ol>
+
+        <h3>For architecture review with the customer</h3>
+        <ol>
+          <li>Walk through the reference's design rationale ("we typically design like this for customers in your profile because...")</li>
+          <li>Engage the customer on where their requirements deviate</li>
+          <li>Document the deviations explicitly in the proposal</li>
+        </ol>
+
+        <h3>For competitive engagements</h3>
+        <ol>
+          <li>Use the reference to anchor the conversation in concrete numbers</li>
+          <li>Explain the trade-offs accepted; this signals you've done this before</li>
+          <li>Compare to the competitor's likely architecture for the same profile</li>
+        </ol>
+
+        <h3>For cert prep</h3>
+        <ol>
+          <li>NCP-MCI tests sizing-and-design knowledge similar to the Small / Medium architectures</li>
+          <li>NCM-MCI extends to design depth that the Medium / Large / VDI architectures embody</li>
+          <li>NCX-MCI panel defense often involves architectures like the Compliance-Heavy or Hybrid+NC2 patterns</li>
+        </ol>
+      </section>
+
+      <!-- ===== Common Mistakes ===== -->
+      <section class="common-mistakes" id="mistakes">
+        <h2>Common Mistakes with Reference Architectures</h2>
+        <ol>
+          <li><strong>Treating reference architectures as the proposal.</strong> They're starting points; the actual proposal is customized.</li>
+          <li><strong>Skipping Sizer.</strong> The reference gets you within ~25%; Sizer gets you to the binding number.</li>
+          <li><strong>Not naming the trade-offs.</strong> Every architecture sacrifices something; customers respect explicit acknowledgment.</li>
+          <li><strong>Forcing a customer into the wrong reference.</strong> If the customer profile genuinely doesn't match any of the eight, design from first principles.</li>
+          <li><strong>Neglecting variations.</strong> Each reference has variations for common deviations; use them rather than re-inventing.</li>
+          <li><strong>Underestimating compliance complexity.</strong> Compliance-heavy customers genuinely need the Compliance-Heavy reference; don't try to make a Medium architecture work.</li>
+        </ol>
+      </section>
+
+      <!-- ===== References ===== -->
+      <section class="references">
+        <h2>References</h2>
+        <p>The reference architectures consume technical specifications and licensing structure verified in the modules and earlier appendices.</p>
+        <ul>
+          <li><strong>Module 09 References.</strong> NCI Pro / Ultimate (replaced AOS Pro / Ultimate), NCM Pro / Ultimate, NCP bundles, the Security Add-On for NCI Pro that bundles Flow Network Security and Data-at-Rest Encryption (per usable TiB). <a href="../../modules/09-licensing-economics/index.html">Module 9</a></li>
+          <li><strong>Module 06 References.</strong> Flow Network Security licensing (NCI Ultimate or Security Add-On for NCI Pro). Bond modes; LACP cautions. <a href="../../modules/06-networking-flow/index.html">Module 6</a></li>
+          <li><strong>Module 07 References.</strong> Async / NearSync / Metro Availability characteristics; Recovery Plans (Nutanix Disaster Recovery / formerly Leap); Witness VM specs. <a href="../../modules/07-data-protection/index.html">Module 7</a></li>
+          <li><strong>Module 05 References.</strong> RF / EC math used in cluster sizing; EC 4+1 needs ≥ 6 nodes. <a href="../../modules/05-dsf-storage-deep-dive/index.html">Module 5</a></li>
+          <li><strong>Module 08 References.</strong> Files (FSVM count), Objects (WORM, S3 Object Lock semantics), Volumes. <a href="../../modules/08-unified-storage/index.html">Module 8</a></li>
+          <li><strong>Appendix B References.</strong> HyperFlex EOL dates and Cisco-Nutanix partnership product (relevant to ROBO and Cisco-mature accounts). <a href="../b-comparison-matrix/index.html">Appendix B</a></li>
+          <li><strong>Appendix F References.</strong> Per-tier Prism Central VM specs and X-Small PC tier. <a href="../f-sizing-rules/index.html">Appendix F</a></li>
+        </ul>
+      </section>
+
+      <!-- ===== Cross-references ===== -->
+      <section class="crossrefs">
+        <h3>Cross-references</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each reference architecture pulls from multiple modules; the cross-references in each section point to specific modules.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> defines the terms used.</li>
+          <li><strong>Sizing Rules:</strong> <a href="../f-sizing-rules/index.html">Appendix F</a> provides the sizing math behind these architectures.</li>
+          <li><strong>Scenarios:</strong> <a href="../c-scenarios/index.html">Appendix C</a> has the design-exercise versions of these architectures.</li>
+          <li><strong>POC Playbook:</strong> Appendix J has the validation steps for these architectures. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Nutanix Sizer:</strong> the official tool for binding sizing.</li>
+        </ul>
+      </section>
+
+    </article>
+
+    <div class="back-home">
+      <a href="../../index.html">← back to home</a>
+    </div>
+
+  </main>
+
+  <footer class="site">
+    <div>Written by Fred Nix · Built for BlueAlly Solutions Architects · Source on <a href="https://github.com/nixfred/nutanix">GitHub</a></div>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-i-reference-architectures</span>
+  </footer>
+
+</body>
+</html>
