@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="bm-title bm-desc">
+  <title id="bm-title">Appendix B hero: Comparison Matrix · Nutanix vs incumbents</title>
+  <desc id="bm-desc">A two-column visual on a deep navy field: a Nutanix column on the left with its product stack listed (AHV, DSF, Files, Objects, Volumes, Flow, Prism, Recovery Plans, NC2, Move), a "vs" divider with category labels in the middle (Hypervisor, Storage, Files, Objects, Block, Networking, Management, DR, HCI, Migration, Hardware, Licensing), and a competitor column on the right showing the incumbents we compare against (ESXi, vSAN, ONTAP, S3, Pure, NSX-T, vCenter+Aria, SRM, VxRail, HCX, NX/OEM, VCF). Mono path top-left.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="ntnxCol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(217,124,74,0.18)"/>
+      <stop offset="100%" stop-color="rgba(217,124,74,0.04)"/>
+    </linearGradient>
+    <linearGradient id="cmpCol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(74,158,255,0.16)"/>
+      <stop offset="100%" stop-color="rgba(74,158,255,0.04)"/>
+    </linearGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <!-- subtle grid lines -->
+  <g stroke="rgba(74,158,255,0.08)" stroke-width="1" fill="none">
+    <path d="M0,720 L1600,720"/>
+    <path d="M0,760 L1600,760"/>
+    <path d="M0,800 L1600,800"/>
+  </g>
+
+  <!-- mono path top-left -->
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-b-comparison-matrix
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · 12 CATEGORIES · ~24 COMPARISONS</text>
+
+  <!-- ============================================================ -->
+  <!-- HEADLINE                                                       -->
+  <!-- ============================================================ -->
+  <text x="800" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">NUTANIX  ·  vs  ·  INCUMBENT STACKS</text>
+  <text x="800" y="184" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#a8b8d4">honest assessments · who wins where · coexistence patterns</text>
+
+  <!-- ============================================================ -->
+  <!-- LEFT COLUMN: Nutanix stack                                    -->
+  <!-- ============================================================ -->
+  <g transform="translate(180, 220)">
+    <rect x="0" y="0" width="380" height="500" rx="6" fill="url(#ntnxCol)" stroke="#d97c4a" stroke-width="1.4"/>
+    <text x="190" y="36" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#d97c4a" letter-spacing="0.14em">NUTANIX</text>
+    <line x1="40" y1="56" x2="340" y2="56" stroke="rgba(217,124,74,0.35)" stroke-width="1"/>
+
+    <g font-family="JetBrains Mono, monospace" font-size="13" fill="#cfeeff">
+      <text x="40" y="92"><tspan fill="#d97c4a">▸</tspan> AHV</text>
+      <text x="40" y="124"><tspan fill="#d97c4a">▸</tspan> DSF</text>
+      <text x="40" y="156"><tspan fill="#d97c4a">▸</tspan> Nutanix Files</text>
+      <text x="40" y="188"><tspan fill="#d97c4a">▸</tspan> Nutanix Objects</text>
+      <text x="40" y="220"><tspan fill="#d97c4a">▸</tspan> Nutanix Volumes</text>
+      <text x="40" y="252"><tspan fill="#d97c4a">▸</tspan> Flow Network Security</text>
+      <text x="40" y="284"><tspan fill="#d97c4a">▸</tspan> Flow Virtual Networking</text>
+      <text x="40" y="316"><tspan fill="#d97c4a">▸</tspan> Prism Element + Central</text>
+      <text x="40" y="348"><tspan fill="#d97c4a">▸</tspan> Recovery Plans (NDR)</text>
+      <text x="40" y="380"><tspan fill="#d97c4a">▸</tspan> NC2 (Cloud Clusters)</text>
+      <text x="40" y="412"><tspan fill="#d97c4a">▸</tspan> Move (migration tool)</text>
+      <text x="40" y="444"><tspan fill="#d97c4a">▸</tspan> NCI / NCM / NCP</text>
+    </g>
+    <text x="190" y="478" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4" font-style="italic">one platform, integrated stack</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- CENTER: vs divider + category strip                            -->
+  <!-- ============================================================ -->
+  <g transform="translate(720, 220)">
+    <!-- vs glyph -->
+    <g filter="url(#purpleGlow)">
+      <circle cx="80" cy="80" r="44" fill="rgba(192,132,252,0.14)" stroke="#c084fc" stroke-width="2"/>
+      <text x="80" y="92" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="700" fill="#c084fc" letter-spacing="0.04em">vs</text>
+    </g>
+
+    <!-- category list -->
+    <text x="80" y="156" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#c084fc" font-weight="600">12 CATEGORIES</text>
+    <line x1="20" y1="170" x2="140" y2="170" stroke="rgba(192,132,252,0.45)" stroke-width="1"/>
+
+    <g font-family="JetBrains Mono, monospace" font-size="11" fill="#a8b8d4">
+      <text x="80" y="192" text-anchor="middle">Hypervisor</text>
+      <text x="80" y="212" text-anchor="middle">Distributed Storage</text>
+      <text x="80" y="232" text-anchor="middle">File Storage</text>
+      <text x="80" y="252" text-anchor="middle">Object Storage</text>
+      <text x="80" y="272" text-anchor="middle">Block Storage</text>
+      <text x="80" y="292" text-anchor="middle">Networking + Security</text>
+      <text x="80" y="312" text-anchor="middle">Management</text>
+      <text x="80" y="332" text-anchor="middle">Data Protection</text>
+      <text x="80" y="352" text-anchor="middle">HCI Platforms</text>
+      <text x="80" y="372" text-anchor="middle">Migration Tools</text>
+      <text x="80" y="392" text-anchor="middle">Hardware Sourcing</text>
+      <text x="80" y="412" text-anchor="middle">Licensing</text>
+    </g>
+    <line x1="20" y1="430" x2="140" y2="430" stroke="rgba(192,132,252,0.45)" stroke-width="1"/>
+    <text x="80" y="454" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4" font-style="italic">jump by category</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT COLUMN: incumbents                                       -->
+  <!-- ============================================================ -->
+  <g transform="translate(1040, 220)">
+    <rect x="0" y="0" width="380" height="500" rx="6" fill="url(#cmpCol)" stroke="#4a9eff" stroke-width="1.4"/>
+    <text x="190" y="36" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#4a9eff" letter-spacing="0.14em">INCUMBENTS</text>
+    <line x1="40" y1="56" x2="340" y2="56" stroke="rgba(74,158,255,0.35)" stroke-width="1"/>
+
+    <g font-family="JetBrains Mono, monospace" font-size="13" fill="#cfddff">
+      <text x="40" y="92"><tspan fill="#4a9eff">▸</tspan> ESXi · Hyper-V</text>
+      <text x="40" y="124"><tspan fill="#4a9eff">▸</tspan> vSAN · arrays</text>
+      <text x="40" y="156"><tspan fill="#4a9eff">▸</tspan> NetApp ONTAP · Isilon · FlashBlade</text>
+      <text x="40" y="188"><tspan fill="#4a9eff">▸</tspan> AWS S3 · Cloudian · MinIO</text>
+      <text x="40" y="220"><tspan fill="#4a9eff">▸</tspan> Pure · PowerStore · NetApp block</text>
+      <text x="40" y="252"><tspan fill="#4a9eff">▸</tspan> NSX-T (DFW + routing)</text>
+      <text x="40" y="284"><tspan fill="#4a9eff">▸</tspan> Traditional firewall + VLAN</text>
+      <text x="40" y="316"><tspan fill="#4a9eff">▸</tspan> vCenter + Aria Suite</text>
+      <text x="40" y="348"><tspan fill="#4a9eff">▸</tspan> Site Recovery Manager (SRM)</text>
+      <text x="40" y="380"><tspan fill="#4a9eff">▸</tspan> VxRail · HyperFlex · Azure Stack</text>
+      <text x="40" y="412"><tspan fill="#4a9eff">▸</tspan> HCX · Zerto · RackWare</text>
+      <text x="40" y="444"><tspan fill="#4a9eff">▸</tspan> VCF Subscription (Broadcom)</text>
+    </g>
+    <text x="190" y="478" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4" font-style="italic">multiple vendors, multiple stacks</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- bottom strip: discipline                                       -->
+  <!-- ============================================================ -->
+  <g transform="translate(120, 760)">
+    <rect x="0" y="0" width="1360" height="60" rx="6" fill="rgba(192,132,252,0.06)" stroke="rgba(192,132,252,0.40)" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="680" y="24" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#c084fc" letter-spacing="0.10em">THE DISCIPLINE</text>
+    <text x="680" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#cfeeff">acknowledge real strengths · be specific about who wins where · name the coexistence pattern · cross-reference the module</text>
+  </g>
+
+  <!-- vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>

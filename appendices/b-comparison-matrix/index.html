@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · Appendix B: Comparison Matrix</title>
+  <meta name="description" content="Feature-by-feature comparisons of Nutanix vs competing platforms. AHV vs ESXi, DSF vs vSAN, Files vs ONTAP, Objects vs S3, Flow vs NSX-T, Recovery Plans vs SRM, Nutanix vs VxRail/HyperFlex/Azure Stack HCI, Move vs HCX, NCI vs VCF subscription. Each comparison includes a dimension table, an honest assessment, and the coexistence pattern." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · Appendix B: Comparison Matrix" />
+  <meta property="og:description" content="Feature-by-feature comparisons of Nutanix vs the incumbent stacks. Honest assessments and coexistence patterns." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/appendices/b-comparison-matrix/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · Appendix B: Comparison Matrix" />
+  <meta name="twitter:description" content="Nutanix vs the incumbent stacks, category by category." />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --accent-purple: #c084fc;
+      --accent-rust: #d97c4a;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary);
+      font-family: var(--font-display); font-size: 16px; line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border-bottom: 1px solid rgba(31, 58, 102, 0.5);
+    }
+    header.brand .inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+    .breadcrumb .slash { color: var(--accent-purple); }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .module-hero { position: relative; margin: -24px calc(50% - 50vw) 0; padding: 0; border: 0; border-radius: 0; background: transparent; overflow: hidden; isolation: isolate; }
+    .module-hero img { display: block; width: 100%; height: clamp(420px, 60vh, 680px); object-fit: cover; object-position: center 50%; }
+    .module-hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to bottom, rgba(10,22,40,0) 0%, rgba(10,22,40,0) 42%, rgba(10,22,40,0.65) 78%, var(--bg-base) 100%),
+        linear-gradient(to right, var(--bg-base) 0%, rgba(10,22,40,0) 7%, rgba(10,22,40,0) 93%, var(--bg-base) 100%);
+    }
+
+    .module-title-block { position: relative; z-index: 2; margin: -180px 0 32px; }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-purple); letter-spacing: 0.04em; margin-bottom: 8px; text-shadow: 0 1px 14px rgba(10,22,40,0.85); }
+    h1.module-title { font-size: 48px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 20px; text-shadow: 0 2px 30px rgba(10, 22, 40, 0.85); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 20px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .chip.appendix { border-color: rgba(192,132,252,0.45); color: var(--accent-purple); }
+
+    .intro { max-width: 820px; margin: 0 auto 24px; color: var(--text-primary); font-size: 17px; line-height: 1.6; }
+    .intro p { margin: 0 0 12px; }
+    .intro ul { margin: 0 0 12px; padding-left: 22px; color: var(--text-secondary); font-size: 15px; }
+    .intro ul li { margin-bottom: 6px; }
+    .intro strong { color: var(--text-primary); }
+
+    /* Sticky category-jump nav */
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(192,132,252,0.55);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 0 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+      letter-spacing: 0.04em;
+    }
+    nav.cat-jump a:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    article.body h2.cat {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--accent-purple);
+      margin: 64px 0 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 110px;
+    }
+
+    article.body h3.compare {
+      font-family: var(--font-display);
+      font-size: 19px; font-weight: 600; letter-spacing: -0.005em;
+      color: var(--text-primary);
+      margin: 32px 0 6px;
+      scroll-margin-top: 110px;
+    }
+
+    .module-ref {
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+      margin: 0 0 14px; letter-spacing: 0.02em;
+    }
+    .module-ref a { color: var(--accent-cyan); }
+
+    article.body table {
+      width: 100%; border-collapse: collapse; margin: 14px 0;
+      font-size: 14px; color: var(--text-primary);
+    }
+    article.body th, article.body td {
+      padding: 9px 12px; text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    article.body th {
+      font-family: var(--font-mono); font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary); font-weight: 600;
+      background: var(--bg-surface);
+    }
+    article.body th:nth-child(2) { color: var(--accent-rust); }
+    article.body th:nth-child(3) { color: var(--accent-primary); }
+    article.body th:nth-child(4) { color: var(--accent-primary); }
+    article.body tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .assess, .coex {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .assess { border-left: 3px solid var(--accent-purple); }
+    .coex { border-left: 3px solid var(--success); }
+    .assess .label, .coex .label {
+      font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: var(--text-tertiary); font-weight: 600;
+      display: block; margin-bottom: 6px;
+    }
+    .assess .label { color: var(--accent-purple); }
+    .coex .label { color: var(--success); }
+    .assess strong, .coex strong { color: var(--text-primary); }
+
+    .how-to-use {
+      margin-top: 64px;
+      padding: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .how-to-use h2 { margin: 0 0 12px; font-size: 22px; }
+    .how-to-use ol { padding-left: 22px; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .how-to-use ol li { margin-bottom: 6px; }
+    .how-to-use ol li strong { color: var(--text-primary); }
+    .how-to-use p { color: var(--text-secondary); font-size: 14px; margin: 14px 0 0; }
+
+    .references { margin-top: 36px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .references h2 { margin: 0 0 12px; font-size: 22px; }
+    .references p { color: var(--text-secondary); font-size: 14px; margin: 0 0 14px; }
+    .references ul { padding-left: 20px; margin: 0; }
+    .references li { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+    .references li strong { color: var(--text-primary); }
+
+    .crossrefs { margin-top: 36px; padding: 20px 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; }
+    .crossrefs h3 { margin: 0 0 10px; font-size: 14px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-tertiary); }
+    .crossrefs ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 14px; }
+    .crossrefs li { margin-bottom: 6px; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-purple);
+      border-radius: 8px; color: var(--text-primary); text-decoration: none;
+      font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+      transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site a:hover { color: var(--accent-cyan); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-purple); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      h1.module-title { font-size: 36px; }
+      .breadcrumb { font-size: 12px; }
+      .module-hero img { height: clamp(320px, 50vh, 460px); }
+      .module-title-block { margin-top: -110px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      article.body table { font-size: 12px; }
+      article.body th, article.body td { padding: 7px 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Appendices</span>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">B · Comparison Matrix</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <figure class="module-hero">
+      <img src="../../public/images/hero-b-comparison-matrix.svg" alt="A two-column comparison visual: Nutanix product stack on the left in rust orange (AHV, DSF, Files, Objects, Volumes, Flow, Prism, Recovery Plans, NC2, Move, NCI/NCM/NCP), incumbent stack on the right in blue (ESXi, vSAN, ONTAP, S3, NSX-T, vCenter+Aria, SRM, VxRail, HCX, VCF), with a purple 'vs' divider in the middle listing 12 comparison categories." />
+    </figure>
+
+    <div class="module-title-block">
+      <div class="module-eyebrow">/nix/nutanix/appendix-b-comparison-matrix</div>
+      <h1 class="module-title">Appendix B · Comparison Matrix</h1>
+      <div class="meta-row">
+        <span class="chip appendix">REFERENCE</span>
+        <span class="chip">12 categories</span>
+        <span class="chip">~24 comparisons</span>
+        <span class="chip">Nutanix vs the incumbents</span>
+      </div>
+    </div>
+
+    <div class="intro">
+      <p>Feature-by-feature comparisons of Nutanix vs competing platforms. When a customer mentions a specific competitor, pull up the relevant section. Each comparison has a dimension table, an honest assessment of who wins where, and the coexistence pattern when applicable.</p>
+      <p><strong>The discipline applied across every comparison:</strong></p>
+      <ul>
+        <li><strong>Acknowledge real strengths on the other side.</strong> Customers respect honesty and lose trust on overclaims.</li>
+        <li><strong>Be specific about who wins where.</strong> "Nutanix wins" is rarely the whole answer; "wins for these workloads, comparable for these, competitor still wins for these niches" is closer to truth.</li>
+        <li><strong>Name the coexistence pattern.</strong> Most enterprise customers don't fully replace incumbents; the durable answer is often hybrid.</li>
+        <li><strong>Cross-reference to the module</strong> where the topic is taught in depth. The matrix is the quick-reference; the modules have the full conversation.</li>
+      </ul>
+    </div>
+
+    <nav class="cat-jump" aria-label="Jump to category">
+      <a href="#hypervisor">Hypervisor</a>
+      <a href="#distributed-storage">Distributed Storage</a>
+      <a href="#file-storage">File Storage</a>
+      <a href="#object-storage">Object Storage</a>
+      <a href="#block-storage">Block Storage</a>
+      <a href="#networking-security">Networking + Security</a>
+      <a href="#management">Management</a>
+      <a href="#data-protection">Data Protection</a>
+      <a href="#hci-platforms">HCI Platforms</a>
+      <a href="#migration-tools">Migration Tools</a>
+      <a href="#hardware-sourcing">Hardware Sourcing</a>
+      <a href="#licensing">Licensing</a>
+    </nav>
+
+    <article class="body">
+
+      <h2 class="cat" id="hypervisor">Hypervisor</h2>
+
+      <h3 class="compare" id="ahv-vs-esxi">AHV vs VMware ESXi</h3>
+      <p class="module-ref">Module: <a href="../../modules/03-ahv-hypervisor/index.html">Module 3 · AHV (The Hypervisor Question)</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>AHV</th><th>ESXi</th></tr></thead>
+        <tbody>
+          <tr><td>Type</td><td>KVM-based, Linux+KVM stack</td><td>VMware proprietary</td></tr>
+          <tr><td>Licensing</td><td>Included with NCI / AOS, no extra fee</td><td>Per-core subscription (post-Broadcom)</td></tr>
+          <tr><td>Management plane</td><td>Acropolis services (in-platform)</td><td>vCenter (separate appliance)</td></tr>
+          <tr><td>Live migration</td><td>Yes (Live Migration)</td><td>Yes (vMotion)</td></tr>
+          <tr><td>HA</td><td>Yes (Acropolis-driven)</td><td>Yes (vSphere HA)</td></tr>
+          <tr><td>DRS-equivalent</td><td>Yes (ADS)</td><td>Yes (DRS)</td></tr>
+          <tr><td>Live storage migration</td><td>Yes (per-VM)</td><td>Yes (Storage vMotion)</td></tr>
+          <tr><td>Maximum cluster size</td><td>Hundreds of nodes</td><td>Thousands of nodes</td></tr>
+          <tr><td>GPU passthrough</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Mature ecosystem</td><td>Smaller third-party tooling</td><td>Larger third-party tooling</td></tr>
+          <tr><td>Fault Tolerance (zero-downtime)</td><td>No direct equivalent</td><td>Yes (FT)</td></tr>
+          <tr><td>Storage policies</td><td>Per Storage Container (DSF)</td><td>Per VM (vSAN SPBM) or array</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>For typical enterprise VM workloads, AHV is operationally equivalent. ESXi's advantage is depth in specific niches (FT for the rare workload that needs it, mature third-party plugin ecosystem, larger cluster scale ceilings). AHV's advantage is licensing (included with AOS) and simpler integration with the Nutanix platform (single management plane, single upgrade cadence). Most customers find the operational learning curve manageable.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>ESXi-on-Nutanix is fully supported. Customers can run ESXi on Nutanix hardware, get DSF benefits, keep vCenter, and migrate to AHV at their own pace. Many run permanent hybrid (some clusters AHV, some ESXi-on-Nutanix) where workload requirements dictate.</div>
+
+      <h3 class="compare" id="ahv-vs-hyperv">AHV vs Microsoft Hyper-V</h3>
+      <p class="module-ref">Module: <a href="../../modules/03-ahv-hypervisor/index.html">Module 3 · AHV</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>AHV</th><th>Hyper-V</th></tr></thead>
+        <tbody>
+          <tr><td>Type</td><td>KVM-based</td><td>Microsoft Type-1</td></tr>
+          <tr><td>Licensing</td><td>Included with NCI / AOS</td><td>Bundled with Windows Server Datacenter</td></tr>
+          <tr><td>Management</td><td>Acropolis + Prism</td><td>SCVMM (System Center VMM)</td></tr>
+          <tr><td>Linux VM support</td><td>First-class</td><td>Capable but Windows-centric tooling</td></tr>
+          <tr><td>Windows VM support</td><td>First-class</td><td>First-class with deep AD integration</td></tr>
+          <tr><td>Storage stack</td><td>DSF</td><td>Storage Spaces Direct or SAN</td></tr>
+          <tr><td>Microsegmentation</td><td>Flow Network Security</td><td>Network Controller / Defender for Cloud</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Hyper-V deployments are less common than VMware in enterprise but real, especially in Microsoft-heavy shops. AHV's advantage is consolidation onto the Nutanix platform; Hyper-V's advantage is licensing efficiency for Windows-Server-Datacenter customers. For most customers consolidating to Nutanix, AHV is the destination.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Move supports Hyper-V to AHV migration. Mixed-hypervisor (Hyper-V plus AHV plus ESXi) is operationally complex; consolidation to one is the typical end state.</div>
+
+
+      <h2 class="cat" id="distributed-storage">Distributed Storage</h2>
+
+      <h3 class="compare" id="dsf-vs-vsan">Nutanix DSF vs VMware vSAN</h3>
+      <p class="module-ref">Module: <a href="../../modules/05-dsf-storage/index.html">Module 5 · DSF Deep Dive</a> · <a href="../../modules/01-hci-foundations/index.html">Module 1 · HCI Foundations</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix DSF</th><th>VMware vSAN</th></tr></thead>
+        <tbody>
+          <tr><td>Architecture</td><td>Distributed across CVMs</td><td>Distributed in ESXi kernel</td></tr>
+          <tr><td>Storage controller</td><td>CVM (separate VM)</td><td>Built into ESXi kernel</td></tr>
+          <tr><td>Compute tax</td><td>CVM resource consumption (8-16 vCPU, 32-64 GB)</td><td>Kernel-mode, lower overhead</td></tr>
+          <tr><td>Replication factor</td><td>RF2, RF3 (per Storage Container)</td><td>FTT=1, FTT=2, FTT=3 (per storage policy)</td></tr>
+          <tr><td>Erasure coding</td><td>EC-X 4+1 / 4+2</td><td>RAID-5 / RAID-6</td></tr>
+          <tr><td>Compression</td><td>Inline, per-container</td><td>Inline, per-cluster (limited per-policy)</td></tr>
+          <tr><td>Deduplication</td><td>Cache + on-disk (per-container)</td><td>Cluster-wide (vSAN ESA)</td></tr>
+          <tr><td>Snapshot model</td><td>DSF-native, instant, no I/O penalty</td><td>VM-level (older), vSAN snapshot improvements in ESA</td></tr>
+          <tr><td>Cross-hypervisor</td><td>Yes (ESXi-on-Nutanix supported)</td><td>ESXi only</td></tr>
+          <tr><td>Maximum cluster</td><td>~32-64 (typical Nutanix sweet spot)</td><td>Up to 64 per cluster</td></tr>
+          <tr><td>Licensing</td><td>Included in NCI / AOS</td><td>Bundled into VCF (post-Broadcom)</td></tr>
+          <tr><td>Self-healing</td><td>Yes (Curator)</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>DSF and vSAN occupy similar architectural space. DSF's advantages: cross-hypervisor support (you can run ESXi on DSF), instant snapshots without I/O penalty, more mature compression/dedup story for many workloads. vSAN's advantages: kernel-mode integration with ESXi (lower overhead), tighter VMware-stack integration, RAID-style data protection options. For most enterprise workloads, the platforms are competitive; the hypervisor and management-stack decision usually drives the storage decision.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers can run vSAN clusters and Nutanix clusters separately with workloads on appropriate platforms. Direct interop (vSAN-to-DSF replication) is not supported; replication paths are platform-specific.</div>
+
+      <h3 class="compare" id="dsf-vs-arrays">Nutanix DSF vs Traditional SAN/NAS Arrays (NetApp, Pure, Dell, etc.)</h3>
+      <p class="module-ref">Module: <a href="../../modules/05-dsf-storage/index.html">Module 5 · DSF Deep Dive</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>DSF (HCI)</th><th>Traditional Array</th></tr></thead>
+        <tbody>
+          <tr><td>Hardware</td><td>Same as compute</td><td>Dedicated array hardware</td></tr>
+          <tr><td>Scaling unit</td><td>Node (compute + storage together)</td><td>Array shelves, separate from compute</td></tr>
+          <tr><td>Controller</td><td>Software (CVM) on every node</td><td>Dedicated array controllers (typically 2)</td></tr>
+          <tr><td>Failure tolerance</td><td>Distributed across N nodes</td><td>Dual-controller within array, replication for site loss</td></tr>
+          <tr><td>Capacity expansion</td><td>Add nodes</td><td>Add shelves to existing controller</td></tr>
+          <tr><td>Compute expansion</td><td>Add nodes (storage included)</td><td>Add servers separately</td></tr>
+          <tr><td>Refresh cycle</td><td>One platform refresh</td><td>Compute and storage separate cycles</td></tr>
+          <tr><td>Tail latency</td><td>Modest (network round-trips for replication)</td><td>Lowest (within-controller backplane)</td></tr>
+          <tr><td>Sequential throughput ceiling</td><td>Node-count dependent</td><td>Controller-bound</td></tr>
+          <tr><td>Maturity in extreme niches</td><td>Younger</td><td>Decades of optimization</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>DSF wins on operational simplicity (one platform to manage, one refresh cycle, scaling by adding nodes). Traditional arrays win on extreme-percentile tail latency for some workloads, sequential bandwidth ceilings, and the depth of features at the high end (NetApp's ONTAP-specific workflows, Pure's specific data services). For most enterprise general-purpose workloads, DSF is competitive or better. For specific workloads (extreme HPC, very high IOPS at predictable tail latency), purpose-built arrays still win.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers commonly run Nutanix for general-purpose workloads and keep an array for specific workloads (databases requiring extreme p99 latency, HPC, specialized applications). The array footprint shrinks over time as DSF's relevant capabilities mature.</div>
+
+
+      <h2 class="cat" id="file-storage">File Storage</h2>
+
+      <h3 class="compare" id="files-vs-ontap">Nutanix Files vs NetApp ONTAP</h3>
+      <p class="module-ref">Module: <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Files</th><th>NetApp ONTAP</th></tr></thead>
+        <tbody>
+          <tr><td>Architecture</td><td>FSVMs on Nutanix cluster</td><td>Dedicated controllers</td></tr>
+          <tr><td>Protocols</td><td>SMB 2.x/3.x, NFS v3/v4</td><td>SMB, NFS, plus protocols (FCP, iSCSI, NVMe)</td></tr>
+          <tr><td>AD integration</td><td>Full (Kerberos, ACLs, ABE)</td><td>Full, mature</td></tr>
+          <tr><td>Snapshot maturity</td><td>DSF-native, fast</td><td>Mature, multiple types</td></tr>
+          <tr><td>FlexClone (file-level cloning)</td><td>Snapshot-based; not exact match</td><td>Yes, mature</td></tr>
+          <tr><td>FlexCache (distributed caching)</td><td>No direct equivalent</td><td>Yes</td></tr>
+          <tr><td>ABE (Access-Based Enumeration)</td><td>Yes</td><td>Yes, more refined options</td></tr>
+          <tr><td>Quotas</td><td>Yes, share or directory</td><td>Yes, mature multi-level</td></tr>
+          <tr><td>Replication</td><td>Files Replication (Nutanix)</td><td>SnapMirror (mature, many policies)</td></tr>
+          <tr><td>Anti-ransomware</td><td>Real-time pattern detection</td><td>Available; less mature</td></tr>
+          <tr><td>Self-Service Restore</td><td>Yes (Windows Previous Versions)</td><td>Yes</td></tr>
+          <tr><td>Files Analytics</td><td>Built-in, good</td><td>OnCommand Insight (separate product)</td></tr>
+          <tr><td>Years of maturity</td><td>~5+ years</td><td>30+ years</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>For typical enterprise file workloads (user shares, application file storage, backup repositories), Files is competitive and often simpler operationally. ONTAP retains advantages in specific deep workflows (FlexClone, FlexCache, advanced policy refinements, the depth of SnapMirror customization). Customers running ONTAP-specific workflows at scale should map their workflows before migrating; many translate, some require workflow change.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Many customers run Files for the bulk of file workloads and keep NetApp for the specific workloads that genuinely benefit from ONTAP-specific features. Hybrid is often the right answer; full replacement is the right answer when workflow mapping shows clean translation.</div>
+
+      <h3 class="compare" id="files-vs-isilon">Nutanix Files vs Dell PowerScale (Isilon)</h3>
+      <p class="module-ref">Module: <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Files</th><th>PowerScale (Isilon)</th></tr></thead>
+        <tbody>
+          <tr><td>Target market</td><td>General enterprise file</td><td>High-performance NAS, HPC, media</td></tr>
+          <tr><td>Scale</td><td>Up to many FSVMs per File Server</td><td>Massive (hundreds of nodes per cluster)</td></tr>
+          <tr><td>Throughput at scale</td><td>Good for typical enterprise</td><td>Higher ceiling for HPC workloads</td></tr>
+          <tr><td>OneFS protocols</td><td>n/a</td><td>Unified namespace, multi-protocol</td></tr>
+          <tr><td>Specialty: media workflows</td><td>Capable</td><td>Industry-leading</td></tr>
+          <tr><td>Specialty: HPC</td><td>No</td><td>Strong</td></tr>
+          <tr><td>Operational integration</td><td>Part of Nutanix platform</td><td>Standalone NAS</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Files targets typical enterprise NAS workloads where the consolidation onto Nutanix is the value proposition. Isilon targets high-performance and very-large-scale NAS workloads (media production, HPC, research) where its scale-out design genuinely excels. For typical enterprise use, Files is competitive; for the workloads Isilon was designed for, Isilon wins.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers with media/HPC workloads keep Isilon for those; Files handles general enterprise file alongside.</div>
+
+      <h3 class="compare" id="files-vs-flashblade">Nutanix Files vs Pure FlashBlade</h3>
+      <p class="module-ref">Module: <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Files</th><th>Pure FlashBlade</th></tr></thead>
+        <tbody>
+          <tr><td>Architecture</td><td>FSVMs on Nutanix</td><td>All-flash NAS appliance</td></tr>
+          <tr><td>Performance ceiling</td><td>High</td><td>Higher (specialized hardware)</td></tr>
+          <tr><td>Multi-protocol</td><td>SMB, NFS</td><td>NFS, S3, plus block (FlashBlade//S)</td></tr>
+          <tr><td>Object services</td><td>Separate (Nutanix Objects)</td><td>Unified with file (FlashBlade)</td></tr>
+          <tr><td>HPC suitability</td><td>Limited</td><td>Strong</td></tr>
+          <tr><td>Operational integration</td><td>Part of Nutanix platform</td><td>Standalone</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>FlashBlade is purpose-built for high-performance NAS and unified file+object workloads. For customers with FlashBlade-class performance requirements, FlashBlade is genuinely strong. For typical enterprise file workloads, Files is competitive and the consolidation onto Nutanix wins on operational simplicity and total cost.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>FlashBlade for workloads that need it; Files for the rest.</div>
+
+
+      <h2 class="cat" id="object-storage">Object Storage</h2>
+
+      <h3 class="compare" id="objects-vs-s3">Nutanix Objects vs AWS S3</h3>
+      <p class="module-ref">Module: <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Objects</th><th>AWS S3</th></tr></thead>
+        <tbody>
+          <tr><td>API</td><td>S3-compatible</td><td>S3 (the standard)</td></tr>
+          <tr><td>Pricing model</td><td>Customer-owned cluster (capex/subscription)</td><td>Cloud consumption (per GB, plus requests, plus egress)</td></tr>
+          <tr><td>Maximum scale</td><td>Cluster scale</td><td>Effectively unlimited (cloud)</td></tr>
+          <tr><td>Ecosystem maturity</td><td>Growing; broad S3-tool compatibility</td><td>Largest; AWS-specific features (S3 Select, Glacier deep archive)</td></tr>
+          <tr><td>Egress cost</td><td>None on local network</td><td>Yes (AWS egress fees)</td></tr>
+          <tr><td>Latency</td><td>LAN</td><td>Internet/cloud-egress dependent</td></tr>
+          <tr><td>Compliance / WORM</td><td>Yes</td><td>Yes (S3 Object Lock)</td></tr>
+          <tr><td>Replication to AWS S3</td><td>Yes (Objects-to-S3)</td><td>n/a</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>AWS S3 is unmatched for hyperscale and cloud-native applications. Nutanix Objects is the on-prem answer for steady-state workloads where data sovereignty, latency, or egress economics favor on-prem (especially backup repositories, on-prem analytics intermediate storage, regulated archives). The two complement each other; most enterprises end up with both.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Use Objects for steady-state high-volume workloads and S3 for elastic cloud-native patterns. Replicate between them where appropriate (Objects-to-S3 for off-site backup of on-prem data).</div>
+
+      <h3 class="compare" id="objects-vs-onprem">Nutanix Objects vs Cloudian / Scality / MinIO / NetApp StorageGRID</h3>
+      <p class="module-ref">Module: <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Objects</th><th>Cloudian / Scality / MinIO / StorageGRID</th></tr></thead>
+        <tbody>
+          <tr><td>API compatibility</td><td>S3-compatible</td><td>S3-compatible</td></tr>
+          <tr><td>Architecture</td><td>Object Service VMs on Nutanix</td><td>Dedicated object-storage software (sometimes appliance)</td></tr>
+          <tr><td>Hardware</td><td>Same Nutanix cluster as compute</td><td>Often dedicated infrastructure</td></tr>
+          <tr><td>Operational integration</td><td>Part of Nutanix platform</td><td>Separate product</td></tr>
+          <tr><td>Multi-tenancy</td><td>Yes (Object Stores, IAM-style)</td><td>Yes</td></tr>
+          <tr><td>WORM compliance</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Years of maturity</td><td>~5+ years</td><td>10+ years (some)</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>For customers consolidating onto Nutanix, Objects replaces these products with the benefit of running on the same cluster as everything else. Standalone object-storage products may have specific niche features Objects doesn't yet match. The consolidation case (replace four storage tiers with one cluster) is the durable Objects argument.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Replacement is typical when consolidating; coexistence is rare unless the existing object storage is serving a niche workload.</div>
+
+
+      <h2 class="cat" id="block-storage">Block Storage</h2>
+
+      <h3 class="compare" id="volumes-vs-arrays">Nutanix Volumes vs Purpose-Built iSCSI Arrays (Pure, Dell PowerStore, NetApp block)</h3>
+      <p class="module-ref">Module: <a href="../../modules/08-unified-storage/index.html">Module 8 · Unified Storage</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Volumes</th><th>Purpose-Built iSCSI Array</th></tr></thead>
+        <tbody>
+          <tr><td>Target consumer</td><td>External hosts (physical, non-Nutanix VMs)</td><td>Various (often vSphere, physical hosts)</td></tr>
+          <tr><td>Hardware</td><td>Same Nutanix cluster</td><td>Dedicated array</td></tr>
+          <tr><td>Multipathing</td><td>Multiple iSCSI portal IPs</td><td>Multiple controller paths</td></tr>
+          <tr><td>Maximum IOPS at extreme scale</td><td>High but cluster-bound</td><td>Highest (specialized hardware)</td></tr>
+          <tr><td>Tail latency at extremes</td><td>Low single-digit ms</td><td>Sub-millisecond on all-flash</td></tr>
+          <tr><td>Operational integration</td><td>Part of Nutanix platform</td><td>Standalone</td></tr>
+          <tr><td>Use case fit</td><td>Bare-metal Oracle, legacy iSCSI, Linux DBs</td><td>Dedicated block requirements, performance-critical</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Volumes handles the typical iSCSI consumer use cases (bare-metal databases, legacy applications, physical hosts) cleanly. Purpose-built block arrays still have the edge for the very top end of latency-sensitive performance requirements. For the customer's typical iSCSI consumers being consolidated alongside their VMware-to-Nutanix migration, Volumes is the right answer.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Keep purpose-built block arrays for workloads at the top end; use Volumes for the rest.</div>
+
+
+      <h2 class="cat" id="networking-security">Networking and Security</h2>
+
+      <h3 class="compare" id="flow-vs-nsxt-dfw">Flow Network Security vs VMware NSX-T (Distributed Firewall)</h3>
+      <p class="module-ref">Module: <a href="../../modules/06-networking-flow/index.html">Module 6 · Networking and Microsegmentation</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Flow Network Security</th><th>NSX-T (Distributed Firewall)</th></tr></thead>
+        <tbody>
+          <tr><td>Policy model</td><td>Category-driven</td><td>Tag-based or IP-based</td></tr>
+          <tr><td>Stateful firewall</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Distributed enforcement</td><td>Yes (OVS flow rules)</td><td>Yes (kernel module)</td></tr>
+          <tr><td>Identity-based rules</td><td>Limited</td><td>Yes (deep AD integration)</td></tr>
+          <tr><td>Maturity</td><td>~5+ years</td><td>10+ years</td></tr>
+          <tr><td>Licensing</td><td>NCI Ultimate, or Security Add-On for NCI Pro (per usable TiB)</td><td>Separate NSX-T per-CPU or per-workload subscription</td></tr>
+          <tr><td>Integration with VMs</td><td>Native AHV (and ESXi-on-Nutanix)</td><td>Native ESXi</td></tr>
+          <tr><td>Third-party security ecosystem</td><td>Service insertion (Palo Alto, Check Point, Fortinet)</td><td>Mature partner ecosystem</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>For VM-tier microsegmentation (the dominant enterprise use case), Flow is competitive with NSX-T's distributed firewall and operationally simpler. NSX-T retains advantages in identity-based policy depth and the partner ecosystem. The licensing comparison favors Flow (bundled with NCI Ultimate or available as a Security Add-On to NCI Pro that also bundles Data-at-Rest Encryption, vs separate NSX-T subscription).</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>NSX-T continues to work on ESXi-on-Nutanix. Customers with deep NSX-T deployments can keep them; Flow is positioned for new AHV workloads or as a replacement evaluation.</div>
+
+      <h3 class="compare" id="fvn-vs-nsxt-routing">Flow Virtual Networking vs VMware NSX-T (Routing and Edge Services)</h3>
+      <p class="module-ref">Module: <a href="../../modules/06-networking-flow/index.html">Module 6 · Networking and Microsegmentation</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Flow Virtual Networking</th><th>NSX-T (Routing/Edge)</th></tr></thead>
+        <tbody>
+          <tr><td>VPC overlay</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Distributed routing</td><td>Yes (basic)</td><td>Yes (mature)</td></tr>
+          <tr><td>BGP integration</td><td>Yes</td><td>Yes (deep)</td></tr>
+          <tr><td>OSPF / dynamic routing</td><td>Limited</td><td>Yes</td></tr>
+          <tr><td>Edge services (LB, NAT, gateway FW)</td><td>Limited (service insertion for advanced)</td><td>Yes (mature)</td></tr>
+          <tr><td>L2VPN</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Federation (multi-site policy)</td><td>Increasing</td><td>Yes (mature)</td></tr>
+          <tr><td>Years of maturity</td><td>~3 years</td><td>10+ years</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>FVN handles common multi-tenant and overlay use cases. NSX-T retains advantages in advanced routing, edge services, L2VPN, and federation. For the customer's basic VPC and overlay needs, FVN is sufficient and included in the platform. For the advanced patterns NSX-T was designed for, NSX-T retains the edge.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>NSX-T-on-Nutanix-on-ESXi for the workloads that need NSX-T's advanced features; FVN for new AHV workloads where its capabilities suffice.</div>
+
+      <h3 class="compare" id="flow-vs-traditional">Flow vs Traditional Firewall + VLAN Approach</h3>
+      <p class="module-ref">Module: <a href="../../modules/06-networking-flow/index.html">Module 6 · Networking and Microsegmentation</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Flow Network Security</th><th>Traditional Firewall + VLAN</th></tr></thead>
+        <tbody>
+          <tr><td>Granularity</td><td>Per-VM, category-driven</td><td>Per-network/subnet</td></tr>
+          <tr><td>Lateral movement protection</td><td>Yes (stateful, distributed)</td><td>Limited (perimeter focus)</td></tr>
+          <tr><td>Operational complexity</td><td>Policy-as-code (categories)</td><td>Network reconfiguration per change</td></tr>
+          <tr><td>Performance impact</td><td>Minimal (OVS flow rules)</td><td>Variable (firewall device)</td></tr>
+          <tr><td>Audit trail</td><td>Centralized in Prism</td><td>Spread across firewalls</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>For zero-trust microsegmentation requirements (which are increasingly common), Flow is dramatically simpler operationally than traditional firewall+VLAN. Traditional approaches still work for perimeter security, but can't realistically deliver VM-level microsegmentation at scale.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Flow handles internal microsegmentation; traditional perimeter firewalls handle external boundaries; they coexist naturally.</div>
+
+
+      <h2 class="cat" id="management">Management</h2>
+
+      <h3 class="compare" id="prism-vs-vcenter-aria">Prism Central vs vCenter + Aria Suite</h3>
+      <p class="module-ref">Module: <a href="../../modules/04-prism-management/index.html">Module 4 · Prism (Element and Central)</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Prism Central + NCM</th><th>vCenter + Aria</th></tr></thead>
+        <tbody>
+          <tr><td>Single management product</td><td>Yes</td><td>No (vCenter + Aria Operations + Aria Automation + vSphere LCM)</td></tr>
+          <tr><td>Multi-cluster scope</td><td>Yes</td><td>vCenter Linked Mode + Aria Federation</td></tr>
+          <tr><td>Categories / tags</td><td>First-class policy keys</td><td>Tags (less integrated with policy)</td></tr>
+          <tr><td>Self-service automation</td><td>Self-Service (formerly Calm)</td><td>Aria Automation</td></tr>
+          <tr><td>Capacity analytics</td><td>Intelligent Operations (NCM Pro)</td><td>Aria Operations</td></tr>
+          <tr><td>Lifecycle management</td><td>LCM (integrated, multi-component)</td><td>vSphere LCM (vSphere-focused)</td></tr>
+          <tr><td>Cross-vendor analytics</td><td>Limited</td><td>Aria Operations covers more vendors</td></tr>
+          <tr><td>Licensing</td><td>NCM tiers (Starter / Pro / Ultimate)</td><td>Aria Suite or VCF bundles</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Prism Central + NCM consolidates what is multiple products in the VMware management stack. The integration is genuine and the operational benefit is real. Aria's advantage is cross-vendor breadth (it can manage non-VMware infrastructure for analytics). For Nutanix-centric environments, Prism wins on simplicity; for genuinely multi-vendor environments, Aria's cross-vendor scope still has value.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers keep Aria for cross-vendor analytics on the non-Nutanix portion of their estate; Prism handles Nutanix-native management. Both can run in parallel.</div>
+
+      <h3 class="compare" id="ncm-vs-aria">NCM vs VMware Aria Suite</h3>
+      <p class="module-ref">Module: <a href="../../modules/04-prism-management/index.html">Module 4</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      <table>
+        <thead><tr><th>Capability</th><th>Where in Nutanix</th><th>Aria Product</th></tr></thead>
+        <tbody>
+          <tr><td>Basic multi-cluster mgmt, Categories, Projects, RBAC, v4 API</td><td>Included with NCI baseline (no NCM required)</td><td>vCenter Linked Mode</td></tr>
+          <tr><td>Capacity analytics, anomaly detection</td><td>NCM Pro (Intelligent Operations)</td><td>Aria Operations</td></tr>
+          <tr><td>Application blueprints</td><td>NCM Ultimate (Self-Service, formerly Calm)</td><td>Aria Automation</td></tr>
+          <tr><td>Event-driven automation</td><td>NCM Ultimate (X-Play)</td><td>Aria Automation</td></tr>
+          <tr><td>Cost governance</td><td>NCM Ultimate</td><td>Aria Cost (CloudHealth)</td></tr>
+          <tr><td>Log management</td><td>Integration with external SIEM</td><td>Aria Operations for Logs</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Functional parity for typical enterprise needs. NCM's value is integration into the same platform as compute and storage; Aria's value is cross-vendor reach.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Same as above (Prism vs vCenter+Aria).</div>
+
+
+      <h2 class="cat" id="data-protection">Data Protection</h2>
+
+      <h3 class="compare" id="recovery-plans-vs-srm">Recovery Plans (NDR / formerly Leap) vs VMware Site Recovery Manager (SRM)</h3>
+      <p class="module-ref">Module: <a href="../../modules/07-data-protection/index.html">Module 7 · Data Protection and DR</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Recovery Plans</th><th>SRM</th></tr></thead>
+        <tbody>
+          <tr><td>Hypervisor</td><td>AHV (and ESXi-on-Nutanix)</td><td>ESXi only</td></tr>
+          <tr><td>Replication source</td><td>Nutanix native (Async / NearSync / Metro)</td><td>vSphere Replication or array-based</td></tr>
+          <tr><td>Test failover</td><td>Yes</td><td>Yes (mature)</td></tr>
+          <tr><td>Runbook customization</td><td>Capable</td><td>Mature, deeply customizable</td></tr>
+          <tr><td>Cross-vendor</td><td>Nutanix-centric</td><td>Multi-vendor (storage arrays, etc.)</td></tr>
+          <tr><td>Licensing</td><td>Bundled with NCM tier</td><td>Separate product</td></tr>
+          <tr><td>Years of maturity</td><td>~5+ years</td><td>15+ years</td></tr>
+          <tr><td>Reporting</td><td>Improving</td><td>Mature</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Recovery Plans handles typical enterprise DR cleanly. SRM has 15+ years of polish for advanced runbook customization, mature reporting, and cross-vendor scope. For most enterprise DR requirements, Recovery Plans is sufficient. For customers with deep SRM customization, the migration is real work.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>SRM continues to work on ESXi-on-Nutanix; Recovery Plans for AHV workloads. Many established SRM customers run both indefinitely.</div>
+
+      <h3 class="compare" id="replication-modes">Nutanix Replication Modes (Async vs NearSync vs Metro)</h3>
+      <p class="module-ref">Module: <a href="../../modules/07-data-protection/index.html">Module 7 · Data Protection and DR</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Async</th><th>NearSync</th><th>Metro Availability</th></tr></thead>
+        <tbody>
+          <tr><td>RPO</td><td>1+ hour typical, 15 min minimum in some configs</td><td>20s to 15 min</td><td>0 (synchronous)</td></tr>
+          <tr><td>RTO</td><td>Recovery time + boot</td><td>Same</td><td>Failover to standby (or active-active)</td></tr>
+          <tr><td>Latency requirement</td><td>Any (WAN OK)</td><td>&lt;5 ms RTT typical</td><td>&lt;5 ms RTT</td></tr>
+          <tr><td>Bandwidth</td><td>Change-rate proportional</td><td>Continuous, scales with write rate</td><td>Full write throughput</td></tr>
+          <tr><td>Cluster overhead</td><td>Low</td><td>Moderate to high</td><td>High</td></tr>
+          <tr><td>Witness required</td><td>No</td><td>No</td><td>Yes (third site)</td></tr>
+          <tr><td>Use case</td><td>General DR, ROBO</td><td>Tier-1 production</td><td>Mission-critical, zero-RPO compliance</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Choose by RPO requirement and constraints. Async for the bulk of workloads. NearSync for Tier-1 with sub-15-min RPO. Metro for genuine zero-RPO requirements with metro distance. Most customers run a mix.</div>
+
+      <h3 class="compare" id="nc2-vs-vmc">Nutanix NC2 vs VMware Cloud (VMC on AWS)</h3>
+      <p class="module-ref">Module: <a href="../../modules/07-data-protection/index.html">Module 7 · Data Protection and DR</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>NC2</th><th>VMware Cloud (VMC)</th></tr></thead>
+        <tbody>
+          <tr><td>Cloud platforms</td><td>AWS, Azure</td><td>AWS (primary), Google Cloud, Azure</td></tr>
+          <tr><td>Pricing</td><td>Bare-metal + Nutanix subscription</td><td>Per-node subscription</td></tr>
+          <tr><td>Replication from on-prem</td><td>Native (Async / NearSync / Metro to NC2)</td><td>vSphere Replication, HCX</td></tr>
+          <tr><td>DR usage</td><td>Replicate to NC2 cluster, fail over</td><td>Replicate to VMC SDDC, fail over</td></tr>
+          <tr><td>Hibernation</td><td>Some configurations support spin-down</td><td>Some configurations</td></tr>
+          <tr><td>Same platform on-prem and cloud</td><td>Yes (Nutanix on both)</td><td>Yes (vSphere on both)</td></tr>
+          <tr><td>Years of availability</td><td>~3+ years (NC2)</td><td>~7+ years (VMC)</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Both let customers extend their on-prem platform into cloud bare-metal. VMC has more years of polish; NC2 is rapidly maturing. The choice usually follows the on-prem platform: Nutanix customers go to NC2, VMware customers go to VMC.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers in mixed-platform environments can run both, but the operational complexity rarely justifies it.</div>
+
+
+      <h2 class="cat" id="hci-platforms">HCI Platforms</h2>
+
+      <h3 class="compare" id="ntnx-vs-vxrail">Nutanix vs Dell VxRail</h3>
+      <p class="module-ref">Module: <a href="../../modules/01-hci-foundations/index.html">Module 1 · HCI Foundations</a> · <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix</th><th>VxRail</th></tr></thead>
+        <tbody>
+          <tr><td>Hypervisor</td><td>AHV native; ESXi supported</td><td>ESXi only</td></tr>
+          <tr><td>Storage</td><td>DSF</td><td>vSAN</td></tr>
+          <tr><td>Hardware</td><td>Multi-vendor (NX, OEM, HCIR)</td><td>Dell hardware required</td></tr>
+          <tr><td>Software stack</td><td>Nutanix-controlled</td><td>VMware-controlled (with Dell hardware integration)</td></tr>
+          <tr><td>Management</td><td>Prism Central</td><td>vCenter + VxRail Manager</td></tr>
+          <tr><td>Cross-hypervisor</td><td>Yes</td><td>No</td></tr>
+          <tr><td>Single-throat-to-choke</td><td>Nutanix (NX) or joint (OEM)</td><td>Dell-VMware joint</td></tr>
+          <tr><td>Migration in/out</td><td>Move (in); standard tools (out)</td><td>Standard VMware tools</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>VxRail is "VMware HCI on Dell hardware" with tight integration between the two vendors. Nutanix HCI is hardware-agnostic with its own software stack. The choice often comes down to: are you committed to VMware long-term (VxRail), or are you evaluating consolidation away from VMware (Nutanix). Post-Broadcom, more customers are evaluating Nutanix.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers can run both during a migration evaluation; long-term coexistence is operationally complex.</div>
+
+      <h3 class="compare" id="ntnx-vs-hyperflex">Nutanix vs Cisco HyperFlex</h3>
+      <p class="module-ref">Module: <a href="../../modules/01-hci-foundations/index.html">Module 1 · HCI Foundations</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix</th><th>HyperFlex</th></tr></thead>
+        <tbody>
+          <tr><td>Storage</td><td>DSF</td><td>HX Data Platform (Cisco-developed)</td></tr>
+          <tr><td>Hardware</td><td>Multi-vendor</td><td>Cisco UCS only</td></tr>
+          <tr><td>Hypervisor</td><td>AHV, ESXi-on-Nutanix</td><td>ESXi (Hyper-V option)</td></tr>
+          <tr><td>Networking</td><td>Standard switching</td><td>Tightly integrated with Cisco UCS networking</td></tr>
+          <tr><td>Market traction</td><td>Strong</td><td>Cisco HyperFlex EOL: last order Sep 11, 2024; last bug-fix support Sep 11, 2025; final subscription renewal Feb 28, 2029</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Cisco discontinued HyperFlex Data Platform (HXDP) software. Customers with HyperFlex deployments are evaluating alternatives. The Nutanix-Cisco partnership product <strong>Cisco Compute Hyperconverged with Nutanix</strong> runs Nutanix software on qualifying Cisco UCS M6 hardware as the recommended migration path: customers keep Cisco compute and networking, swap the storage software stack to Nutanix.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Migration from HyperFlex to Nutanix-on-Cisco is the active conversation in 2026, especially as HyperFlex bug-fix support expires September 2025; coexistence is transitional.</div>
+
+      <h3 class="compare" id="ntnx-vs-azure-stack">Nutanix vs Microsoft Azure Stack HCI</h3>
+      <p class="module-ref">Module: <a href="../../modules/01-hci-foundations/index.html">Module 1 · HCI Foundations</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix</th><th>Azure Stack HCI</th></tr></thead>
+        <tbody>
+          <tr><td>Hypervisor</td><td>AHV (or ESXi)</td><td>Hyper-V</td></tr>
+          <tr><td>Storage</td><td>DSF</td><td>Storage Spaces Direct</td></tr>
+          <tr><td>Cloud integration</td><td>NC2 (AWS / Azure)</td><td>Azure-native (deep)</td></tr>
+          <tr><td>Management</td><td>Prism Central</td><td>Windows Admin Center / Azure portal</td></tr>
+          <tr><td>Microsoft ecosystem fit</td><td>Standard integrations</td><td>Deep (AD, Entra, etc.)</td></tr>
+          <tr><td>Linux workload support</td><td>First-class</td><td>Capable but Windows-centric</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Azure Stack HCI is Microsoft's HCI play, deeply integrated with Azure cloud. Customers heavily invested in the Microsoft ecosystem find it natural. Nutanix is hypervisor-flexible and has broader workload support. Choice often follows existing platform alignment.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Customers in mixed Microsoft + non-Microsoft environments may run both for specific workload tiers.</div>
+
+
+      <h2 class="cat" id="migration-tools">Migration Tools</h2>
+
+      <h3 class="compare" id="move-vs-alternatives">Nutanix Move vs Alternatives (HCX, Zerto, RackWare)</h3>
+      <p class="module-ref">Module: <a href="../../modules/10-migration-path/index.html">Module 10 · Migration Path</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>Nutanix Move</th><th>VMware HCX</th><th>Zerto</th><th>RackWare</th></tr></thead>
+        <tbody>
+          <tr><td>Source platforms</td><td>ESXi, Hyper-V, AWS, Azure, AHV</td><td>ESXi (in/out of VMC)</td><td>ESXi, Hyper-V, AWS, Azure, others</td><td>ESXi, Hyper-V, AWS, Azure, physical</td></tr>
+          <tr><td>Target platforms</td><td>AHV, NC2</td><td>ESXi, VMC</td><td>ESXi, AWS, Azure, others</td><td>ESXi, AHV, AWS, Azure, others</td></tr>
+          <tr><td>Cutover model</td><td>Brief planned (5-30 min)</td><td>Live or scheduled</td><td>Continuous replication, brief cutover</td><td>Brief cutover</td></tr>
+          <tr><td>Bundled with platform</td><td>Yes (Nutanix)</td><td>Yes (with VMC subscription)</td><td>Separate product</td><td>Separate product</td></tr>
+          <tr><td>Free</td><td>Yes</td><td>Yes (with VMC)</td><td>No</td><td>No</td></tr>
+          <tr><td>Complexity for typical migration</td><td>Low</td><td>Moderate</td><td>Moderate</td><td>Moderate</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>For Nutanix-bound migrations, Move is the right tool: included, validated, sufficient for typical enterprise migrations. Third-party tools (Zerto, RackWare) excel at multi-target scenarios where customers may move workloads to multiple destinations and want one tooling layer. HCX is the VMware-bound equivalent.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>Most customers use Move for Nutanix-target migrations. Third-party tools come into play for complex multi-cloud migration strategies.</div>
+
+
+      <h2 class="cat" id="hardware-sourcing">Hardware Sourcing</h2>
+
+      <h3 class="compare" id="nx-vs-oem-vs-hcir">NX vs OEM vs HCIR (Software-Only)</h3>
+      <p class="module-ref">Module: <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>NX (Nutanix-branded)</th><th>OEM (Dell XC, Lenovo HX, HPE DX, Cisco UCS)</th><th>HCIR (Software-Only)</th></tr></thead>
+        <tbody>
+          <tr><td>Hardware vendor</td><td>Nutanix (Super Micro mfg)</td><td>Dell / Lenovo / HPE / Cisco</td><td>Customer choice (HCL-compliant)</td></tr>
+          <tr><td>Support model</td><td>Single-vendor (Nutanix)</td><td>Joint Nutanix + OEM</td><td>Multi-vendor (customer manages)</td></tr>
+          <tr><td>Validation</td><td>Tightly Nutanix-controlled</td><td>Validated by Nutanix + OEM</td><td>HCL-compliance</td></tr>
+          <tr><td>Existing relationship</td><td>New (if not already)</td><td>Preserves vendor relationship</td><td>Maximum flexibility</td></tr>
+          <tr><td>Cost flexibility</td><td>Standardized</td><td>Standard with OEM negotiation</td><td>Most flexible</td></tr>
+          <tr><td>Ideal for</td><td>One-vendor preference</td><td>Existing server-vendor relationships</td><td>Custom hardware, software-control preference</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>No single right answer. NX for customers wanting one vendor; OEM for customers preserving Dell/Lenovo/HPE/Cisco relationships; HCIR for customers with custom hardware requirements or wanting maximum sourcing flexibility. Always ask the hardware-sourcing question early in discovery.</div>
+
+
+      <h2 class="cat" id="licensing">Licensing</h2>
+
+      <h3 class="compare" id="nci-vs-vcf">Nutanix NCI Subscription (formerly AOS) vs VMware VCF Subscription</h3>
+      <p class="module-ref">Module: <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing</a></p>
+      <table>
+        <thead><tr><th>Dimension</th><th>NCI Subscription (formerly AOS)</th><th>VCF Subscription</th></tr></thead>
+        <tbody>
+          <tr><td>Licensing model</td><td>Per-core</td><td>Per-core (post-Broadcom)</td></tr>
+          <tr><td>Hypervisor</td><td>AHV included at every tier</td><td>vSphere included</td></tr>
+          <tr><td>Distributed storage</td><td>DSF included</td><td>vSAN included</td></tr>
+          <tr><td>Networking</td><td>Flow Network Security with NCI Ultimate (or Security Add-On for NCI Pro, per usable TiB)</td><td>NSX-T included in VCF</td></tr>
+          <tr><td>Management</td><td>Prism Element / Prism Central included; advanced features via NCM tier (separate paid SKU)</td><td>Aria included with VCF</td></tr>
+          <tr><td>Term</td><td>1, 3, 5 year</td><td>1-year, 3-year</td></tr>
+          <tr><td>Minimum cores per CPU</td><td>1-core minimum typical</td><td>16-core minimum (Broadcom)</td></tr>
+          <tr><td>Order minimum</td><td>Negotiated per deal</td><td>72-core order minimum (Broadcom, post-2025)</td></tr>
+          <tr><td>True-up</td><td>Standard provision</td><td>Standard provision</td></tr>
+          <tr><td>Perpetual option</td><td>Limited</td><td>Largely deprecated post-Broadcom</td></tr>
+          <tr><td>Reference price (April 2026)</td><td>Negotiated; check BlueAlly pricing tools</td><td>vSphere Foundation ~$190/core MSRP; VCF ~$350/core MSRP (down from $700)</td></tr>
+        </tbody>
+      </table>
+      <div class="assess"><span class="label">Honest assessment</span>Both are per-core subscription models with multi-year discount tiers. The comparison depends on customer-specific factors: configuration density, feature usage, refresh timing. Post-Broadcom changes (per-core, minimum-core floors, bundled tiers, reduced perpetual options) shifted the comparison toward Nutanix for many configurations. The honest path is the customer-specific TCO analysis.</div>
+      <div class="coex"><span class="label">Coexistence pattern</span>The full Broadcom-comparison methodology lives in <a href="../../modules/09-licensing-economics/index.html">Module 9 · Licensing and Real Costs</a>.</div>
+
+
+      <section class="how-to-use">
+        <h2 id="how-to-use">How to Use This Matrix in Customer Conversations</h2>
+        <p>When a customer mentions a competitor:</p>
+        <ol>
+          <li><strong>Find the relevant section</strong> in this matrix.</li>
+          <li><strong>Read the honest assessment</strong> before responding. The disposition you bring matters as much as the facts.</li>
+          <li><strong>Acknowledge real strengths</strong> on the competitor side. Customers respect honesty.</li>
+          <li><strong>Be specific about who wins where.</strong> Avoid generic claims.</li>
+          <li><strong>Name the coexistence pattern</strong> if applicable.</li>
+          <li><strong>Cross-reference to the module</strong> for the deeper conversation.</li>
+          <li><strong>Propose concrete next steps</strong> (POC, workload mapping, TCO analysis) when appropriate.</li>
+        </ol>
+        <p>The matrix is a reference, not a script. The SA-chair conversation is yours to have. The matrix gives you the facts to have it well.</p>
+      </section>
+
+      <section class="references">
+        <h2 id="references">References</h2>
+        <p>The comparisons in this appendix are derived from the per-module References sections (Modules 1, 3-9). Highlights specific to the comparison matrix:</p>
+        <ul>
+          <li><a href="https://www.cisco.com/c/en/us/products/collateral/hyperconverged-infrastructure/hyperflex-hx-series/hyperflex-data-platform-eol.html"><strong>Cisco HyperFlex End-of-Life Announcement</strong></a>. Authoritative HXDP EOL dates (last order Sep 11, 2024; last support Feb 28, 2029).</li>
+          <li><a href="https://futurumgroup.com/insights/cisco-discontinues-hyperflex-to-focus-on-nutanix-based-hci/"><strong>Cisco Discontinues HyperFlex to Focus on Nutanix-Based HCI</strong></a> (Futurum Group). Industry analysis of the HyperFlex-to-Nutanix migration path.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options"><strong>Nutanix Cloud Platform Software Options</strong></a>. NCI / NCM / NCP licensing structure used in the licensing comparison and the NCM-vs-Aria mapping.</li>
+          <li><a href="https://redresscompliance.com/vcf-licensing-guide-2026.html"><strong>VCF Licensing Guide 2026</strong></a> (Redress Compliance). VCF reference pricing ($350/core, 16-core CPU minimum, 72-core order minimum) used in the AOS-vs-VCF licensing row.</li>
+          <li><a href="https://vmwaremadesimple.com/articles/vsphere-foundation-vs-standard-2026.html"><strong>vSphere Foundation vs Standard 2026</strong></a>. vSphere Foundation MSRP $190/core, partner quotes $195+.</li>
+          <li><a href="https://www.nutanix.com/products/cloud-platform/software-options"><strong>Flow Network Security Licensing</strong></a>. Confirms Flow ships with NCI Ultimate or as Security Add-On for NCI Pro (per usable TiB; bundles Data-at-Rest Encryption).</li>
+          <li><a href="https://www.nutanixbible.com/13a-book-of-dr-services.html"><strong>Nutanix Disaster Recovery (formerly Leap), Nutanix Bible Chapter 13a</strong></a>. Recovery Plans architecture for the SRM comparison row.</li>
+        </ul>
+      </section>
+
+      <section class="crossrefs">
+        <h3>Cross-References</h3>
+        <ul>
+          <li><strong>Modules:</strong> Each comparison links back to the module where the topic is taught in depth.</li>
+          <li><strong>Glossary:</strong> <a href="../a-glossary/index.html">Appendix A</a> defines the terms used in this matrix.</li>
+          <li><strong>Objections:</strong> Appendix D has full response scripts for the customer objections that often surface during these comparisons. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Discovery Questions:</strong> Appendix E has the discovery questions that help you understand which comparison the customer is actually making. <span style="color:var(--text-tertiary)">(coming)</span></li>
+          <li><strong>Competitive Matrix:</strong> Appendix H goes deeper on specific HCI-vs-HCI competitive scenarios. <span style="color:var(--text-tertiary)">(coming)</span></li>
+        </ul>
+      </section>
+
+      <div class="back-home">
+        <a href="../../index.html">← Back to Home · Modules and Appendices</a>
+      </div>
+
+    </article>
+  </main>
+
+  <footer class="site">
+    <span>Written by Fred Nix · Built for BlueAlly Solutions Architects · <a href="https://github.com/nixfred/nutanix">Source on GitHub</a></span>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>appendix-b-comparison-matrix</span>
+  </footer>
+
+</body>
+</html>
