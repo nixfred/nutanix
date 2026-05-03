@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="d-title d-desc">
+  <title id="d-title">Appendix D hero: 45 customer objections across 9 topics</title>
+  <desc id="d-desc">A stylized handbook layout with a large headline "45 OBJECTIONS · 9 TOPICS" on a deep navy background, surrounded by nine topic chips listing the count of objections per category (HCI Fundamentals 5, Hypervisor 4, Management Plane 5, Distributed Storage 7, Networking 4, Data Protection 5, Unified Storage 4, Licensing 6, Migration 5). Mono path top-left. Purple appendix accent.</desc>
+
+  <defs>
+    <radialGradient id="bgRad" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#143664"/>
+      <stop offset="55%" stop-color="#0c1f3a"/>
+      <stop offset="100%" stop-color="#070f1c"/>
+    </radialGradient>
+
+    <linearGradient id="chipGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(192,132,252,0.18)"/>
+      <stop offset="100%" stop-color="rgba(192,132,252,0.04)"/>
+    </linearGradient>
+
+    <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgRad)"/>
+
+  <!-- subtle grid -->
+  <g stroke="rgba(74,158,255,0.08)" stroke-width="1" fill="none">
+    <path d="M0,720 L1600,720"/>
+    <path d="M0,760 L1600,760"/>
+    <path d="M0,800 L1600,800"/>
+  </g>
+
+  <!-- mono path -->
+  <text x="60" y="64" font-family="JetBrains Mono, ui-monospace, monospace" font-size="15" letter-spacing="0.04em" fill="#a8b8d4">
+    <tspan fill="#c084fc">/</tspan>nix<tspan fill="#c084fc">/</tspan>nutanix<tspan fill="#c084fc">/</tspan>appendix-d-objections
+  </text>
+  <text x="60" y="86" font-family="JetBrains Mono, ui-monospace, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" opacity="0.85">REFERENCE · 45 OBJECTIONS · 9 TOPICS · CUSTOMER-CONVERSATION READY</text>
+
+  <!-- HEADLINE -->
+  <g transform="translate(800, 240)" filter="url(#purpleGlow)">
+    <text x="0" y="0" text-anchor="middle" font-family="Inter, sans-serif" font-size="120" font-weight="700" fill="#c084fc" letter-spacing="-0.02em">45</text>
+  </g>
+  <text x="800" y="290" text-anchor="middle" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#e8f0ff" letter-spacing="0.16em">CUSTOMER OBJECTIONS</text>
+  <text x="800" y="318" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" letter-spacing="0.10em" fill="#a8b8d4">organized by topic · with sa-chair response scripts</text>
+
+  <!-- 9 category chips arranged in a 3x3 grid -->
+  <g transform="translate(280, 380)">
+    <!-- Row 1 -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 01</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">HCI Fundamentals</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">5</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #1–#5</text>
+    </g>
+    <g transform="translate(360, 0)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 02</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Hypervisor (AHV)</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">4</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #6–#9</text>
+    </g>
+    <g transform="translate(720, 0)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 03</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Management Plane</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">5</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #10–11, #21–23</text>
+    </g>
+
+    <!-- Row 2 -->
+    <g transform="translate(0, 130)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 04</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Distributed Storage</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">7</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #12–15, #18–19, #24</text>
+    </g>
+    <g transform="translate(360, 130)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 05</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Networking + Security</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">4</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #16–17, #20, #25</text>
+    </g>
+    <g transform="translate(720, 130)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 06</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Data Protection + DR</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">5</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #26–#30</text>
+    </g>
+
+    <!-- Row 3 -->
+    <g transform="translate(0, 260)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 07</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Unified Storage</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">4</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #31–#34</text>
+    </g>
+    <g transform="translate(360, 260)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 08</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Licensing + Cost</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">6</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #35–#40</text>
+    </g>
+    <g transform="translate(720, 260)">
+      <rect x="0" y="0" width="320" height="100" rx="6" fill="url(#chipGrad)" stroke="#c084fc" stroke-width="1.4"/>
+      <text x="20" y="34" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.10em" fill="#6b7a9a" font-weight="600">CATEGORY · 09</text>
+      <text x="20" y="64" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#e8f0ff">Migration</text>
+      <text x="300" y="74" text-anchor="end" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#c084fc">5</text>
+      <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">objections #41–#45</text>
+    </g>
+  </g>
+
+  <!-- discipline strip -->
+  <g transform="translate(120, 800)">
+    <rect x="0" y="0" width="1360" height="56" rx="6" fill="rgba(192,132,252,0.06)" stroke="rgba(192,132,252,0.40)" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="680" y="22" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#c084fc" letter-spacing="0.10em">THE DISCIPLINE</text>
+    <text x="680" y="42" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#cfeeff">acknowledge the legitimate concern · be specific not generic · acknowledge competitor strengths · end with a productive next step</text>
+  </g>
+
+  <!-- vignette -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="78%">
+    <stop offset="60%" stop-color="rgba(0,0,0,0)"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+  </radialGradient>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
