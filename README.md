@@ -1,21 +1,22 @@
-# Nuta**NIX**
+<p align="center">
+  <img src="public/images/readme-splash.svg" alt="NutaNIX · A field guide for BlueAlly Solutions Architects · ten modules, eleven appendices, twenty-one hand-authored heroes, seven-cert ladder · live at nixfred.com/nutanix" width="100%" />
+</p>
 
-```
-$ cd /nix/nutanix
-$ ls
-01-hci-foundations/   06-networking-flow/      a-glossary/              g-cli-reference/
-02-nutanix-architecture/  07-data-protection/  b-comparison-matrix/     h-competitive-matrix/
-03-ahv-hypervisor/    08-unified-storage/      c-scenarios/             i-reference-architectures/
-04-prism-management/  09-licensing-economics/  d-objections/            j-poc-playbook/
-05-dsf-storage/       10-migration-path/       e-discovery-questions/   k-cert-tracker/
-                                               f-sizing-rules/
-$ _
-```
+<p align="center">
+  <a href="https://nixfred.com/nutanix"><strong>nixfred.com/nutanix</strong></a>
+  &nbsp;·&nbsp;
+  Curriculum complete
+  &nbsp;·&nbsp;
+  10 modules
+  &nbsp;·&nbsp;
+  11 appendices
+  &nbsp;·&nbsp;
+  No build step
+</p>
+
+<hr/>
 
 A field guide to Nutanix, written for the people who have to explain it.
-
-**Live site:** [nixfred.com/nutanix](https://nixfred.com/nutanix)
-**Status:** Curriculum complete. Ten modules, eleven appendices, all shipped.
 
 ---
 
