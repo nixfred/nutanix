@@ -313,9 +313,9 @@
       line-height: 1.45;
     }
 
-    /* Certification training: same shape as appendices, gold accent (exam semantics). */
+    /* Certification training: featured directly under the hero, gold accent (exam semantics). */
     section.certs {
-      margin: 64px 0 0;
+      margin: 0;
     }
     section.certs h2 {
       font-size: 14px;
@@ -372,6 +372,38 @@
       margin-top: 4px;
       line-height: 1.45;
     }
+    .cert-card.featured {
+      padding: 22px 24px;
+    }
+    .cert-card.featured .title {
+      font-size: 19px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .cert-card.featured .lede {
+      display: block;
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      line-height: 1.55;
+    }
+    .cert-card .facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .cert-card .pill {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 11px;
+      font-variant-numeric: tabular-nums;
+    }
+    .cert-card .pill b { color: var(--text-primary); font-weight: 600; }
 
     /* Closing image: sits between .page and footer.
        Full-bleed; fades into bg-base on TOP (handoff from page content)
@@ -463,6 +495,25 @@
 
     </section>
 
+    <section class="certs" id="certs">
+      <h2>Certification training</h2>
+      <p class="lead">Full prep packages, one study group per exam: blueprint-mapped study guides, original question banks, flashcards, and a timed mock exam. <a href="certs/index.html">Browse all study groups</a>.</p>
+      <div class="cert-grid">
+        <a class="cert-card featured" href="certs/NCP-CN-6.10/index.html">
+          <span class="exam">NCP-CN · 6.10</span>
+          <span class="title">Nutanix Certified Professional, Cloud Native Study Group</span>
+          <span class="lede">NKP from a VMware seat: five blueprint-mapped study guides, a 127-question bank, flashcards, a VMware translation legend, and a timed 75-question mock exam with per-section scoring.</span>
+          <span class="facts">
+            <span class="pill"><b>75</b> questions · <b>120</b> min</span>
+            <span class="pill">NKP <b>2.12</b> · AOS <b>6.10</b></span>
+            <span class="pill">pass <b>3000</b> / 1000-6000</span>
+            <span class="pill">valid <b>3</b> years</span>
+          </span>
+        </a>
+        <!-- Next study group card goes here. Pattern: folder under certs/, card on certs/index.html, card here. -->
+      </div>
+    </section>
+
     <section class="who">
       <h2>Who this is for</h2>
       <ul>
@@ -504,15 +555,6 @@
         <a class="appendix-card" href="appendices/i-reference-architectures/index.html"><span class="letter">I</span><span class="title">Reference Architectures</span><span class="lede">Multi-site DR, backup consolidation, ROBO, edge.</span></a>
         <a class="appendix-card" href="appendices/j-poc-playbook/index.html"><span class="letter">J</span><span class="title">POC Playbook</span><span class="lede">Demo flows, success criteria, customer scripts.</span></a>
         <a class="appendix-card" href="appendices/k-cert-tracker/index.html"><span class="letter">K</span><span class="title">Cert Tracker</span><span class="lede">Blueprint coverage map across all 10 modules.</span></a>
-      </div>
-    </section>
-
-    <section class="certs" id="certs">
-      <h2>Certification training</h2>
-      <p class="lead">Full prep packages, one study group per exam: blueprint-mapped study guides, original question banks, flashcards, and a timed mock exam. <a href="certs/index.html">Browse all study groups</a>.</p>
-      <div class="cert-grid">
-        <a class="cert-card" href="certs/NCP-CN-6.10/index.html"><span class="exam">NCP-CN · 6.10</span><span class="title">Cloud Native Study Group</span><span class="lede">NKP for VMware people: five study guides, a 127-question bank, flashcards, timed 75-question mock exam.</span></a>
-        <!-- Next study group card goes here. Pattern: folder under certs/, card on certs/index.html, card here. -->
       </div>
     </section>
 
