@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 · Flashcards</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;font-size:16px}
+  .wrap{max-width:680px;margin:0 auto;padding:36px 20px 80px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+  .decks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .deckbtn{background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:8px 14px;
+    border-radius:999px;cursor:pointer;font-size:13.5px;font-family:var(--font)}
+  .deckbtn.active{border-color:var(--teal);color:var(--teal);font-weight:700}
+  #stage{perspective:1200px;margin:10px 0}
+  #card{position:relative;width:100%;min-height:280px;cursor:pointer;
+    transform-style:preserve-3d;transition:transform .45s}
+  #card.flip{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:1px solid var(--line);
+    background:var(--panel);display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:28px;text-align:center}
+  .face.back{transform:rotateY(180deg);border-color:var(--purple)}
+  .face .label{position:absolute;top:14px;left:18px;font-family:var(--mono);font-size:11px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.1em}
+  .face .obj{position:absolute;top:14px;right:18px;font-family:var(--mono);font-size:11px;color:var(--purple)}
+  .face .txt{font-size:19px;font-weight:600;color:#fff}
+  .face.back .txt{font-size:16px;font-weight:400;color:var(--ink)}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .btn{border:none;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer;font-size:14.5px;font-family:var(--font)}
+  .know{background:var(--good);color:#03130c}
+  .drill{background:var(--bad);color:#fff}
+  .skip{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
+  .meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:14px}
+  .meta b{color:var(--amber)}
+  .modebar{margin-top:10px;text-align:center}
+  .modebar button{background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+  a{color:var(--teal);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · BlueAlly Study Package</p>
+  <h1>Flashcards</h1>
+  <p class="sub">Tap the card to flip. Mark it <b style="color:var(--good)">Know it</b> or <b style="color:var(--bad)">Drill it</b>; your buckets persist in this browser. Drill mode replays only what you keep missing. Built for the 10-minute coffee break.</p>
+  <div class="decks" id="decks"></div>
+  <div id="stage">
+    <div id="card">
+      <div class="face front"><span class="label">Question</span><span class="obj" id="fobj"></span><div class="txt" id="ftxt"></div></div>
+      <div class="face back"><span class="label">Answer</span><span class="obj" id="bobj"></span><div class="txt" id="btxt"></div></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="btn drill" onclick="mark(false)">Drill it</button>
+    <button class="btn skip" onclick="next()">Skip</button>
+    <button class="btn know" onclick="mark(true)">Know it</button>
+  </div>
+  <div class="meta"><span id="pos"></span><span>known <b id="kn">0</b> · drilling <b id="dr">0</b></span></div>
+  <div class="modebar">
+    <button onclick="toggleMode()" id="modebtn">Switch to drill-only mode</button> ·
+    <button onclick="shuffleDeck()">Shuffle</button> ·
+    <button onclick="resetDeck()">Reset deck progress</button>
+  </div>
+  <footer><a href="../index.html">← Study Hub</a> · Cards sourced from the official NCP-CN 6.10 blueprint objectives and study guides 00-04.</footer>
+</div>
+<script>
+var DECKS={
+"K8s Basics":[
+ ["Smallest deployable unit in Kubernetes?","The Pod: one or more containers sharing network and storage. You deploy Deployments, which manage ReplicaSets, which manage pods.","K8s"],
+ ["What does a Deployment give you over bare pods?","Declared replica count, rolling updates, rollback. THE stateless workload object.","K8s"],
+ ["Stable virtual IP + DNS in front of changing pods?","A Service (ClusterIP inside, NodePort on node ports, LoadBalancer for an external IP).","K8s"],
+ ["Four RBAC objects, two scopes?","Role + RoleBinding (namespace scoped); ClusterRole + ClusterRoleBinding (cluster wide).","K8s"],
+ ["Chain from pod storage request to actual disk?","PVC (request) binds a PV (storage), dynamically provisioned by a StorageClass via the CSI driver.","K8s"],
+ ["What makes a StorageClass the 'default'?","The is-default-class annotation; PVCs without an explicit class use it. Missing default = Pending PVCs.","K8s"],
+ ["Helm in one line?","Package manager: chart (templated manifests) + values (your config) = release (an install).","K8s"],
+ ["Cluster API (CAPI) in one line?","Kubernetes resources that describe clusters; controllers reconcile them into real infrastructure. Kubernetes creating Kubernetes.","K8s"],
+ ["kubectl triage loop?","get pods -A → describe pod (events) → logs (-c container, --previous).","K8s"],
+ ["HPA vs Cluster Autoscaler?","HPA scales POD replicas on metrics; Cluster Autoscaler scales NODES when pods are unschedulable.","K8s"],
+ ["Namespace's job?","Logical partition for objects, RBAC scoping, and quotas. NKP Projects ride on namespaces.","K8s"]],
+"S1 · Environment":[
+ ["Why seed a private registry?","Air-gapped clusters can only pull from inside the gap; seeding pushes the NKP bundle's images/charts into your internal registry first.","1.1"],
+ ["Who must reach the registry?","Bastion, bootstrap process, management cluster nodes, and ALL workload cluster nodes.","1.1"],
+ ["x509 errors while seeding mean?","Trust problem: the registry's (self-signed) CA is not trusted by the host doing the push, or later by nodes.","1.1"],
+ ["Bootstrap cluster: what and why?","Temporary kind cluster on the install host running CAPI controllers to build the management cluster; pivots, then is deleted.","1.2"],
+ ["Why does the bastion need a container runtime?","The bootstrap (kind) cluster runs as containers on it.","1.2/1.4"],
+ ["NKP license tiers, one line each?","Starter: entry basics. Pro: production platform app stack. Ultimate: fleet management, attach external clusters, Insights, multi-tenancy.","1.3"],
+ ["Scenario says 'attach EKS' or 'Insights'. Tier?","Ultimate. Always Ultimate for external attach, Insights, fleet multi-tenancy.","1.3"],
+ ["Bastion's three required lines of sight?","Prism Central API, the private registry, and the node networks (SSH where pre-provisioned).","1.4"],
+ ["KIB vs NIB?","Both build node machine images (OS + kubelet/containerd baked); KIB is the Konvoy-lineage tool that also PREPARES pre-provisioned nodes; NIB is the Nutanix image-building path.","1.5"],
+ ["Air-gapped image build difference?","Package sources/artifacts come from internal mirrors + local bundle via override files; no upstream repos.","1.5"],
+ ["Three parameter buckets for a target provider?","Networking (subnets, VIP, LB range, CIDR no-overlap), Connectivity (PC URL/creds, registry, SSH), Storage (container, StorageClass).","1.6"],
+ ["Air-gapped install order?","Seed registry → bootstrap cluster → management cluster (pivot) → Kommander → license.","1.1-2.2"]],
+"S2 · Build Clusters":[
+ ["Command family that builds clusters?","nkp create cluster <provider> (nutanix, aws, vsphere...) with provider-specific flags.","2.1"],
+ ["Flags for API VIP and Service LB pool?","--control-plane-endpoint-ip and --kubernetes-service-load-balancer-ip-range.","2.1"],
+ ["How to customize beyond what flags express?","--dry-run -o yaml to emit CAPI manifests, edit the right resource, kubectl apply.","2.1"],
+ ["Node pool = which CAPI resource?","MachineDeployment (one per pool), referencing a provider machine template for VM shape.","2.1"],
+ ["Control plane size/version lives in?","KubeadmControlPlane.","2.1"],
+ ["Per-VM CPU/RAM/disk/subnet/image on Nutanix lives in?","NutanixMachineTemplate.","2.1"],
+ ["Diagnosis chain for a stuck deployment?","Cluster → KubeadmControlPlane / MachineDeployment → Machine → NutanixMachine; describe the first unhealthy object, read events/conditions.","2.1"],
+ ["Machines stuck Provisioning usually mean?","Provider side: bad PC credentials, missing image, full subnet/IPAM.","2.1"],
+ ["Nodes Running but NotReady usually mean?","CNI not working or nodes cannot pull images (registry trust/reachability).","2.1"],
+ ["--self-managed does what?","Pivots CAPI into the new cluster so it manages itself: that is what makes a management cluster.","2.1"],
+ ["Kommander is installed how and where?","nkp install kommander on the management cluster, after the cluster exists; installer config customizes it.","2.2"],
+ ["Trim platform apps for a small environment?","Kommander installer configuration (custom manifest): enable/disable apps and set overrides.","2.2"],
+ ["Where is the NKP license applied?","In Kommander (UI/CLI) post-install; tier unlocks features.","2.2"],
+ ["Kommander broken: highest-signal objects?","Flux HelmReleases + platform app pods in Kommander namespaces.","2.2"]],
+"S3 · Day 2 Ops":[
+ ["NKP's identity broker?","Dex (OIDC), federating LDAP/OIDC/SAML IdPs; groups map to roles.","3.1"],
+ ["Kommander roles vs cluster roles?","Kommander roles = fleet plane (workspaces, projects, apps). Cluster roles = K8s RBAC inside clusters. Grants federate downward.","3.1"],
+ ["User logs in fine, sees nothing. Why?","Authenticated (Dex) but not authorized: no role binding at any layer.","3.1"],
+ ["Admission policy enforcement component?","Gatekeeper (OPA).","3.1"],
+ ["Logging stack trio?","Logging Operator (collect, Fluent Bit) + Loki (store) + Grafana (view). Enabled, not default.","3.2"],
+ ["Tenant log isolation feature?","Multi-tenant logging: scoped flows/access per tenant namespaces.","3.2"],
+ ["Loki long-term persistence targets?","S3-compatible object storage / Nutanix Unified Storage (Objects).","3.2"],
+ ["Velero's two dependencies?","Target object storage (credentials + reachability) and VolumeSnapshotClasses for CSI PV snapshots.","3.3"],
+ ["Nightly 2am backup, one command shape?","velero schedule create nightly --schedule \"0 2 * * *\".","3.3"],
+ ["Backup PartiallyFailed: first move?","velero backup logs <name>: it names failing resources/volumes and why.","3.3"],
+ ["Monitoring stack trio?","Prometheus (metrics) + Alertmanager (routing) + Grafana (dashboards). Do not confuse with the logging trio.","3.4"],
+ ["Fleet-wide single pane of metrics?","Centralized metrics aggregated at the management cluster; Insights (Ultimate) adds intelligence.","3.4"],
+ ["Prometheus crashing volume-full maps to?","Configure backend storage for a monitoring application: size the PVC/retention.","3.4"],
+ ["Cluster Autoscaler scale-up trigger and bounds?","Unschedulable (Pending) pods; per node pool min/max. Provider-specific config (Nutanix/AWS/vSphere).","3.5"],
+ ["Estate upgrade order?","Air gap: seed new bundle FIRST. Then management cluster/Kommander, then workload clusters.","3.6"],
+ ["Manual node pool scaling edits what?","The MachineDeployment's replicas (CLI or UI); CAPI reconciles VMs to match.","3.6"]],
+"S4 · Fleet Mgmt":[
+ ["Workspace vs project, one breath?","Workspace = big box: clusters + apps + RBAC (tenant/BU/env). Project = team slice inside it: namespaces + RBAC + quotas + apps + GitOps across selected clusters.","4.1/4.5"],
+ ["Different admins, apps, governance → which construct?","Separate workspaces. Team slices inside shared governance → projects.","4.1"],
+ ["Workspace 'infrastructure provider' is?","Stored credentials/endpoint Kommander uses to DEPLOY managed clusters for that workspace.","4.1"],
+ ["Insights is?","Fleet-level anomaly/health intelligence; Ultimate tier with its own license install.","4.1"],
+ ["Managed vs attached: the capability line?","Both get apps/RBAC/observability. Only MANAGED get lifecycle (upgrade, scale, delete) from Kommander.","4.3"],
+ ["Attach requirements?","Reachability from management cluster (or tunneled attachment), privileged kubeconfig, default StorageClass for persistent apps; EKS needs IAM prep; external attach = Ultimate.","4.3"],
+ ["Attached cluster, platform apps Pending on volumes?","No default StorageClass on the attached cluster. Create/designate one.","4.3"],
+ ["Unreachable-from-management cluster must be attached?","Tunneled attachment (outbound tunnel from the attached side).","4.3"],
+ ["Detach vs delete?","Detach: attached cluster leaves management, keeps running. Delete: managed cluster + provider resources destroyed (nkp delete cluster / GUI).","4.4"],
+ ["Deletion hangs: two classic causes?","Stuck finalizers; invalid provider credentials (cannot destroy unreachable resources).","4.4"],
+ ["Project quotas do what?","Federate CPU/memory/object ceilings to the project's namespaces across member clusters (with limit ranges).","4.5"],
+ ["Project CD is?","GitOps (Flux-based): Git repo manifests auto-sync to the project's clusters.","4.5"],
+ ["Federated resources?","Identical K8s objects (ConfigMaps/Secrets) stamped and kept in sync across the project's member clusters.","4.5"],
+ ["Platform app fails until another app is enabled?","Platform application DEPENDENCIES (dashboards need their datastore).","4.6"],
+ ["One cluster needs different app config than the workspace?","Global/workspace scope config + CLUSTER scope override there; narrower scope wins. CLI can enable/disable/modify too.","4.6"]]
+};
+var deckName=Object.keys(DECKS)[0],order=[],pos=0,mode='all';
+var LS='ncp-cn-flash-v1';
+function store(){try{return JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){return{}}}
+function save(s){localStorage.setItem(LS,JSON.stringify(s))}
+function key(i){return deckName+'::'+i}
+function buildOrder(){
+ var s=store(),cards=DECKS[deckName],idx=[];
+ for(var i=0;i<cards.length;i++){
+  var st=s[key(i)];
+  if(mode==='drill' && st==='know')continue;
+  idx.push(i);
+ }
+ order=idx;pos=0;
+}
+function renderDecks(){
+ var d=document.getElementById('decks');d.innerHTML='';
+ Object.keys(DECKS).forEach(function(n){
+  var b=document.createElement('button');b.className='deckbtn'+(n===deckName?' active':'');b.textContent=n;
+  b.onclick=function(){deckName=n;buildOrder();show();renderDecks();};
+  d.appendChild(b);
+ });
+}
+function counts(){
+ var s=store(),k=0,dr=0;
+ DECKS[deckName].forEach(function(_,i){var st=s[key(i)];if(st==='know')k++;if(st==='drill')dr++;});
+ document.getElementById('kn').textContent=k;document.getElementById('dr').textContent=dr;
+}
+function show(){
+ var c=document.getElementById('card');c.classList.remove('flip');
+ if(!order.length){document.getElementById('ftxt').textContent= mode==='drill'?'Drill bucket empty. Nice.':'Deck empty';
+  document.getElementById('btxt').textContent='';document.getElementById('pos').textContent='0 / 0';counts();return;}
+ var i=order[pos%order.length],card=DECKS[deckName][i];
+ setTimeout(function(){
+  document.getElementById('ftxt').textContent=card[0];
+  document.getElementById('btxt').textContent=card[1];
+  document.getElementById('fobj').textContent='obj '+card[2];
+  document.getElementById('bobj').textContent='obj '+card[2];
+ },c.classList.contains('flip')?220:0);
+ document.getElementById('pos').textContent=(pos%order.length+1)+' / '+order.length+' · '+deckName+(mode==='drill'?' · DRILL':'');
+ counts();
+}
+function next(){pos++;show()}
+function mark(know){
+ if(!order.length)return;
+ var s=store();s[key(order[pos%order.length])]=know?'know':'drill';save(s);
+ if(mode==='drill'&&know){order.splice(pos%order.length,1);} else {pos++;}
+ show();
+}
+function toggleMode(){
+ mode=mode==='all'?'drill':'all';
+ document.getElementById('modebtn').textContent=mode==='all'?'Switch to drill-only mode':'Switch to all-cards mode';
+ buildOrder();show();
+}
+function shuffleDeck(){order.sort(function(){return Math.random()-.5});pos=0;show()}
+function resetDeck(){
+ if(!confirm('Reset know/drill progress for this deck?'))return;
+ var s=store();DECKS[deckName].forEach(function(_,i){delete s[key(i)]});save(s);buildOrder();show();
+}
+document.getElementById('card').addEventListener('click',function(){this.classList.toggle('flip')});
+renderDecks();buildOrder();show();
+</script>
+</body>
+</html>

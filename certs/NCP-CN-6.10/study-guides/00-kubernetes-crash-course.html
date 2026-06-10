@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 00 · Kubernetes Crash Course for NCP-CN</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  h3{font-size:17px;color:var(--teal);margin:24px 0 6px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  pre{background:#0b1119;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.5}
+  pre code{border:none;background:none;padding:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600;white-space:nowrap}
+  td:last-child{color:var(--muted)}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 Study Guide · 00 of 04</p>
+  <h1>Kubernetes Crash Course</h1>
+  <p class="sub">The exam assumes CKA level knowledge. You do not need CKA depth to pass NCP-CN, but you need every concept on this page cold, because NKP vocabulary is built on top of it. This is the minimum viable Kubernetes, scoped to exactly what the blueprint leans on.</p>
+  <div class="meta">
+    <span class="pill">⏱️ <b>~60-90 min</b> + lab reps</span>
+    <span class="pill">🎯 Prerequisite for <b>all sections</b></span>
+    <span class="pill">📅 War plan: <b>Week 1, days 1-3</b></span>
+  </div>
+
+  <h2><span class="num">§1</span>The control plane model (everything is a reconcile loop)</h2>
+  <p>Kubernetes is a <strong>desired state machine</strong>. You write what you want (YAML manifests), submit it to the <strong>API server</strong>, and controllers loop forever making reality match. You never tell Kubernetes <em>how</em>, only <em>what</em>.</p>
+  <div class="card">
+    <p style="margin:4px 0"><strong>Control plane</strong>: API server (front door), etcd (the database of desired state), scheduler (picks nodes for pods), controller manager (the reconcile loops).<br>
+    <strong>Worker nodes</strong>: kubelet (node agent that runs pods), container runtime (containerd), kube-proxy (service networking).</p>
+  </div>
+  <div class="exam"><div class="h">Why NCP-CN cares</div>
+  This reconcile model is exactly how NKP deploys clusters: Cluster API controllers reconcile <code>Cluster</code> and <code>MachineDeployment</code> resources into real VMs on AHV. When the exam asks how to diagnose a stuck deployment, the answer shape is "inspect the CAPI resources and find which reconcile is failing."</div>
+
+  <h2><span class="num">§2</span>Workloads: pod → deployment</h2>
+  <table>
+    <tr><th>Object</th><th>What it is</th></tr>
+    <tr><td>Pod</td><td>Smallest deployable unit: one or more containers sharing network and storage. Ephemeral; you almost never create bare pods.</td></tr>
+    <tr><td>ReplicaSet</td><td>Keeps N identical pod replicas running. Managed for you by Deployments.</td></tr>
+    <tr><td>Deployment</td><td>THE workload object: declares image + replicas, handles rolling updates and rollback. What you use for stateless apps.</td></tr>
+    <tr><td>StatefulSet</td><td>Like a Deployment but with stable identity and per replica storage. Databases, Loki, Prometheus live here.</td></tr>
+    <tr><td>DaemonSet</td><td>One pod on every node. Log shippers and node agents (you will meet these in the NKP logging stack).</td></tr>
+    <tr><td>Namespace</td><td>Logical partition of a cluster for grouping objects + scoping RBAC and quotas. NKP Projects map onto namespaces.</td></tr>
+  </table>
+
+  <h2><span class="num">§3</span>Networking: services and ingress</h2>
+  <p>Pods die and get new IPs. A <strong>Service</strong> is a stable virtual IP + DNS name in front of a set of pods (selected by labels).</p>
+  <table>
+    <tr><th>Service type</th><th>Use</th></tr>
+    <tr><td>ClusterIP</td><td>Default. Reachable inside the cluster only.</td></tr>
+    <tr><td>NodePort</td><td>Exposes the service on a port of every node.</td></tr>
+    <tr><td>LoadBalancer</td><td>Asks the infrastructure for a real load balanced IP. On NKP/AHV this is MetalLB style address pools; in cloud it is the cloud LB.</td></tr>
+  </table>
+  <p><strong>Ingress</strong> routes HTTP by hostname/path to services through an ingress controller (NKP ships Traefik as a platform app). <strong>Gatekeeper</strong> (OPA) enforces admission policies; the blueprint names it under security.</p>
+
+  <h2><span class="num">§4</span>RBAC, the part the exam genuinely tests (Objective 3.1)</h2>
+  <p>Four objects, two scopes. This is mechanical once you see the grid:</p>
+  <table>
+    <tr><th>Object</th><th>Scope</th><th>What it does</th></tr>
+    <tr><td>Role</td><td>One namespace</td><td>A bundle of allowed verbs on resources (get/list pods, create deployments...)</td></tr>
+    <tr><td>ClusterRole</td><td>Whole cluster</td><td>Same idea, cluster wide (or reusable across namespaces)</td></tr>
+    <tr><td>RoleBinding</td><td>One namespace</td><td>Grants a Role (or ClusterRole) to a user/group/serviceaccount IN that namespace</td></tr>
+    <tr><td>ClusterRoleBinding</td><td>Whole cluster</td><td>Grants a ClusterRole everywhere</td></tr>
+  </table>
+  <p><strong>Authentication</strong> (who are you) is separate from <strong>authorization</strong> (what may you do). Kubernetes does not store users; identity comes from certificates, tokens, or an OIDC provider. NKP embeds <strong>Dex</strong> as the OIDC broker that federates LDAP/SAML/OIDC upstreams, and then layers <strong>Kommander roles</strong> (workspace/project level) on top of <strong>cluster roles</strong>.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Differentiate between Kommander roles and cluster roles" is verbatim blueprint. Kommander roles govern the fleet management plane (who can administer a workspace or project); cluster roles are plain Kubernetes RBAC inside each cluster. Role inheritance flows from workspace to project to cluster context.</div>
+
+  <h2><span class="num">§5</span>Storage: PV, PVC, StorageClass, CSI</h2>
+  <p>The chain, left to right: a pod mounts a <strong>PersistentVolumeClaim</strong> (a request: "8Gi, ReadWriteOnce"), the claim binds a <strong>PersistentVolume</strong> (an actual piece of storage), and a <strong>StorageClass</strong> is the recipe that <em>dynamically provisions</em> PVs on demand via a <strong>CSI driver</strong>.</p>
+  <div class="card"><p style="margin:4px 0">On NKP over Nutanix infrastructure, the <strong>Nutanix CSI driver</strong> provisions from Nutanix Volumes (block) or Nutanix Files. A <strong>default StorageClass</strong> (annotated <code>storageclass.kubernetes.io/is-default-class</code>) is what makes PVCs without an explicit class Just Work. <strong>VolumeSnapshotClasses</strong> define how CSI snapshots are taken, which is what Velero leans on for backup.</p></div>
+  <div class="exam"><div class="h">Exam shape</div>
+  Storage shows up sideways everywhere: attach an external cluster and apps fail to provision volumes → no default StorageClass (objective 4.3). Velero backup of volumes → snapshot classes and target storage requirements (objective 3.3). Loki persistence → object storage or Nutanix Unified Storage (objective 3.2).</div>
+
+  <h2><span class="num">§6</span>Helm and platform applications</h2>
+  <p><strong>Helm</strong> is the package manager: a <strong>chart</strong> is a templated bundle of manifests, installed as a <strong>release</strong>, customized through <strong>values</strong> (YAML). NKP's <strong>platform applications</strong> (Prometheus, Grafana, Loki, Traefik, Gatekeeper, Velero...) are curated charts that Kommander deploys per workspace or per cluster, with your overrides going into values-shaped config. "Customize a platform application deployment" on the exam means: edit its configuration override, the values, at the right scope (global vs cluster).</p>
+
+  <h2><span class="num">§7</span>Cluster API (CAPI), the engine under NKP</h2>
+  <p>CAPI's trick: <strong>use Kubernetes to create Kubernetes</strong>. Cluster definitions are themselves Kubernetes resources, reconciled by providers that talk to infrastructure (Nutanix, AWS, vSphere...).</p>
+  <table>
+    <tr><th>CAPI piece</th><th>Meaning</th></tr>
+    <tr><td>Bootstrap cluster</td><td>A temporary local kind cluster whose only job is to run CAPI controllers long enough to create your real management cluster, then it pivots and is deleted. Objective 1.2.</td></tr>
+    <tr><td>Management cluster</td><td>The permanent cluster running CAPI controllers + Kommander; creates and manages workload clusters.</td></tr>
+    <tr><td>Cluster / MachineDeployment / Machine</td><td>The CRDs describing a cluster, its node pools, and individual nodes. Scaling a node pool = editing a MachineDeployment.</td></tr>
+    <tr><td>Infrastructure provider</td><td>The plugin for the target platform (CAPX for Nutanix/AHV). Determines what parameters a cluster build needs.</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Determine which Cluster API resources should be analyzed" for a stuck deployment: walk the chain. Cluster → KubeadmControlPlane → MachineDeployment → Machine → provider machine (e.g. NutanixMachine), and read events/conditions where the chain stalls.</div>
+
+  <h2><span class="num">§8</span>kubectl survival kit</h2>
+<pre><code># contexts: which cluster am I talking to (kubeconfig)
+kubectl config get-contexts && kubectl config use-context &lt;name&gt;
+
+# the universal triage loop
+kubectl get pods -A                      # what exists, what is crashing
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;       # events: WHY it is failing
+kubectl logs &lt;pod&gt; -n &lt;ns&gt; [-c container] [--previous]
+
+# apply desired state / inspect it
+kubectl apply -f thing.yaml
+kubectl get deploy,svc,pvc -n &lt;ns&gt; -o wide
+kubectl get &lt;resource&gt; &lt;name&gt; -o yaml    # the full truth
+
+# RBAC sanity check
+kubectl auth can-i create deployments -n team-a --as user@blueally.com</code></pre>
+  <div class="card"><p style="margin:4px 0"><strong>Lab reps (do this, 30 min):</strong> <code>brew install kind kubectl</code>, then <code>kind create cluster</code>. Deploy nginx as a Deployment, expose it as a Service, scale it, kill a pod and watch the ReplicaSet replace it, create a PVC against the default StorageClass, run the triage loop on something broken (set a bad image tag). That hour of muscle memory pays for itself across the whole exam. Bonus: a kind cluster is literally what an NKP bootstrap cluster is.</p></div>
+
+  <h2><span class="num">§9</span>Self check (answer before moving to Guide 01)</h2>
+  <div class="card">
+    <p>1. A pod needs storage that survives restarts. Name the three objects in the chain and which one a platform admin pre defines.</p>
+    <p>2. A user can list pods in namespace <code>team-a</code> but nowhere else. Which two RBAC objects make that true?</p>
+    <p>3. What is the bootstrap cluster for, and what happens to it after the management cluster exists?</p>
+    <p>4. Scaling a node pool from 3 to 5 workers edits which CAPI resource?</p>
+    <p>5. Platform apps are customized through what mechanism, and at which two scopes?</p>
+    <p class="muted">Answers are all on this page. If any of these feel shaky, redo that section before Guide 01; everything downstream assumes them.</p>
+  </div>
+
+  <footer>
+    Sources: <a href="https://kubernetes.io/docs/home/">Kubernetes documentation</a>, <a href="https://cluster-api.sigs.k8s.io/">Cluster API book</a>, official NCP-CN 6.10 Exam Blueprint Guide (objectives 1.2, 2.1, 3.1-3.3, 4.3, 4.6). Part of the BlueAlly NCP-CN study package.<br>
+    <a class="next" href="01-prepare-environment.html">Next · Guide 01: Prepare the Environment →</a>
+  </footer>
+</div>
+</body>
+</html>

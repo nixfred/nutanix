@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 · Full Mock Exam (75 Q / 120 min)</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 110px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+  #startcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  #startcard ul{margin:10px 0 16px;padding-left:20px;color:var(--muted)}
+  .bigbtn{background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:800;border:none;
+    padding:13px 22px;border-radius:11px;font-size:16px;cursor:pointer}
+  #hud{display:none;position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    z-index:5;font-family:var(--mono);font-size:14px}
+  #hud .t{color:var(--amber);font-weight:700}
+  #hud .p{color:var(--muted)}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.14)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #submitbar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--panel);
+    border-top:1px solid var(--line);padding:12px;text-align:center;z-index:6}
+  #results{display:none;background:var(--panel);border:1px solid var(--teal);border-radius:14px;padding:22px;margin:18px 0}
+  #results h2{margin:0 0 10px}
+  #results table{width:100%;border-collapse:collapse;margin:12px 0}
+  #results th,#results td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14.5px}
+  #results .verdict{font-size:19px;font-weight:800}
+  .pass{color:var(--good)} .fail{color:var(--bad)}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Mock Exam · BlueAlly Study Package</p>
+  <h1>Full Mock Exam</h1>
+  <p class="sub">75 original questions, 120-minute countdown, blueprint-weighted (17 / 12 / 24 / 22 across Sections 1-4). Exam mode: no feedback until you submit. All questions are distinct from the section quizzes.</p>
+
+  <div id="startcard">
+    <strong>Before you start</strong>
+    <ul>
+      <li>Block 2 uninterrupted hours. The timer starts when you click and does not pause.</li>
+      <li>Multiple-response questions say how many to pick, like the real exam.</li>
+      <li>The real exam passes at 3000/6000 scaled with weighted questions. As a raw-score proxy, treat <strong>70%+ (53/75) as "ready to schedule," 60-69% as "close, drill the weak section," below 60% as "not yet."</strong></li>
+      <li>On submit you get total score, per-section breakdown, and full review with explanations.</li>
+    </ul>
+    <button class="bigbtn" onclick="startExam()">Start exam · 120:00</button>
+  </div>
+
+  <div id="hud"><span class="t" id="timer">120:00</span> &nbsp;·&nbsp; <span class="p" id="prog">0 / 75 answered</span></div>
+  <div id="quiz"></div>
+  <div id="results"></div>
+  <div id="submitbar"><button class="bigbtn" onclick="grade(false)">Submit exam</button></div>
+
+  <footer>Original questions © BlueAlly study package, calibrated to the official NCP-CN 6.10 Exam Blueprint Guide + community-reported emphasis. Not affiliated with Nutanix; no braindump content. <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+// s = blueprint section 1-4, multi = number to select (absent = single)
+var Q=[
+// ===== SECTION 1 (17) =====
+{s:1,q:"An organization has zero internet connectivity in its datacenter. What is the FIRST artifact-related step of an NKP install there?",opts:["Run nkp create cluster with --offline","Download the NKP air-gapped bundle on a connected machine and transfer it across the gap","Open a firewall exception for registry.k8s.io","Install Kommander"],a:[1],why:"Air-gapped installs start with getting the bundle inside the gap, then seeding the registry from it."},
+{s:1,q:"Which parameters does a registry seeding operation require?",opts:["Prism Element cluster name only","Bundle location, destination registry URL, and registry credentials/TLS material","The management cluster kubeconfig","A Kommander license key"],a:[1],why:"Seeding pushes bundle contents to a registry: where the bundle is, where the registry is, and how to authenticate/trust it."},
+{s:1,q:"Seeding fails with x509 certificate errors. The cause is most likely:",opts:["Wrong NKP version","The registry's self-signed certificate is not trusted by the host running the seed","The bundle is corrupt","The license tier is Starter"],a:[1],why:"x509 errors are trust errors: import the registry CA on the seeding host (and later ensure nodes trust it too)."},
+{s:1,q:"Which components must be able to reach the private registry in a fully air-gapped NKP estate?",opts:["Only the bastion","Only the management cluster","The bastion, bootstrap process, management cluster nodes, and all workload cluster nodes","Only Kommander"],a:[2],why:"Everything that pulls images needs the registry; that is the design constraint air-gapped questions probe."},
+{s:1,q:"What is the bootstrap cluster, physically?",opts:["A three-node AHV cluster","A temporary kind (Kubernetes-in-Docker) cluster on the install host","A Prism Central VM","A cloud-hosted SaaS control plane"],a:[1],why:"It is a throwaway kind cluster running CAPI controllers on the bastion/install machine."},
+{s:1,q:"Why does the NKP install host need a container runtime?",opts:["To run Kommander locally","Because the bootstrap cluster runs as containers on it","To cache Loki logs","It does not"],a:[1],why:"kind = Kubernetes in Docker; no runtime, no bootstrap cluster, no install."},
+{s:1,q:"After the management cluster is built, what happens to CAPI state and the bootstrap cluster?",opts:["Both remain on the bastion permanently","CAPI state pivots into the management cluster; the bootstrap cluster is deleted","CAPI state moves to Prism Central","The bootstrap cluster becomes a workload cluster"],a:[1],why:"The pivot makes the management cluster self-managing; the temporary cluster is then removed."},
+{s:1,q:"A team only wants to evaluate basic NKP cluster deployment on Nutanix with no production platform stack. The fitting license tier:",opts:["Starter","Pro","Ultimate","FIPS"],a:[0],why:"Starter is the entry tier; Pro adds the production platform application stack; Ultimate adds fleet/multi-tenant/attach."},
+{s:1,multi:2,q:"Which TWO capabilities require NKP Ultimate rather than Pro?",opts:["Deploying a managed cluster on Nutanix","Attaching existing EKS/AKS/GKE clusters","NKP Insights","Using Velero at all","Running Prometheus"],a:[1,2],why:"External cluster attach and Insights are Ultimate surface; deploys and the core app stack exist below Ultimate."},
+{s:1,q:"How are NKP licenses obtained and applied?",opts:["Auto-generated by the CLI","Through Nutanix licensing/support flows, then applied in Kommander","Bought per pod","Embedded in machine images"],a:[1],why:"Obtain via the Nutanix licensing process; apply (add/remove) through Kommander."},
+{s:1,q:"The bastion host in an air-gapped design primarily exists to:",opts:["Serve as a worker node","Be the controlled machine inside the restricted network that drives the install (CLI, bundles, bootstrap)","Host the registry GUI","Run Grafana"],a:[1],why:"It is the install driver with lines of sight to Prism Central, the registry, and node networks."},
+{s:1,multi:3,q:"Pick the THREE network lines of sight a bastion needs for an NKP-on-Nutanix install:",opts:["Prism Central API endpoint","The private registry","The node subnets/SSH where applicable","The public internet at all times","Nutanix support portal during install"],a:[0,1,2],why:"Drive infrastructure, push/pull images, reach nodes. Air gap explicitly excludes the last two."},
+{s:1,q:"KIB's node 'preparation' mode (vs image building) exists for which scenario?",opts:["AWS only","Pre-provisioned infrastructure where machines already exist and must be readied in place","Bare metal only with PXE","It is deprecated"],a:[1],why:"Pre-provisioned flows prepare existing hosts rather than baking fresh provider images."},
+{s:1,q:"What is baked into a KIB-built machine image?",opts:["Customer application containers","OS plus the Kubernetes payload (containerd, kubelet) and hardening, ready for CAPI to boot nodes from","The NKP license","Kommander dashboards"],a:[1],why:"Machine images carry OS + K8s components; apps and licenses come much later."},
+{s:1,q:"An air-gapped KIB build differs from a connected one chiefly in:",opts:["CPU architecture","Package/artifact sources pointing at internal mirrors and local bundles via overrides","Image format","It must run as root"],a:[1],why:"No upstream repos in the gap: overrides redirect package sources to internal mirrors."},
+{s:1,q:"Choosing a control plane endpoint IP for a Nutanix NKP cluster, you must ensure:",opts:["It is inside the pod CIDR","It is a stable address outside DHCP conflicts and not overlapping pod/service CIDRs","It matches Prism Central's IP","It is public"],a:[1],why:"The VIP must be stable and collision-free; CIDR overlaps are the classic self-inflicted wound."},
+{s:1,q:"Which fact about supported operating systems matters when planning images?",opts:["Any Linux ISO works","Node images must come from NKP's supported OS list, which constrains KIB base images","Only Windows Server is supported","OS choice is irrelevant to upgrades"],a:[1],why:"The supported OS matrix bounds what KIB can legitimately bake and what NKP will support."},
+// ===== SECTION 2 (12) =====
+{s:2,q:"The canonical tool for creating an NKP cluster on Nutanix infrastructure is:",opts:["Prism Element UI","The nkp CLI (nkp create cluster nutanix ...)","terraform apply","kubeadm init on each VM"],a:[1],why:"The NKP CLI fronts the whole CAPI build; kubeadm/terraform are not the NKP workflow."},
+{s:2,q:"Which flag pair expresses 'stable API VIP' and 'IP pool for LoadBalancer Services'?",opts:["--endpoint / --subnets","--control-plane-endpoint-ip / --kubernetes-service-load-balancer-ip-range","--vm-image / --cluster-name","--self-managed / --dry-run"],a:[1],why:"VIP for the control plane; LB range feeds Service type LoadBalancer."},
+{s:2,q:"How do you obtain editable CAPI manifests instead of immediately building a cluster?",opts:["kubectl get cluster -o yaml on the bootstrap cluster","Run the create command with --dry-run -o yaml, edit, then apply","Export from Prism Central","Decompile the NKP binary"],a:[1],why:"Dry run emits the manifests; that is the custom-manifest customization path."},
+{s:2,q:"Control plane node count and version for a CAPI cluster live in:",opts:["MachineDeployment","KubeadmControlPlane","NutanixMachineTemplate","ClusterRoleBinding"],a:[1],why:"KubeadmControlPlane owns control plane replicas/version; MachineDeployments own workers."},
+{s:2,q:"Machines reach Running but nodes stay NotReady. The first suspicion:",opts:["Prism Central is down","CNI not functioning or nodes cannot pull images (registry trust/reachability)","Too few namespaces","Kommander missing"],a:[1],why:"VM exists, kubelet up, node NotReady = networking (CNI) or image pulls; classic air-gap symptom."},
+{s:2,q:"One cluster needs three worker pools with different VM shapes. In CAPI that is:",opts:["Three Clusters","Three MachineDeployments each referencing its own machine template","Three KubeadmControlPlanes","Impossible"],a:[1],why:"A pool per MachineDeployment, shapes via their templates."},
+{s:2,q:"When is the custom-manifest route REQUIRED over CLI flags?",opts:["Every production build","When the desired configuration cannot be expressed by available CLI parameters","Only for AWS","Whenever FIPS is on"],a:[1],why:"Flags first; manifests when the shape outgrows them."},
+{s:2,q:"Kommander is installed:",opts:["Automatically with every cluster","Onto the management cluster after it exists, via nkp install kommander (optionally with an installer config)","On each workload cluster","Inside Prism Central"],a:[1],why:"Cluster first, fleet layer second; the installer config customizes what ships."},
+{s:2,q:"The Kommander installer configuration file is the place to:",opts:["Set BIOS settings","Enable/disable individual platform applications and set their overrides (e.g., small environments)","Choose the hypervisor","Define VPC peering"],a:[1],why:"That is the documented mechanism for trimming/customizing the platform app set at install."},
+{s:2,q:"Where does the NKP license actually get applied?",opts:["nkp create cluster flag","In Kommander after installation (UI or CLI)","In the machine image","In the registry"],a:[1],why:"Licensing is a Kommander operation; tier gates the features exposed."},
+{s:2,q:"Kommander components fail to come up in an air-gapped install. Most probable cause:",opts:["The Kubernetes version is too new","Platform app images cannot be pulled because registry overrides/trust were not provided to the Kommander install","Too many workspaces","The bastion was rebooted"],a:[1],why:"Same air-gap law as everything else: Kommander's HelmReleases pull images; point them at the seeded registry."},
+{s:2,q:"Diagnosing a half-broken Kommander, the highest-signal objects to inspect are:",opts:["Nodes' /var/log/messages","The Flux HelmReleases and platform app pods in Kommander's namespaces","Prism alerts","The bootstrap cluster (recreate it to check)"],a:[1],why:"Kommander deploys via Flux/HelmReleases; their status names the failing app and reason."},
+// ===== SECTION 3 (24) =====
+{s:3,q:"NKP's embedded OIDC identity broker is:",opts:["Keycloak","Dex","Okta","cert-manager"],a:[1],why:"Dex federates external IdPs (LDAP/OIDC/SAML) into the platform."},
+{s:3,q:"Corporate group memberships should drive NKP permissions. The mechanism:",opts:["Recreate users by hand","Configure the external IdP in Kommander and map IdP groups to roles","Share one admin token","Sync /etc/passwd"],a:[1],why:"IdP + group mapping is the supported, scalable pattern the blueprint names."},
+{s:3,q:"A CI pipeline needs to call NKP-managed clusters. Per the blueprint, it authenticates with:",opts:["A screenshot of the dashboard","Tokens","The root password","SAML redirects in curl"],a:[1],why:"'Use tokens to authenticate users' covers programmatic/automation auth."},
+{s:3,q:"Granting a team admin over ONE workspace but nothing else is done at:",opts:["Cluster RBAC on every cluster","The Kommander/workspace role level","The Linux sudoers file","Prism Central RBAC"],a:[1],why:"Fleet-plane scope = Kommander roles; the grant federates to that workspace's clusters."},
+{s:3,q:"A developer needs to create Deployments in one namespace of one cluster only. That is:",opts:["A Kommander global role","Plain Kubernetes RBAC: a Role + RoleBinding in that namespace","An Ultimate license feature","A Dex connector"],a:[1],why:"Inside-cluster, namespace-scoped = classic K8s RBAC, the 'cluster roles' side of the distinction."},
+{s:3,q:"Role inheritance in NKP flows:",opts:["Cluster → project → workspace","Workspace → project → cluster contexts (downward)","Randomly","Only within Dex"],a:[1],why:"Grants at wider scopes federate down into narrower contexts."},
+{s:3,q:"Custom roles exist because:",opts:["Built-in roles cannot be combined with groups","Built-ins may not match an organization's exact permission boundaries; custom roles + bindings go finer","They are required for FIPS","Dex demands them"],a:[1],why:"Custom roles/bindings tailor authorization beyond the built-in set."},
+{s:3,q:"Which platform component enforces 'no privileged containers' as an admission rule?",opts:["Velero","Gatekeeper (OPA)","Loki","Alertmanager"],a:[1],why:"Gatekeeper validates admission against policy; named in the blueprint's security references."},
+{s:3,q:"The NKP logging stack's log STORE is:",opts:["Prometheus","Loki","etcd","Elasticsearch always"],a:[1],why:"Loki stores logs; Grafana views; Logging Operator orchestrates collection."},
+{s:3,q:"Logging in NKP is:",opts:["Always on","A platform application set you enable per workspace/cluster","Mandatory for licensing","Part of the CSI driver"],a:[1],why:"You enable the logging stack apps; it is not on by default."},
+{s:3,q:"Restricting which logs a tenant can see is delivered by:",opts:["Multi-tenant logging (scoped flows/access)","Deleting other tenants' logs nightly","One Grafana per pod","TLS"],a:[0],why:"Multi-tenant logging scopes collection and viewing per tenant namespace."},
+{s:3,q:"Loki needs durable, scalable backend storage. Blueprint-aligned targets:",opts:["RAM disks","S3-compatible object storage / Nutanix Unified Storage","The bastion's home directory","GitHub"],a:[1],why:"Object storage backends (S3-style, Nutanix Objects) are the documented persistence path."},
+{s:3,q:"Under heavy log volume the correct response is:",opts:["Disable logging","Scale the logging stack components (collectors, Loki)","Shorter pod names","Move logs to etcd"],a:[1],why:"'Scale the logging stack' is a knowledge item; the stack components scale out."},
+{s:3,multi:2,q:"Velero's TWO foundational dependencies in NKP:",opts:["A target object storage location with working credentials","A GPU node pool","VolumeSnapshotClasses for CSI snapshots of PV data","A second Prism Central","Public internet"],a:[0,2],why:"Backups land in object storage; PV data protection rides CSI snapshot classes."},
+{s:3,q:"Nightly backups at 02:00 are expressed as:",opts:["A bash loop on the bastion","velero schedule create with a cron expression","A Grafana alert","An LCM policy"],a:[1],why:"Velero schedules are cron-shaped; that is the CLI vocabulary expected."},
+{s:3,q:"Recovering namespace team-a from last night's backup:",opts:["velero restore create --from-backup <name> (scoped as needed)","kubectl undo","Reinstall NKP","Snapshot the AHV VMs"],a:[0],why:"Velero restores come from named backups via the CLI."},
+{s:3,q:"Backups succeed but PV data is missing from them. Check:",opts:["The exam blueprint","Volume snapshot class configuration (CSI snapshots not happening)","Grafana version","Node count"],a:[1],why:"Object data without volume data = snapshot path broken; snapshot classes are the first stop."},
+{s:3,q:"The monitoring stack trio is:",opts:["Loki, Fluent Bit, Grafana","Prometheus (metrics), Alertmanager (routing), Grafana (dashboards)","Velero, Dex, Traefik","NCC, LCM, Pulse"],a:[1],why:"Metrics stack vs logging stack: the exam loves swapping their components as distractors."},
+{s:3,q:"Fleet-wide health from one pane is achieved through:",opts:["Logging into each cluster's Grafana","Centralized metrics on the management cluster","An email digest","Prism Element"],a:[1],why:"Centralized/federated metrics at the management cluster is the multi-cluster answer."},
+{s:3,q:"Scraping a Customer application's own metrics into the platform stack involves:",opts:["Editing Prometheus' binary","Custom service-level metrics (ServiceMonitor-style configuration)","Pulse","A new license"],a:[1],why:"Custom service/system metrics are a named knowledge item; ServiceMonitors are the K8s-native shape."},
+{s:3,q:"Sending critical alerts to PagerDuty/webhook/email is configured in:",opts:["The CSI driver","Alert rules + notification endpoints (Alertmanager configuration)","Dex","KIB"],a:[1],why:"'Configure monitoring alerts and endpoints' = Alertmanager routing."},
+{s:3,q:"Cluster Autoscaler triggers scale-UP when:",opts:["CPU is above 50% anywhere","Pods are unschedulable due to insufficient node resources","Grafana says so","The admin is asleep"],a:[1],why:"Pending-unschedulable pods drive scale-up; idle nodes drive scale-down, within min/max."},
+{s:3,q:"Autoscaling configuration in NKP is:",opts:["Global only","Per node pool, with provider-specific configuration (Nutanix/AWS/vSphere)","Per pod","Hard-coded"],a:[1],why:"Min/max per pool, with per-provider docs the blueprint lists."},
+{s:3,q:"The safe upgrade sequence for an NKP estate is:",opts:["Workload clusters then management","Management cluster (and Kommander) first, then workload clusters; air gaps seed the new bundle first","Alphabetical","Only Kommander ever upgrades"],a:[1],why:"Management first, fleet second, and the registry gets the new release before anything pulls it."},
+// ===== SECTION 4 (22) =====
+{s:4,q:"The TOP-level isolation construct in Kommander is the:",opts:["Namespace","Workspace","Project","StorageClass"],a:[1],why:"Workspaces hold clusters, apps, and RBAC; projects subdivide them."},
+{s:4,q:"Tenant A and Tenant B must never share dashboards, apps, or admins. Layout:",opts:["One workspace, two projects","Two workspaces (one per tenant), with per-tenant login URLs","Two namespaces","Two clusters in one project"],a:[1],why:"Tenant isolation = workspace per tenant; multi-tenancy + dedicated login URLs are blueprint references."},
+{s:4,q:"A workspace's 'infrastructure provider' is best described as:",opts:["The physical switch vendor","Stored credentials/endpoint Kommander uses to deploy managed clusters into a target platform for that workspace","The CSI driver","A Dex connector"],a:[1],why:"It is the deploy-target wiring at workspace level."},
+{s:4,q:"Granting cluster-admin-like rights across every current AND future cluster in a workspace is done via:",opts:["Per-cluster kubeconfig edits","Workspace-level access control (role bindings that federate to member clusters)","SSH keys","A Gatekeeper policy"],a:[1],why:"Workspace RBAC federates; future members inherit automatically."},
+{s:4,q:"Workspace applications can be:",opts:["Enabled for the workspace and optionally per cluster within it","Only global","Only per pod","Licensed separately each"],a:[0],why:"Apps deploy at workspace scope with per-cluster enablement available ('Enabling an Application per Cluster')."},
+{s:4,q:"Deploying a managed workload cluster is initiated from:",opts:["Prism Element","Kommander (UI) or the nkp CLI, into a chosen workspace","The attached cluster itself","KIB"],a:[1],why:"Deploys are fleet operations driven from the management plane into a workspace."},
+{s:4,q:"A workload cluster deploy to vSphere needs templates; the same deploy to Nutanix needs subnets/images via Prism Central. This illustrates:",opts:["A bug","The impact of target provider environments on deployments","License differences","CNI choice"],a:[1],why:"Provider determines parameters and capabilities; verbatim blueprint concept."},
+{s:4,q:"A workload cluster deployment fails instantly with authorization errors before any Machines exist. Check:",opts:["The workspace's infrastructure provider credentials","Loki retention","The project quota","Velero"],a:[0],why:"Pre-machine auth failures point at the provider wiring on the workspace."},
+{s:4,multi:2,q:"Attaching an existing conformant cluster requires (pick TWO):",opts:["Network reachability from the management cluster OR a tunneled attachment","Rebuilding the cluster with KIB images","A kubeconfig with sufficient privilege","An Ultimate license is never needed","Deleting its existing workloads"],a:[0,2],why:"Reachability (or tunnel) + privileged kubeconfig are the core; external attach is in fact an Ultimate capability, and workloads stay."},
+{s:4,q:"EKS attachment has extra steps compared to a generic cluster because:",opts:["EKS is not Kubernetes","Cloud IAM/auth must be prepared ('EKS: Preparing the Cluster') so Kommander can authenticate","EKS lacks namespaces","It requires FIPS"],a:[1],why:"Cloud-managed control planes need their IAM/auth wiring prepared for attach."},
+{s:4,q:"Platform apps on a freshly attached cluster sit Pending on storage. The named fix:",opts:["Bigger nodes","Create/designate a default StorageClass on the attached cluster","Reinstall Kommander","Detach and reattach"],a:[1],why:"'Creating a Default StorageClass' exists precisely for this attach gotcha."},
+{s:4,q:"Which operation can Kommander NOT perform on an attached (vs managed) cluster?",opts:["Deploy platform applications","Federate RBAC","Upgrade its Kubernetes version / scale its node pools","Show its metrics centrally"],a:[2],why:"Lifecycle stays with the attached cluster's own platform; apps/RBAC/observability federate fine."},
+{s:4,q:"Decommissioning: the correct pairing is:",opts:["Detach managed, delete attached","Detach attached (keeps running), delete managed (destroys cluster + provider resources)","Delete both","Detach requires recreating the cluster"],a:[1],why:"Attached clusters outlive NKP management; managed clusters are NKP's to destroy."},
+{s:4,q:"'Delete an NKP Cluster with One Command' refers to:",opts:["kubectl delete ns kommander","nkp delete cluster (CLI teardown of a managed cluster)","rm -rf /","A Prism Central action"],a:[1],why:"The NKP CLI tears down managed clusters and their provider resources."},
+{s:4,q:"A cluster deletion hangs indefinitely. Two classic culprits worth checking first are stuck finalizers and:",opts:["Too many labels","Invalid infrastructure provider credentials (cannot destroy unreachable resources)","Grafana sessions","Quota overage"],a:[1],why:"Teardown needs the provider; dead creds = orphaned destroy."},
+{s:4,q:"A project, precisely, is:",opts:["A Git repository","A slice of a workspace projecting shared namespaces + RBAC + quotas + apps onto selected member clusters","A separate management cluster","A billing unit only"],a:[1],why:"Projects are the team/app construct inside a workspace."},
+{s:4,q:"Three teams share one workspace's six clusters; each team needs its own namespace set, ceilings, and deploy pipeline. Model this as:",opts:["Three workspaces","Three projects within the workspace","Eighteen clusters","Three Dex instances"],a:[1],why:"Same governance domain, team-level slices = projects."},
+{s:4,q:"Project-level quotas and limit ranges:",opts:["Apply only to the management cluster","Federate resource ceilings to the project's namespaces across its member clusters","Are advisory","Block attach operations"],a:[1],why:"Quotas/limit ranges are enforced project-wide across clusters."},
+{s:4,q:"Project Continuous Deployment in NKP is:",opts:["Jenkins bundled","GitOps (Flux-based): a Git repo whose manifests sync automatically to the project's clusters","Manual kubectl apply","An Ultimate-only CLI"],a:[1],why:"'Continuous Delivery with GitOps' is the named mechanism at project level."},
+{s:4,q:"You need one identical Secret present in a project's namespace on all five member clusters, kept in sync. Use:",opts:["Email","Federated resources at the project level","A USB stick","StatefulSets"],a:[1],why:"Resource federation stamps and maintains identical objects across member clusters."},
+{s:4,q:"Enabling a dashboard app fails until its datastore app is enabled. This is:",opts:["A license bug","A platform application dependency","Scope confusion","A CAPI error"],a:[1],why:"Apps have dependencies; enable dependencies first (or accept auto-pull where supported)."},
+{s:4,q:"One cluster in a workspace needs different app config than the rest. The blueprint mechanism:",opts:["Fork the app","Global/workspace scope config with a CLUSTER-scope override on the exception (narrower scope wins)","A second Kommander","Manual edits on that cluster"],a:[1],why:"Global vs cluster scope differentiation; cluster scope overrides for that cluster, and CLI can modify/enable/disable apps too."}
+];
+var state={started:false,answers:{},deadline:null,tick:null};
+function startExam(){
+ document.getElementById('startcard').style.display='none';
+ document.getElementById('hud').style.display='block';
+ document.getElementById('submitbar').style.display='block';
+ state.started=true;state.deadline=Date.now()+120*60*1000;
+ render();
+ state.tick=setInterval(function(){
+  var ms=state.deadline-Date.now();
+  if(ms<=0){clearInterval(state.tick);document.getElementById('timer').textContent='00:00';grade(true);return;}
+  var m=Math.floor(ms/60000),s=Math.floor(ms%60000/1000);
+  document.getElementById('timer').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+ },500);
+}
+function render(){
+ var root=document.getElementById('quiz');
+ Q.forEach(function(q,qi){
+  var d=document.createElement('div');d.className='q';d.id='q'+qi;
+  d.innerHTML='<div class="tag">Q'+(qi+1)+' of 75 · Section '+q.s+(q.multi?' · select '+q.multi:'')+'</div>'
+   +'<div class="qn">'+q.q+'</div>'+(q.multi?'<div class="multi-note">Multiple response: select '+q.multi+'.</div>':'');
+  q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(!state.started)return;
+    var cur=state.answers[qi]||[];
+    if(q.multi){
+     var idx=cur.indexOf(i);
+     if(idx>-1){cur.splice(idx,1);b.classList.remove('sel');}
+     else if(cur.length<q.multi){cur.push(i);b.classList.add('sel');}
+    }else{
+     d.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel')});
+     cur=[i];b.classList.add('sel');
+    }
+    state.answers[qi]=cur;prog();
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+q.why;
+  d.appendChild(ex);
+  root.appendChild(d);
+ });
+}
+function prog(){
+ var n=Object.keys(state.answers).filter(function(k){return (state.answers[k]||[]).length>0}).length;
+ document.getElementById('prog').textContent=n+' / 75 answered';
+}
+function grade(auto){
+ if(!state.started)return;state.started=false;clearInterval(state.tick);
+ var per={1:[0,0],2:[0,0],3:[0,0],4:[0,0]},score=0;
+ Q.forEach(function(q,qi){
+  var chosen=(state.answers[qi]||[]).slice().sort().join();
+  var right=q.a.slice().sort().join()===chosen;
+  per[q.s][1]++;if(right){per[q.s][0]++;score++;}
+  var d=document.getElementById('q'+qi);
+  d.querySelectorAll('.opt').forEach(function(o,i){
+   o.disabled=true;
+   if(q.a.indexOf(i)>-1)o.classList.add('correct');
+   else if((state.answers[qi]||[]).indexOf(i)>-1)o.classList.add('wrong');
+  });
+  d.querySelector('.explain').classList.add('show');
+ });
+ var pct=Math.round(score/75*100);
+ var verdict= pct>=70?'<span class="verdict pass">READY: '+pct+'% — schedule the exam.</span>'
+   : pct>=60?'<span class="verdict" style="color:var(--amber)">CLOSE: '+pct+'% — drill the weakest section, retake in 2-3 days.</span>'
+   :'<span class="verdict fail">NOT YET: '+pct+'% — rebuild the weak sections before retaking.</span>';
+ var rows='';[1,2,3,4].forEach(function(s){
+  var p=per[s],pc=Math.round(p[0]/p[1]*100);
+  rows+='<tr><td>Section '+s+'</td><td>'+p[0]+' / '+p[1]+'</td><td>'+pc+'%</td></tr>';
+ });
+ var r=document.getElementById('results');
+ r.innerHTML='<h2>Results · '+score+' / 75'+(auto?' (time expired)':'')+'</h2>'+verdict
+  +'<table><tr><th>Domain</th><th>Score</th><th>%</th></tr>'+rows+'</table>'
+  +'<p style="color:var(--muted);font-size:14px">Raw % is a proxy; the real exam uses weighted scaled scoring (pass 3000/6000). Review every miss below, then update your cheat sheet. Sections map to study guides 01-04.</p>';
+ r.style.display='block';document.getElementById('submitbar').style.display='none';
+ r.scrollIntoView({behavior:'smooth'});prog();
+}
+</script>
+</body>
+</html>

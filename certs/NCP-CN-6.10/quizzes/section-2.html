@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN Quiz · Section 2: Build an NKP Cluster</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  code{font-family:var(--mono);font-size:.9em;color:#cfe}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Question Bank</p>
+  <h1>Section 2 Quiz: Manage Building an NKP Cluster</h1>
+  <p class="sub">12 original questions on objectives 2.1 and 2.2: NKP CLI cluster builds, CAPI customization, deployment diagnosis, Kommander deployment and licensing.</p>
+  <div id="scorebar">Score: 0 / 12 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions © BlueAlly study package, written against the official NCP-CN 6.10 Exam Blueprint Guide. <a href="../study-guides/02-build-nkp-cluster.html">← Back to Guide 02</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"2.1",q:"You need a worker node pool with more RAM than the rest of the cluster's workers. Which CAPI resources express a node pool and its per-VM hardware shape on Nutanix?",
+  opts:["Cluster and KubeadmControlPlane",
+        "MachineDeployment and NutanixMachineTemplate",
+        "Machine and KubeadmConfigTemplate",
+        "NutanixCluster and Cluster"],
+  a:[1],why:"A node pool IS a MachineDeployment; the per-VM hardware (vCPU, memory, disk, subnet, image) lives in the provider machine template it references, NutanixMachineTemplate on AHV. Control plane sizing lives in KubeadmControlPlane; Cluster/NutanixCluster hold cluster-wide identity and networking."},
+ {obj:"2.1",q:"A cluster deployment hangs with Machines stuck in Provisioning. What is the most effective first diagnostic move?",
+  opts:["Reinstall the NKP CLI",
+        "Describe the stuck Machine and its provider machine resource to read events/conditions, then check provider-side causes (credentials, subnet, image)",
+        "Delete the bootstrap cluster and retry",
+        "Upgrade Kommander first"],
+  a:[1],why:"Provisioning means CAPI asked the infrastructure provider for a VM and it has not materialized. kubectl describe on the Machine and NutanixMachine surfaces the provider error: bad Prism Central credentials, missing image, full subnet/IPAM. Reinstalling the CLI or touching Kommander (which is not even installed yet) does nothing; deleting bootstrap mid-build orphans the operation."},
+ {obj:"2.1",q:"What does the --self-managed flag accomplish on an nkp create cluster command?",
+  opts:["The cluster auto-upgrades itself on a schedule",
+        "CAPI components pivot into the newly built cluster so it manages its own lifecycle, making it a management cluster",
+        "It disables Kommander",
+        "It marks the cluster as exempt from licensing"],
+  a:[1],why:"Self-managed = the cluster carries its own CAPI controllers (pivoted from the bootstrap cluster) instead of being managed by another cluster. That is precisely what makes a management cluster. It has nothing to do with auto-upgrades, Kommander presence, or licensing."},
+ {obj:"2.1",multi:2,q:"When does deploying with a CUSTOM MANIFEST become the right approach over plain CLI flags? Pick TWO.",
+  opts:["When the customization (per-pool machine shapes, special networking, birth-time taints) exceeds what CLI flags express",
+        "Whenever the cluster is larger than three nodes",
+        "When you generate manifests with a dry-run, edit the CAPI resources, and apply them",
+        "Custom manifests are required for every Nutanix deployment",
+        "Only when deploying to AWS"],
+  a:[0,2],why:"The custom manifest path: nkp create cluster ... --dry-run -o yaml emits the CAPI resources, you edit what flags cannot express, kubectl apply. It is the escape hatch for advanced shapes, not a size requirement, not provider-specific, and not mandatory."},
+ {obj:"2.1",q:"Which statement correctly maps an air-gapped use case onto NKP CLI parameters?",
+  opts:["Air gap requires no special flags; NKP detects it",
+        "Add the registry mirror flag set pointing at the seeded internal registry so all image pulls resolve inside the gap",
+        "Pass --offline=true and the CLI embeds all images in the manifest",
+        "Set the license tier to Ultimate"],
+  a:[1],why:"Air-gapped builds add registry mirror/override parameters aimed at your seeded registry (plus its CA material), so bootstrap and node image pulls never leave the gap. There is no magic detection or image embedding, and license tier is orthogonal."},
+ {obj:"2.1",q:"In the CAPI ownership chain used for diagnosis, which order is correct, top to bottom?",
+  opts:["Machine → MachineDeployment → Cluster → KubeadmControlPlane",
+        "Cluster → KubeadmControlPlane / MachineDeployment → Machine → provider machine (NutanixMachine)",
+        "Kommander → Cluster → kubelet",
+        "NutanixMachineTemplate → Cluster → Machine"],
+  a:[1],why:"Cluster sits on top; KubeadmControlPlane owns control plane machines while MachineDeployments own worker machines; each Machine pairs with a provider machine resource carrying infrastructure detail. Diagnosis walks down until conditions/events go bad."},
+ {obj:"2.2",q:"What is Kommander, in NKP terms?",
+  opts:["The Kubernetes scheduler replacement Nutanix ships",
+        "The fleet management layer installed on the management cluster: workspaces, projects, platform applications, attached clusters, licensing",
+        "The CLI used to build machine images",
+        "The Nutanix CSI driver's control plane"],
+  a:[1],why:"Kommander is the multi-cluster management application (TMC's role in the VMware translation): UI/API for workspaces, projects, platform apps, attach/deploy clusters, and where the NKP license is applied. KIB builds images; the scheduler and CSI are unrelated."},
+ {obj:"2.2",q:"A Customer has a resource-constrained management cluster and only needs monitoring, not the full platform application stack. How is that delivered at install time?",
+  opts:["It cannot be; Kommander always installs every platform app",
+        "Use a Kommander installer configuration (custom manifest) that disables the unneeded platform applications",
+        "Install Kommander on a workload cluster instead",
+        "Buy the Starter license, which auto-trims apps"],
+  a:[1],why:"The installer config is exactly for this: enable/disable individual platform apps and set their overrides ('Installing Kommander in a Small Environment' is a named blueprint doc). License tier gates features, it does not trim resource footprints, and Kommander belongs on the management cluster."},
+ {obj:"2.2",q:"After nkp install kommander completes, where and how is the NKP license applied?",
+  opts:["It was already embedded in the machine image by KIB",
+        "Through Kommander (UI or CLI license flow), activating the tier's features such as Ultimate's external cluster attach",
+        "By emailing the license file to Nutanix support",
+        "In Prism Central's licensing page"],
+  a:[1],why:"Licensing is a Kommander-level operation (add/remove an NKP license); the applied tier unlocks the corresponding surface. Prism Central licensing covers the Nutanix infrastructure stack, not NKP tiers; KIB bakes OS images, not licenses."},
+ {obj:"2.2",q:"A Kommander deployment is unhealthy after install. Knowing how Kommander deploys its components, where do you look?",
+  opts:["The Flux/HelmRelease status and platform app pods in Kommander's namespaces on the management cluster",
+        "Prism Element hardware alerts",
+        "The bootstrap cluster's logs (it keeps a copy)",
+        "The vCenter events pane"],
+  a:[0],why:"Kommander's components and platform apps are delivered as HelmReleases reconciled by Flux. Failed/stalled HelmReleases and their pods tell you which app broke and why (often registry reachability in air gaps, or resource exhaustion in small environments). The bootstrap cluster is gone by now."},
+ {obj:"2.2",multi:2,q:"Which TWO statements about FIPS-mode NKP deployments are true per the blueprint's references?",
+  opts:["FIPS is enabled by toggling a checkbox in Prism Central",
+        "NKP supports FIPS deployments, documented as 'FIPS Support in NKP'",
+        "FIPS-compliant vSphere deployments involve creating FIPS CAPI VM templates with KIB",
+        "FIPS mode is the default for all NKP clusters",
+        "FIPS removes the need for image building"],
+  a:[1,2],why:"The blueprint references 'FIPS Support in NKP' and the vSphere FIPS docs (creating a FIPS CAPI VM template / management cluster), which run through KIB-built FIPS images. It is an opt-in compliance posture, not a default, and definitely not a Prism checkbox."},
+ {obj:"2.1",q:"Which nkp create cluster parameters are the direct expression of 'the cluster needs a stable API entry point and a pool of IPs for Service type LoadBalancer'?",
+  opts:["--cluster-name and --vm-image",
+        "--control-plane-endpoint-ip and --kubernetes-service-load-balancer-ip-range",
+        "--subnets and --endpoint",
+        "--self-managed and --kubeconfig"],
+  a:[1],why:"The control plane endpoint IP is the stable VIP clients/kubelets target; the LB IP range feeds the load balancer pool for Services. --endpoint is Prism Central's URL (connectivity), --subnets places NICs, the others are identity/output concerns."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

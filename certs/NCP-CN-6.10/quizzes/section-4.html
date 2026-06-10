@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN Quiz · Section 4: Fleet Management</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Question Bank</p>
+  <h1>Section 4 Quiz: Conduct NKP Fleet Management</h1>
+  <p class="sub">14 original questions on objectives 4.1 to 4.6: workspaces, workload clusters, attach/detach, projects, platform applications. The workspace vs project boundary decides most of these, exactly like the real thing.</p>
+  <div id="scorebar">Score: 0 / 14 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions © BlueAlly study package, written against the official NCP-CN 6.10 Exam Blueprint Guide. <a href="../study-guides/04-fleet-management.html">← Back to Guide 04</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"4.1",q:"Production and development clusters have different administrators, different platform app sets, and different access policies. The correct fleet construct to separate them is:",
+  opts:["Two projects in one workspace","Two workspaces","Two namespaces on one cluster","Two Prism Central instances"],
+  a:[1],why:"Different cluster membership, governance, RBAC, and app sets is exactly the workspace boundary. Projects slice namespaces WITHIN a workspace's clusters; namespaces alone do not separate cluster fleets."},
+ {obj:"4.1",q:"What does configuring an 'infrastructure provider' at the workspace level give you?",
+  opts:["A default StorageClass for the workspace",
+        "The credentials/endpoint Kommander uses to DEPLOY managed clusters into that infrastructure (e.g., Nutanix/Prism Central)",
+        "A dedicated registry per workspace",
+        "Automatic attachment of any cluster found in that infrastructure"],
+  a:[1],why:"The infrastructure provider object holds how Kommander reaches the target platform to create workload clusters for that workspace. Storage classes live per cluster, registries are environment concerns, and nothing auto-attaches."},
+ {obj:"4.1",q:"NKP Insights' purpose, per the blueprint, is best described as:",
+  opts:["A replacement for Prometheus",
+        "Fleet-level intelligence: anomaly detection and health insights across clusters (Ultimate tier, own license install)",
+        "A cost billing module only",
+        "The NKP CLI's interactive mode"],
+  a:[1],why:"Insights layers anomaly/health analysis over the fleet; blueprint references its overview and installing its Ultimate license. It complements, not replaces, the monitoring stack."},
+ {obj:"4.2",q:"A workload cluster deployment into a workspace fails immediately. Beyond the CAPI chain, which WORKSPACE-level cause should be on the shortlist?",
+  opts:["The workspace name contains a hyphen",
+        "Invalid or expired infrastructure provider credentials configured on the workspace",
+        "Too many projects in the workspace",
+        "Grafana is disabled"],
+  a:[1],why:"Deploys into a workspace ride the workspace's infrastructure provider; dead credentials kill creation before machines exist. Names, project counts, and dashboards are unrelated."},
+ {obj:"4.2",q:"Which is TRUE about how target providers shape workload cluster deployments?",
+  opts:["All providers expose identical parameters",
+        "The provider determines required parameters and capabilities (subnets/VIPs on Nutanix, AMIs on AWS, templates on vSphere/VCD), so the same intent deploys differently per provider",
+        "Only Nutanix infrastructure is supported for workload clusters",
+        "Provider choice is made after the cluster is running"],
+  a:[1],why:"Blueprint phrasing: 'recognize the impact of target provider environments on workload cluster deployments.' Each provider has its own parameter surface and constraints; NKP spans Nutanix, vSphere, AWS, VCD and more; and provider is decided at deploy time."},
+ {obj:"4.3",q:"An attached GKE cluster's platform applications hang with PersistentVolumeClaims Pending. The classic cause is:",
+  opts:["GKE clusters cannot be attached",
+        "The attached cluster lacks a default StorageClass, so apps needing persistence cannot provision volumes",
+        "The NKP license expired",
+        "Loki requires AWS specifically"],
+  a:[1],why:"'Creating a Default StorageClass' is a named blueprint reference under attachment for exactly this failure: federated apps request PVCs with no explicit class, and without a default class they Pend forever."},
+ {obj:"4.3",q:"An on-prem cluster behind NAT cannot be reached from the management cluster, but must be brought under Kommander. The blueprint's mechanism is:",
+  opts:["A tunneled attachment",
+        "Moving the management cluster behind the same NAT",
+        "Opening all inbound ports",
+        "It cannot be done"],
+  a:[0],why:"'Prerequisites for a Tunneled Attachment' exists for unreachable clusters: the attachment rides an outbound tunnel from the attached side. Re-homing the management cluster or flattening the firewall are not answers."},
+ {obj:"4.3",multi:2,q:"Which TWO capabilities does Kommander have over a MANAGED cluster that it lacks over an ATTACHED cluster?",
+  opts:["Deploying platform applications to it",
+        "Upgrading its Kubernetes version",
+        "Scaling its node pools",
+        "Federating RBAC to it",
+        "Viewing its metrics centrally"],
+  a:[1,2],why:"Attached clusters keep their own lifecycle owner (EKS/AKS/GKE or another platform); Kommander governs apps, RBAC, and observability on them but cannot upgrade or scale their nodes. Managed (NKP-deployed) clusters get full lifecycle control."},
+ {obj:"4.4",q:"Detach vs delete, the correct statement:",
+  opts:["Both destroy the cluster",
+        "Detach releases an attached cluster from management (it keeps running); delete destroys a managed cluster and its provider resources",
+        "Delete only removes the cluster from the UI",
+        "Detach requires Prism Element credentials"],
+  a:[1],why:"Decommissioning logic: attached clusters get detached (they predate NKP and outlive it); managed clusters get deleted ('Delete an NKP Cluster with One Command' or via the Kommander GUI, including NKP-deployed EKS). Deletion is real destruction, not cosmetic."},
+ {obj:"4.4",q:"A managed cluster's deletion hangs for an hour. A likely cause worth checking first:",
+  opts:["The cluster has too many namespaces",
+        "Infrastructure provider credentials are no longer valid, so provider resources cannot be destroyed (or finalizers are stuck)",
+        "Grafana dashboards reference it",
+        "The license tier is too low to delete"],
+  a:[1],why:"Deletion has to unwind real provider resources; dead credentials or stuck finalizers are the classic hangs. Namespace counts, dashboards, and licenses do not block teardown."},
+ {obj:"4.5",multi:2,q:"A team needs a CPU/memory ceiling AND Git-driven automatic deployments across the three clusters it uses inside a workspace. Which TWO project features deliver this?",
+  opts:["Project quotas and limit ranges",
+        "Workspace infrastructure provider",
+        "Project Continuous Deployment (GitOps)",
+        "Tunneled attachment",
+        "NKP Insights"],
+  a:[0,2],why:"Both are project-level features: quotas/limit ranges federate resource ceilings to the project's namespaces on member clusters; project CD syncs a Git repo's manifests to them (Flux-based GitOps). Providers, tunnels, and Insights live elsewhere."},
+ {obj:"4.5",q:"What does 'federating resources' in a project mean?",
+  opts:["Migrating VMs between AHV hosts",
+        "Stamping identical Kubernetes resources (ConfigMaps, Secrets, etc.) into the project's namespaces across all its member clusters",
+        "Merging two workspaces",
+        "Sharing licenses between Customers"],
+  a:[1],why:"Federation = one definition, many clusters: the project pushes the same resource into its namespace on every member cluster and keeps it in sync. Nothing to do with VM mobility or licensing."},
+ {obj:"4.6",q:"You enable a logging dashboard app and it fails because Loki is not enabled. Which blueprint concept does this illustrate?",
+  opts:["Global vs cluster scope","Platform application dependencies","Tunneled attachment","Project quotas"],
+  a:[1],why:"Apps depend on apps: dashboards need their datastore (Grafana needs Prometheus; logging views need Loki). 'Recognize platform application dependencies' is a verbatim knowledge item; enabling dependents without dependencies is the standard trap."},
+ {obj:"4.6",q:"Monitoring configuration must apply to every cluster in a workspace EXCEPT one cluster that needs different alert endpoints. The mechanism is:",
+  opts:["Create a second management cluster for the exception",
+        "Set the app configuration at workspace (global) scope and override it at CLUSTER scope for the exception; cluster scope wins there",
+        "Edit Prometheus manually on the exception cluster and hope",
+        "Impossible; configuration is all-or-nothing"],
+  a:[1],why:"'Differentiate between global and cluster scope application configuration' is the knowledge item: broad config at the wider scope, per-cluster overrides where needed, and the narrower scope takes precedence on that cluster. Manual drift-edits get reconciled away."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

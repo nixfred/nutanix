@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 Study Hub · BlueAlly</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:900px;margin:0 auto;padding:48px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 10px}
+  h1{font-size:34px;margin:0 0 10px;letter-spacing:-.5px}
+  .sub{color:var(--muted);margin:0 0 22px;max-width:720px;font-size:17px}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
+  .pill{font-size:13px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:15px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--purple);
+    margin:36px 0 14px;border-bottom:1px solid var(--line);padding-bottom:9px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  a.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;color:var(--ink);text-decoration:none;transition:.15s}
+  a.card:hover{border-color:var(--teal);transform:translateY(-2px)}
+  .card .n{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+  .card .t{font-weight:700;color:#fff;font-size:16.5px;margin-bottom:5px}
+  .card .d{font-size:13.5px;color:var(--muted)}
+  .plan{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:6px}
+  .plan .wk{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .plan .wk:last-child{border-bottom:none}
+  .plan .wlabel{font-family:var(--mono);font-size:12px;color:var(--amber);white-space:nowrap;min-width:120px}
+  .plan .wbody{font-size:14.5px;color:var(--muted)}
+  .plan .wbody b{color:#fff}
+  .warn{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:22px 0;font-size:14.5px}
+  .warn b{color:var(--amber)}
+  a{color:var(--teal)}
+  footer{margin-top:50px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p style="font-family:var(--mono);font-size:12.5px;margin:0 0 20px"><a href="../index.html" style="color:var(--muted);text-decoration:none">&larr; Certification Training</a></p>
+  <p class="kicker">BlueAlly SA Training Package</p>
+  <h1>NCP-CN 6.10 Study Hub</h1>
+  <p class="sub">Everything needed to pass the Nutanix Certified Professional, Cloud Native exam: study guides built from the official blueprint, an original 127-question bank, flashcards, a VMware translation legend, and a three week war plan. Self contained HTML; share the whole folder.</p>
+  <div class="facts">
+    <span class="pill">75 questions · <b>120 min</b></span>
+    <span class="pill"><b>$200</b> per attempt</span>
+    <span class="pill">pass <b>3000</b> / 1000-6000</span>
+    <span class="pill">NKP <b>2.12</b> · AOS <b>6.10</b> · PC <b>pc2024.2</b></span>
+    <span class="pill">valid <b>3 years</b></span>
+  </div>
+
+  <h2>Start here</h2>
+  <div class="grid">
+    <a class="card" href="reference/vmware-to-nutanix.html"><div class="n">Reference</div><div class="t">VMware → Nutanix Legend</div><div class="d">Your VMware vocabulary mapped to NKP. Read first; everything else lands easier.</div></a>
+    <a class="card" href="study-guides/00-kubernetes-crash-course.html"><div class="n">Guide 00</div><div class="t">Kubernetes Crash Course</div><div class="d">CKA-level assumptions, compressed to what the exam touches. Mandatory if K8s is rusty.</div></a>
+    <a class="card" href="reference/exam-day.html"><div class="n">Reference</div><div class="t">Exam Day One-Pager</div><div class="d">Logistics, retake math for the July 1 deadline, in-room tactics.</div></a>
+  </div>
+
+  <h2>Study guides (the four blueprint sections)</h2>
+  <div class="grid">
+    <a class="card" href="study-guides/01-prepare-environment.html"><div class="n">Section 1 · 6 objectives</div><div class="t">Prepare the Environment</div><div class="d">Registry seeding, bootstrap cluster, license tiers, bastion, KIB/NIB images, provider parameters.</div></a>
+    <a class="card" href="study-guides/02-build-nkp-cluster.html"><div class="n">Section 2 · 2 objectives</div><div class="t">Build an NKP Cluster</div><div class="d">NKP CLI, CAPI customization and diagnosis, Kommander deployment and licensing.</div></a>
+    <a class="card" href="study-guides/03-day2-operations.html"><div class="n">Section 3 · 6 objectives</div><div class="t">Day 2 Operations</div><div class="d">Dex auth/RBAC, logging stack, Velero, monitoring, autoscaling, upgrades. The densest exam territory.</div></a>
+    <a class="card" href="study-guides/04-fleet-management.html"><div class="n">Section 4 · 6 objectives</div><div class="t">Fleet Management</div><div class="d">Workspaces vs projects, deploy/attach/detach clusters, platform apps, GitOps CD.</div></a>
+  </div>
+
+  <h2>Test yourself</h2>
+  <div class="grid">
+    <a class="card" href="quizzes/section-1.html"><div class="n">Quiz · 12 Q</div><div class="t">Section 1 Quiz</div><div class="d">Instant feedback + explanations per objective.</div></a>
+    <a class="card" href="quizzes/section-2.html"><div class="n">Quiz · 12 Q</div><div class="t">Section 2 Quiz</div><div class="d">CAPI, CLI, Kommander build scenarios.</div></a>
+    <a class="card" href="quizzes/section-3.html"><div class="n">Quiz · 14 Q</div><div class="t">Section 3 Quiz</div><div class="d">Auth, logging, Velero, monitoring, lifecycle.</div></a>
+    <a class="card" href="quizzes/section-4.html"><div class="n">Quiz · 14 Q</div><div class="t">Section 4 Quiz</div><div class="d">Workspace vs project judgment calls.</div></a>
+    <a class="card" href="quizzes/mock-exam.html" style="border-color:var(--amber)"><div class="n" style="color:var(--amber)">Mock · 75 Q · timed</div><div class="t">Full Mock Exam</div><div class="d">120-minute countdown, blueprint-weighted, per-section breakdown. 70%+ = schedule the real one.</div></a>
+    <a class="card" href="flashcards/index.html"><div class="n">Daily · 70+ cards</div><div class="t">Flashcards</div><div class="d">Five decks, know/drill buckets, drill-only mode. Coffee-break weapon.</div></a>
+  </div>
+
+  <h2>Reference shelf</h2>
+  <div class="grid">
+    <a class="card" href="reference/glossary.html"><div class="n">Reference</div><div class="t">Glossary</div><div class="d">Canonical NKP vocabulary, filterable.</div></a>
+    <a class="card" href="reference/ncp-cn-6.10-blueprint-objectives.md"><div class="n">Reference</div><div class="t">Blueprint Objective Map</div><div class="d">Every objective + knowledge item, structured.</div></a>
+    <a class="card" href="reference/NCP-CN-6.10-Exam-Blueprint-Guide-official.pdf"><div class="n">Official PDF</div><div class="t">Exam Blueprint Guide</div><div class="d">The source of truth, from Nutanix University.</div></a>
+  </div>
+
+  <h2>The 3-week war plan (deadline July 1)</h2>
+  <div class="plan">
+    <div class="wk"><span class="wlabel">WK1 · Jun 9-15</span><span class="wbody"><b>Foundations.</b> Legend + K8s crash course + kind lab reps (days 1-3). Guides 01-02 + NKPA course modules 1-4 (days 4-7). Flashcards daily from day one.</span></div>
+    <div class="wk"><span class="wlabel">WK2 · Jun 16-22</span><span class="wbody"><b>The platform.</b> Guides 03-04 + NKPA modules 5-8. Nutanix Test Drive hands-on: Kommander, workspaces, projects, platform apps. Section quiz after each guide; misses feed the drill bucket.</span></div>
+    <div class="wk"><span class="wlabel">WK3 · Jun 23-30</span><span class="wbody"><b>Exam mode.</b> Mock #1 cold by Jun 24 (preserves a retake window). Rebuild weak sections. Official Nutanix practice exam as the calibration gate. Mock #2 by Jun 28; at 70%+ book and sit it Jun 29-30.</span></div>
+  </div>
+
+  <div class="warn"><b>Free official prep:</b> the <a href="https://www.nutanix.com/support-services/training-certification/training/course-details-nutanix-kubernetes-platform-administration">Nutanix Kubernetes Platform Administration (NKPA) course</a> is free, 8 modules, and tracks the blueprint nearly 1:1. It is the spine; this package is the muscle. Register for the exam at <a href="https://university.nutanix.com/course?course_id=67598524e842c1118be3f103">Nutanix University</a>.</div>
+
+  <footer>Built 2026-06-09 against the official NCP-CN 6.10 Exam Blueprint Guide (local copy in reference/). Original question bank; no braindump content (your cert and BlueAlly's partner standing depend on that). Versions pinned: NKP 2.12, AOS 6.10, pc2024.2.</footer>
+</div>
+</body>
+</html>

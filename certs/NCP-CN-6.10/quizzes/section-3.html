@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN Quiz · Section 3: Day 2 Operations</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Question Bank</p>
+  <h1>Section 3 Quiz: Perform Day 2 Operations</h1>
+  <p class="sub">14 original questions on objectives 3.1 to 3.6: auth/RBAC, logging, Velero backup, monitoring, autoscaling, lifecycle. Community intel says this territory is the densest on the real exam; drill it hardest.</p>
+  <div id="scorebar">Score: 0 / 14 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions © BlueAlly study package, written against the official NCP-CN 6.10 Exam Blueprint Guide. <a href="../study-guides/03-day2-operations.html">← Back to Guide 03</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"3.1",q:"A user authenticates successfully through the corporate LDAP (via Dex) but sees an empty Kommander dashboard. What is missing?",
+  opts:["Their LDAP password has expired",
+        "A role binding granting them a Kommander-level role; authentication succeeded but no authorization was granted",
+        "The cluster's CSI driver",
+        "An NKP Ultimate license"],
+  a:[1],why:"Authentication (who you are) worked; authorization (what you may see/do) was never granted. The fix is a Kommander role binding, typically via their IdP group. Expired passwords fail login outright; CSI and licensing produce different symptoms."},
+ {obj:"3.1",q:"Which statement correctly differentiates Kommander roles from cluster roles?",
+  opts:["They are the same objects synchronized automatically",
+        "Kommander roles govern the fleet management plane (workspaces, projects, platform apps); cluster roles are Kubernetes RBAC inside individual clusters",
+        "Cluster roles always override Kommander roles",
+        "Kommander roles only apply to attached clusters"],
+  a:[1],why:"Two layers: Kommander roles control the management plane surface; cluster roles (plain K8s Role/ClusterRole + bindings) control resources inside each cluster. Workspace/project grants federate downward into cluster-level access, which is the inheritance the blueprint mentions."},
+ {obj:"3.1",multi:2,q:"Which TWO are part of configuring authentication for an NKP estate per the blueprint?",
+  opts:["Configuring an external identity provider (e.g., LDAP) and mapping its groups",
+        "Creating local Unix users on every node",
+        "Using tokens for user/automation authentication",
+        "Disabling RBAC for simplicity",
+        "Storing passwords in a ConfigMap"],
+  a:[0,2],why:"The blueprint names identity provider + groups configuration and token-based authentication. Node-local users, disabling RBAC, and plaintext ConfigMap passwords are anti-patterns the exam expects you to reject."},
+ {obj:"3.1",q:"What enforces admission policies (e.g., disallowing privileged pods) across NKP clusters, per the blueprint's security references?",
+  opts:["Velero","Gatekeeper (OPA)","Loki","The Cluster Autoscaler"],
+  a:[1],why:"'Enforcing Policies Using Gatekeeper' is a named blueprint reference: OPA Gatekeeper validates/denies resources at admission against policy. Velero is backup, Loki is logs, the autoscaler is node counts."},
+ {obj:"3.2",q:"Which trio forms the core of the NKP logging stack?",
+  opts:["Prometheus, Alertmanager, Grafana",
+        "Logging Operator (Fluent Bit collection), Loki (storage), Grafana (viewing)",
+        "Velero, Dex, Traefik",
+        "NCC, Pulse, Prism"],
+  a:[1],why:"Logs: collected by the Logging Operator's Fluent Bit/flow machinery, stored in Loki, queried in Grafana. The first trio is the MONITORING stack; know both cold and never mix them on the exam."},
+ {obj:"3.2",q:"Two tenant teams share clusters in a workspace and must not see each other's logs. The blueprint's answer is:",
+  opts:["Give each team its own Grafana password",
+        "Multi-tenant logging: scope log flows/access so each tenant views only its own namespaces' logs",
+        "Disable logging for one team",
+        "Export both teams' logs to email"],
+  a:[1],why:"Multi-Tenant Logging is a named capability: per-tenant flows and scoped access deliver isolation inside a shared logging stack. Shared-password Grafana or disabling logging is not isolation."},
+ {obj:"3.2",q:"For long-term retention, where does the blueprint point you for persisting Loki's log data?",
+  opts:["Node local disk only","etcd","Object storage, e.g. S3-compatible targets or Nutanix Unified Storage","A USB drive on the bastion"],
+  a:[2],why:"Loki's backend is object-storage friendly; the blueprint references configuring Loki for S3 storage and integrating persistence with Nutanix Unified Storage (Objects). etcd stores cluster state, never logs."},
+ {obj:"3.3",multi:2,q:"Velero backups in NKP depend on which TWO prerequisites?",
+  opts:["A reachable target object storage location with valid credentials",
+        "An NKP Starter license",
+        "VolumeSnapshotClasses configured so CSI can snapshot persistent volumes",
+        "Prism Element SSH access",
+        "A second NKP cluster running at all times"],
+  a:[0,2],why:"Velero writes backup data to object storage (credentials + reachability mandatory) and protects PV data through CSI snapshots (snapshot classes configured). License nuance exists but Starter is not the dependency, and no standby cluster is required."},
+ {obj:"3.3",q:"A nightly Velero backup reports PartiallyFailed. The first diagnostic step is:",
+  opts:["Restore immediately to see what is missing",
+        "Read the backup's logs (velero backup logs <name>) to see which resources or volumes failed and why",
+        "Delete and recreate the schedule",
+        "Reboot the management cluster"],
+  a:[1],why:"PartiallyFailed means some items failed; the backup logs name them and the cause (snapshot class issues, storage location auth, namespace scoping). Blind restores, schedule churn, or reboots skip the evidence."},
+ {obj:"3.4",q:"A Customer with 15 NKP clusters wants estate-wide health visibility without logging into 15 Grafanas. The blueprint's mechanism is:",
+  opts:["Centralized metrics aggregated at the management cluster (Kommander-level dashboards)",
+        "An RSS feed of alerts",
+        "Per-cluster kubectl top loops in cron",
+        "Forwarding all metrics to Prism Element"],
+  a:[0],why:"Centralized Metrics is a named reference: the management cluster aggregates fleet metrics so multi-cluster health lives in one place; NKP Insights (Ultimate) layers intelligence on top. The others are jokes the exam will happily offer as distractors."},
+ {obj:"3.4",q:"Prometheus keeps crashing on a busy cluster with volume-full errors. Which blueprint knowledge item does this map to?",
+  opts:["Configure monitoring alerts and endpoints",
+        "Configure backend storage for a monitoring application: size/provision the PVC backing Prometheus retention",
+        "Use custom dashboards",
+        "Verify Pulse status"],
+  a:[1],why:"Prometheus retention writes to a persistent volume; undersized backend storage fills and crashes it. That is exactly the 'configure backend storage for a monitoring application' bullet. Pulse is the NCA-level Nutanix telemetry, a deliberate cross-track distractor."},
+ {obj:"3.5",q:"Pods queue as Pending every morning and nodes idle every afternoon. Which NKP feature addresses this, and what bounds it?",
+  opts:["HPA, bounded by CPU targets",
+        "Cluster Autoscaler on the node pool, bounded by configured min and max node counts",
+        "Manual scaling, bounded by the admin's patience",
+        "ADS on the AHV hosts"],
+  a:[1],why:"Unschedulable pods → scale node pool up; idle nodes → scale down, between per-pool min/max. HPA scales POD replicas (different layer), and ADS balances VMs across AHV hosts (infrastructure layer). Provider-specific autoscaler config exists for Nutanix, AWS, vSphere."},
+ {obj:"3.6",q:"Correct upgrade order for an air-gapped NKP fleet:",
+  opts:["Workload clusters first, then management, then re-seed the registry",
+        "Seed the new release bundle to the registry first, upgrade the management cluster/Kommander, then upgrade workload clusters",
+        "Upgrade everything simultaneously for consistency",
+        "Only the management cluster ever needs upgrades"],
+  a:[1],why:"Air gap step zero: the new images must exist in the registry before anything can pull them. Then management cluster first (it orchestrates), then workload clusters (CAPI rolls nodes onto new images/K8s versions). Simultaneous upgrades are how you get a very bad day."},
+ {obj:"3.6",q:"Scaling a worker pool from 3 to 5 nodes manually means changing what?",
+  opts:["The replica count on the node pool, i.e. its MachineDeployment",
+        "The KubeadmControlPlane replicas",
+        "The number of CVMs on the Nutanix cluster",
+        "The Prometheus retention size"],
+  a:[0],why:"Node pools are MachineDeployments; manual scale = set its replicas (CLI or UI) and CAPI reconciles VMs to match. KubeadmControlPlane replicas are control plane nodes, CVMs are Nutanix infrastructure, and retention is monitoring."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

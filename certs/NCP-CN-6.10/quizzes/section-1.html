@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN Quiz · Section 1: Prepare the Environment</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Question Bank</p>
+  <h1>Section 1 Quiz: Prepare the Environment</h1>
+  <p class="sub">12 original questions calibrated to the official blueprint (objectives 1.1 to 1.6) and community-reported exam emphasis. Multiple-response questions tell you how many to pick, exactly like the real exam. No braindump content.</p>
+  <div id="scorebar">Score: 0 / 12 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions © BlueAlly study package, written against the official NCP-CN 6.10 Exam Blueprint Guide. <a href="../study-guides/01-prepare-environment.html">← Back to Guide 01</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"1.1",q:"Why must a private registry be seeded before installing NKP in an air-gapped environment?",
+  opts:["NKP requires Harbor specifically as its image store",
+        "Cluster components can only pull container images and charts from inside the gap, so the NKP bundle contents must be pushed to a reachable internal registry first",
+        "Seeding generates the TLS certificates the cluster will use",
+        "The registry hosts the NKP license file"],
+  a:[1],why:"Air-gapped means no path to public registries. Seeding pushes the downloaded NKP bundle (images + charts) into your internal registry so the bootstrap, management, and workload clusters can pull everything locally. The registry is yours (any compliant registry, not specifically Harbor), and it has nothing to do with TLS generation or licensing."},
+ {obj:"1.1",multi:2,q:"Registry seeding from the bastion completed successfully, but during cluster creation, nodes fail to pull images. Which TWO causes are most likely?",
+  opts:["The nodes do not trust the registry's self-signed CA certificate",
+        "The seed command silently failed",
+        "Nodes cannot resolve or route to the registry (DNS/firewall)",
+        "The NKP license tier does not include registry support",
+        "The bootstrap cluster was deleted too early"],
+  a:[0,2],why:"A successful seed proves bastion-to-registry works. Node pulls fail on the node side: trust (self-signed cert not in the nodes' trust store, baked via the machine image or kubeadm config) or reachability (DNS, routing, firewall). Licensing does not gate registry pulls, and the bootstrap cluster's lifetime is unrelated to node image pulls."},
+ {obj:"1.2",q:"What is the purpose of the bootstrap cluster in an NKP installation?",
+  opts:["It becomes the permanent management cluster after installation",
+        "It is a temporary local cluster that runs the Cluster API controllers needed to create the management cluster, then is deleted after pivot",
+        "It load balances the control plane endpoints of workload clusters",
+        "It hosts Kommander during the installation"],
+  a:[1],why:"CAPI needs a Kubernetes cluster to run its controllers, but you do not have one yet. The NKP CLI spins up a temporary kind-based cluster on the install host, uses it to build the real management cluster, then PIVOTS the CAPI state into the new cluster and deletes the bootstrap. It never becomes permanent, never load balances, and Kommander installs later on the management cluster."},
+ {obj:"1.2",q:"During a management cluster build you want to inspect what the bootstrap cluster is doing. What is the supported approach?",
+  opts:["SSH into the bootstrap cluster's nodes",
+        "Output the bootstrap cluster's kubeconfig to a file and use kubectl against it",
+        "Open the Kommander dashboard",
+        "Read Prism Central tasks, the bootstrap cluster mirrors them"],
+  a:[1],why:"The blueprint references 'Outputting the Bootstrap Cluster Kubeconfig to a File' directly. With that kubeconfig you can kubectl into the bootstrap cluster and watch CAPI resources reconcile. It is a kind cluster in containers, not SSH-able VMs; Kommander does not exist yet at this stage."},
+ {obj:"1.3",multi:2,q:"A Customer wants to attach two existing EKS clusters to NKP, give four internal teams isolated self-service spaces, and use NKP Insights. Which TWO statements are correct?",
+  opts:["NKP Pro satisfies all requirements",
+        "NKP Ultimate is required",
+        "Attaching external clusters and Insights are Ultimate-tier capabilities",
+        "Attaching EKS requires NKP Starter plus an add-on",
+        "Insights is included in every tier"],
+  a:[1,2],why:"The tier heuristic: attach external (EKS/AKS/GKE) clusters, multi-tenancy at fleet scale, and NKP Insights all point to Ultimate. Pro covers production platform apps on Nutanix-deployed clusters but not the external-attach fleet story."},
+ {obj:"1.3",q:"A Customer runs one production NKP cluster on Nutanix and needs the supported monitoring, logging, and backup platform application stack, with no external clusters and no multi-tenant fleet features. The most cost-appropriate license tier is:",
+  opts:["Starter","Pro","Ultimate","Community Edition"],
+  a:[1],why:"Pro is the production single/multi cluster tier with the platform application stack. Ultimate adds fleet management, external attach, Insights, multi-tenancy, which this use case does not need. Starter lacks the production app stack; Community Edition is not an NKP license tier."},
+ {obj:"1.4",multi:3,q:"Which THREE must be true of a bastion host used for an air-gapped NKP install?",
+  opts:["It runs a supported Linux OS with a container runtime for the bootstrap cluster",
+        "It has network reachability to Prism Central and the private registry",
+        "It runs Windows Server with Docker Desktop",
+        "It hosts the NKP CLI and the transferred air-gapped bundles",
+        "It must be deployed as a VM inside the cluster it will create"],
+  a:[0,1,3],why:"The bastion is the install driver: supported Linux + container runtime (the bootstrap kind cluster runs here), lines of sight to Prism Central (to drive infrastructure) and to the registry (to seed/pull), and it holds the NKP CLI and bundles. Windows is not the supported path, and the bastion exists OUTSIDE the cluster it creates."},
+ {obj:"1.5",q:"What is the role of Konvoy Image Builder (KIB) in an NKP deployment?",
+  opts:["It builds the container images for Kommander's platform applications",
+        "It bakes node machine images (OS + Kubernetes payload) for the target provider, and can also prepare pre-provisioned nodes",
+        "It seeds the private registry",
+        "It generates CAPI manifests for the cluster"],
+  a:[1],why:"KIB produces the machine images cluster nodes boot from (containerd, kubelet, hardening baked in) for providers like Nutanix/vSphere/AWS, and runs node preparation for pre-provisioned hosts. Registry seeding is its own workflow, and CAPI manifests come from the NKP CLI dry run."},
+ {obj:"1.5",q:"Compared to a connected build, what fundamentally changes when building a machine image for an air-gapped environment?",
+  opts:["Nothing; image builds always run offline",
+        "Package sources and artifacts must come from local/internal mirrors and the air-gapped bundle instead of public repositories",
+        "The image must be built inside the bootstrap cluster",
+        "Air-gapped environments cannot use custom images"],
+  a:[1],why:"An air-gapped builder cannot reach upstream OS package repos or registries, so overrides point all package sources at internal mirrors and use the local air-gapped artifacts. Builds do not run inside the bootstrap cluster, and air-gapped installs rely MORE on custom-built images, not less."},
+ {obj:"1.6",multi:3,q:"You are gathering parameters to build a cluster on Nutanix infrastructure. Which THREE belong on the checklist per the blueprint's buckets?",
+  opts:["Subnet selection and a control plane endpoint/VIP that does not collide with pod/service CIDRs",
+        "Prism Central URL and credentials",
+        "The storage container backing the CSI driver / default StorageClass intent",
+        "The number of Kommander dashboards to license",
+        "The brand of physical switches in the datacenter"],
+  a:[0,1,2],why:"The blueprint's three buckets: networking (subnets, VIP, LB ranges, no CIDR overlap), connectivity (Prism Central endpoint + credentials, registry reachability, SSH keys), storage (container, StorageClass). Dashboard counts and switch brands are noise."},
+ {obj:"1.1/1.2",q:"Put an air-gapped NKP installation in the correct order:",
+  opts:["Bootstrap cluster → seed registry → management cluster → Kommander",
+        "Seed registry → bootstrap cluster → management cluster → Kommander",
+        "Kommander → management cluster → bootstrap cluster → seed registry",
+        "Management cluster → bootstrap cluster → seed registry → Kommander"],
+  a:[1],why:"The registry must hold the images BEFORE anything tries to pull them, and even the bootstrap cluster's images come from it in a true air gap. Then bootstrap → management cluster (pivot) → Kommander on top."},
+ {obj:"1.1",q:"Which network requirement applies to the private registry in an air-gapped NKP design?",
+  opts:["Only the bastion host ever needs to reach it",
+        "It must be reachable from the bastion AND from all current and future cluster nodes",
+        "It must have a public IP for Nutanix licensing callbacks",
+        "It must run on the management cluster itself"],
+  a:[1],why:"Every node that pulls images needs the registry: bootstrap host, management cluster nodes, workload cluster nodes. Bastion-only reachability is the classic broken design (seed works, clusters fail). Public IPs defeat the air gap, and the registry typically lives OUTSIDE the clusters it feeds."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>
