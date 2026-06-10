@@ -185,6 +185,78 @@
     }
     .group-card .pill b { color: var(--text-primary); font-weight: 600; }
 
+    section.ladder { margin: 64px 0 0; }
+    section.ladder h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    section.ladder .lead {
+      color: var(--text-secondary);
+      font-size: 15px;
+      margin: 0 0 16px;
+      max-width: 70ch;
+    }
+    .ladder-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .ladder-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 13px 18px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .ladder-list li:last-child { border-bottom: none; }
+    .ladder-list li.live { border-left: 3px solid var(--accent-gold); }
+    .ladder-list .tier {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      color: var(--text-tertiary);
+      min-width: 102px;
+    }
+    .ladder-list .code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      min-width: 84px;
+    }
+    .ladder-list li.live .code { color: var(--accent-gold); }
+    .ladder-list .name {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      flex: 1;
+    }
+    .ladder-list .go {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .ladder-list .go:hover { color: var(--accent-cyan); }
+    .ladder-list li.live .go {
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+    .ladder-list li.live .go:hover { color: var(--accent-cyan); }
+    @media (max-width: 640px) {
+      .ladder-list .tier { min-width: 100%; }
+    }
+
     section.anatomy { margin: 64px 0 0; }
     section.anatomy .lead {
       color: var(--text-secondary);
@@ -323,6 +395,61 @@
       </div>
     </section>
 
+    <section class="ladder">
+      <h2>The cert ladder</h2>
+      <p class="lead">Where each exam sits. One study group is built so far; the rest link to their blueprint coverage maps in <a href="../appendices/k-cert-tracker/index.html">Appendix K</a> until their study groups land here.</p>
+      <ul class="ladder-list">
+        <li>
+          <span class="tier">Expert</span>
+          <span class="code">NCX-MCI</span>
+          <span class="name">Multicloud Infrastructure Expert, live panel defense</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#ncx-mci">blueprint map &rarr;</a>
+        </li>
+        <li>
+          <span class="tier">Master</span>
+          <span class="code">NCM-MCI</span>
+          <span class="name">Multicloud Infrastructure Master</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#ncm-mci">blueprint map &rarr;</a>
+        </li>
+        <li>
+          <span class="tier">Professional</span>
+          <span class="code">NCP-MCI</span>
+          <span class="name">Multicloud Infrastructure, the core HCI cert</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#ncp-mci">blueprint map &rarr;</a>
+        </li>
+        <li class="live">
+          <span class="tier">Professional</span>
+          <span class="code">NCP-CN</span>
+          <span class="name">Cloud Native, Kubernetes on NKP</span>
+          <a class="go" href="NCP-CN-6.10/index.html">study group &rarr;</a>
+        </li>
+        <li>
+          <span class="tier">Professional</span>
+          <span class="code">NCP-NS</span>
+          <span class="name">Network Security, Flow microsegmentation</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#ncp-ns">blueprint map &rarr;</a>
+        </li>
+        <li>
+          <span class="tier">Professional</span>
+          <span class="code">NCP-US</span>
+          <span class="name">Unified Storage: Files, Objects, Volumes</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#ncp-us">blueprint map &rarr;</a>
+        </li>
+        <li>
+          <span class="tier">Professional</span>
+          <span class="code">NCP-MCA</span>
+          <span class="name">Multicloud Automation, Calm and lifecycle</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#ncp-mca">blueprint map &rarr;</a>
+        </li>
+        <li>
+          <span class="tier">Associate</span>
+          <span class="code">NCA</span>
+          <span class="name">Nutanix Certified Associate, the foundation</span>
+          <a class="go" href="../appendices/k-cert-tracker/index.html#nca">blueprint map &rarr;</a>
+        </li>
+      </ul>
+    </section>
+
     <section class="anatomy">
       <h2>What every study group contains</h2>
       <p class="lead">The groups share one anatomy, so once you have used one you know your way around all of them.</p>
@@ -337,9 +464,9 @@
 
     <section class="crossref">
       <p>
-        Looking for how the ten curriculum modules map to each exam blueprint?
-        That lives in <a href="../appendices/k-cert-tracker/index.html">Appendix K: Cert Tracker</a>.
-        The study groups here are the deep-prep packages; the modules are the foundation.
+        The <a href="../index.html#modules">ten curriculum modules</a> are the foundation
+        under every exam on the ladder; the study groups here are the exam-specific deep prep.
+        New to Nutanix entirely? Start with the modules.
       </p>
     </section>
 
