@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 04 · Conduct NKP Fleet Management</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 Study Guide · Section 4 of 4</p>
+  <h1>Conduct NKP Fleet Management</h1>
+  <p class="sub">Kommander's whole reason to exist: many clusters, many teams, one control plane. Workspaces and projects are the two nouns this section turns on; get their boundary crisp and half the questions answer themselves.</p>
+  <div class="meta">
+    <span class="pill">🎯 Objectives <b>4.1 – 4.6</b></span>
+    <span class="pill">📅 War plan: <b>Week 2, days 5-7</b></span>
+    <span class="pill">Versions <b>NKP 2.12 · AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">§0</span>The mental model first</h2>
+  <div class="card"><p style="margin:4px 0"><strong>Workspace</strong> = the big isolation box. Holds CLUSTERS (deployed or attached), workspace level platform applications, and workspace RBAC. Think business unit, environment tier, or tenant.<br><br>
+  <strong>Project</strong> = a slice INSIDE a workspace. Selects some/all of the workspace's clusters and projects a shared set of NAMESPACES onto them, with project RBAC, quotas/limit ranges, project apps, and GitOps continuous deployment. Think team or application.<br><br>
+  Hierarchy: <code>Global → Workspace → Project → (namespaces on clusters)</code>. Apps and RBAC can be set at each level and flow downward. Multi tenancy = workspaces per tenant, dedicated login URLs per tenant.</p></div>
+
+  <h2><span class="num">4.1</span>Configure workspaces</h2>
+  <p>Create/delete workspaces; assign each workload cluster to exactly one workspace; configure the <strong>infrastructure provider</strong> at workspace level (the credentials/endpoint Kommander uses to deploy clusters there, e.g. a Nutanix/Prism Central provider); set <strong>workspace level access control</strong> (roles federate to member clusters); deploy <strong>workspace applications</strong> (enabled per workspace, optionally per cluster). <strong>Insights</strong> (Ultimate) gives anomaly/health intelligence across the fleet; it has its own license install.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Given a use case, determine workload cluster workspace assignment": separate by tenant/team/environment when isolation, RBAC, or app set differ; same workspace when they share governance. Production vs dev with different admins = different workspaces.</div>
+
+  <h2><span class="num">4.2</span>Deploy workload clusters to a workspace</h2>
+  <p>From Kommander (UI or <code>nkp</code> CLI) you deploy <strong>managed clusters</strong> into a workspace, on whatever infrastructure provider the workspace has configured (Nutanix, vSphere, AWS, even VCD via the UI). The target provider determines the deployment parameters (Guide 01 §1.6) and what is possible. Lifecycle of a managed cluster (upgrade, scale, delete) is fully Kommander's.</p>
+  <p><strong>Troubleshooting deployment of a workload cluster</strong> = Guide 02's CAPI chain walk, but initiated from the management cluster; plus workspace level causes: wrong/expired infrastructure provider credentials, exhausted IP pools, image missing on that provider.</p>
+
+  <h2><span class="num">4.3</span>Attach clusters to a workspace</h2>
+  <p><strong>Attach</strong> brings an EXISTING cluster (built elsewhere: EKS, AKS, GKE, or any conformant Kubernetes) under Kommander management. Attached ≠ managed:</p>
+  <table>
+    <tr><th>Capability</th><th>Managed (NKP deployed)</th><th>Attached (existing)</th></tr>
+    <tr><td>Platform apps, monitoring, RBAC federation</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Lifecycle (upgrade/scale nodes) via Kommander</td><td>Yes</td><td>No, its own platform owns lifecycle</td></tr>
+  </table>
+  <p><strong>Attachment requirements:</strong> network reachability from the management cluster (or a <strong>tunneled attachment</strong> when the cluster is behind NAT/firewall and cannot be reached directly), a kubeconfig with sufficient privilege, cloud specifics for EKS (prepare the cluster, IAM/auth wiring), and a <strong>default StorageClass</strong> so platform apps that need persistence can provision volumes.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  Attach scenarios test the requirements list: "attached EKS cluster, monitoring apps stuck Pending" → no default StorageClass. "Cluster cannot be reached from the management cluster but must be attached" → tunneled attachment. Attaching external clusters at all = Ultimate license.</div>
+
+  <h2><span class="num">4.4</span>Detach or delete clusters</h2>
+  <p><strong>Decommissioning logic:</strong> <strong>detach</strong> an attached cluster (it keeps running, Kommander just stops managing it; platform apps Kommander federated may be left behind/cleaned), <strong>delete</strong> a managed cluster (the cluster and its provider resources are destroyed; "Delete an NKP Cluster with One Command" or via the Kommander dashboard GUI, including deleting EKS clusters from the UI when they were NKP deployed).</p>
+  <p><strong>Troubleshooting stuck detach/delete:</strong> finalizers holding resources, provider credentials no longer valid (cannot destroy what it cannot reach), or order of operations (delete workload clusters before the management cluster that owns them).</p>
+
+  <h2><span class="num">4.5</span>Configure projects</h2>
+  <p>Inside a workspace, a <strong>project</strong> targets selected clusters, creating the project namespace(s) on each. Project level features the blueprint names:</p>
+  <table>
+    <tr><th>Feature</th><th>What it gives you</th></tr>
+    <tr><td>Project access control</td><td>Roles/bindings scoped to the project's namespaces across its clusters</td></tr>
+    <tr><td>Project applications</td><td>Apps deployed to the project's clusters/namespaces</td></tr>
+    <tr><td>Quotas + limit ranges</td><td>Resource ceilings per project (CPU/mem/object counts), federated to all member clusters</td></tr>
+    <tr><td>Continuous Deployment (GitOps)</td><td>Flux based: point the project at a Git repo and manifests sync to project clusters automatically</td></tr>
+    <tr><td>Federated resources</td><td>ConfigMaps/Secrets/etc. stamped identically across the project's clusters</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  Workspace vs project disambiguation: quotas, GitOps CD, namespace level team isolation = PROJECT. Cluster membership, infrastructure providers, attach/deploy = WORKSPACE. "Add clusters to a project" selects from the workspace's clusters only.</div>
+
+  <h2><span class="num">4.6</span>Configure platform applications</h2>
+  <p>The curated catalog (monitoring, logging, security, ingress, backup...) Kommander deploys and manages. The blueprint's five knowledge bullets in plain words:</p>
+  <table>
+    <tr><th>Bullet</th><th>Means</th></tr>
+    <tr><td>Dependencies</td><td>Apps require other apps (Grafana needs Prometheus; logging dashboards need Loki). Enabling an app pulls or requires its dependencies; disabling one can break dependents.</td></tr>
+    <tr><td>Customize from the dashboard</td><td>Per app configuration overrides (values YAML) edited in the Kommander UI at workspace/cluster level</td></tr>
+    <tr><td>Global vs cluster scope</td><td>Configuration set once for everywhere vs overridden for a single cluster; cluster scope wins for that cluster</td></tr>
+    <tr><td>Troubleshoot configurations</td><td>HelmRelease/Flux status for the app, values syntax errors, dependency not enabled, resources insufficient</td></tr>
+    <tr><td>CLI control</td><td>Enable/disable/modify apps via CLI, not just UI ("Deploy Platform Applications Using CLI")</td></tr>
+  </table>
+
+  <h2><span class="num">§</span>Section 4 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">Workspaces hold clusters (deployed via the workspace's infrastructure provider, or attached with reachability + kubeconfig + default StorageClass, tunneled when unreachable, Ultimate when external). Projects slice workspaces into namespace level team spaces with RBAC, quotas, apps, federation, and GitOps CD. Platform applications deploy at global/workspace/cluster scope with dependencies, customized via overrides in UI or CLI. Detach releases attached clusters; delete destroys managed ones.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. Two Customers (tenants) on one NKP estate, each with prod + dev clusters and their own admins. Sketch the workspace/project layout.</p>
+    <p>2. An attached GKE cluster's logging apps will not start; volumes Pending. First thing you check?</p>
+    <p>3. What can Kommander do to a managed cluster that it cannot do to an attached one?</p>
+    <p>4. A team needs a CPU ceiling and Git driven deployments across three clusters in a workspace. Which construct and which two features?</p>
+    <p>5. Monitoring config must apply fleet wide except one cluster that needs different alert endpoints. How?</p>
+  </div>
+
+  <footer>
+    Sources: official NCP-CN 6.10 Exam Blueprint Guide Section 4 + referenced NKP 2.12 docs (Workspaces; Multi-Tenancy in NKP; Attaching an Existing Kubernetes Cluster; Requirements for Attaching Existing AKS, EKS, and GKE Clusters; Prerequisites for a Tunneled Attachment; Creating a Default StorageClass; Disconnecting or Deleting Clusters; Creating a Project Using the UI; Project Quotas and Limit Ranges; Continuous Delivery with GitOps; Platform Applications; Deployment Scope).<br>
+    <a class="next" href="../quizzes/section-4.html">Next · Quiz yourself on Section 4 →</a>
+  </footer>
+</div>
+</body>
+</html>

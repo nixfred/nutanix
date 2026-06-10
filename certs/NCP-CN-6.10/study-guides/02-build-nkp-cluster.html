@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 02 · Manage Building an NKP Cluster</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  pre{background:#0b1119;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.5}
+  pre code{border:none;background:none;padding:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 Study Guide · Section 2 of 4</p>
+  <h1>Manage Building an NKP Cluster</h1>
+  <p class="sub">Two objectives, but they carry the architecture of the whole platform: drive cluster creation with the NKP CLI + CAPI, then put Kommander on top and license it. If Section 1 was "before the build," this is the build.</p>
+  <div class="meta">
+    <span class="pill">🎯 Objectives <b>2.1 – 2.2</b></span>
+    <span class="pill">📅 War plan: <b>Week 1, days 6-7</b></span>
+    <span class="pill">Versions <b>NKP 2.12 · AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">2.1</span>Customize and deploy clusters</h2>
+  <p>The front door is the <strong>NKP CLI</strong>. One command family does the heavy lifting:</p>
+<pre><code># the canonical shape (Nutanix/AHV provider)
+nkp create cluster nutanix \
+  --cluster-name blueally-prod \
+  --endpoint https://prism-central.fqdn:9440 \      # Prism Central
+  --kubernetes-service-load-balancer-ip-range 10.0.50.10-10.0.50.29 \
+  --control-plane-endpoint-ip 10.0.50.5 \           # the cluster VIP
+  --subnets primary-subnet \
+  --vm-image nkp-rocky-9.4-release-...              # the KIB/NIB image from 1.5
+  # air-gapped adds registry mirror flags pointing at the seeded registry
+  # --self-managed pivots CAPI into the new cluster (management cluster builds)
+  # --dry-run -o yaml emits manifests instead of building (custom manifest path)</code></pre>
+  <p><strong>Customization beyond flags = CAPI.</strong> When a use case outgrows CLI flags (custom machine sizing per pool, special networking, taints/labels at birth), you generate the manifests (<code>--dry-run -o yaml</code>), edit the CAPI resources, and apply. Know which resource owns what:</p>
+  <table>
+    <tr><th>You want to change…</th><th>CAPI resource to touch</th></tr>
+    <tr><td>Cluster wide identity, networking CIDRs</td><td><code>Cluster</code> (+ provider cluster, e.g. <code>NutanixCluster</code>)</td></tr>
+    <tr><td>Control plane size/count/version</td><td><code>KubeadmControlPlane</code></td></tr>
+    <tr><td>Worker pool count, machine shape, labels</td><td><code>MachineDeployment</code> (one per node pool)</td></tr>
+    <tr><td>Per VM provider details (CPU, RAM, disk, subnet, image)</td><td>Provider machine template (e.g. <code>NutanixMachineTemplate</code>)</td></tr>
+    <tr><td>Node bootstrap/kubeadm config (registries, files, users)</td><td><code>KubeadmConfigTemplate</code></td></tr>
+  </table>
+  <div class="exam"><div class="h">Diagnosing a stuck deployment (exam loves this)</div>
+  Walk the ownership chain and read conditions/events where it stalls: <code>Cluster</code> → <code>KubeadmControlPlane</code> → <code>MachineDeployment</code> → <code>Machine</code> → <code>NutanixMachine</code>. Practical tools: <code>kubectl get cluster,machines -A</code>, <code>kubectl describe</code> on the first not-Ready object, and <code>clusterctl describe cluster</code> style tree views. Machines stuck in Provisioning usually mean provider side problems (credentials, subnet, image not found); nodes up but NotReady usually means CNI/registry reachability.</div>
+  <p><strong>Reading a use case for CLI parameters</strong> is mostly mapping nouns: "air-gapped" → registry mirror flags + seeded registry; "needs 5 workers with GPUs" → node pool/MachineDeployment sizing flags; "behind a VIP" → control plane endpoint IP; "on this subnet with this image" → <code>--subnets</code> / <code>--vm-image</code>.</p>
+
+  <h2><span class="num">2.2</span>Customize and deploy Kommander (and license it)</h2>
+  <p><strong>Kommander is the fleet management layer</strong>: the UI/API where workspaces, projects, platform applications, attached clusters, and licensing live. It installs onto the management cluster after the cluster itself is built:</p>
+<pre><code>nkp install kommander \
+  --installer-config kommander.yaml \   # the custom manifest for Kommander
+  --kubeconfig $MGMT_KUBECONFIG
+  # air-gapped: add the flag set pointing at the seeded registry</code></pre>
+  <p><strong>The installer config (custom manifest) is where you:</strong> enable/disable individual platform applications (don't deploy the full stack in a small environment), set app overrides (values), configure FIPS mode, and point at custom registries. "Installing Kommander in a Small Environment" is a named blueprint doc: trimming the default app set to fit constrained resources.</p>
+  <p><strong>Licensing:</strong> after Kommander is up, you apply the NKP license (Starter/Pro/Ultimate from objective 1.3) through the Kommander UI or CLI flow; Ultimate unlocks the multi cluster surface (attach external clusters, Insights, multi tenancy).</p>
+  <div class="exam"><div class="h">Diagnosing a Kommander deployment issue</div>
+  Kommander is Flux/HelmRelease driven under the hood: triage = check the install command output, then the HelmReleases/platform app pods in the kommander namespace, and verify registry reachability (air gap again). Small environment failures are typically resource exhaustion: the default platform app stack needs the Pro/Ultimate management cluster minimums from Guide 01 §1.6.</div>
+
+  <h2><span class="num">§</span>Section 2 in one breath</h2>
+  <div class="card"><p style="margin:4px 0"><code>nkp create cluster &lt;provider&gt;</code> with the right flags builds the cluster through CAPI; anything flags cannot express becomes a dry run manifest you edit at the correct CAPI resource and apply; diagnosis walks the Cluster→Machine ownership chain. Then <code>nkp install kommander</code> with an installer config puts the fleet layer on the management cluster, you license it to the right tier, and small environments trim the platform app set.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. You need a worker pool of 8 nodes with extra RAM while the CLI default gives you 4 uniform workers. Which two CAPI resources are involved in expressing that?</p>
+    <p>2. <code>nkp create cluster nutanix</code> hangs; Machines sit in Provisioning. Where do you look first and why?</p>
+    <p>3. What is the purpose of <code>--self-managed</code> on a management cluster build?</p>
+    <p>4. A Customer wants only monitoring, no logging stack, on a resource constrained management cluster. What mechanism delivers that during the Kommander install?</p>
+    <p>5. Which install step does the license get applied at, and what does Ultimate unlock that Pro does not?</p>
+  </div>
+
+  <footer>
+    Sources: official NCP-CN 6.10 Exam Blueprint Guide Section 2 + referenced NKP 2.12 docs (Installing NKP; Nutanix Air-gapped Environment Creating a New Cluster; Pro and Ultimate Cluster Minimum Requirements; Installing Kommander in a Small Environment; Additional Kommander Configuration; FIPS Support in NKP). CLI flags shown are representative shapes for study; verify exact syntax against NKP 2.12 docs before running in anger.<br>
+    <a class="next" href="03-day2-operations.html">Next · Guide 03: Perform Day 2 Operations →</a>
+  </footer>
+</div>
+</body>
+</html>

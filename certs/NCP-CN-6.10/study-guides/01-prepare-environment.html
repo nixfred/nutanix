@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 01 · Prepare the Environment for an NKP Deployment</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  pre{background:#0b1119;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.5}
+  pre code{border:none;background:none;padding:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 Study Guide · Section 1 of 4</p>
+  <h1>Prepare the Environment for an NKP Deployment</h1>
+  <p class="sub">Six objectives, one story: everything that has to exist BEFORE <code>nkp create cluster</code> can succeed. The exam loves this section's air-gapped angle because it is where real enterprise deployments hurt.</p>
+  <div class="meta">
+    <span class="pill">🎯 Objectives <b>1.1 – 1.6</b></span>
+    <span class="pill">📅 War plan: <b>Week 1, days 4-5</b></span>
+    <span class="pill">Versions <b>NKP 2.12 · AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">1.1</span>Seed a private registry</h2>
+  <p><strong>The problem:</strong> an air-gapped environment cannot pull images from the internet. NKP is delivered as downloadable <strong>bundles</strong> (container images + charts), and <em>seeding</em> means pushing those bundles into a private registry that lives inside the gap, so every cluster component can pull from it instead of from public registries.</p>
+  <div class="card"><p style="margin:4px 0"><strong>Workflow shape:</strong> download the NKP air-gapped bundle on a connected machine → transfer it across the gap (the classic sneakernet/controlled transfer) → run the NKP CLI push/seed command pointing at your registry URL with credentials → verify images are present → reference that registry in every subsequent install command.</p></div>
+  <p><strong>What the seeding command needs (parameters):</strong> the bundle location, the destination registry URL, registry username/password (or CA/cert material for TLS), and the registry must be reachable from the bastion AND from all future cluster nodes.</p>
+  <p><strong>Troubleshooting buckets:</strong> authentication failures (bad creds, expired tokens), TLS trust failures (self signed registry cert not trusted by the pushing host or by nodes), network reachability (DNS, firewall, proxy), and storage exhaustion on the registry (bundles are large).</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  Given a failed seed, pick the cause: if the push works from the bastion but nodes later fail to pull, think node-to-registry trust or DNS, not the seed itself. Know that the registry must exist BEFORE cluster creation in air-gapped installs and that both the bootstrap process and workload clusters pull from it.</div>
+
+  <h2><span class="num">1.2</span>Create a bootstrap cluster</h2>
+  <p>NKP builds Kubernetes with Kubernetes (CAPI, Guide 00 §7). The <strong>bootstrap cluster</strong> is a temporary, local, kind based cluster the NKP CLI spins up on your bastion/installer machine. Its only job: run the CAPI controllers that create the real <strong>management cluster</strong> on the target infrastructure. Once the management cluster is up, CAPI state <em>pivots</em> (moves) into it, and the bootstrap cluster is deleted.</p>
+  <p><strong>Purpose questions answer:</strong> "why does NKP need Docker/a container runtime on the install host?" Because the bootstrap cluster runs there. <strong>Parameter questions:</strong> the kubeconfig of the bootstrap cluster can be written out (<code>--kubeconfig</code> style output) so you can inspect it while it works; air-gapped bootstrap needs the registry mirror flags so even the bootstrap images come from your seeded registry.</p>
+  <p><strong>Troubleshooting buckets:</strong> the install host lacks resources or a working container runtime, the bootstrap cluster cannot reach the target infrastructure APIs (Prism Central credentials/URL wrong, network), or air-gapped image pulls fail (registry mirror not configured, untrusted CA).</p>
+
+  <h2><span class="num">1.3</span>License tiers: Starter, Pro, Ultimate</h2>
+  <table>
+    <tr><th>Tier</th><th>Aimed at</th><th>Headline capabilities</th></tr>
+    <tr><td>NKP Starter</td><td>Getting started, single cluster basics</td><td>Core Kubernetes cluster management on Nutanix; entry feature set</td></tr>
+    <tr><td>NKP Pro</td><td>Production single/multi cluster on Nutanix</td><td>Adds the production platform application stack (monitoring, logging, backup) for managed clusters</td></tr>
+    <tr><td>NKP Ultimate</td><td>Fleet scale + heterogeneous estates</td><td>Full multi cluster fleet management: multi tenancy with workspaces/projects, attach EXTERNAL clusters (EKS/AKS/GKE), NKP Insights, the whole Kommander surface</td></tr>
+  </table>
+  <p><strong>Alignment heuristic for scenario questions:</strong> the moment a scenario says attach an existing EKS/AKS/GKE cluster, multiple teams/tenants, centralized fleet dashboards, or Insights, the answer is <strong>Ultimate</strong>. Single Nutanix cluster with production observability reads as <strong>Pro</strong>. Kicking tires reads as <strong>Starter</strong>. Licenses are obtained through Nutanix licensing/support portal flows and applied in Kommander (add/remove license).</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Align the use case with a license tier" is verbatim blueprint. Also know the license nuance for backup/restore: full Velero based backup operations are tier gated, and the blueprint has a doc called "NKP License Support for Backup &amp; Restore" (objective 3.3 crossover).</div>
+
+  <h2><span class="num">1.4</span>Prepare a bastion host</h2>
+  <p>The <strong>bastion</strong> is the hardened jump machine inside the restricted network from which you run the NKP CLI and the whole install. In air-gapped designs it is usually the only thing that ever touched the outside world's artifacts.</p>
+  <div class="card"><p style="margin:4px 0"><strong>It needs:</strong> a supported Linux OS, a container runtime (for the bootstrap cluster), the NKP CLI + tooling, enough CPU/RAM/disk for bootstrap work, and <strong>network lines of sight</strong> to: Prism Central (to drive infrastructure), the private registry (to push/pull), and the node subnets the clusters will live on. SSH key access to nodes for pre provisioned installs.</p></div>
+
+  <h2><span class="num">1.5</span>Build machine images (KIB / NIB)</h2>
+  <p>Cluster nodes need an OS image with the right Kubernetes payload baked in. Two CLI tools, one idea:</p>
+  <table>
+    <tr><th>Tool</th><th>What it does</th></tr>
+    <tr><td>KIB · Konvoy Image Builder</td><td>Bakes machine images for cluster nodes across providers (Nutanix/AHV, vSphere, AWS, Azure...). Output: a template/AMI/image with containerd, kubelet, and OS hardening preinstalled. Also runs node preparation for pre provisioned hosts.</td></tr>
+    <tr><td>NIB · Nutanix Image Builder</td><td>The Nutanix flavored image building path for AHV images specifically (blueprint names both; know NIB = building machine images, KIB = the Konvoy lineage tool, also used to prepare nodes).</td></tr>
+  </table>
+  <p><strong>Prereqs/minimums:</strong> a base OS from the supported OS list, access to the provider (to upload the image), and for <strong>air-gapped image builds</strong>: local package repos / override files instead of public ones, because the builder cannot reach upstream repos. Customization happens through override files (e.g., FIPS variants, custom packages, vSphere FIPS CAPI VM templates).</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "What changes in an air-gapped image build?" → package sources/overrides point at internal mirrors and the artifact bundle is local. "When do you run node preparation instead of building an image?" → pre provisioned infrastructure where machines already exist.</div>
+
+  <h2><span class="num">1.6</span>Know your target provider's parameters</h2>
+  <p>Before building a cluster, gather the provider specific facts. The exam phrases this as "identify parameters associated with building a cluster on a target provider," in three buckets:</p>
+  <table>
+    <tr><th>Bucket</th><th>Nutanix/AHV examples</th></tr>
+    <tr><td>Networking</td><td>Which subnet(s) nodes join, control plane endpoint/VIP, load balancer IP ranges (MetalLB pool), DNS, no overlap with pod/service CIDRs</td></tr>
+    <tr><td>Connectivity</td><td>Prism Central URL + credentials, registry reachability, proxy settings if any, SSH keys for node access</td></tr>
+    <tr><td>Storage</td><td>Which storage container backs the CSI driver, default StorageClass intent, file vs volumes mode</td></tr>
+  </table>
+  <p>General resource floor: NKP publishes minimum CPU/RAM/disk per control plane and worker node, and Pro/Ultimate management clusters have their own larger minimums (Kommander's platform apps are not free). Supported OS list constrains image choice.</p>
+
+  <h2><span class="num">§</span>Section 1 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">Air gap? Seed a registry first. The NKP CLI runs on a bastion, spins a throwaway kind bootstrap cluster, which uses CAPI to build the real management cluster from machine images you baked with KIB/NIB, on a provider whose networking/connectivity/storage parameters you gathered up front, under a license tier matched to the use case. Every objective in this section is a piece of that sentence.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. Air-gapped install: name the order, registry seeding vs bootstrap cluster vs management cluster.</p>
+    <p>2. Customer wants to attach two existing EKS clusters and give four teams isolated self service. Which license tier and why?</p>
+    <p>3. Nodes fail to pull images after a successful seed from the bastion. Two most likely causes?</p>
+    <p>4. What is on a bastion host that makes the bootstrap cluster possible?</p>
+    <p>5. What changes about a KIB build when the environment is air-gapped?</p>
+  </div>
+
+  <footer>
+    Sources: official NCP-CN 6.10 Exam Blueprint Guide Section 1 + its referenced NKP 2.12 docs (Air-gapped vs Non-Air-gapped Environments; Seeding the Registry; CAPI Concepts and Terms; NKP Starter/Pro/Ultimate License; Creating a Bastion Host; Konvoy Image Builder; General NKP Resource Requirements; Supported Operating Systems).<br>
+    <a class="next" href="02-build-nkp-cluster.html">Next · Guide 02: Manage Building an NKP Cluster →</a>
+  </footer>
+</div>
+</body>
+</html>

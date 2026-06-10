@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 · Exam Day One-Pager</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:740px;margin:0 auto;padding:44px 22px 80px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:29px;margin:0 0 14px;letter-spacing:-.4px}
+  h2{font-size:15px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--purple);
+    margin:30px 0 8px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  table{width:100%;border-collapse:collapse}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600;white-space:nowrap;width:34%}
+  td:last-child{color:var(--muted)}
+  ul{margin:8px 0;padding-left:22px;color:var(--muted)}
+  li{margin:6px 0}
+  strong{color:#fff}
+  a{color:var(--teal);text-decoration:none}
+  .warn{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:14.5px}
+  .warn b{color:var(--amber)}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#ccc}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · BlueAlly Study Package</p>
+  <h1>Exam Day One-Pager</h1>
+
+  <h2>The numbers</h2>
+  <table>
+    <tr><td>Questions</td><td>75, multiple choice + multiple response (multi-response states how many to pick)</td></tr>
+    <tr><td>Time</td><td>120 minutes ≈ 96 seconds per question</td></tr>
+    <tr><td>Passing</td><td>3000 scaled on 1000-6000; questions are weighted, so raw % is a proxy only</td></tr>
+    <tr><td>Cost</td><td>$200 USD per attempt</td></tr>
+    <tr><td>Versions tested</td><td>NKP 2.12 · AOS 6.10 · Prism Central pc2024.2</td></tr>
+    <tr><td>Languages</td><td>English, Japanese</td></tr>
+    <tr><td>Validity</td><td>3 years; renew by re-pass, an equivalent NCP in another track, or NCM-MCI</td></tr>
+    <tr><td>Register</td><td><a href="https://university.nutanix.com/course?course_id=67598524e842c1118be3f103">university.nutanix.com (NCP-CN exam page)</a></td></tr>
+  </table>
+
+  <h2>Retakes (know before you book)</h2>
+  <ul>
+    <li>3 paid attempts total, <strong>7-day wait</strong> between each.</li>
+    <li>After attempt 3: <strong>60-day lockout</strong> (or email university@nutanix.com for a reset).</li>
+    <li>With a July 1 deadline: first attempt by <strong>June 23-24</strong> preserves one retake window. Do not book the first attempt on June 30.</li>
+  </ul>
+
+  <h2>Delivery</h2>
+  <ul>
+    <li><strong>Remote proctored:</strong> locked-down browser session, webcam, clean desk, no second monitor, government ID. Test your machine + network the day before.</li>
+    <li><strong>Test center:</strong> arrive 15 minutes early with government ID.</li>
+  </ul>
+
+  <div class="warn"><b>Integrity:</b> Nutanix revokes certifications for exam security violations (copying questions, study material during the exam, false identity). Braindump familiarity is also how Customers lose trust in a badge. We built this package clean for a reason.</div>
+
+  <h2>Final 48 hours</h2>
+  <ul>
+    <li>Mock exam score 70%+ consistently → book it. Below that, drill the weakest section, not your strongest.</li>
+    <li>Rebuild your <strong>cheat sheet</strong> (one page of personal weak facts) and review it the morning of. The vmik.net candidates swear by this.</li>
+    <li>Re-run the <a href="../flashcards/index.html">flashcards in drill-only mode</a> until the drill bucket is empty.</li>
+    <li>Skim the <a href="glossary.html">glossary</a> and the four "in one breath" boxes at the end of each study guide.</li>
+  </ul>
+
+  <h2>In the room</h2>
+  <ul>
+    <li>96 sec/question average; bank time on the gimmes. Flag and move on anything over 2 minutes.</li>
+    <li>Multi-response: the count is stated. Pick exactly that many; partial logic = eliminate the absurd two first.</li>
+    <li>Translate VMware-brain to Nutanix vocabulary BEFORE answering (the <a href="vmware-to-nutanix.html">legend</a>).</li>
+    <li>Scenario verbs are the blueprint's verbs: "determine," "given a use case," "troubleshoot." The answer is usually the OPERATIONAL one, not the cleverest one.</li>
+    <li>License tier tells: attach external / Insights / multi-tenant ⇒ Ultimate. Air gap tells: registry first, trust the CA, seed before upgrade.</li>
+  </ul>
+
+  <footer><a href="../index.html">← Study Hub</a> · Source: official NCP-CN 6.10 Exam Blueprint Guide sections 1.1-1.13.</footer>
+</div>
+</body>
+</html>

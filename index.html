@@ -313,6 +313,66 @@
       line-height: 1.45;
     }
 
+    /* Certification training: same shape as appendices, gold accent (exam semantics). */
+    section.certs {
+      margin: 64px 0 0;
+    }
+    section.certs h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    section.certs .lead {
+      color: var(--text-tertiary);
+      font-size: 14px;
+      margin: 0 0 16px;
+      max-width: 70ch;
+    }
+    section.certs .lead a { color: var(--text-secondary); }
+    section.certs .lead a:hover { color: var(--accent-cyan); }
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 980px) {
+      .cert-grid { grid-template-columns: 1fr; gap: 12px; }
+    }
+    .cert-card {
+      padding: 14px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid rgba(251, 191, 36, 0.55);
+      border-radius: 6px;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 150ms ease, transform 150ms ease;
+    }
+    a.cert-card:hover { border-color: var(--accent-cyan); border-left-color: var(--accent-cyan); transform: translateY(-1px); }
+    .cert-card .exam {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #fbbf24;
+      letter-spacing: 0.10em;
+      font-weight: 600;
+    }
+    .cert-card .title {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 4px;
+    }
+    .cert-card .lede {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
     /* Closing image: sits between .page and footer.
        Full-bleed; fades into bg-base on TOP (handoff from page content)
        and on BOTTOM (handoff to footer text). */
@@ -413,7 +473,7 @@
       </ul>
     </section>
 
-    <section class="modules">
+    <section class="modules" id="modules">
       <h2>Ten modules</h2>
       <div class="module-grid">
         <a class="module-card" href="modules/01-hci-foundations/index.html"><span class="num">01</span><span class="title">HCI Foundations</span><span class="lede">Why hyperconverged, what it replaces.</span></a>
@@ -429,7 +489,7 @@
       </div>
     </section>
 
-    <section class="appendices">
+    <section class="appendices" id="appendices">
       <h2>Eleven appendices</h2>
       <p class="lead">Reference toolkit. Pull these up between meetings: definitions, comparisons, objection framings, sizing math, CLI, and the cert blueprints in one place.</p>
       <div class="appendix-grid">
@@ -444,6 +504,15 @@
         <a class="appendix-card" href="appendices/i-reference-architectures/index.html"><span class="letter">I</span><span class="title">Reference Architectures</span><span class="lede">Multi-site DR, backup consolidation, ROBO, edge.</span></a>
         <a class="appendix-card" href="appendices/j-poc-playbook/index.html"><span class="letter">J</span><span class="title">POC Playbook</span><span class="lede">Demo flows, success criteria, customer scripts.</span></a>
         <a class="appendix-card" href="appendices/k-cert-tracker/index.html"><span class="letter">K</span><span class="title">Cert Tracker</span><span class="lede">Blueprint coverage map across all 10 modules.</span></a>
+      </div>
+    </section>
+
+    <section class="certs" id="certs">
+      <h2>Certification training</h2>
+      <p class="lead">Full prep packages, one study group per exam: blueprint-mapped study guides, original question banks, flashcards, and a timed mock exam. <a href="certs/index.html">Browse all study groups</a>.</p>
+      <div class="cert-grid">
+        <a class="cert-card" href="certs/NCP-CN-6.10/index.html"><span class="exam">NCP-CN · 6.10</span><span class="title">Cloud Native Study Group</span><span class="lede">NKP for VMware people: five study guides, a 127-question bank, flashcards, timed 75-question mock exam.</span></a>
+        <!-- Next study group card goes here. Pattern: folder under certs/, card on certs/index.html, card here. -->
       </div>
     </section>
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 03 · Perform Day 2 Operations</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  pre{background:#0b1119;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.5}
+  pre code{border:none;background:none;padding:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 Study Guide · Section 3 of 4</p>
+  <h1>Perform Day 2 Operations</h1>
+  <p class="sub">Six objectives, the biggest section, and per community intel the densest question territory: auth, logging, backup, monitoring, autoscaling, lifecycle. The platform is built; now you run it.</p>
+  <div class="meta">
+    <span class="pill">🎯 Objectives <b>3.1 – 3.6</b></span>
+    <span class="pill">📅 War plan: <b>Week 2, days 1-4</b></span>
+    <span class="pill">Versions <b>NKP 2.12 · AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">3.1</span>Authentication and authorization</h2>
+  <p><strong>Authentication:</strong> NKP embeds <strong>Dex</strong> as an OIDC broker. You configure an <strong>identity provider</strong> (external LDAP directory, OIDC, SAML) in Kommander, map <strong>groups</strong> from the IdP, and users sign in through a generated login URL (per tenant URLs exist for multi tenancy). Service/automation access uses <strong>tokens</strong>.</p>
+  <p><strong>Authorization is layered, and the layering is the exam question:</strong></p>
+  <table>
+    <tr><th>Layer</th><th>Governs</th><th>Examples</th></tr>
+    <tr><td>Kommander roles</td><td>The fleet management plane</td><td>Who can administer workspaces, projects, attach clusters, deploy platform apps</td></tr>
+    <tr><td>Cluster roles (plain K8s RBAC)</td><td>Inside each cluster</td><td>Role/ClusterRole + bindings from Guide 00 §4; what users can do to workloads</td></tr>
+  </table>
+  <p><strong>Role inheritance / environment contexts:</strong> grants flow downhill. A role granted at the workspace level federates to the clusters in that workspace; project level grants scope to the project's namespaces on its clusters. Custom roles + role bindings let you go finer than the built ins. <strong>Gatekeeper</strong> (OPA admission policy) is the policy enforcement piece the blueprint names under security.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  Scenario gives a permission outcome and asks which layer to touch. Heuristic: anything about seeing/administering workspaces, projects, or platform apps = Kommander role. Anything about pods/deployments/namespaces on a specific cluster = cluster RBAC. "User authenticates fine but sees nothing" = authenticated via Dex but no role binding at any layer.</div>
+
+  <h2><span class="num">3.2</span>Logging</h2>
+  <p>The NKP logging stack is a platform application set built on the <strong>Logging Operator</strong> with <strong>Loki</strong> as the log store and <strong>Grafana</strong> as the view. It is <strong>not enabled by default</strong>; you enable the logging stack apps per workspace/cluster.</p>
+  <table>
+    <tr><th>Piece</th><th>Job</th></tr>
+    <tr><td>Logging Operator</td><td>Orchestrates collection: Fluent Bit agents on nodes, flows/outputs route logs</td></tr>
+    <tr><td>Loki</td><td>Stores logs (label indexed, object storage friendly)</td></tr>
+    <tr><td>Grafana (logging)</td><td>Query/view logs</td></tr>
+  </table>
+  <p><strong>Multi tenant logging:</strong> restrict who sees which logs by scoping flows to namespaces/tenants, so each team views only its own. <strong>Persistence and scale:</strong> Loki's backend can target object storage (the blueprint names an S3 example and integrating persistent data with <strong>Nutanix Unified Storage</strong>, i.e. Objects/Files); scaling the stack means scaling Loki components and collectors for volume.</p>
+
+  <h2><span class="num">3.3</span>Backup and recovery (Velero)</h2>
+  <p><strong>Velero</strong> backs up cluster API objects + persistent volume data. NKP ships it in the platform app stack (license tier gated; "NKP License Support for Backup &amp; Restore").</p>
+  <div class="card"><p style="margin:4px 0"><strong>Dependencies to recognize:</strong> a <strong>target object storage location</strong> for backup data (S3 compatible; Nutanix Objects works), credentials for it, and <strong>VolumeSnapshotClasses</strong> (CSI) so PV data can be snapshotted. No target storage, no backups.</p></div>
+<pre><code># the Velero CLI vocabulary the blueprint expects
+velero backup create nightly-app --include-namespaces team-a
+velero schedule create nightly --schedule "0 2 * * *"   # cron shaped
+velero backup get / describe / logs                      # diagnose
+velero restore create --from-backup nightly-app</code></pre>
+  <p><strong>Diagnosing backup issues:</strong> backup PartiallyFailed or Failed → read <code>velero backup logs</code>; usual suspects are storage location credentials/reachability, snapshot class missing/misconfigured, or namespace scoping. <strong>Cluster restore</strong> = restoring from a backup into a rebuilt/replacement cluster; restores are how you prove backups (test them).</p>
+
+  <h2><span class="num">3.4</span>Performance and health monitoring</h2>
+  <p>The monitoring stack platform apps: <strong>Prometheus</strong> (scrape + store metrics), <strong>Alertmanager</strong> (route alerts), <strong>Grafana</strong> (dashboards). Per cluster stacks, plus <strong>centralized metrics</strong> in a multi cluster fleet: the management cluster aggregates/federates so you watch the estate from one place (Kommander dashboards; <strong>NKP Insights</strong> adds anomaly detection at Ultimate).</p>
+  <p><strong>Customization the blueprint expects you to know exists:</strong> custom dashboards in Grafana, custom service/system level metrics (ServiceMonitors scraping your apps), <strong>alert rules + notification endpoints</strong> (where Alertmanager sends: email/webhook/chat), and <strong>backend storage for the monitoring app</strong> (Prometheus retention needs a PV; size it or it falls over).</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Centralize monitoring in a multi cluster environment" → management cluster federation/centralized metrics, not logging into 12 Grafanas. "Configure backend storage for a monitoring application" → PVC/StorageClass sizing for Prometheus. Health diagnosis questions pair metrics (what is slow) with the platform app status (what is broken).</div>
+
+  <h2><span class="num">3.5</span>Cluster autoscaling</h2>
+  <p><strong>What it is:</strong> the <strong>Cluster Autoscaler</strong> grows/shrinks a node pool between min and max bounds based on pod schedulability: pods Pending for lack of resources → scale up; nodes underutilized → scale down. This is NODE autoscaling (vs HPA scaling pods; know the difference cold).</p>
+  <p><strong>Configuring it:</strong> per node pool min/max settings; provider specific configuration exists for Nutanix, AWS, and vSphere (the blueprint lists all three docs). Use cases: bursty workloads, cost control, CI farms.</p>
+
+  <h2><span class="num">3.6</span>Lifecycle management</h2>
+  <table>
+    <tr><th>Operation</th><th>How it works in NKP</th></tr>
+    <tr><td>Upgrade clusters</td><td>Sequenced: check Upgrade Prerequisites, upgrade the management cluster/Kommander first, then workload clusters; CAPI rolls nodes with new machine images (Kubernetes version upgrades on managed clusters). Air-gapped upgrades have their own doc: new bundles seeded to the registry first. Pro vs Ultimate upgrade docs differ in scope (fleet vs single).</td></tr>
+    <tr><td>Update cluster configuration</td><td>Edit the owning CAPI resource (Guide 02 table) and let reconcile do it; scenario questions ask when config update vs rebuild is right</td></tr>
+    <tr><td>Manage node pools</td><td>Create/resize/delete pools = MachineDeployments; heterogeneous pools for different workload shapes</td></tr>
+    <tr><td>Manually scale</td><td>Bump replica count on a node pool (CLI or UI); autoscaler bounds vs manual setpoints</td></tr>
+    <tr><td>Delete clusters</td><td><code>nkp delete cluster</code> ("Delete an NKP Cluster with One Command"); cleans up provider resources; managed vs attached matters (Guide 04)</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  Upgrade ORDER is the classic: management cluster before workload clusters; air gap means re-seed the registry with the new release bundle BEFORE anything. Node pool questions hinge on MachineDeployment being the unit of scaling.</div>
+
+  <h2><span class="num">§</span>Section 3 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">Dex authenticates against your IdP; Kommander roles govern the fleet plane while cluster RBAC governs inside, with inheritance flowing workspace → project → cluster. The logging stack (Logging Operator + Loki) and monitoring stack (Prometheus + Alertmanager + Grafana, centralized at the management cluster) are platform apps you enable, customize, persist, and scale. Velero needs object storage + snapshot classes and is driven by its CLI. The autoscaler manages node counts per pool bounds. Upgrades flow management first, air gaps re-seed first, and node pools are MachineDeployments.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. A user logs in via LDAP fine but sees an empty Kommander UI. What is missing, and at which layer?</p>
+    <p>2. Velero backups fail with storage location errors. Name the two dependencies you verify first.</p>
+    <p>3. Team A must not see Team B's logs in Grafana. What feature solves this and what is it scoped to?</p>
+    <p>4. Pods sit Pending at 9am daily, nodes idle by noon. Which feature, and what two bounds configure it?</p>
+    <p>5. Air-gapped fleet upgrade from NKP 2.12 to the next release: what is step zero, and which cluster upgrades first?</p>
+  </div>
+
+  <footer>
+    Sources: official NCP-CN 6.10 Exam Blueprint Guide Section 3 + referenced NKP 2.12 docs (NKP Security; Access Control; External LDAP Directory Configuration; NKP Logging; Logging Operator; Multi-Tenant Logging; Velero Configuration; Backup Operations; Centralized Metrics; Monitoring and Alerts; Configuring Nutanix/AWS/vSphere Cluster Autoscaler; Upgrade Prerequisites; Upgrading Kubernetes Version on a Managed Cluster), plus upstream <a href="https://velero.io/docs/">Velero</a> and <a href="https://prometheus.io/docs/">Prometheus</a> docs.<br>
+    <a class="next" href="04-fleet-management.html">Next · Guide 04: Conduct NKP Fleet Management →</a>
+  </footer>
+</div>
+</body>
+</html>

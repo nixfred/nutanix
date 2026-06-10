@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VMware → Nutanix / NKP Translation Legend</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--vmw:#6db1ff;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:980px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:31px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 22px;max-width:760px}
+  input#filter{width:100%;padding:12px 16px;border-radius:11px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);font-size:16px;font-family:var(--font);outline:none;margin-bottom:8px}
+  input#filter:focus{border-color:var(--teal)}
+  .hint{font-size:12.5px;color:var(--muted);margin:0 0 14px;font-family:var(--mono)}
+  h2{font-size:15px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--purple);
+    margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  table{width:100%;border-collapse:collapse;margin:0 0 8px}
+  th{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+    text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}
+  td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px}
+  td.vmw{color:var(--vmw);font-weight:600;width:24%}
+  td.ntx{color:var(--teal);font-weight:600;width:26%}
+  td.note{color:var(--muted);font-size:14px}
+  tr:hover td{background:rgba(124,124,240,.05)}
+  .warn{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:20px 0;font-size:14.5px}
+  .warn b{color:var(--amber)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.87em;color:#cfe}
+  footer{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb;--vmw:#0a58c0;--teal:#067a74;--purple:#5b5bd0}
+    body{font-size:11pt}input#filter,.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">BlueAlly SA Reference · NCP-CN 6.10 Companion</p>
+  <h1>VMware → Nutanix / NKP Translation Legend</h1>
+  <p class="sub">You already know this stuff, you just know it by its VMware name. Left column is the world you come from, middle is what Nutanix calls it, right is the catch. Two layers: core infrastructure first, then the cloud native layer the NCP-CN exam actually tests.</p>
+
+  <input id="filter" type="search" placeholder="Filter… try 'vMotion', 'Tanzu', 'DRS', 'registry'">
+  <p class="hint">Rows filter live across both tables. Print this page for a desk copy.</p>
+
+  <div class="warn"><b>Exam warning:</b> the NCP-CN exam speaks pure Nutanix. If you answer in your head with VMware vocabulary, translate before you click. Tested stack: NKP 2.12 on AOS 6.10 with Prism Central pc2024.2.</div>
+
+  <h2>Layer 1 · Core Infrastructure (the world NKP sits on)</h2>
+  <table id="t1">
+    <tr><th>VMware</th><th>Nutanix</th><th>What to know</th></tr>
+    <tr><td class="vmw">vCenter Server</td><td class="ntx">Prism Central (PC)</td><td class="note">Multi cluster management plane. Prism Element is per cluster (closer to the ESXi host client than to vCenter).</td></tr>
+    <tr><td class="vmw">ESXi</td><td class="ntx">AHV</td><td class="note">Nutanix's free KVM based hypervisor. No per CPU hypervisor licensing. Nutanix also runs on ESXi itself, but NKP on AHV is the home game.</td></tr>
+    <tr><td class="vmw">vSAN</td><td class="ntx">AOS storage / DSF (Distributed Storage Fabric)</td><td class="note">Software defined storage pooled from local disks. The Controller VM (CVM) on every node serves I/O; there is no kernel module equivalent.</td></tr>
+    <tr><td class="vmw">vMotion</td><td class="ntx">Live Migration</td><td class="note">Same concept, AHV native. Data locality means hot data follows the VM after it lands.</td></tr>
+    <tr><td class="vmw">DRS</td><td class="ntx">ADS (Acropolis Dynamic Scheduling)</td><td class="note">Automatic initial placement plus hotspot remediation. Less knob heavy than DRS; it is on by default.</td></tr>
+    <tr><td class="vmw">vSphere HA</td><td class="ntx">VM High Availability</td><td class="note">Restart VMs from a failed host. Reserved segments vs admission control vocabulary differs, behavior rhymes.</td></tr>
+    <tr><td class="vmw">DRS affinity / anti-affinity rules</td><td class="ntx">Affinity Policies</td><td class="note">VM-host and VM-VM anti-affinity, defined in Prism. NCA level, but appears in NKP node placement conversations.</td></tr>
+    <tr><td class="vmw">vSphere Standard/Distributed Switch</td><td class="ntx">Open vSwitch (OVS) virtual switch</td><td class="note">Bond types (active-backup, balance-slb, LACP) replace NIC teaming policies. Managed vs unmanaged networks replace port groups with/without IPAM.</td></tr>
+    <tr><td class="vmw">NSX</td><td class="ntx">Flow Virtual Networking</td><td class="note">Microsegmentation and virtual networking. Not deep on the CN exam but the name comes up.</td></tr>
+    <tr><td class="vmw">Storage Policy / datastore</td><td class="ntx">Storage Container</td><td class="note">Containers carry RF (replication factor), compression, dedup, erasure coding settings.</td></tr>
+    <tr><td class="vmw">VM Template / Content Library</td><td class="ntx">VM Template / Images (Prism Central)</td><td class="note">Image service in PC distributes images across clusters.</td></tr>
+    <tr><td class="vmw">SRM / vSphere Replication</td><td class="ntx">Leap / Protection Policies / Recovery Plans</td><td class="note">DR orchestration. Async replication with 1 hour or greater RPO is the classic tier.</td></tr>
+    <tr><td class="vmw">vRealize / Aria Operations</td><td class="ntx">Prism Central monitoring + NCC health checks</td><td class="note">NCC is the cluster health checker; Pulse is the phone home telemetry.</td></tr>
+    <tr><td class="vmw">VUM / vLCM (Lifecycle Manager)</td><td class="ntx">LCM (Life Cycle Manager)</td><td class="note">One LCM inventories and upgrades firmware AND software across the cluster. Same acronym, easy translation.</td></tr>
+  </table>
+
+  <h2>Layer 2 · Cloud Native (what NCP-CN actually tests)</h2>
+  <table id="t2">
+    <tr><th>VMware</th><th>Nutanix</th><th>What to know</th></tr>
+    <tr><td class="vmw">Tanzu / TKG (Tanzu Kubernetes Grid)</td><td class="ntx">NKP (Nutanix Kubernetes Platform)</td><td class="note">The whole K8s platform. NKP descends from D2iQ's DKP (Konvoy + Kommander), acquired by Nutanix. Exam version: NKP 2.12.</td></tr>
+    <tr><td class="vmw">TKG management cluster / Supervisor</td><td class="ntx">NKP Management Cluster (runs Kommander)</td><td class="note">The cluster that manages the fleet. Kommander is the fleet management application on it.</td></tr>
+    <tr><td class="vmw">Tanzu Mission Control (TMC)</td><td class="ntx">Kommander</td><td class="note">Multi cluster fleet management: workspaces, projects, platform apps, attach foreign clusters (EKS/AKS/GKE). Heart of exam Section 4.</td></tr>
+    <tr><td class="vmw">Tanzu Kubernetes Cluster (workload cluster)</td><td class="ntx">Managed / Workload Cluster</td><td class="note">Deployed from the management cluster into a workspace, via NKP UI or <code>nkp</code> CLI.</td></tr>
+    <tr><td class="vmw">Cluster API (CAPI) under TKG</td><td class="ntx">Cluster API (CAPI) under NKP</td><td class="note">Same upstream tech. Bootstrap cluster (temporary kind cluster) creates the management cluster, then CAPI resources (Cluster, MachineDeployment, etc.) drive everything. Exam objectives 1.2 and 2.1.</td></tr>
+    <tr><td class="vmw">vSphere CSI driver</td><td class="ntx">Nutanix CSI driver</td><td class="note">StorageClasses backed by Nutanix Volumes or Files. Default StorageClass matters for attach scenarios (objective 4.3).</td></tr>
+    <tr><td class="vmw">Harbor (private registry)</td><td class="ntx">Private registry + registry seeding</td><td class="note">NKP does not ship a registry; you bring one and SEED it with NKP bundles for air-gapped installs. Heavy exam topic (objective 1.1).</td></tr>
+    <tr><td class="vmw">TKG node images (BYOI)</td><td class="ntx">KIB / NIB (Konvoy/Nutanix Image Builder)</td><td class="note">CLI tools that bake OS machine images for cluster nodes, or prepare pre provisioned nodes. Objective 1.5.</td></tr>
+    <tr><td class="vmw">Pinniped / vSphere SSO integration</td><td class="ntx">Dex (OIDC) identity provider</td><td class="note">NKP embeds Dex for IdP federation (LDAP, OIDC, SAML upstreams). Kommander roles vs cluster roles distinction is objective 3.1.</td></tr>
+    <tr><td class="vmw">Velero on TKG</td><td class="ntx">Velero on NKP</td><td class="note">Identical tool. Backup schedules, volume snapshot classes, restores via Velero CLI. Objective 3.3.</td></tr>
+    <tr><td class="vmw">Prometheus/Grafana via Tanzu packages</td><td class="ntx">Platform Applications (monitoring stack)</td><td class="note">Kommander ships curated platform apps: Prometheus, Grafana, Loki based logging, Gatekeeper policy. Enabled per workspace or per cluster; global vs cluster scope is objective 4.6.</td></tr>
+    <tr><td class="vmw">Fluent Bit logging on TKG</td><td class="ntx">Logging stack (Logging Operator + Loki + Grafana)</td><td class="note">Multi tenant logging, scaling the stack, persisting to Nutanix Unified Storage. Objective 3.2.</td></tr>
+    <tr><td class="vmw">Cluster Autoscaler on TKG</td><td class="ntx">NKP Cluster Autoscaler</td><td class="note">Per provider configuration (Nutanix, AWS, vSphere). Objective 3.5.</td></tr>
+    <tr><td class="vmw">TMC cluster groups</td><td class="ntx">Workspaces</td><td class="note">Logical isolation boundary for clusters + apps + RBAC. Projects subdivide workspaces for teams/namespaces with quotas and GitOps CD. Workspace vs project distinctions are exam gold (objectives 4.1, 4.5).</td></tr>
+    <tr><td class="vmw">TMC attach cluster</td><td class="ntx">Attach cluster to a workspace</td><td class="note">Attach existing EKS/AKS/GKE or any conformant cluster to Kommander. Requirements + tunneled attachment + default StorageClass are objective 4.3.</td></tr>
+    <tr><td class="vmw">Tanzu editions licensing</td><td class="ntx">NKP Starter / Pro / Ultimate</td><td class="note">Feature gates: multi cluster fleet management, Insights, FIPS, attach counts vary by tier. Aligning use case to tier is objective 1.3. Licenses applied through Kommander.</td></tr>
+    <tr><td class="vmw">Argo CD via Tanzu</td><td class="ntx">Continuous Deployment in Projects (GitOps, Flux based)</td><td class="note">Project level CD wiring a Git repo to clusters. Objective 4.5.</td></tr>
+    <tr><td class="vmw">jumpbox</td><td class="ntx">Bastion host</td><td class="note">The machine you run NKP installs from in restricted/air-gapped networks. Prereqs + network requirements are objective 1.4.</td></tr>
+  </table>
+
+  <footer>
+    Part of the BlueAlly NCP-CN 6.10 study package · <a href="../index.html">Study Hub</a> · <a href="ncp-cn-6.10-blueprint-objectives.md">Blueprint map</a> · Sources: official NCP-CN 6.10 Exam Blueprint Guide, NKP 2.12 documentation. VMware and all VMware product names are trademarks of Broadcom.
+  </footer>
+</div>
+<script>
+document.getElementById('filter').addEventListener('input',function(){
+  var q=this.value.toLowerCase();
+  document.querySelectorAll('#t1 tr, #t2 tr').forEach(function(tr,i){
+    if(!tr.querySelector('td'))return;
+    tr.style.display = tr.textContent.toLowerCase().indexOf(q)>-1 ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>

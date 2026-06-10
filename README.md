@@ -93,6 +93,16 @@ NCA        Associate      foundational concepts, 20-40 hr prep
 
 Each module declares per-exam coverage in its YAML front matter. Appendix K maps every blueprint domain to the modules and appendices that teach it, with study sequences, hands-on labs, and the specific pitfalls each cert tier hides.
 
+## Certification training
+
+Beyond the curriculum, [`/certs/`](https://nixfred.com/nutanix/certs/) hosts full exam-prep study groups, one self-contained package per exam. Each group follows the same anatomy: study guides written to the official blueprint sections, section quizzes with explanations, a timed blueprint-weighted mock exam, flashcards, and a reference shelf (exam-day one-pager, glossary, official blueprint PDF).
+
+| Study group | What it gets you |
+|---|---|
+| [NCP-CN 6.10](https://nixfred.com/nutanix/certs/NCP-CN-6.10/) | Cloud Native (NKP): 5 study guides, 127-question bank, flashcards, timed 75-question mock, VMware translation legend |
+
+Adding a new study group takes three steps: drop a self-contained folder under `certs/` (for example `certs/NCP-MCI-6.10/`), add its card to `certs/index.html`, and add its card to the homepage Certification Training section. The card templates live as HTML comments at both insertion points.
+
 ## What makes it different
 
 - **One file per page.** No framework, no bundler, no node_modules. Each module is a single self-contained HTML file. Each hero is a single SVG. View source and the whole thing is right there.
@@ -128,6 +138,9 @@ nutanix/
 ├── 404.html                     # terminal-aesthetic miss
 ├── modules/                     # 10 module pages, one HTML each
 ├── appendices/                  # 11 appendix pages, one HTML each
+├── certs/                       # certification training: one study group per exam
+│   ├── index.html               # study-group directory
+│   └── NCP-CN-6.10/             # self-contained prep package (guides, quizzes, flashcards)
 ├── public/
 │   ├── images/                  # 21 hand-authored hero SVGs + share-card.png
 │   └── favicon.svg              # NX monogram
