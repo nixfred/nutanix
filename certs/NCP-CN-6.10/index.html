@@ -36,6 +36,9 @@
   .warn{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:22px 0;font-size:14.5px}
   .warn b{color:var(--amber)}
   a{color:var(--teal)}
+  .vgroup{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--amber);margin:20px 0 10px}
+  .vgroup:first-of-type{margin-top:6px}
+  a.card .src{font-family:var(--mono);font-size:11px;color:var(--good);margin-bottom:6px;text-transform:none;letter-spacing:0}
   footer{margin-top:50px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
 </style>
 </head>
@@ -76,6 +79,31 @@
     <a class="card" href="quizzes/section-4.html"><div class="n">Quiz · 14 Q</div><div class="t">Section 4 Quiz</div><div class="d">Workspace vs project judgment calls.</div></a>
     <a class="card" href="quizzes/mock-exam.html" style="border-color:var(--amber)"><div class="n" style="color:var(--amber)">Mock · 75 Q · timed</div><div class="t">Full Mock Exam</div><div class="d">120-minute countdown, blueprint-weighted, per-section breakdown. 70%+ = schedule the real one.</div></a>
     <a class="card" href="flashcards/index.html"><div class="n">Daily · 70+ cards</div><div class="t">Flashcards</div><div class="d">Five decks, know/drill buckets, drill-only mode. Coffee-break weapon.</div></a>
+  </div>
+
+  <h2>Video training</h2>
+  <p class="sub">Deep technical training, free on YouTube, ordered the way the package is: Kubernetes foundation first (the exam assumes CKA-level fluency), then the NKP platform itself from Nutanix University, then the GitOps continuous-delivery internals Section 4 leans on. Every link was checked live. Watch on 1.5x; pause and lab it.</p>
+
+  <p class="vgroup">Kubernetes foundation · assume CKA-level going in</p>
+  <div class="grid">
+    <a class="card" href="https://www.youtube.com/watch?v=l57xKN6OBhY" target="_blank" rel="noopener"><div class="src">freeCodeCamp.org</div><div class="t">CKA Exam Preparation (2026 Update)</div><div class="d">Full-length Kubernetes course taught to the CKA blueprint. The single best free foundation if your Kubernetes is rusty. Start here.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=5zImYn0isPk" target="_blank" rel="noopener"><div class="src">CodingWithPassion</div><div class="t">Kubernetes Architecture: Control Plane</div><div class="d">API server, etcd, scheduler, controller manager, kubelet. The mental model the exam keeps testing sideways.</div></a>
+  </div>
+
+  <p class="vgroup">NKP platform · Nutanix University, the exam product itself</p>
+  <div class="grid">
+    <a class="card" href="https://www.youtube.com/watch?v=MpD_xTg8jqk" target="_blank" rel="noopener"><div class="src">Nutanix University</div><div class="t">Deploy Your First Cluster with NKP</div><div class="d">The Section 2 build path end to end. Vendor walkthrough of the exact workflow you get scored on.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=jT6N2c32ETE" target="_blank" rel="noopener"><div class="src">Nutanix University</div><div class="t">Lifecycle Management with NKP and Cluster API</div><div class="d">CAPI customization and diagnosis: the densest Section 2 objective, straight from the source.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=-lNuG7bMNVU" target="_blank" rel="noopener"><div class="src">Nutanix University</div><div class="t">NKP Management Simplified: The Console</div><div class="d">Day 2 operations tour: cluster create, app deploy, the Kommander surface. Maps Section 3.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=l1UKBvtsgEk" target="_blank" rel="noopener"><div class="src">Nutanix University</div><div class="t">NKP Insights: Security and Compliance</div><div class="d">Proactive monitoring and compliance, a Section 3 day-2 objective most candidates underweight.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=Cc9Ng7soVDo" target="_blank" rel="noopener"><div class="src">Nutanix University</div><div class="t">Network Policies for Containerized Apps</div><div class="d">Securing workloads with NKP network policies. Section 3 again, the part people fumble live.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=gqdqimJ7MSQ" target="_blank" rel="noopener"><div class="src">Nutanix University</div><div class="t">Expand with NKP Managed Clusters</div><div class="d">Attach and manage clusters across the fleet. Core Section 4 workspace-and-project judgment.</div></a>
+    <a class="card" href="https://www.youtube.com/watch?v=It4zoQQwBgw" target="_blank" rel="noopener"><div class="src">Nutanix</div><div class="t">Manage Kubernetes at Scale: Fleet Ops</div><div class="d">Multi-cloud, DR, and fleet operations at scale. The Section 4 story, shown at its limit.</div></a>
+  </div>
+
+  <p class="vgroup">GitOps and cloud native CD · Section 4 continuous delivery</p>
+  <div class="grid">
+    <a class="card" href="https://www.youtube.com/watch?v=Fs_Oz-RzWWI" target="_blank" rel="noopener"><div class="src">CNCF</div><div class="t">Flux: The GitOps Operator (Deep Dive)</div><div class="d">Stefan Prodan on how Flux reconciles desired state from Git. The internals behind NKP's GitOps CD.</div></a>
   </div>
 
   <h2>Reference shelf</h2>
