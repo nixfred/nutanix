@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 · Hands-on Labs (local, no Nutanix)</title>
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:900px;margin:0 auto;padding:40px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 10px}
+  h1{font-size:32px;margin:0 0 10px;letter-spacing:-.5px}
+  .sub{color:var(--muted);margin:0 0 22px;max-width:760px;font-size:16.5px}
+  h2{font-size:15px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--purple);
+    margin:40px 0 14px;border-bottom:1px solid var(--line);padding-bottom:9px;scroll-margin-top:16px}
+  h3{font-size:18px;margin:26px 0 4px}
+  .map{font-family:var(--mono);font-size:12px;color:var(--amber);margin:0 0 10px}
+  .map b{color:var(--ink)}
+  p{margin:10px 0}
+  a{color:var(--teal)}
+  pre{background:#0b1119;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.5;color:#cfe;margin:12px 0}
+  pre .c{color:var(--muted)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--line);
+    color:var(--good);padding:3px 10px;border-radius:999px;margin-left:6px}
+  .note{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:20px 0;font-size:14.5px}
+  .note b{color:var(--amber)}
+  .scope{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:16px 20px;margin:18px 0;font-size:14.5px}
+  .scope .yes{color:var(--good)} .scope .no{color:var(--bad)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:10px 0}
+  a.vcard{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;color:var(--ink);text-decoration:none;transition:.15s}
+  a.vcard:hover{border-color:var(--teal);transform:translateY(-2px)}
+  a.vcard .n{font-family:var(--mono);font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:.07em}
+  a.vcard .t{font-weight:700;color:#fff;margin:5px 0 3px;font-size:15px}
+  a.vcard .d{font-size:13px;color:var(--muted)}
+  ol.toc{columns:2;font-size:14.5px;color:var(--muted)}
+  ol.toc a{text-decoration:none}
+  footer{margin-top:50px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  .crumb{font-family:var(--mono);font-size:12.5px;margin:0 0 20px}
+  .crumb a{color:var(--muted);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="crumb"><a href="../index.html">&larr; NCP-CN 6.10 Study Hub</a></p>
+  <p class="kicker">BlueAlly SA Training Package</p>
+  <h1>Hands-on Labs (local, no Nutanix)</h1>
+  <p class="sub">No NKP cluster, no Prism Central, no online lab access required. NKP is a curated bundle of upstream CNCF projects, so you can build the muscle memory for most of the exam's hands-on objectives on your own laptop with kind and free tooling. Every command here was run on macOS (Apple Silicon) with colima before publishing.</p>
+
+  <div class="scope">
+    <strong>What these labs cover, and what they cannot.</strong>
+    <p><span class="yes">Covered (the upstream mechanics NKP is built on):</span> Kubernetes architecture and kubectl, RBAC, the Cluster API object model, GitOps with Flux, OPA Gatekeeper admission policy, the Prometheus monitoring stack, and Velero backup and restore. That is roughly 70% of the exam's hands-on territory, taught with the exact tools NKP ships.</p>
+    <p><span class="no">Not covered (stays book-knowledge from the study guides and NKPA videos):</span> the Nutanix infrastructure provider parameters (Prism Central endpoint, subnets, KIB images), the Kommander UI and its workspaces, projects, and platform-app catalog, and the NKP licensing flow. Those need a real NKP estate. The labs build the foundation; the guides carry the product specifics.</p>
+  </div>
+
+  <h2>Watch first</h2>
+  <p>Three verified primers, in order, before you start. Basics, then exam-grade Kubernetes, then the NKP product itself.</p>
+  <div class="grid">
+    <a class="vcard" href="https://youtu.be/s_o8dwzRlu4" target="_blank" rel="noopener"><div class="n">TechWorld with Nana · 1:12</div><div class="t">Kubernetes Crash Course</div><div class="d">Architecture, pods, services, config, deployments. The foundation.</div></a>
+    <a class="vcard" href="https://youtu.be/l57xKN6OBhY" target="_blank" rel="noopener"><div class="n">freeCodeCamp · 2:06</div><div class="t">CKA Exam Prep (2026)</div><div class="d">CKA-level depth: RBAC, storage, networking, troubleshooting.</div></a>
+    <a class="vcard" href="https://youtu.be/ZIcqkMfOMpA" target="_blank" rel="noopener"><div class="n">Nutanix University · 0:57</div><div class="t">Kubernetes in Production with NKP</div><div class="d">The product tour: fleet, workspaces, GitOps, CAPI, observability.</div></a>
+  </div>
+
+  <h2>Setup (once)</h2>
+  <p>Install the toolchain, start a container runtime, and create a local cluster. The cluster you create is a kind (Kubernetes in Docker) cluster, which is exactly what NKP uses for its temporary bootstrap cluster (Section 1).</p>
+<pre><span class="c"># install the toolchain (Homebrew)</span>
+brew install colima docker kind helm clusterctl fluxcd/tap/flux velero kubectl
+
+<span class="c"># start a container runtime (no Docker Desktop license needed)</span>
+colima start --cpu 6 --memory 12 --disk 60
+
+<span class="c"># create the lab cluster, then confirm the node is Ready</span>
+kind create cluster --name ncpcn-lab
+kubectl --context kind-ncpcn-lab get nodes
+</pre>
+
+  <h2>The labs</h2>
+  <ol class="toc">
+    <li><a href="#l0">kind and kubectl: the control plane</a></li>
+    <li><a href="#l1">RBAC: Role and RoleBinding</a></li>
+    <li><a href="#l2">Cluster API: the object model</a></li>
+    <li><a href="#l3">Flux: GitOps continuous delivery</a></li>
+    <li><a href="#l4">Gatekeeper: admission policy</a></li>
+    <li><a href="#l5">Prometheus: the monitoring stack</a></li>
+    <li><a href="#l6">Velero: backup and restore</a></li>
+  </ol>
+
+  <h3 id="l0">Lab 0 &middot; kind and kubectl: the control plane <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 1 / 2</b> &middot; the bootstrap cluster (Q5, Q6), NotReady troubleshooting (Q22)</p>
+  <p>Deploy and expose an app, then look at what is actually running. The kube-system namespace shows the control plane the exam keeps testing sideways: etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kube-proxy.</p>
+<pre>kubectl --context kind-ncpcn-lab create namespace demo
+kubectl -n demo create deployment web --image=nginx:stable --replicas=2
+kubectl -n demo expose deployment web --port=80 --type=ClusterIP
+kubectl -n demo rollout status deployment/web
+
+<span class="c"># the control plane, live</span>
+kubectl -n kube-system get pods
+</pre>
+  <p><span class="c">// Observe:</span> kind is Kubernetes in Docker. No container runtime, no kind cluster, no NKP install. That is the literal reason the install host needs a runtime (Q6).</p>
+
+  <h3 id="l1">Lab 1 &middot; RBAC: Role and RoleBinding <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 3</b> &middot; in-cluster RBAC vs fleet RBAC (Q34, Q35)</p>
+  <p>Grant a service account read-only pod access in one namespace, then prove the boundary with <code>kubectl auth can-i</code>. This is the in-cluster Kubernetes RBAC side of the distinction; the Kommander workspace and project roles are the fleet-plane side that federates downward.</p>
+<pre>kubectl create namespace team-a
+kubectl -n team-a create serviceaccount dev
+kubectl -n team-a create role pod-reader --verb=get,list,watch --resource=pods
+kubectl -n team-a create rolebinding dev-pod-reader --role=pod-reader --serviceaccount=team-a:dev
+
+kubectl auth can-i list pods   --as=system:serviceaccount:team-a:dev -n team-a    <span class="c"># yes</span>
+kubectl auth can-i list pods   --as=system:serviceaccount:team-a:dev -n default   <span class="c"># no  (Role is namespaced)</span>
+kubectl auth can-i delete pods --as=system:serviceaccount:team-a:dev -n team-a    <span class="c"># no  (verb not granted)</span>
+</pre>
+  <p><span class="c">// Note:</span> <code>kubectl auth can-i</code> exits non-zero on a "no". Handy in scripts, and a small detail worth knowing.</p>
+
+  <h3 id="l2">Lab 2 &middot; Cluster API: the object model <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 2</b> &middot; management cluster (Q7), KubeadmControlPlane vs MachineDeployment (Q21, Q23), the generate/dry-run workflow (Q20)</p>
+  <p>Install the Cluster API controllers with the Docker provider. The exam tests the CAPI object model, which is provider-agnostic: the Nutanix provider swaps in for Docker, but the objects are identical. After init, the management cluster manages itself, exactly as NKP pivots CAPI state into the management cluster.</p>
+<pre>clusterctl init --infrastructure docker
+
+<span class="c"># the CAPI object model, now live as CRDs:</span>
+kubectl get crds | grep cluster.x-k8s.io
+<span class="c">#  clusters                  -> the top-level cluster object</span>
+<span class="c">#  kubeadmcontrolplanes      -> owns control-plane replicas + k8s version (Q21)</span>
+<span class="c">#  machinedeployments        -> one per worker pool, owns worker replicas (Q23)</span>
+<span class="c">#  machinesets / machines    -> the layers beneath a MachineDeployment</span>
+<span class="c">#  dockermachinetemplates    -> machine shapes (NutanixMachineTemplate on real NKP)</span>
+
+<span class="c"># the provider controllers (management cluster is self-managing, Q7):</span>
+kubectl get deploy -A | grep -E 'capi-|capd-'
+
+<span class="c"># the customization workflow (Q20): render editable manifests instead of applying</span>
+clusterctl generate cluster my-cluster --kubernetes-version v1.31.0 \
+  --control-plane-machine-count=1 --worker-machine-count=2 &gt; my-cluster.yaml
+</pre>
+  <p><span class="c">// Note:</span> on a default kind cluster the Docker provider will not boot real worker nodes without mounting the host Docker socket, which is a Docker-provider quirk, not exam content. The exam tests the object model and the generate-then-apply workflow, which is what this lab makes concrete. On real NKP the same <code>clusterctl</code> and CAPI objects drive Nutanix nodes through Prism Central.</p>
+
+  <h3 id="l3">Lab 3 &middot; Flux: GitOps continuous delivery <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 4</b> &middot; GitOps CD (Q72), Flux reconciliation and HelmReleases (Q29)</p>
+  <p>Install Flux, point it at a Git repo, and watch it reconcile the manifests into the cluster automatically. This is exactly the project-level Continuous Delivery mechanism NKP exposes, and the Flux HelmReleases you inspect when Kommander platform apps misbehave.</p>
+<pre>flux install
+
+flux create source git podinfo \
+  --url=https://github.com/stefanprodan/podinfo --branch=master --interval=1m
+
+flux create kustomization podinfo \
+  --source=GitRepository/podinfo --path="./kustomize" --prune=true \
+  --interval=5m --target-namespace=default --wait
+
+flux get kustomizations
+kubectl -n default get deploy podinfo     <span class="c"># deployed straight from Git</span>
+</pre>
+
+  <h3 id="l4">Lab 4 &middot; Gatekeeper: admission policy <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 3</b> &middot; OPA Gatekeeper "no privileged containers" admission rule (Q37)</p>
+  <p>Install Gatekeeper, write a constraint that forbids privileged containers, and watch the admission webhook block one. Scope it to a single namespace so it cannot interfere with system pods.</p>
+<pre>kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.22.2/deploy/gatekeeper.yaml
+kubectl -n gatekeeper-system rollout status deploy/gatekeeper-controller-manager
+
+<span class="c"># the policy: a ConstraintTemplate (the rule) + a Constraint (where it applies)</span>
+kubectl apply -f - &lt;&lt;'EOF'
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdenyprivileged
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDenyPrivileged
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sdenyprivileged
+        violation[{"msg": msg}] {
+          c := input.review.object.spec.containers[_]
+          c.securityContext.privileged == true
+          msg := sprintf("Privileged container not allowed: %v", [c.name])
+        }
+EOF
+kubectl wait --for condition=established crd/k8sdenyprivileged.constraints.gatekeeper.sh --timeout=90s
+
+kubectl create namespace policy-demo
+kubectl apply -f - &lt;&lt;'EOF'
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDenyPrivileged
+metadata:
+  name: no-privileged
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces: ["policy-demo"]
+EOF
+
+<span class="c"># this is DENIED by the admission webhook:</span>
+kubectl -n policy-demo run priv --image=nginx:stable --restart=Never \
+  --overrides='{"spec":{"containers":[{"name":"priv","image":"nginx:stable","securityContext":{"privileged":true}}]}}'
+<span class="c"># Error: admission webhook "validation.gatekeeper.sh" denied the request:</span>
+<span class="c">#        [no-privileged] Privileged container not allowed: priv</span>
+
+<span class="c"># a normal pod is ALLOWED:</span>
+kubectl -n policy-demo run ok --image=nginx:stable --restart=Never
+</pre>
+
+  <h3 id="l5">Lab 5 &middot; Prometheus: the monitoring stack <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 3</b> &middot; the monitoring trio (Q47), ServiceMonitor (Q49), vs the logging stack</p>
+  <p>Install kube-prometheus-stack and confirm the trio the exam loves to swap with logging components: Prometheus collects metrics, Alertmanager routes alerts, Grafana shows dashboards. Logging is the other stack (Loki stores, Grafana views, the Logging Operator collects).</p>
+<pre>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install kps prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+
+<span class="c"># the trio, live</span>
+kubectl -n monitoring get pods | grep -E 'prometheus-kps|grafana|alertmanager'
+
+<span class="c"># the CRD behind scraping a custom app's metrics (Q49)</span>
+kubectl get crd servicemonitors.monitoring.coreos.com
+</pre>
+  <p><span class="c">// Note:</span> install without a blocking <code>--wait</code> and poll readiness instead; this chart pulls many images and a blocking wait can stall.</p>
+
+  <h3 id="l6">Lab 6 &middot; Velero: backup and restore <span class="pill">validated</span></h3>
+  <p class="map">Maps to <b>Section 3</b> &middot; backup to object storage (Q41), velero backup (Q44), velero restore (Q45)</p>
+  <p>Stand up MinIO as S3-compatible object storage, install Velero against it, then back up a namespace, delete it, and restore it. Backups land in object storage with working credentials, which is one of Velero's two foundational dependencies.</p>
+<pre>kubectl apply -f https://raw.githubusercontent.com/vmware-tanzu/velero/main/examples/minio/00-minio-deployment.yaml
+kubectl -n velero rollout status deploy/minio
+
+printf '[default]\naws_access_key_id = minio\naws_secret_access_key = minio123\n' &gt; minio-creds
+
+velero install --provider aws --plugins velero/velero-plugin-for-aws:v1.12.0 \
+  --bucket velero --secret-file minio-creds --use-volume-snapshots=false \
+  --backup-location-config region=minio,s3ForcePathStyle=true,s3Url=http://minio.velero.svc:9000
+
+<span class="c"># back up the demo namespace from Lab 0, delete it, restore it</span>
+velero backup create demo-bak --include-namespaces demo --wait
+kubectl delete ns demo
+velero restore create demo-restore --from-backup demo-bak --wait
+kubectl -n demo get deploy web      <span class="c"># back from the backup</span>
+</pre>
+  <div class="note"><b>Honest scope on Velero:</b> this lab validates resource-level backup and restore to object storage (Q41, Q44, Q45). Velero's second dependency, snapshotting persistent-volume data via CSI VolumeSnapshotClasses (Q43, Q46), needs the external-snapshotter controller plus a snapshot-capable CSI driver, which a default kind cluster does not ship. The PV-snapshot path is real and on the exam; it is just not exercised in this minimal local setup. Understand it from the study guide.</div>
+
+  <h2>Cleanup</h2>
+<pre>kind delete cluster --name ncpcn-lab
+colima stop          <span class="c"># frees the VM; colima start brings it back</span>
+</pre>
+
+  <footer>Every command above was run on macOS (Apple Silicon) with colima and kind before publishing. Labs build the upstream-CNCF foundation NKP is assembled from; the Nutanix and Kommander specifics live in the <a href="../index.html">study guides</a>. Original content, no braindump material. <a href="../index.html">Back to the Study Hub</a></footer>
+</div>
+</body>
+</html>
