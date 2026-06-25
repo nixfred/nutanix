@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 · Flashcards</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;font-size:16px}
+  .wrap{max-width:680px;margin:0 auto;padding:36px 20px 80px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+  .decks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .deckbtn{background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:8px 14px;
+    border-radius:999px;cursor:pointer;font-size:13.5px;font-family:var(--font)}
+  .deckbtn.active{border-color:var(--teal);color:var(--teal);font-weight:700}
+  #stage{perspective:1200px;margin:10px 0}
+  #card{position:relative;width:100%;min-height:280px;cursor:pointer;
+    transform-style:preserve-3d;transition:transform .45s}
+  #card.flip{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:1px solid var(--line);
+    background:var(--panel);display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:28px;text-align:center}
+  .face.back{transform:rotateY(180deg);border-color:var(--purple)}
+  .face .label{position:absolute;top:14px;left:18px;font-family:var(--mono);font-size:11px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.1em}
+  .face .obj{position:absolute;top:14px;right:18px;font-family:var(--mono);font-size:11px;color:var(--purple)}
+  .face .txt{font-size:19px;font-weight:600;color:#fff}
+  .face.back .txt{font-size:16px;font-weight:400;color:var(--ink)}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .btn{border:none;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer;font-size:14.5px;font-family:var(--font)}
+  .know{background:var(--good);color:#03130c}
+  .drill{background:var(--bad);color:#fff}
+  .skip{background:var(--panel);color:var(--muted);border:1px solid var(--line)}
+  .meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:14px}
+  .meta b{color:var(--amber)}
+  .modebar{margin-top:10px;text-align:center}
+  .modebar button{background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+  a{color:var(--teal);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCA 6.10 · BlueAlly Study Package</p>
+  <h1>Flashcards</h1>
+  <p class="sub">Tap the card to flip. Mark it <b style="color:var(--good)">Know it</b> or <b style="color:var(--bad)">Drill it</b>; your buckets persist in this browser. Drill mode replays only what you keep missing. Built for the 10-minute coffee break.</p>
+  <div class="decks" id="decks"></div>
+  <div id="stage">
+    <div id="card">
+      <div class="face front"><span class="label">Question</span><span class="obj" id="fobj"></span><div class="txt" id="ftxt"></div></div>
+      <div class="face back"><span class="label">Answer</span><span class="obj" id="bobj"></span><div class="txt" id="btxt"></div></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="btn drill" onclick="mark(false)">Drill it</button>
+    <button class="btn skip" onclick="next()">Skip</button>
+    <button class="btn know" onclick="mark(true)">Know it</button>
+  </div>
+  <div class="meta"><span id="pos"></span><span>known <b id="kn">0</b> · drilling <b id="dr">0</b></span></div>
+  <div class="modebar">
+    <button onclick="toggleMode()" id="modebtn">Switch to drill-only mode</button> ·
+    <button onclick="shuffleDeck()">Shuffle</button> ·
+    <button onclick="resetDeck()">Reset deck progress</button>
+  </div>
+  <footer><a href="../index.html">← Study Hub</a> · Cards sourced from the NCA 6.10 blueprint objectives and verified against Nutanix docs.</footer>
+</div>
+<script>
+var DECKS={
+"S1 · Lifecycle":[
+ ["What does LCM update?","Both cluster SOFTWARE (AOS, Foundation, Prism, NCC) and hardware FIRMWARE, with dependency resolution.","1.1"],
+ ["First LCM step before updating?","Inventory: scans the cluster for running versions and available updates.","1.2"],
+ ["LCM with no internet?","Host the dark-site bundle on a local web server and point LCM at it.","1.3"],
+ ["Prism Element vs Prism Central updates?","PE upgrades with AOS via LCM; PC is a separate component with its own upgrade path.","1.1"],
+ ["How does LCM protect uptime during reboots?","Rolling, node-by-node updates; VMs are live-migrated/HA-protected around reboots.","1.2"],
+ ["Why must Inventory run first?","It discovers installed versions and the compatible updates LCM will sequence.","1.2"],
+ ["LCM firmware support beyond Nutanix NX?","Qualified OEMs (Dell, HPE, Cisco, Lenovo, Fujitsu) and NC2.","1.1"],
+ ["What does LCM NOT update?","Guest OS patches inside your VMs, and application data.","1.1"]],
+"S2 · Administration":[
+ ["How is AHV licensed?","Included free in every NCI license; a new node ships with AHV by default.","2.1"],
+ ["AHV is built on?","KVM, hardened and operationalized by Nutanix.","2.1"],
+ ["Live Migration vs HA?","Live Migration = planned, no-downtime move of a running VM. HA = restart of VMs after an unplanned host failure.","2.2"],
+ ["What is ADS?","Acropolis Dynamic Scheduling: automatic, on by default, balances VM load to avoid hot spots (AHV's DRS).","2.2"],
+ ["Prism Element vs Prism Central?","PE: built into AOS, in every CVM, one cluster. PC: separate VM, manages many clusters across sites.","2.3"],
+ ["Which AOS tier for Metro, encryption, microsegmentation?","Ultimate.","2.4"],
+ ["AOS Starter limits?","Up to 12 nodes per cluster, RF2; async (>=1 hr), compression, dedup, LCM.","2.4"],
+ ["What does Pro add over Starter?","RF3, erasure coding, GPU passthrough, multi-site replication, >12 nodes.","2.4"],
+ ["acli vs ncli?","acli = VM/network operations; ncli = cluster-level operations.","2.1"],
+ ["What requires NGT?","Application-consistent (VSS) snapshots; NGT also gives Self-Service Restore and VirtIO drivers.","2.1"]],
+"S3 · Health":[
+ ["Health check vs alert?","Checks are scheduled/proactive (NCC); alerts are event-driven, with info/warning/critical severities.","3.1"],
+ ["What is NCC?","Nutanix Cluster Check: the health-check framework scanning config, performance, and operation.","3.2"],
+ ["What is Pulse?","Proactive telemetry: securely sends cluster health/config data to Nutanix on a schedule.","3.3"],
+ ["Pulse is packaged with?","NCC, so its checks/telemetry stay current regardless of AOS/hypervisor version.","3.3"],
+ ["Where to see status and resiliency at a glance?","The Prism Health dashboard.","3.1"],
+ ["Run all NCC checks command?","ncc health_checks run_all (or run NCC from Prism).","3.2"],
+ ["What is the Support Portal for?","Downloads, license management, support cases, and documentation/KB.","3.4"],
+ ["What does Insights provide?","Predictive health and support automation, fed by Pulse telemetry.","3.3"]],
+"S4 · Cluster Config":[
+ ["Where are RF and optimizations set?","On the storage CONTAINER (not the pool or vDisk).","4.1"],
+ ["Storage hierarchy?","Storage pool (raw disks) → container (policy) → vDisk (VM disk); served by the CVM/DSF.","4.1"],
+ ["RF2/FT1: failures tolerated and min nodes?","Tolerates 1 failure; minimum 3 nodes.","4.2"],
+ ["RF3/FT2: failures tolerated and min nodes?","Tolerates 2 failures; minimum 5 nodes.","4.2"],
+ ["Default cluster redundancy?","RF2 / FT1.","4.2"],
+ ["Dedup best fit?","VDI and full clones (many VMs share identical blocks).","4.3"],
+ ["Erasure coding (EC-X) best fit and timing?","Cold data; post-process on data write-cold for more than 7 days.","4.3"],
+ ["General-purpose default optimization?","Compression (LZ4/LZ4HC), inline >64KB or post-process.","4.3"],
+ ["Supported hypervisors?","AHV (default), VMware ESXi, Microsoft Hyper-V.","4.4"],
+ ["What is NC2?","The full Nutanix stack on bare-metal instances in AWS and Azure.","4.4"],
+ ["Two-node ROBO cluster needs?","An external Witness VM in a separate failure domain.","4.5"],
+ ["AHV default OVS bridge?","br0 (default bond br0-up); CVM and host on the native/untagged VLAN.","4.6"],
+ ["What does Foundation do?","Images bare-metal nodes with AOS + a hypervisor and forms a cluster; ~3 IPs per node.","4.7"]],
+"Key Numbers":[
+ ["NCA exam: questions and time?","50 questions, 90 minutes.","exam"],
+ ["NCA passing score and scale?","3000, on a 1000-6000 scale.","exam"],
+ ["NCA cost and validity?","$99; certification is valid 3 years.","exam"],
+ ["Platform baseline for NCA 6.10?","AOS 6.10 and Prism Central pc2024.2.","exam"],
+ ["Min nodes: RF2 / RF3?","RF2 = 3 nodes; RF3 = 5 nodes.","4.2"],
+ ["Async / NearSync / Metro RPOs?","Async >= 60 min; NearSync 1-15 min; Metro 0 (synchronous).","4.4"],
+ ["Erasure coding cold threshold?","More than 7 days write-cold (post-process).","4.3"],
+ ["Inline compression I/O threshold?","Large/sequential I/O over 64 KB.","4.3"],
+ ["One-node ROBO guest-VM limit?","Selected hardware, reduced resiliency, limited guest-VM count.","4.5"]]
+};
+var deckName=Object.keys(DECKS)[0],mode='all',order=[],pos=0;
+var LS='nca-flash-v1';
+function store(){try{return JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){return{}}}
+function save(s){localStorage.setItem(LS,JSON.stringify(s))}
+function key(i){return deckName+'::'+i}
+function buildOrder(){
+ var s=store(),cards=DECKS[deckName],idx=[];
+ for(var i=0;i<cards.length;i++){
+  var st=s[key(i)];
+  if(mode==='drill' && st==='know')continue;
+  idx.push(i);
+ }
+ order=idx;pos=0;
+}
+function renderDecks(){
+ var d=document.getElementById('decks');d.innerHTML='';
+ Object.keys(DECKS).forEach(function(n){
+  var b=document.createElement('button');b.className='deckbtn'+(n===deckName?' active':'');b.textContent=n;
+  b.onclick=function(){deckName=n;buildOrder();show();renderDecks();};
+  d.appendChild(b);
+ });
+}
+function counts(){
+ var s=store(),k=0,dr=0;
+ DECKS[deckName].forEach(function(_,i){var st=s[key(i)];if(st==='know')k++;if(st==='drill')dr++;});
+ document.getElementById('kn').textContent=k;document.getElementById('dr').textContent=dr;
+}
+function show(){
+ var c=document.getElementById('card');c.classList.remove('flip');
+ if(!order.length){document.getElementById('ftxt').textContent= mode==='drill'?'Drill bucket empty. Nice.':'Deck empty';
+  document.getElementById('btxt').textContent='';document.getElementById('pos').textContent='0 / 0';counts();return;}
+ var i=order[pos%order.length],card=DECKS[deckName][i];
+ setTimeout(function(){
+  document.getElementById('ftxt').textContent=card[0];
+  document.getElementById('btxt').textContent=card[1];
+  document.getElementById('fobj').textContent='obj '+card[2];
+  document.getElementById('bobj').textContent='obj '+card[2];
+ },c.classList.contains('flip')?220:0);
+ document.getElementById('pos').textContent=(pos%order.length+1)+' / '+order.length+' · '+deckName+(mode==='drill'?' · DRILL':'');
+ counts();
+}
+function next(){pos++;show()}
+function mark(know){
+ if(!order.length)return;
+ var s=store();s[key(order[pos%order.length])]=know?'know':'drill';save(s);
+ if(mode==='drill'&&know){order.splice(pos%order.length,1);} else {pos++;}
+ show();
+}
+function toggleMode(){
+ mode=mode==='all'?'drill':'all';
+ document.getElementById('modebtn').textContent=mode==='all'?'Switch to drill-only mode':'Switch to all-cards mode';
+ buildOrder();show();
+}
+function shuffleDeck(){order.sort(function(){return Math.random()-.5});pos=0;show()}
+function resetDeck(){
+ if(!confirm('Reset know/drill progress for this deck?'))return;
+ var s=store();DECKS[deckName].forEach(function(_,i){delete s[key(i)]});save(s);buildOrder();show();
+}
+document.getElementById('card').addEventListener('click',function(){this.classList.toggle('flip')});
+renderDecks();buildOrder();show();
+</script>
+</body>
+</html>

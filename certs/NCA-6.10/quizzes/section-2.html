@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 Quiz · Section 2: Basic Administration</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCA 6.10 · Question Bank</p>
+  <h1>Section 2 Quiz: Basic Administration</h1>
+  <p class="sub">13 original questions on VM management, AHV resiliency, the two Prism planes, and licensing, calibrated to blueprint Section 2. Every answer is grounded in Nutanix documentation.</p>
+  <div id="scorebar">Score: 0 / 13 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions, written against the NCA 6.10 Exam Blueprint Guide and verified against Nutanix docs. <a href="../study-guides/02-basic-administration.html">← Back to Guide 02</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"2.1",q:"How is the AHV hypervisor licensed?",
+  opts:["Sold separately per socket","Included at no extra licensing cost in every NCI license","Free only for 90 days","Requires a VMware ELA"],
+  a:[1],why:"AHV is included at no additional licensing cost in every Nutanix Cloud Infrastructure (NCI) license, and a new node ships with AHV by default. It is not sold per-socket or time-limited."},
+ {obj:"2.1",q:"AHV is built on which open-source foundation?",
+  opts:["Xen","KVM (Kernel-based Virtual Machine)","Hyper-V","ESXi"],
+  a:[1],why:"AHV is KVM-based: Nutanix hardened and operationalized KVM into an enterprise hypervisor with management, HA, live migration, and integration built in."},
+ {obj:"2.2",q:"An AHV host fails unexpectedly. Which feature recovers its VMs, and how?",
+  opts:["Live Migration, by moving the running VMs with no downtime","VM High Availability (HA), by restarting the VMs on surviving hosts","ADS, by pausing the VMs","Nothing, the VMs are lost until the host returns"],
+  a:[1],why:"HA handles unplanned host failure by RESTARTING the affected VMs on surviving hosts (brief downtime). Live Migration is a planned, no-downtime move and cannot help once the host is already down."},
+ {obj:"2.2",q:"Which feature moves a RUNNING VM between hosts with no downtime, for example during maintenance?",
+  opts:["VM HA","Live Migration","Foundation","Pulse"],
+  a:[1],why:"Live Migration copies a VM's memory state to another host while the VM keeps running, so there is no downtime. It is triggered by maintenance, ADS rebalancing, node expansion, or admin request."},
+ {obj:"2.2",q:"Which feature automatically rebalances VM placement to avoid CPU/storage hot spots?",
+  opts:["ADS (Acropolis Dynamic Scheduling)","Erasure coding","NCC","Metro Availability"],
+  a:[0],why:"ADS is the automatic scheduler, on by default on every AHV cluster, that places and rebalances workloads to avoid hot spots. It is the AHV analog of VMware DRS."},
+ {obj:"2.2",multi:2,q:"Which TWO are automatic, built-in behaviors of an AHV cluster?",
+  opts:["ADS runs by default to balance load","HA restarts VMs after a host failure","You must buy a separate product for live migration","VMs never move between hosts"],
+  a:[0,1],why:"ADS is on by default and HA restarts VMs after host failure, both built into the stack. Live migration is also built in (no separate product), and VMs do move between hosts."},
+ {obj:"2.3",q:"You must manage four clusters across three sites from a single console. Which management plane?",
+  opts:["Prism Element","Prism Central","Foundation","NCC"],
+  a:[1],why:"Prism Central is the separate VM (or scale-out VM cluster) that manages multiple clusters across sites from one screen. Prism Element manages only its own single cluster."},
+ {obj:"2.3",multi:2,q:"Which TWO statements about Prism Element are correct?",
+  opts:["It runs inside every CVM and is built into AOS","It manages only the cluster it belongs to","It is a separate VM you must deploy after the cluster is up","It is required to manage multiple clusters across sites"],
+  a:[0,1],why:"Prism Element is built into AOS, runs in every CVM, and manages just its own cluster. The 'separate VM you deploy' and 'manage many clusters' descriptions are Prism Central."},
+ {obj:"2.3",q:"How is Prism Central upgraded relative to AOS?",
+  opts:["It always upgrades automatically with AOS","It is a separate component with its own upgrade path","It cannot be upgraded","Only Foundation can upgrade it"],
+  a:[1],why:"Prism Central is independent of AOS and is managed and upgraded as a separate component (via its own LCM/one-click upgrade). Prism Element, by contrast, rides along with AOS."},
+ {obj:"2.4",q:"A customer needs Metro Availability and data-at-rest encryption with native key management. Which AOS tier?",
+  opts:["Starter","Pro","Ultimate","Community Edition"],
+  a:[2],why:"Advanced replication (Metro, NearSync, cross-cluster migration) and encryption (data-at-rest, native KMS), plus Flow microsegmentation, are Ultimate-tier features."},
+ {obj:"2.4",q:"Which AOS tier caps at 12 nodes per cluster and tops out at RF2?",
+  opts:["Starter","Pro","Ultimate","NC2"],
+  a:[0],why:"Starter is the entry tier: up to 12 nodes per cluster, RF2, compression/deduplication, async replication (RPO 1 hour or greater), and lifecycle management. RF3 and erasure coding require Pro."},
+ {obj:"2.4",multi:2,q:"Which TWO capabilities require AOS Pro (not available in Starter)?",
+  opts:["RF3 redundancy","Erasure coding","Async replication with a 1-hour RPO","Basic data compression"],
+  a:[0,1],why:"Pro adds RF3 and erasure coding (and lifts the 12-node cap, GPU passthrough, multi-site replication). Async (>=1 hour) and compression are available starting at Starter."},
+ {obj:"2.1",q:"Which CLI is used for VM and network operations versus cluster-level operations?",
+  opts:["acli for VM/network, ncli for cluster operations","ncli for VM/network, acli for cluster operations","kubectl for both","powershell for both"],
+  a:[0],why:"acli (Acropolis CLI) handles VM and network operations; ncli (Nutanix CLI) handles cluster-level operations. Most day-to-day administration is done in Prism."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

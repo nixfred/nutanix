@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 · Full Mock Exam (50 Q / 90 min)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 110px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+  #startcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  #startcard ul{margin:10px 0 16px;padding-left:20px;color:var(--muted)}
+  .bigbtn{background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:800;border:none;
+    padding:13px 22px;border-radius:11px;font-size:16px;cursor:pointer}
+  #hud{display:none;position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    z-index:5;font-family:var(--mono);font-size:14px}
+  #hud .t{color:var(--amber);font-weight:700}
+  #hud .p{color:var(--muted)}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font)}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.14)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #submitbar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--panel);
+    border-top:1px solid var(--line);padding:12px;text-align:center;z-index:6}
+  #results{display:none;background:var(--panel);border:1px solid var(--teal);border-radius:14px;padding:22px;margin:18px 0}
+  #results h2{margin:0 0 10px}
+  #results table{width:100%;border-collapse:collapse;margin:12px 0}
+  #results th,#results td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14.5px}
+  #results .verdict{font-size:19px;font-weight:800}
+  .pass{color:var(--good)} .fail{color:var(--bad)}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCA 6.10 · Mock Exam · BlueAlly Study Package</p>
+  <h1>Full Mock Exam</h1>
+  <p class="sub">50 original questions, 90-minute countdown, blueprint-weighted (8 / 14 / 10 / 18 across Sections 1-4) to match the real exam's shape and length. Exam mode: no feedback until you submit.</p>
+
+  <div id="startcard">
+    <strong>Before you start</strong>
+    <ul>
+      <li>Block 90 uninterrupted minutes. The timer starts when you click and does not pause.</li>
+      <li>Multiple-response questions say how many to pick, like the real exam.</li>
+      <li>The real exam passes at 3000/6000 scaled with weighted questions. As a raw-score proxy, treat <strong>70%+ (35/50) as "ready to schedule," 60-69% as "close, drill the weak section," below 60% as "not yet."</strong></li>
+      <li>On submit you get total score, per-section breakdown, and full review with explanations.</li>
+    </ul>
+    <button class="bigbtn" onclick="startExam()">Start exam · 90:00</button>
+  </div>
+
+  <div id="hud"><span class="t" id="timer">90:00</span> &nbsp;·&nbsp; <span class="p" id="prog">0 / 50 answered</span></div>
+  <div id="quiz"></div>
+  <div id="results"></div>
+  <div id="submitbar"><button class="bigbtn" onclick="grade(false)">Submit exam</button></div>
+
+  <footer>Original questions, calibrated to the NCA 6.10 Exam Blueprint Guide and verified against Nutanix documentation. Not affiliated with Nutanix; no braindump content. <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+// s = blueprint section 1-4, multi = number to select (absent = single)
+var Q=[
+// ===== SECTION 1 · Lifecycle Management (8) =====
+{s:1,q:"LCM provides one unified workflow to update which two things?",opts:["VMs and containers","Cluster software and hardware firmware","Only firmware","Only AOS"],a:[1],why:"LCM is the unified, dependency-aware updater for both software (AOS, Foundation, Prism, NCC) and firmware."},
+{s:1,q:"The LCM step that discovers running versions and available updates is called:",opts:["Foundation","Inventory","Pulse","Expansion"],a:[1],why:"An Inventory operation scans the cluster and populates update candidates; you run it before updating."},
+{s:1,q:"For a cluster with no Support Portal connectivity, LCM uses:",opts:["A phone call to support","A dark-site bundle hosted on a local web server","Public registry mirrors","Nothing; updates are impossible"],a:[1],why:"The LCM dark-site bundle is hosted locally and LCM is pointed at it; functionality is retained offline."},
+{s:1,q:"Which is upgraded as a SEPARATE component, not with AOS?",opts:["Prism Element","Prism Central","The CVM","The storage container"],a:[1],why:"Prism Central is independent of AOS with its own upgrade path; Prism Element rides along with AOS."},
+{s:1,q:"During an LCM update requiring reboots, the cluster stays available because LCM:",opts:["Reboots all nodes simultaneously","Performs a rolling, node-by-node update","Powers off all VMs","Skips firmware"],a:[1],why:"LCM rolls updates one node at a time; VMs are protected by live migration/HA around reboots."},
+{s:1,multi:2,q:"Which TWO are valid LCM update targets?",opts:["AOS","Disk/BIOS firmware","The guest OS inside a VM","Application source code"],a:[0,1],why:"LCM updates Nutanix software and qualified firmware; it does not patch guest OSes or application code."},
+{s:1,q:"Why must Inventory precede Update?",opts:["It is optional","It discovers installed versions and the compatible updates LCM will sequence","It reboots the cluster","It applies licenses"],a:[1],why:"Without an inventory there are no discovered versions or candidates for LCM to plan and apply."},
+{s:1,q:"Besides Nutanix NX, LCM can update firmware on:",opts:["Only Nutanix hardware","Qualified OEM servers (Dell, HPE, Cisco, Lenovo, Fujitsu) and NC2","Any whitebox server","Apple Mac minis"],a:[1],why:"LCM supports qualified OEM platforms and Nutanix Cloud Clusters, not unqualified whitebox or Apple hardware."},
+// ===== SECTION 2 · Basic Administration (14) =====
+{s:2,q:"The AHV hypervisor is:",opts:["Licensed separately per socket","Included free in every NCI license","A 90-day trial only","Only available on NC2"],a:[1],why:"AHV is included at no extra cost in NCI; new nodes ship with AHV by default."},
+{s:2,q:"AHV is built on:",opts:["Xen","KVM","Hyper-V","bhyve"],a:[1],why:"AHV is Nutanix's hardened, enterprise build of KVM."},
+{s:2,q:"Moving a running VM to another host during planned maintenance with no downtime is:",opts:["HA","Live Migration","ADS rebuild","Foundation"],a:[1],why:"Live Migration copies memory state while the VM runs; no downtime."},
+{s:2,q:"After an unexpected host failure, VMs come back via:",opts:["Live Migration","VM HA restarting them on surviving hosts","Manual rebuild","Erasure coding"],a:[1],why:"HA restarts the affected VMs elsewhere; it is a restart, not a live move."},
+{s:2,q:"The automatic feature that balances VM load to avoid hot spots is:",opts:["ADS","NCC","Pulse","LCM"],a:[0],why:"Acropolis Dynamic Scheduling (ADS) is automatic and on by default, the AHV analog of DRS."},
+{s:2,q:"To manage several clusters across multiple sites from one screen, deploy:",opts:["A second Prism Element","Prism Central","Foundation","A Witness VM"],a:[1],why:"Prism Central is the multi-cluster management plane; Prism Element manages only its own cluster."},
+{s:2,q:"Prism Element runs:",opts:["As a separate VM you install","Inside every CVM, built into AOS","On the bastion host","In AWS only"],a:[1],why:"Prism Element is built into AOS and runs in each CVM, no separate deployment."},
+{s:2,multi:2,q:"Which TWO are true of Prism Central (PC)?",opts:["It is a separate VM (or scale-out VM cluster)","It can manage many clusters from one place","It is built into every CVM","It is upgraded automatically with AOS"],a:[0,1],why:"PC is a separately deployed VM that manages many clusters; the built-in/CVM and AOS-coupled traits describe PE."},
+{s:2,q:"Which feature set requires the AOS Ultimate tier?",opts:["RF2 and compression","Async replication at 1-hour RPO","Metro Availability, encryption with native KMS, and microsegmentation","Lifecycle management"],a:[2],why:"Advanced replication, encryption, and Flow microsegmentation are Ultimate features."},
+{s:2,q:"The AOS Starter tier is limited to:",opts:["Up to 12 nodes per cluster and RF2","Unlimited nodes and RF3","NC2 only","Metro Availability"],a:[0],why:"Starter caps at 12 nodes per cluster with RF2; RF3 and a higher node count require Pro."},
+{s:2,q:"Which capability is added by Pro over Starter?",opts:["Compression","RF3 and erasure coding","Async replication","Prism Element"],a:[1],why:"Pro adds RF3, erasure coding, GPU passthrough, multi-site replication, and lifts the node cap."},
+{s:2,q:"For VM and network operations from the CLI you use:",opts:["ncli","acli","kubectl","pulse"],a:[1],why:"acli (Acropolis CLI) drives VM/network operations; ncli handles cluster-level operations."},
+{s:2,q:"Application-consistent (VSS) snapshots of a Windows VM require:",opts:["Nothing extra","Nutanix Guest Tools (NGT) installed in the guest","Erasure coding","A second cluster"],a:[1],why:"NGT provides the VSS integration for application-consistent snapshots; it must be installed and enabled in the guest."},
+{s:2,q:"Nutanix Guest Tools (NGT) also provides:",opts:["A new hypervisor","Self-Service Restore (file-level restore) and VirtIO mobility drivers for AHV","Cluster imaging","LCM bundles"],a:[1],why:"NGT bundles the guest agent, Self-Service/File-Level Restore, VSS provider, and VirtIO drivers."},
+// ===== SECTION 3 · Environmental Health (10) =====
+{s:3,q:"A health check differs from an alert in that a check is:",opts:["Event-driven","Scheduled/proactive, while an alert is event-driven","Only in Prism Central","A type of backup"],a:[1],why:"Checks run on a schedule; alerts fire on events and carry severities."},
+{s:3,q:"The framework that runs health checks across the cluster is:",opts:["NGT","NCC (Nutanix Cluster Check)","Foundation","Velero"],a:[1],why:"NCC scans configuration, performance, and operational state and reports issues."},
+{s:3,q:"The feature that sends scheduled cluster telemetry to Nutanix for proactive support is:",opts:["Pulse","ADS","Metro","KIB"],a:[0],why:"Pulse securely transmits cluster health/config data to Nutanix on a schedule, feeding Insights."},
+{s:3,q:"Pulse ships as part of which component?",opts:["LCM","NCC","Prism Central","Foundation"],a:[1],why:"Pulse is packaged with NCC so the latest checks/telemetry work regardless of AOS or hypervisor version."},
+{s:3,q:"To see overall status and whether the cluster can tolerate its configured failures, open:",opts:["The BIOS","The Prism Health dashboard","The bastion","The Support Portal only"],a:[1],why:"The Health dashboard surfaces component status and the data-resiliency state."},
+{s:3,multi:3,q:"Which THREE are done on the Support Portal?",opts:["Download software and LCM dark-site bundles","Manage licenses","Open and track support cases","Run customer VMs","Configure VLANs"],a:[0,1,2],why:"The portal is for downloads, license management, support cases, and docs, not running workloads or networking config."},
+{s:3,q:"Prism alert severities are:",opts:["Low/medium/high","Info/warning/critical","Pass/fail","Hot/cold"],a:[1],why:"Alerts are classified info, warning, or critical and can notify out."},
+{s:3,q:"The command that runs the full battery of NCC checks is:",opts:["ncc health_checks run_all","lcm inventory","foundation start","acli cluster.check"],a:[0],why:"ncc health_checks run_all executes all NCC checks; NCC can also run from Prism."},
+{s:3,q:"Nutanix Insights, fed by Pulse, provides:",opts:["A hypervisor","Predictive health and support automation","Cluster imaging","VLAN tagging"],a:[1],why:"Insights uses Pulse telemetry for predictive health and context-aware support."},
+{s:3,q:"A 3-node RF2 cluster currently has one host down. The Health dashboard's resiliency state will indicate:",opts:["It can still tolerate another failure normally","Reduced/critical resiliency until the host is restored and data is re-protected","Nothing changes","The cluster is destroyed"],a:[1],why:"With one node down an RF2 cluster has used its single-failure tolerance; resiliency shows reduced until rebuilt."},
+// ===== SECTION 4 · Cluster Configuration (18) =====
+{s:4,q:"Replication Factor and storage optimizations are configured on the:",opts:["Storage pool","Storage container","vDisk","CVM"],a:[1],why:"RF, compression, dedup, and EC are container-level policies; the pool is raw capacity, vDisks live in containers."},
+{s:4,q:"Minimum nodes for RF2:",opts:["2","3","4","5"],a:[1],why:"RF2 needs 3 nodes (3 metadata copies)."},
+{s:4,q:"Minimum nodes for RF3:",opts:["3","4","5","6"],a:[2],why:"RF3 needs 5 nodes (5 metadata copies)."},
+{s:4,q:"RF2 / FT1 tolerates how many simultaneous node or drive failures?",opts:["0","1","2","3"],a:[1],why:"FT1 (data RF2) survives a single failure."},
+{s:4,q:"RF3 / FT2 tolerates how many simultaneous failures?",opts:["1","2","3","4"],a:[1],why:"FT2 (data RF3) survives two simultaneous failures."},
+{s:4,q:"The default redundancy of a new cluster is:",opts:["RF1","RF2 / FT1","RF3 / FT2","RF4"],a:[1],why:"New clusters default to RF2 / FT1."},
+{s:4,q:"Best optimization for many identical VDI clones:",opts:["Erasure coding","Deduplication","RF3","None"],a:[1],why:"Dedup removes duplicate blocks shared across identical clones."},
+{s:4,q:"Best optimization to reclaim capacity on cold, rarely changed data:",opts:["Deduplication","Erasure coding (EC-X)","Inline compression of hot writes","RF1"],a:[1],why:"EC-X stripes parity across nodes for capacity savings on write-cold data."},
+{s:4,q:"Standard (post-process) erasure coding acts on data that has been write-cold for:",opts:["1 hour","More than 7 days","30 minutes","1 year"],a:[1],why:"Post-process EC-X encodes data not overwritten for more than seven days."},
+{s:4,q:"The broadly safe, general-purpose optimization to enable by default is:",opts:["Compression","Erasure coding","Deduplication","RF3"],a:[0],why:"Compression (LZ4/LZ4HC) is broadly safe across workloads."},
+{s:4,multi:3,q:"Which THREE hypervisors run on Nutanix?",opts:["AHV","VMware ESXi","Microsoft Hyper-V","Citrix XenServer"],a:[0,1,2],why:"AHV (default), ESXi, and Hyper-V are supported; XenServer is not."},
+{s:4,q:"NC2 (Nutanix Cloud Clusters) runs:",opts:["Containers on-prem only","The full Nutanix stack on bare-metal instances in AWS and Azure","A browser-based emulator","ESXi only"],a:[1],why:"NC2 runs CVM + AHV + AOS + Prism on AWS/Azure bare metal, operated as one cloud with on-prem."},
+{s:4,q:"A two-node ROBO cluster additionally requires:",opts:["A second Prism Central","An external Witness VM in a separate failure domain","Erasure coding","RF3"],a:[1],why:"The Witness VM arbitrates for two-node clusters to preserve resiliency."},
+{s:4,q:"A single-node ROBO cluster is characterized by:",opts:["Unlimited guest VMs","Selected hardware models, reduced resiliency, and a limited guest-VM count","RF3 by default","No CVM"],a:[1],why:"One-node clusters run on selected hardware with lowered resiliency and a capped guest-VM count."},
+{s:4,q:"AHV's default Open vSwitch bridge is:",opts:["virbr0","br0","eth0","vmbr0"],a:[1],why:"The default OVS bridge is br0 (default uplink bond br0-up); CVM and host sit on the native VLAN."},
+{s:4,q:"Storage on every node is served by the:",opts:["Witness VM","Controller VM (CVM) running the Distributed Storage Fabric","Prism Central VM","BIOS"],a:[1],why:"The CVM runs DSF and presents pooled storage to the hypervisor, with data locality."},
+{s:4,q:"The tool that images bare-metal nodes with AOS + a hypervisor and forms a cluster is:",opts:["LCM","Foundation","Velero","NCC"],a:[1],why:"Foundation images nodes and creates clusters; it is built into the CVMs and needs ~3 IPs per node."},
+{s:4,q:"Metro Availability provides which RPO?",opts:["60 minutes","15 minutes","0 (synchronous, stretched cluster)","24 hours"],a:[2],why:"Metro is a synchronous stretched cluster with RPO 0; async is >=60 min and NearSync is 1-15 min."}
+];
+var state={started:false,answers:{},deadline:null,tick:null};
+function startExam(){
+ document.getElementById('startcard').style.display='none';
+ document.getElementById('hud').style.display='block';
+ document.getElementById('submitbar').style.display='block';
+ state.started=true;state.deadline=Date.now()+90*60*1000;
+ render();
+ state.tick=setInterval(function(){
+  var ms=state.deadline-Date.now();
+  if(ms<=0){clearInterval(state.tick);document.getElementById('timer').textContent='00:00';grade(true);return;}
+  var m=Math.floor(ms/60000),s=Math.floor(ms%60000/1000);
+  document.getElementById('timer').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+ },500);
+}
+function render(){
+ var root=document.getElementById('quiz');
+ Q.forEach(function(q,qi){
+  var d=document.createElement('div');d.className='q';d.id='q'+qi;
+  d.innerHTML='<div class="tag">Q'+(qi+1)+' of 50 · Section '+q.s+(q.multi?' · select '+q.multi:'')+'</div>'
+   +'<div class="qn">'+q.q+'</div>'+(q.multi?'<div class="multi-note">Multiple response: select '+q.multi+'.</div>':'');
+  q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(!state.started)return;
+    var cur=state.answers[qi]||[];
+    if(q.multi){
+     var idx=cur.indexOf(i);
+     if(idx>-1){cur.splice(idx,1);b.classList.remove('sel');}
+     else if(cur.length<q.multi){cur.push(i);b.classList.add('sel');}
+    }else{
+     d.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel')});
+     cur=[i];b.classList.add('sel');
+    }
+    state.answers[qi]=cur;prog();
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+q.why;
+  d.appendChild(ex);
+  root.appendChild(d);
+ });
+}
+function prog(){
+ var n=Object.keys(state.answers).filter(function(k){return (state.answers[k]||[]).length>0}).length;
+ document.getElementById('prog').textContent=n+' / 50 answered';
+}
+function grade(auto){
+ if(!state.started)return;state.started=false;clearInterval(state.tick);
+ var per={1:[0,0],2:[0,0],3:[0,0],4:[0,0]},score=0;
+ Q.forEach(function(q,qi){
+  var chosen=(state.answers[qi]||[]).slice().sort().join();
+  var right=q.a.slice().sort().join()===chosen;
+  per[q.s][1]++;if(right){per[q.s][0]++;score++;}
+  var d=document.getElementById('q'+qi);
+  d.querySelectorAll('.opt').forEach(function(o,i){
+   o.disabled=true;
+   if(q.a.indexOf(i)>-1)o.classList.add('correct');
+   else if((state.answers[qi]||[]).indexOf(i)>-1)o.classList.add('wrong');
+  });
+  d.querySelector('.explain').classList.add('show');
+ });
+ var pct=Math.round(score/50*100);
+ var verdict= pct>=70?'<span class="verdict pass">READY: '+pct+'%, schedule the exam.</span>'
+   : pct>=60?'<span class="verdict" style="color:var(--amber)">CLOSE: '+pct+'%, drill the weakest section, retake in 2-3 days.</span>'
+   :'<span class="verdict fail">NOT YET: '+pct+'%, rebuild the weak sections before retaking.</span>';
+ var rows='';[1,2,3,4].forEach(function(s){
+  var p=per[s],pc=Math.round(p[0]/p[1]*100);
+  rows+='<tr><td>Section '+s+'</td><td>'+p[0]+' / '+p[1]+'</td><td>'+pc+'%</td></tr>';
+ });
+ var r=document.getElementById('results');
+ r.innerHTML='<h2>Results · '+score+' / 50'+(auto?' (time expired)':'')+'</h2>'+verdict
+  +'<table><tr><th>Domain</th><th>Score</th><th>%</th></tr>'+rows+'</table>'
+  +'<p style="color:var(--muted);font-size:14px">Raw % is a proxy; the real exam uses weighted scaled scoring (pass 3000/6000). Review every miss below, then update your notes. Sections map to study guides 01-04.</p>';
+ r.style.display='block';document.getElementById('submitbar').style.display='none';
+ r.scrollIntoView({behavior:'smooth'});prog();
+}
+</script>
+</body>
+</html>

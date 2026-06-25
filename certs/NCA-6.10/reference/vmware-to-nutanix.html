@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reference · VMware to Nutanix Legend (NCA 6.10)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:29px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600;width:34%}
+  td:nth-child(2){color:var(--teal);width:30%}
+  strong{color:#fff}
+  a{color:var(--teal);text-decoration:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted)}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--muted)}
+  footer{margin-top:46px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:18px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 · Reference</p>
+  <h1>VMware to Nutanix Legend</h1>
+  <p class="sub">Most NCA candidates come from a VMware seat. Map your existing vocabulary onto Nutanix and the whole exam lands easier. The right column is what the exam will name.</p>
+
+  <table>
+    <tr><th>VMware concept</th><th>Nutanix equivalent</th><th>Note</th></tr>
+    <tr><td>vCenter Server</td><td>Prism Central</td><td>Multi-cluster management plane; a separate VM you deploy.</td></tr>
+    <tr><td>ESXi host / single-cluster management</td><td>Prism Element</td><td>Built into AOS, runs in every CVM, manages just its own cluster.</td></tr>
+    <tr><td>ESXi (the hypervisor)</td><td>AHV</td><td>KVM-based, included free in NCI. Nutanix also supports ESXi and Hyper-V.</td></tr>
+    <tr><td>vSAN</td><td>Distributed Storage Fabric (DSF)</td><td>Served by the Controller VM (CVM) on every node; data locality.</td></tr>
+    <tr><td>VMFS datastore</td><td>Storage container</td><td>Where you set RF, compression, deduplication, and erasure coding.</td></tr>
+    <tr><td>VMDK</td><td>vDisk</td><td>The virtual disk a VM consumes, living inside a container.</td></tr>
+    <tr><td>vMotion</td><td>Live Migration</td><td>Planned, no-downtime move of a running VM between hosts.</td></tr>
+    <tr><td>DRS (Distributed Resource Scheduler)</td><td>ADS (Acropolis Dynamic Scheduling)</td><td>Automatic, on by default; balances load to avoid hot spots.</td></tr>
+    <tr><td>vSphere HA</td><td>VM High Availability (HA)</td><td>Restarts VMs on surviving hosts after an unplanned host failure.</td></tr>
+    <tr><td>Storage Policy / FTT (failures to tolerate)</td><td>Replication Factor / Redundancy Factor (FT)</td><td>RF2/FT1 tolerates 1 failure (3 nodes); RF3/FT2 tolerates 2 (5 nodes).</td></tr>
+    <tr><td>VMware Tools</td><td>Nutanix Guest Tools (NGT)</td><td>VSS app-consistent snapshots, Self-Service Restore, VirtIO drivers.</td></tr>
+    <tr><td>vSphere Lifecycle Manager / Update Manager (vLCM/VUM)</td><td>LCM (Life Cycle Manager)</td><td>One-click software AND firmware updates, dependency-aware, dark-site capable.</td></tr>
+    <tr><td>Standard / Distributed vSwitch</td><td>Open vSwitch (OVS), bridge br0</td><td>Default uplink bond br0-up; CVM and host on the native VLAN.</td></tr>
+    <tr><td>Site Recovery Manager / array replication</td><td>Protection Domains + Async / NearSync / Metro</td><td>Async RPO &ge; 60 min; NearSync 1-15 min; Metro RPO 0 (stretched cluster).</td></tr>
+    <tr><td>Auto Deploy / host imaging</td><td>Foundation</td><td>Images bare-metal nodes with AOS + a hypervisor and forms the cluster.</td></tr>
+    <tr><td>Skyline / health checks</td><td>NCC + Pulse</td><td>NCC runs health checks; Pulse sends telemetry to Nutanix for proactive support.</td></tr>
+    <tr><td>VMware Cloud on AWS</td><td>NC2 (Nutanix Cloud Clusters)</td><td>Full Nutanix stack on AWS/Azure bare metal, one operating model.</td></tr>
+  </table>
+
+  <div class="note"><strong>Watch the traps.</strong> The exam likes to swap HA and Live Migration (restart vs no-downtime move), and to swap where policy lives (container, not pool). It also tests that AHV is free and built in, unlike a separately licensed ESXi.</div>
+
+  <footer>
+    Verified against Nutanix documentation (AHV, Prism, DSF/Data Efficiency, Data Protection, LCM, NGT, Foundation, NC2). Read first, then the four study guides land faster. <a href="../index.html">Study Hub</a>
+  </footer>
+</div>
+</body>
+</html>

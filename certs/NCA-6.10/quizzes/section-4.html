@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 Quiz · Section 4: Cluster Configuration</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCA 6.10 · Question Bank</p>
+  <h1>Section 4 Quiz: Cluster Configuration</h1>
+  <p class="sub">15 original questions on storage components, RF/FT, optimization, hypervisors, NC2, cluster sizes, networking, and data protection, calibrated to blueprint Section 4 (the densest section). Every answer is grounded in Nutanix documentation.</p>
+  <div id="scorebar">Score: 0 / 15 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions, written against the NCA 6.10 Exam Blueprint Guide and verified against Nutanix docs. <a href="../study-guides/04-cluster-configuration.html">← Back to Guide 04</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"4.1",q:"At which level do you set Replication Factor, compression, deduplication, and erasure coding?",
+  opts:["The storage pool","The storage container","The individual vDisk","The CVM BIOS"],
+  a:[1],why:"Policy (RF and the optimizations) is set on the storage CONTAINER. The storage pool is the raw pooled capacity of all disks; vDisks are the virtual disks VMs consume inside a container."},
+ {obj:"4.2",q:"What is the minimum number of nodes required for RF2?",
+  opts:["1","2","3","5"],
+  a:[2],why:"RF2 requires a minimum of 3 nodes. Even though data has 2 copies, a healthy cluster keeps 3 copies of metadata, so 3 nodes is the floor."},
+ {obj:"4.2",q:"What is the minimum number of nodes required for RF3?",
+  opts:["3","4","5","7"],
+  a:[2],why:"RF3 requires a minimum of 5 nodes, because RF3 keeps 5 copies of metadata (data has 3 copies)."},
+ {obj:"4.2",multi:2,q:"Which TWO statements about RF3 / FT2 are correct?",
+  opts:["It tolerates 2 simultaneous node or drive failures","It requires a minimum of 5 nodes","It tolerates only 1 failure","It requires only 3 nodes"],
+  a:[0,1],why:"RF3 / FT2 keeps 3 data copies (5 metadata copies), needs at least 5 nodes, and survives 2 simultaneous failures. RF2 / FT1 is the one that tolerates a single failure on 3 nodes."},
+ {obj:"4.2",q:"What is the default redundancy of a new Nutanix cluster?",
+  opts:["RF2 / FT1","RF3 / FT2","RF1 / FT0","RF4 / FT3"],
+  a:[0],why:"By default a Nutanix cluster is RF2 / FT1, which tolerates the failure of a single node or drive. FT1 maps to data RF2 (metadata RF3)."},
+ {obj:"4.3",q:"Which storage optimization is the best fit for VDI with many full clones?",
+  opts:["Erasure coding","Deduplication","Thin provisioning only","None, VDI cannot be optimized"],
+  a:[1],why:"Deduplication fingerprints data on ingest (SHA-1) and removes duplicate blocks, which is ideal where many VMs share identical OS/app data, such as VDI full clones and persistent desktops."},
+ {obj:"4.3",q:"Which storage optimization best fits cold, infrequently changed data?",
+  opts:["Deduplication","Erasure coding (EC-X)","Inline compression of hot data","Replication Factor 1"],
+  a:[1],why:"Erasure coding (EC-X) stripes RAID-like parity across nodes to reclaim capacity without RF's full-copy overhead. It is post-process on write-cold data, so it suits cold/archival data, not hot data."},
+ {obj:"4.3",q:"When does standard (post-process) erasure coding act on data?",
+  opts:["Immediately on every write","Only on data that has been write-cold (not overwritten) for more than 7 days","Never; it is manual only","Only during cluster expansion"],
+  a:[1],why:"Post-process EC-X encodes data that has been write-cold for more than seven days. (An inline EC option also exists and can be enabled via nCLI, with post-process as a fallback.)"},
+ {obj:"4.3",q:"Which optimization is the broadly safe, general-purpose default recommendation?",
+  opts:["Erasure coding","Deduplication","Compression","Disabling all optimization"],
+  a:[2],why:"Compression (inline for large/sequential I/O over 64 KB, or post-process; LZ4/LZ4HC) is broadly safe to enable across workloads and is the usual default. Dedup and EC-X target specific data profiles."},
+ {obj:"4.4",multi:3,q:"Which THREE hypervisors can run on Nutanix?",
+  opts:["AHV","VMware ESXi","Microsoft Hyper-V","Citrix XenServer as the Nutanix default"],
+  a:[0,1,2],why:"Nutanix supports AHV (the built-in default), VMware ESXi, and Microsoft Hyper-V. XenServer is not a supported Nutanix hypervisor, and AHV (not Xen) is the default."},
+ {obj:"4.4",q:"What does NC2 (Nutanix Cloud Clusters) run on, and where?",
+  opts:["A container runtime on-premises only","The full Nutanix stack (CVM, AHV, AOS, Prism) on bare-metal instances in AWS and Azure","A SaaS web app with no infrastructure","ESXi nested in a browser"],
+  a:[1],why:"NC2 runs the complete Nutanix HCI stack on bare-metal instances in AWS and Azure, operated as one cloud with on-prem. It is the extend/migrate-to-public-cloud answer without changing the operating model."},
+ {obj:"4.5",q:"A 2-node ROBO cluster needs something a 3-node cluster does not. What is it?",
+  opts:["A second Prism Central","An external Witness VM in a separate failure domain","A third hypervisor","Erasure coding"],
+  a:[1],why:"A two-node cluster requires an external Witness VM in a separate failure domain to arbitrate and preserve resiliency. Three nodes is the standard minimum; one-node ROBO exists on selected hardware with reduced resiliency."},
+ {obj:"4.6",q:"On AHV, what is the default Open vSwitch bridge, and where should the CVM and host live?",
+  opts:["br0, with the CVM and AHV host on the native/untagged VLAN","virbr0, on a dedicated tagged VLAN","eth0, with no VLAN at all","br1, on the storage VLAN only"],
+  a:[0],why:"AHV networking uses Open vSwitch with default bridge br0 and default uplink bond br0-up. Best practice places the CVM and AHV host on the native/untagged VLAN; bonds should have at least two NICs for HA."},
+ {obj:"4.1",q:"Which order describes the Nutanix storage hierarchy from physical to virtual?",
+  opts:["vDisk → container → storage pool","Storage pool (physical disks) → container (policy) → vDisk (VM disk)","Container → storage pool → vDisk","CVM → vDisk → storage pool"],
+  a:[1],why:"All physical disks form the storage pool; a container is a logical slice of the pool where policy (RF, compression, dedup, EC) is set; vDisks live inside containers and are consumed by VMs. The CVM/DSF serves it all."},
+ {obj:"4.4",q:"NearSync replication targets which approximate RPO range?",
+  opts:["RPO of 0 (synchronous)","1 to 15 minutes","60 minutes or greater","24 hours"],
+  a:[1],why:"NearSync provides an RPO of roughly 1 to 15 minutes using lightweight snapshots, low RPO without synchronous overhead. Async is 60 minutes or greater; Metro Availability is a stretched cluster with RPO 0."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

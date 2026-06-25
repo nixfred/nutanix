@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reference · Exam Day One-Pager (NCA 6.10)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:29px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  h2{font-size:18px;margin:30px 0 8px}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  ul{padding-left:20px;color:var(--muted)}
+  li{margin:6px 0}
+  strong{color:#fff}
+  a{color:var(--teal);text-decoration:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:14px 0}
+  footer{margin-top:46px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:18px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 · Reference</p>
+  <h1>Exam Day One-Pager</h1>
+  <p class="sub">Logistics, scoring, and in-room tactics for the Nutanix Certified Associate 6.10 exam.</p>
+
+  <div class="facts">
+    <span class="pill">50 questions · <b>90 min</b></span>
+    <span class="pill"><b>$99</b> per attempt</span>
+    <span class="pill">pass <b>3000</b> / 1000-6000</span>
+    <span class="pill">AOS <b>6.10</b> · PC <b>pc2024.2</b></span>
+    <span class="pill">valid <b>3 years</b></span>
+  </div>
+
+  <h2>Format</h2>
+  <ul>
+    <li><strong>50 questions</strong> in <strong>90 minutes</strong>: multiple-choice and multiple-response. Multiple-response questions tell you how many to select.</li>
+    <li><strong>Scaled scoring 1000-6000; pass at 3000.</strong> Questions are blueprint-weighted, so raw percentage is only a proxy.</li>
+    <li>Four sections: Lifecycle Management, Basic Administration, Environmental Health, Cluster Configuration.</li>
+    <li>Aimed at roughly <strong>6-12 months</strong> of IT-infrastructure experience, ideally with Nutanix.</li>
+  </ul>
+
+  <h2>Register and schedule</h2>
+  <ul>
+    <li>Register through <a href="https://university.nutanix.com">university.nutanix.com</a> (free MyNutanix account). Cost is <strong>$99</strong>; discounts/vouchers appear periodically.</li>
+    <li>Delivered <strong>online proctored</strong> or at a Pearson VUE test center.</li>
+    <li>Recommended free prep courses: <strong>Nutanix Hybrid Cloud Fundamentals (NHCF)</strong> and <strong>Enterprise Cloud Administration (ECA)</strong>.</li>
+    <li>The certification is valid for <strong>3 years</strong> (Nutanix moved from 2 to 3 years on August 1, 2025).</li>
+  </ul>
+
+  <h2>Online proctoring checklist</h2>
+  <ul>
+    <li>Quiet, well-lit, private room; <strong>cleared desk</strong>, no notes, no second monitor, no phones.</li>
+    <li>Working <strong>webcam and microphone</strong>, stable internet.</li>
+    <li><strong>Government-issued photo ID.</strong></li>
+    <li>Run the system/network check ahead of time; proctoring software glitches are a known frustration, so schedule with margin.</li>
+  </ul>
+
+  <h2>In-room tactics</h2>
+  <div class="card">
+    <ul style="margin:0">
+      <li><strong>Flag and move on.</strong> If unsure, flag it; a later question often jogs the answer. Do not burn time early.</li>
+      <li><strong>Read multiple-response counts.</strong> Select exactly the number asked.</li>
+      <li><strong>Process of elimination.</strong> The NCA is not gotcha-heavy; eliminate the clearly wrong options first.</li>
+      <li><strong>Watch the classic traps:</strong> HA (restart) vs Live Migration (no-downtime move); policy lives on the container not the pool; RF2 = 3 nodes, RF3 = 5 nodes; LCM does software AND firmware.</li>
+    </ul>
+  </div>
+
+  <h2>If you do not pass</h2>
+  <ul>
+    <li>Nutanix typically enforces a <strong>waiting period before a retake</strong>. Use it: drill the weakest section from your mock-exam breakdown rather than rushing back.</li>
+  </ul>
+
+  <footer>
+    Verify all logistics against <a href="https://university.nutanix.com">university.nutanix.com</a> when you schedule; Nutanix updates policies and pricing. <a href="../index.html">Study Hub</a>
+  </footer>
+</div>
+</body>
+</html>

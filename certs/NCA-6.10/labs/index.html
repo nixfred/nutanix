@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 · Hands-on Labs</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:29px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 22px}
+  h2{font-size:18px;margin:30px 0 10px}
+  a{color:var(--teal);text-decoration:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted)}
+  .opt{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .opt .b{font-family:var(--mono);font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+  .opt .d{font-size:14.5px;color:var(--muted)}
+  .opt .d strong{color:#fff}
+  .lab{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:12px 0}
+  .lab .t{font-weight:700;color:#fff}
+  .lab .o{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:4px}
+  .lab .d{font-size:14px;color:var(--muted);margin-top:4px}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--muted)}
+  footer{margin-top:46px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:18px}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 · Hands-on</p>
+  <h1>Hands-on Labs</h1>
+  <p class="sub">The NCA is a Prism-and-operations exam, so hands-on clicks beat reading. Unlike a pure-Kubernetes cert, NCA practice needs a real Nutanix environment. Two free ways to get one, then a task list mapped to the blueprint.</p>
+
+  <h2>Get an environment (pick one)</h2>
+  <div class="opt"><span class="b">Instant · browser</span><span class="d"><strong>Nutanix Test Drive.</strong> A hosted, guided Nutanix cluster you drive from a browser, no install. Fastest way to click through Prism. Launch from <a href="https://www.nutanix.com/test-drive">nutanix.com/test-drive</a>.</span></div>
+  <div class="opt"><span class="b">Your hardware</span><span class="d"><strong>Nutanix Community Edition (CE).</strong> A free download of AOS + AHV you install on your own hardware (or nested) to build a real single-node or multi-node cluster. Closest to the production experience; get it from the Nutanix Community / portal.</span></div>
+
+  <div class="note"><strong>Why not laptop-only labs?</strong> NCA objectives are about Prism, LCM, storage containers, health, and cluster configuration, which need a Nutanix cluster. CE or Test Drive give you that for free; budget an evening for CE setup or minutes for Test Drive.</div>
+
+  <h2>Lab task list (map to the four sections)</h2>
+
+  <div class="lab"><div class="o">Section 1 · LCM</div><div class="t">Run an LCM inventory and read the update list</div><div class="d">In Prism, open LCM and run Inventory. Observe the running software and firmware versions and which have updates. Note that it lists BOTH software and firmware, and that you cannot update before inventory populates.</div></div>
+
+  <div class="lab"><div class="o">Section 2 · Admin</div><div class="t">Create a VM, then live-migrate it</div><div class="d">Create a VM in Prism (vCPU, RAM, disk on a container, a NIC on a network). Power it on, then migrate it to another host and watch it move with no downtime. Compare to what HA would do on a host failure (a restart).</div></div>
+
+  <div class="lab"><div class="o">Section 2 · Admin</div><div class="t">Explore Prism Element vs Prism Central</div><div class="d">Note what you manage in Prism Element (this cluster) versus Prism Central (multi-cluster). Find where AOS licensing/tier information is shown.</div></div>
+
+  <div class="lab"><div class="o">Section 3 · Health</div><div class="t">Run NCC and read the Health dashboard</div><div class="d">Run NCC health checks (Prism or <code>ncc health_checks run_all</code>). Open the Health dashboard and find the data-resiliency state. Trigger/observe an alert and note its severity (info/warning/critical). Check whether Pulse is enabled.</div></div>
+
+  <div class="lab"><div class="o">Section 4 · Storage</div><div class="t">Create a storage container with optimizations</div><div class="d">Create a container and set its Replication Factor and enable compression (and try dedup/erasure coding). Confirm that these policies live on the CONTAINER, not the pool. Note the default cluster redundancy (RF2/FT1).</div></div>
+
+  <div class="lab"><div class="o">Section 4 · Networking</div><div class="t">Inspect AHV networking</div><div class="d">Look at the virtual switch / bridge (br0) and create a VM network (VLAN). Confirm the CVM and host sit on the native VLAN and that uplink bonds use multiple NICs.</div></div>
+
+  <div class="lab"><div class="o">Section 4 · Data protection</div><div class="t">Protect a VM with a snapshot schedule</div><div class="d">Create a Protection Domain (or protection policy), add a VM, and set a schedule. Note how the RPO classifies it (async at 60+ minutes vs NearSync at 1-15). Install NGT in a VM and observe application-consistent snapshot support.</div></div>
+
+  <footer>
+    Environment links are Nutanix-hosted; verify current availability at <a href="https://www.nutanix.com">nutanix.com</a>. Tasks map to study guides 01-04. <a href="../index.html">Study Hub</a>
+  </footer>
+</div>
+</body>
+</html>

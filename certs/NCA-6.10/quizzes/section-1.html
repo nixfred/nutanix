@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 Quiz · Section 1: Lifecycle Management</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCA 6.10 · Question Bank</p>
+  <h1>Section 1 Quiz: Lifecycle Management</h1>
+  <p class="sub">10 original questions on LCM, calibrated to blueprint Section 1. Multiple-response questions tell you how many to pick, like the real exam. Every answer is grounded in Nutanix documentation. No braindump content.</p>
+  <div id="scorebar">Score: 0 / 10 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions, written against the NCA 6.10 Exam Blueprint Guide and verified against Nutanix docs. <a href="../study-guides/01-lifecycle-management.html">← Back to Guide 01</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"1.1",q:"Which Nutanix tool provides a single, one-click workflow to update BOTH cluster software and hardware firmware?",
+  opts:["NCC","Foundation","LCM (Life Cycle Manager)","Prism Central only"],
+  a:[2],why:"LCM is the unified updater for software AND firmware, with dependency resolution and a planned upgrade sequence. NCC runs health checks; Foundation images new nodes into a cluster; Prism Central is a management plane, not the updater itself."},
+ {obj:"1.1",multi:3,q:"Which THREE can LCM update?",
+  opts:["AOS software","BIOS/BMC and disk firmware","Foundation","Guest operating system patches inside your VMs","Your application's database data"],
+  a:[0,1,2],why:"LCM updates Nutanix software (AOS, Foundation, Prism, NCC/licensing) and qualified firmware (BIOS/BMC, disk, HBA, NIC). It does not patch guest OSes inside VMs and has nothing to do with application data."},
+ {obj:"1.2",q:"What operation must you run before LCM can show and apply available updates?",
+  opts:["Foundation imaging","An Inventory operation","A full cluster reboot","Pulse registration"],
+  a:[1],why:"Inventory scans the cluster, reports the running versions of supported software and firmware, and populates the available updates. Order: Inventory, then review, then Update."},
+ {obj:"1.2",q:"Place the LCM workflow in the correct order.",
+  opts:["Update → Inventory → review","Inventory → review available updates → Update","Reboot → Inventory → Update","Update → reboot → Inventory"],
+  a:[1],why:"You cannot meaningfully update before an inventory has discovered versions and update candidates. LCM then plans a safe, rolling sequence (nodes may reboot as part of it)."},
+ {obj:"1.3",q:"A regulated cluster has no connectivity to the Nutanix Support Portal. How do you keep it current with LCM?",
+  opts:["LCM cannot run without internet","Host the LCM dark-site bundle on a local web server and point LCM at it","Email firmware files to each node","Disable LCM and patch manually forever"],
+  a:[1],why:"LCM supports dark sites: download the dark-site bundle on a connected machine, host it on a local web server inside the network, and configure LCM to use that URL. The capability is retained; only the source changes."},
+ {obj:"1.3",multi:2,q:"Which TWO statements about LCM dark-site updates are correct?",
+  opts:["The dark-site bundle is hosted on a local web server reachable by the cluster","Dark sites lose all LCM functionality","LCM still resolves dependencies and sequencing offline","You must give the cluster a public IP"],
+  a:[0,2],why:"Dark-site LCM hosts the bundle locally and still plans compatible upgrade sequencing in advance. Functionality is not lost, and a public IP would defeat the point of an isolated site."},
+ {obj:"1.1",q:"Is Prism Element updated as a separate LCM component, or together with AOS?",
+  opts:["Separate component with its own schedule","Together with AOS (it is built into AOS)","It cannot be updated","Only via Foundation"],
+  a:[1],why:"Prism Element is built into AOS and is upgraded along with AOS through LCM. Prism Central is the piece that is a separate component with its own upgrade path."},
+ {obj:"1.2",q:"Why does LCM resolve dependencies and compute the upgrade order itself?",
+  opts:["To force you to upgrade everything at once","To remove manual, error-prone sequencing and reduce risk, even at dark sites","Because firmware has no dependencies","To bypass the inventory step"],
+  a:[1],why:"LCM intelligently resolves software and firmware dependencies and sequences updates in advance, removing manual risk. This works even in disconnected dark-site environments."},
+ {obj:"1.1",multi:2,q:"Which TWO hardware/platform families does LCM support for firmware updates?",
+  opts:["Nutanix NX and qualified OEM servers (Dell, HPE, Cisco, Lenovo, Fujitsu)","Nutanix Cloud Clusters (NC2)","Any random whitebox with no qualification","Only Apple hardware"],
+  a:[0,1],why:"LCM supports Nutanix NX plus qualified OEM hardware vendors and NC2. It does not update unqualified whitebox hardware, and Apple hardware is not a Nutanix platform."},
+ {obj:"1.2",q:"During an LCM update, a node needs to reboot. What does LCM do to protect uptime?",
+  opts:["It reboots every node at once","It rolls the update node-by-node so the cluster stays available","It refuses to update anything that needs a reboot","It powers off all VMs first"],
+  a:[1],why:"LCM performs updates as a rolling sequence so the cluster remains up; VMs are live-migrated/HA-protected around node reboots. It does not reboot the whole cluster simultaneously."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

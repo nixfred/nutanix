@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 Quiz · Section 3: Environmental Health</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCA 6.10 · Question Bank</p>
+  <h1>Section 3 Quiz: Environmental Health</h1>
+  <p class="sub">10 original questions on the health dashboard, checks vs alerts, NCC, Pulse, and the Support Portal, calibrated to blueprint Section 3. Every answer is grounded in Nutanix documentation.</p>
+  <div id="scorebar">Score: 0 / 10 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions, written against the NCA 6.10 Exam Blueprint Guide and verified against Nutanix docs. <a href="../study-guides/03-environmental-health.html">← Back to Guide 03</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"3.1",q:"What is the key difference between a health check and an alert?",
+  opts:["Checks are event-driven; alerts are scheduled","Checks are scheduled/proactive; alerts are event-driven/reactive","They are the same thing","Alerts only exist in Prism Central"],
+  a:[1],why:"Health checks (run by NCC) execute on a schedule and report pass/warn/fail. Alerts are event-driven, raised when something crosses a threshold or fails, and carry severities."},
+ {obj:"3.2",q:"What is NCC (Nutanix Cluster Check)?",
+  opts:["A backup tool","The framework that runs health checks across configuration, performance, and operational state","A hypervisor","A licensing portal"],
+  a:[1],why:"NCC is the health-check framework that scans the cluster's components, configuration, performance, and operation, and reports issues to fix before they cause outages."},
+ {obj:"3.3",q:"Which feature securely sends cluster health and configuration data to Nutanix on a schedule for proactive support?",
+  opts:["Pulse","Foundation","Metro Availability","Erasure coding"],
+  a:[0],why:"Pulse is Nutanix's proactive-support telemetry. When enabled it sends cluster health/config data to Nutanix on a regular schedule, feeding the Insights platform for predictive health and faster support."},
+ {obj:"3.3",q:"Pulse is packaged together with which component, so its checks stay current regardless of AOS/hypervisor version?",
+  opts:["Foundation","NCC","Prism Central","LCM"],
+  a:[1],why:"Pulse is packaged as part of NCC, so customers always get the latest checks and telemetry mechanism no matter which AOS or hypervisor version they run."},
+ {obj:"3.1",q:"Where do you look for overall cluster status and current data-resiliency at a glance?",
+  opts:["The Foundation applet","The Prism Health dashboard","The BIOS","The bootstrap cluster"],
+  a:[1],why:"The Health dashboard in Prism shows host/disk/VM/storage status and the cluster's data-resiliency state in one place, including whether it can currently tolerate its configured failures."},
+ {obj:"3.4",multi:3,q:"Which THREE are things you do on the Nutanix Support Portal?",
+  opts:["Download software (AOS, NCC, Foundation, LCM dark-site bundles)","Manage licenses","Open and track support cases","Run production VMs","Replace the AHV hypervisor with Xen"],
+  a:[0,1,2],why:"The Support Portal is for downloads, license management, support cases, and documentation/KB. You do not run workloads on it, and you cannot swap AHV for Xen."},
+ {obj:"3.1",q:"Alerts in Prism are classified by severity. Which set is correct?",
+  opts:["Low / medium / high","Info / warning / critical","Green / yellow / red only","Pass / fail"],
+  a:[1],why:"Prism alert severities are info, warning, and critical. Alerts can also notify out (for example by email) and can drive proactive support."},
+ {obj:"3.2",q:"Which command runs the full set of NCC health checks?",
+  opts:["ncc health_checks run_all","foundation --image","lcm inventory --all","acli host.check"],
+  a:[0],why:"ncc health_checks run_all runs the complete battery of NCC checks. You can also run NCC from Prism. NCC is downloaded and updated from the Support Portal."},
+ {obj:"3.3",q:"Pulse and alerts both support proactive operations. How do they differ?",
+  opts:["Pulse is scheduled telemetry to Nutanix; alerts are event-driven notifications","Pulse is event-driven; alerts are scheduled","They are identical mechanisms","Neither leaves the cluster"],
+  a:[0],why:"Pulse captures purpose-driven diagnostic data on a regular schedule and sends it to Nutanix; alerts are event-driven and fire when something happens. Different mechanisms, both aid proactive support."},
+ {obj:"3.3",q:"What does the Nutanix Insights platform provide, fed by Pulse data?",
+  opts:["A new hypervisor","Predictive health and context-aware support automation across your infrastructure","Cluster imaging","VLAN tagging"],
+  a:[1],why:"Insights ingests Pulse telemetry to deliver predictive health and support automation, with a unified dashboard of infrastructure health. It does not image clusters or configure networking."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · Objective '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>
