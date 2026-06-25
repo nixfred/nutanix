@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 01 · Lifecycle Management (NCA 6.10)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px;border:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted);text-decoration:none;border:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 Study Guide · Section 1 of 4</p>
+  <h1>Describe Lifecycle Management</h1>
+  <p class="sub">One tool owns this whole section: <strong>LCM, the Life Cycle Manager</strong>. The exam wants you to know what LCM is, what it can update, the order of operations (inventory first), and how it works when the cluster has no internet (dark site). This maps to <a href="../../../modules/04-prism-management/index.html">Module 4 (Prism)</a>.</p>
+  <div class="meta">
+    <span class="pill">🎯 Section <b>1 of 4</b></span>
+    <span class="pill">Maps to <b>Module 4</b></span>
+    <span class="pill">Versions <b>AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">1.1</span>What LCM is</h2>
+  <p>The <strong>Life Cycle Manager (LCM)</strong> is the framework that inventories and updates the software and firmware running across a Nutanix cluster from a single place. It gives a real-time view of installed component versions, flags which ones have updates available, and applies those updates with <strong>one-click</strong>, in the correct order, resolving dependencies for you.</p>
+  <p>The single most important idea: <strong>LCM does both software and firmware</strong>. It is not just a firmware tool and not just a software tool, it is the unified updater for the cluster.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  If a question asks "which tool updates BIOS/BMC firmware AND AOS/Prism software from one workflow," the answer is <strong>LCM</strong>. If it implies a tool that only does one of those, it is a distractor.</div>
+
+  <h2><span class="num">1.2</span>Inventory comes first</h2>
+  <p>Before LCM can update anything, you run an <strong>Inventory</strong> operation. Inventory scans the cluster and reports the running versions of every supported software and firmware component, then compares them against what is available so it can show you the update candidates.</p>
+  <p>Order of operations on the exam: <strong>Inventory → review available updates → Update</strong>. You cannot meaningfully update before an inventory has populated the available versions.</p>
+  <div class="card"><p style="margin:4px 0"><strong>Why it matters:</strong> LCM <em>intelligently resolves dependencies and sequencing in advance</em>. That is why you do not hand-pick firmware order, you let LCM plan it. A node may reboot as part of an update; LCM handles the rolling sequence so the cluster stays up.</p></div>
+
+  <h2><span class="num">1.3</span>What LCM can update</h2>
+  <table>
+    <tr><th>Category</th><th>Examples</th></tr>
+    <tr><td>Nutanix software</td><td>AOS, Foundation, Prism (and its components), Licensing/NCC where applicable</td></tr>
+    <tr><td>Firmware</td><td>BIOS/BMC, disk (HDD/SSD/NVMe), HBA, NIC and other qualified hardware firmware</td></tr>
+    <tr><td>Hardware platforms</td><td>Nutanix NX, plus qualified OEM/server vendors: Dell, HPE, Cisco, Lenovo, Fujitsu/Fsas, and Nutanix Cloud Clusters (NC2)</td></tr>
+  </table>
+  <p class="muted">Prism Element is part of AOS and rides along with AOS upgrades; Prism Central is a separate component with its own LCM/upgrade path (see Section 2). That distinction shows up on the exam.</p>
+
+  <h2><span class="num">1.4</span>Dark-site (no-internet) updates</h2>
+  <p>Many Nutanix customers run clusters with no connection to the Nutanix Support Portal (secure, regulated, or air-gapped sites). LCM supports these with a <strong>dark-site bundle</strong>: you download the LCM bundle on a connected machine, host it on a <strong>local web server</strong> inside your network, and point LCM at that URL. From there the inventory-and-update experience is the same, just sourced locally.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "A cluster has no internet access. How do you keep firmware and software current with LCM?" → host the <strong>LCM dark-site bundle on a local web server</strong> and configure LCM to use it. The capability is not lost without internet; the source changes.</div>
+
+  <h2><span class="num">§</span>Section 1 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">LCM is the one-click, dependency-aware updater for both <strong>software and firmware</strong>. Always <strong>inventory first</strong> to discover versions and updates, then update; LCM plans the safe order and rolls through nodes. No internet? Point LCM at a <strong>dark-site bundle on a local web server</strong>.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. What two broad categories of components does LCM update?</p>
+    <p>2. What operation must run before you can apply updates, and why?</p>
+    <p>3. A regulated cluster has no Support Portal connectivity. How do you run LCM updates?</p>
+    <p>4. Is Prism Element updated as a separate LCM component, or with AOS?</p>
+  </div>
+
+  <footer>
+    Sources: official NCA 6.10 Exam Blueprint Guide, Section 1 (Describe Lifecycle Management) + Nutanix Life Cycle Manager Guide (Inventory; Firmware and Software Update Specifications; Firmware/Software Updates with Dark Site). Every claim verified against current Nutanix documentation; confirm the live blueprint before exam day.<br>
+    <a class="next" href="02-basic-administration.html">Next · Guide 02: Basic Administration &rarr;</a>
+  </footer>
+</div>
+</body>
+</html>

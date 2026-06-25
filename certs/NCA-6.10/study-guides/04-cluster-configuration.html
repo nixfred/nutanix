@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 04 · Cluster Configuration (NCA 6.10)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px;border:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted);text-decoration:none;border:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 Study Guide · Section 4 of 4</p>
+  <h1>Describe Cluster Configuration Options</h1>
+  <p class="sub">The biggest section: storage components, Replication and Redundancy Factor, the three storage-optimization features, supported hypervisors and NC2, networking, and use cases. Maps to <a href="../../../modules/01-hci-foundations/index.html">Module 1</a>, <a href="../../../modules/02-nutanix-architecture/index.html">Module 2</a>, <a href="../../../modules/05-dsf-storage/index.html">Module 5 (DSF)</a>, and <a href="../../../modules/06-networking-flow/index.html">Module 6 (Networking)</a>.</p>
+  <div class="meta">
+    <span class="pill">🎯 Section <b>4 of 4</b></span>
+    <span class="pill">Maps to <b>Modules 1, 2, 5, 6</b></span>
+    <span class="pill">Versions <b>AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">4.1</span>Storage components</h2>
+  <table>
+    <tr><th>Component</th><th>What it is</th></tr>
+    <tr><td>Storage Pool</td><td>All physical disks (SSD/NVMe/HDD) across all nodes, pooled into one tier of capacity. Usually one pool per cluster.</td></tr>
+    <tr><td>Storage Container</td><td>A logical slice of the storage pool where you set policies (RF, compression, dedup, erasure coding). Containers present as datastores/shares to the hypervisor. <strong>Optimization and RF are set at the container level.</strong></td></tr>
+    <tr><td>vDisk</td><td>A virtual disk a VM consumes, living inside a container. Made of extents; data is distributed across the cluster.</td></tr>
+  </table>
+  <p>The storage layer is the <strong>Distributed Storage Fabric (DSF)</strong>, served by the <strong>Controller VM (CVM)</strong> on every node. Data locality keeps a VM's hot data on the node it runs on.</p>
+
+  <h2><span class="num">4.2</span>Replication Factor and Redundancy Factor</h2>
+  <table>
+    <tr><th>Setting</th><th>Copies / meaning</th><th>Tolerates</th><th>Minimum nodes</th></tr>
+    <tr><td>RF2 / FT1</td><td>2 copies of data (metadata RF3)</td><td>1 node or drive failure</td><td>3 nodes</td></tr>
+    <tr><td>RF3 / FT2</td><td>3 copies of data (metadata RF5)</td><td>2 simultaneous node or drive failures</td><td>5 nodes</td></tr>
+  </table>
+  <p><strong>Replication Factor (RF)</strong> is the data setting on a container (how many copies of data). <strong>Redundancy Factor / Fault Tolerance (FT)</strong> is the cluster-level resiliency. They line up: <strong>FT1 ↔ data RF2</strong>, <strong>FT2 ↔ data RF3</strong>. Default for a cluster is <strong>RF2 / FT1</strong>.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  Memorize the minimums: <strong>RF2 needs 3 nodes, RF3 needs 5 nodes</strong> (RF3 keeps 5 metadata copies, hence 5). "Tolerate two simultaneous node failures" → <strong>RF3 / FT2</strong>.</div>
+
+  <h2><span class="num">4.3</span>Storage optimization: compression, deduplication, erasure coding</h2>
+  <table>
+    <tr><th>Feature</th><th>How it works</th><th>Best for</th></tr>
+    <tr><td>Compression</td><td>Inline (large/sequential I/O, &gt;64&nbsp;KB) or post-process; uses LZ4 / LZ4HC. The recommended default optimization.</td><td>Almost everything; broadly safe to enable</td></tr>
+    <tr><td>Deduplication</td><td>SHA-1 fingerprint on ingest; removes duplicate blocks (inline and post-process)</td><td>Full clones, VDI, persistent desktops, repeated OS images</td></tr>
+    <tr><td>Erasure Coding (EC-X)</td><td>RAID-like parity striped across nodes; post-process on write-cold data (not overwritten for &gt;7 days)</td><td>Cold / write-once data; reclaims capacity without RF's full copy cost</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  Match the workload: <strong>dedup → VDI / full clones</strong>; <strong>erasure coding → cold, infrequently changed data</strong>; <strong>compression → general default</strong>. Know EC-X is post-process on data cold for ~7 days. All three are set on the <strong>storage container</strong>.</div>
+
+  <h2><span class="num">4.4</span>Supported hypervisors and NC2</h2>
+  <p>Nutanix runs your choice of hypervisor: <strong>AHV</strong> (built in, free, KVM-based), <strong>VMware ESXi</strong>, and <strong>Microsoft Hyper-V</strong>. AHV is the default.</p>
+  <p><strong>NC2 (Nutanix Cloud Clusters)</strong> runs the full Nutanix stack (CVM + AHV + AOS + Prism) on <strong>bare-metal instances in AWS and Azure</strong>, operated as one cloud with on-prem. It is the "extend/migrate to public cloud without changing your operating model" answer.</p>
+
+  <h2><span class="num">4.5</span>Cluster sizes</h2>
+  <table>
+    <tr><th>Size</th><th>Notes</th></tr>
+    <tr><td>3-node (standard)</td><td>The normal minimum for a resilient cluster (RF2 / FT1)</td></tr>
+    <tr><td>2-node (ROBO)</td><td>Edge/remote; requires an external <strong>Witness VM</strong> in a separate failure domain</td></tr>
+    <tr><td>1-node (ROBO)</td><td>Lowest cost, reduced resiliency; only on selected hardware models, limited guest-VM count</td></tr>
+  </table>
+
+  <h2><span class="num">4.6</span>Networking basics (AHV)</h2>
+  <p>AHV networking uses <strong>Open vSwitch (OVS)</strong>. The default bridge is <strong>br0</strong> with a default uplink bond <strong>br0-up</strong>; OVS supports VLAN tagging, load balancing, and LACP. Best practice puts the <strong>CVM and AHV host on the native/untagged VLAN</strong>, and a bond should have <strong>at least two physical NICs</strong> for high availability. Guest VM VLANs are set on the VM NIC (virtual network / VLAN).</p>
+
+  <h2><span class="num">4.7</span>Building it: Foundation</h2>
+  <p><strong>Foundation</strong> is the tool that images bare-metal nodes (installs the chosen AOS and hypervisor) and forms them into a cluster. It is built into the CVMs and needs roughly <strong>three IPs per node</strong> (hypervisor, CVM, and IPMI/remote management) plus a cluster IP and a Data Services IP.</p>
+
+  <h2><span class="num">§</span>Section 4 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">Disks form a <strong>storage pool</strong>; policy (RF, compression, dedup, EC) is set on a <strong>container</strong>; VMs use <strong>vDisks</strong>. <strong>RF2/FT1 (3 nodes)</strong> survives one failure, <strong>RF3/FT2 (5 nodes)</strong> survives two. Optimize with compression (default), dedup (VDI/clones), or EC-X (cold data). Hypervisor is AHV/ESXi/Hyper-V, or run on cloud bare metal with <strong>NC2</strong>. AHV networking is <strong>OVS / br0</strong>. <strong>Foundation</strong> images nodes into a cluster.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. Where do you set replication factor and compression, the pool or the container?</p>
+    <p>2. Minimum nodes for RF2? For RF3? How many failures does each tolerate?</p>
+    <p>3. Which optimization fits VDI full clones? Which fits cold archival data?</p>
+    <p>4. What does a two-node ROBO cluster require that a three-node cluster does not?</p>
+    <p>5. What is the default OVS bridge name on AHV, and where should the CVM/host VLAN sit?</p>
+    <p>6. What does NC2 run on, and where?</p>
+  </div>
+
+  <footer>
+    Sources: official NCA 6.10 Exam Blueprint Guide, Section 4 (Describe Cluster Configuration Options) + Nutanix documentation (AOS Storage / Data Efficiency: compression, deduplication, erasure coding; Redundancy Factor vs Replication Factor; AHV Networking best practices; Foundation Field Installation Guide; Nutanix Cloud Clusters on AWS/Azure; Two-Node Cluster guidelines). Every claim verified against current Nutanix documentation; confirm the live blueprint before exam day.<br>
+    <a class="next" href="../on-the-exam/index.html">Finish · High-Yield Exam-Facts Card &rarr;</a>
+  </footer>
+</div>
+</body>
+</html>

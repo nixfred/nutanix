@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 02 · Basic Administration (NCA 6.10)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px;border:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted);text-decoration:none;border:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 Study Guide · Section 2 of 4</p>
+  <h1>Describe Nutanix Basic Administration</h1>
+  <p class="sub">The day-to-day: managing VMs, the resiliency features that keep them running (live migration, HA, ADS), the difference between the two management planes (Prism Element and Prism Central), and matching a use case to an AOS license tier. Maps to <a href="../../../modules/03-ahv-hypervisor/index.html">Module 3 (AHV)</a>, <a href="../../../modules/04-prism-management/index.html">Module 4 (Prism)</a>, and <a href="../../../modules/09-licensing-economics/index.html">Module 9 (Licensing)</a>.</p>
+  <div class="meta">
+    <span class="pill">🎯 Section <b>2 of 4</b></span>
+    <span class="pill">Maps to <b>Modules 3, 4, 9</b></span>
+    <span class="pill">Versions <b>AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">2.1</span>VM management on AHV</h2>
+  <p><strong>AHV</strong> is Nutanix's built-in hypervisor. It is <strong>KVM-based</strong> (Nutanix hardened and operationalized KVM), and it is <strong>included at no extra licensing cost</strong> in every Nutanix Cloud Infrastructure (NCI) license; a new node ships with AHV by default. Core VM operations, virtual networking, live migration, and VM high availability are <strong>built into the stack</strong>, not separate products you license and deploy.</p>
+  <p>Day-to-day VM management (create, power, clone, snapshot, update vCPU/RAM/disks/NICs) happens in Prism. The CLI equivalent is <code>acli</code> (Acropolis CLI) for VM and network operations and <code>ncli</code> for cluster-level operations.</p>
+
+  <h2><span class="num">2.2</span>The three resiliency features: Live Migration, HA, ADS</h2>
+  <table>
+    <tr><th>Feature</th><th>What it does</th><th>When it triggers</th></tr>
+    <tr><td>Live Migration</td><td>Moves a running VM between AHV hosts in the same cluster with no downtime; memory state copies while the VM keeps running</td><td>Maintenance, ADS rebalancing, node expansion, or admin request</td></tr>
+    <tr><td>VM High Availability (HA)</td><td>If a host fails, the VMs that were on it are <strong>restarted</strong> on surviving hosts</td><td>Unplanned host failure (this is a restart, not a live move)</td></tr>
+    <tr><td>ADS · Acropolis Dynamic Scheduling</td><td>Automatically places and rebalances VMs to avoid CPU/storage hot spots</td><td>Continuously; ADS is automatic and on by default for every AHV cluster</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  Trap: HA vs Live Migration. <strong>Live Migration = planned, no downtime, VM stays running.</strong> <strong>HA = unplanned host failure, the VM restarts elsewhere</strong> (brief downtime). ADS is the "automatically balances load / avoids hot spots" answer, the AHV analog of DRS.</div>
+
+  <h2><span class="num">2.3</span>Prism Element vs Prism Central</h2>
+  <table>
+    <tr><th></th><th>Prism Element (PE)</th><th>Prism Central (PC)</th></tr>
+    <tr><td>What it is</td><td>Built into AOS, runs inside every CVM</td><td>A separate VM (or scale-out VM cluster) you deploy after the cluster is up</td></tr>
+    <tr><td>Scope</td><td>Manages only its own single cluster</td><td>Manages many clusters across sites from one screen</td></tr>
+    <tr><td>Upgrades</td><td>Rides along with AOS via LCM</td><td>A separate component with its own upgrade path</td></tr>
+    <tr><td>Extras</td><td>Core configure / manage / monitor</td><td>Categories, multi-cluster views, and the higher-tier automation/operations features</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Single screen across multiple clusters / multiple sites" → <strong>Prism Central</strong>. "Built into every cluster, manages just that cluster" → <strong>Prism Element</strong>. PE is free and always there; PC is a separate VM you stand up.</div>
+
+  <h2><span class="num">2.4</span>AOS licensing tiers</h2>
+  <table>
+    <tr><th>Tier</th><th>Headline scope</th><th>Representative features</th></tr>
+    <tr><td>Starter</td><td>Small/entry, up to 12 nodes per cluster</td><td>RF2, compression and deduplication, async replication (RPO ≥ 1 hour), lifecycle management</td></tr>
+    <tr><td>Pro</td><td>Larger deployments, richer data services</td><td>More than 12 nodes, RF3, erasure coding, VM flash-mode pinning, multi-site replication, GPU passthrough</td></tr>
+    <tr><td>Ultimate</td><td>Mission-critical / advanced</td><td>Advanced replication (Metro, NearSync, cross-cluster migration), encryption (data-at-rest, native KMS), microsegmentation (Flow), multiple managed Kubernetes clusters</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  Align the use case to a tier. Needs <strong>Metro / NearSync / encryption / microsegmentation</strong> → <strong>Ultimate</strong>. Needs <strong>RF3 / erasure coding / &gt;12 nodes</strong> → <strong>Pro</strong>. Basic RF2 with async and compression → <strong>Starter</strong>. (Prism Starter ships with every AOS license; a 90-day Prism Ultimate trial is included too.)</div>
+
+  <h2><span class="num">§</span>Section 2 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">AHV is the free, KVM-based, built-in hypervisor. Live Migration moves running VMs with no downtime; <strong>HA restarts</strong> VMs after a host fails; <strong>ADS</strong> auto-balances load. Manage one cluster in <strong>Prism Element</strong> (built into AOS), many clusters in <strong>Prism Central</strong> (a separate VM). Match the feature need to the AOS tier: Starter, Pro, or Ultimate.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. A host fails unexpectedly. Which feature brings the VMs back, and is it a live move or a restart?</p>
+    <p>2. You need to manage four clusters in three sites from one console. PE or PC?</p>
+    <p>3. Is AHV a separately licensed hypervisor? Where does it come from?</p>
+    <p>4. A customer needs Metro Availability and data-at-rest encryption. Which AOS tier?</p>
+    <p>5. Which feature automatically avoids hot spots by rebalancing VMs?</p>
+  </div>
+
+  <footer>
+    Sources: official NCA 6.10 Exam Blueprint Guide, Section 2 (Describe Nutanix Basic Administration) + Nutanix documentation (AHV Virtualization / Architecture; Prism architecture; AOS Software Options and Licensing). Every claim verified against current Nutanix documentation; confirm the live blueprint before exam day.<br>
+    <a class="next" href="03-environmental-health.html">Next · Guide 03: Environmental Health &rarr;</a>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCA 6.10 Study Hub · BlueAlly</title>
+<link rel="icon" type="image/svg+xml" href="../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:900px;margin:0 auto;padding:48px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 10px}
+  h1{font-size:34px;margin:0 0 10px;letter-spacing:-.5px}
+  .sub{color:var(--muted);margin:0 0 22px;max-width:720px;font-size:17px}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
+  .pill{font-size:13px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:5px 13px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:15px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--purple);
+    margin:36px 0 14px;border-bottom:1px solid var(--line);padding-bottom:9px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  a.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;color:var(--ink);text-decoration:none;transition:.15s}
+  a.card:hover{border-color:var(--teal);transform:translateY(-2px)}
+  .card .n{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+  .card .t{font-weight:700;color:#fff;font-size:16.5px;margin-bottom:5px}
+  .card .d{font-size:13.5px;color:var(--muted)}
+  .soon{display:block;background:var(--panel);border:1px dashed var(--line);border-radius:14px;
+    padding:18px 20px;color:var(--muted);opacity:.72}
+  .soon .n{font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+  .soon .t{font-weight:700;color:var(--ink);font-size:16.5px;margin-bottom:5px}
+  .soon .d{font-size:13.5px}
+  .warn{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:22px 0;font-size:14.5px}
+  .warn b{color:var(--amber)}
+  a{color:var(--teal)}
+  footer{margin-top:50px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p style="font-family:var(--mono);font-size:12.5px;margin:0 0 20px"><a href="../index.html" style="color:var(--muted);text-decoration:none">&larr; Certification Training</a></p>
+  <p class="kicker">BlueAlly SA Training Package</p>
+  <h1>NCA 6.10 Study Hub</h1>
+  <p class="sub">Everything to pass the Nutanix Certified Associate exam: study guides built from the official blueprint and cross-linked to the curriculum modules, a high-yield exam-facts card, and a blueprint objective map. The NCA is the foundation rung, core Nutanix Cloud Platform (AOS, AHV, Prism, storage, data protection, lifecycle), so most of it is already taught in Modules 1 through 7. Self-contained HTML; share the whole folder.</p>
+  <div class="facts">
+    <span class="pill">50 questions · <b>90 min</b></span>
+    <span class="pill"><b>$99</b> per attempt</span>
+    <span class="pill">pass <b>3000</b> / 1000-6000</span>
+    <span class="pill">AOS <b>6.10</b> · PC <b>pc2024.2</b></span>
+    <span class="pill">valid <b>3 years</b></span>
+  </div>
+
+  <div class="warn"><b>Phase 1 of 2.</b> Study guides, the high-yield exam-facts card, and the blueprint map are live now. Section quizzes, a 50-question timed mock, flashcards, a VMware-to-Nutanix primer, and hands-on labs land in Phase 2. Every fact on these pages was verified against Nutanix documentation; still confirm the official blueprint at <a href="https://university.nutanix.com">university.nutanix.com</a> when you schedule.</div>
+
+  <h2>Start here</h2>
+  <div class="grid">
+    <a class="card" href="on-the-exam/index.html" style="border-color:var(--amber)"><div class="n" style="color:var(--amber)">High-Yield · 30 facts</div><div class="t">&ldquo;This Is On The Exam&rdquo; Card</div><div class="d">The most-tested NCA facts, each with the exam point, the right answer, and background. Verified against Nutanix docs. The fastest single read before exam day.</div></a>
+    <a class="card" href="reference/nca-6.10-blueprint-objectives.md"><div class="n">Reference</div><div class="t">Blueprint Objective Map</div><div class="d">All four exam sections and their objectives, each pointed at the module section that teaches it. The table of contents for your study.</div></a>
+    <a class="card" href="../../appendices/a-glossary/index.html"><div class="n">Reference</div><div class="t">Glossary (Appendix A)</div><div class="d">Every Nutanix term defined. The NCA tests terminology directly; read this end to end.</div></a>
+  </div>
+
+  <h2>Study guides (the four blueprint sections)</h2>
+  <div class="grid">
+    <a class="card" href="study-guides/01-lifecycle-management.html" style="border-color:var(--teal)"><div class="n" style="color:var(--teal)">Section 1</div><div class="t">Lifecycle Management</div><div class="d">LCM: inventory, one-click software and firmware updates, dependency resolution, dark-site bundles. What LCM updates and how.</div></a>
+    <a class="card" href="study-guides/02-basic-administration.html"><div class="n">Section 2</div><div class="t">Basic Administration</div><div class="d">VM operations, live migration, HA and ADS, cluster management in Prism Element vs Prism Central, and AOS licensing tiers.</div></a>
+    <a class="card" href="study-guides/03-environmental-health.html"><div class="n">Section 3</div><div class="t">Environmental Health</div><div class="d">Where to find statistics, alerts, and status: the health dashboard, NCC, Pulse telemetry, and the Support Portal.</div></a>
+    <a class="card" href="study-guides/04-cluster-configuration.html"><div class="n">Section 4</div><div class="t">Cluster Configuration</div><div class="d">Storage components, Replication and Redundancy Factor, storage optimization, supported hypervisors and NC2, networking, use cases.</div></a>
+  </div>
+
+  <h2>Where the curriculum already teaches this</h2>
+  <div class="grid">
+    <a class="card" href="../../modules/01-hci-foundations/index.html"><div class="n">Module 1</div><div class="t">HCI Foundations</div><div class="d">Why hyperconverged, what it replaces. Section 4 use-case framing.</div></a>
+    <a class="card" href="../../modules/02-nutanix-architecture/index.html"><div class="n">Module 2</div><div class="t">Nutanix Architecture</div><div class="d">CVM, Stargate, Cassandra, Curator. The substrate under every section.</div></a>
+    <a class="card" href="../../modules/03-ahv-hypervisor/index.html"><div class="n">Module 3</div><div class="t">AHV Hypervisor</div><div class="d">AHV, VM operations, live migration, ADS, HA. Section 2 core.</div></a>
+    <a class="card" href="../../modules/04-prism-management/index.html"><div class="n">Module 4</div><div class="t">Prism Management</div><div class="d">Element vs Central, LCM, health, alerts. Sections 1 and 3.</div></a>
+    <a class="card" href="../../modules/05-dsf-storage/index.html"><div class="n">Module 5</div><div class="t">DSF Storage</div><div class="d">Containers, RF, compression, dedup, erasure coding. Section 4.</div></a>
+    <a class="card" href="../../modules/07-data-protection/index.html"><div class="n">Module 7</div><div class="t">Data Protection</div><div class="d">Snapshots, protection domains, async, NearSync, Metro. Section 4.</div></a>
+  </div>
+
+  <h2>Test yourself</h2>
+  <div class="grid">
+    <div class="soon"><div class="n">Phase 2</div><div class="t">Section quizzes &amp; 50-Q mock</div><div class="d">Four section quizzes plus a 90-minute, 50-question timed mock matching the real exam shape. Coming in the next build.</div></div>
+    <div class="soon"><div class="n">Phase 2</div><div class="t">Flashcards</div><div class="d">Four decks, one per section, know/drill buckets. Coming in the next build.</div></div>
+    <div class="soon"><div class="n">Phase 2</div><div class="t">VMware &rarr; Nutanix primer &amp; labs</div><div class="d">A translation legend for VMware-background readers, plus Nutanix CE and Test Drive walkthroughs. Coming in the next build.</div></div>
+  </div>
+
+  <footer>
+    Sources for every fact on these pages: the official Nutanix NCA 6.10 Exam Blueprint Guide plus Nutanix documentation (AOS Storage / Data Efficiency, Prism architecture, Life Cycle Manager Guide, NCC and Pulse / Insights, Data Protection with Async DR and NearSync, AHV Networking, AOS licensing, Foundation Field Installation Guide, Nutanix Cloud Clusters). Verify the live blueprint at <a href="https://university.nutanix.com">university.nutanix.com</a> before exam day.<br><br>
+    <a href="../../index.html" style="color:var(--muted)">Home</a> &nbsp;·&nbsp; <a href="../index.html" style="color:var(--muted)">Certification Training</a> &nbsp;·&nbsp; <a href="../../appendices/k-cert-tracker/index.html" style="color:var(--muted)">Cert ladder (Appendix K)</a>
+  </footer>
+</div>
+</body>
+</html>

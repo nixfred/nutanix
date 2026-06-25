@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide 03 · Environmental Health (NCA 6.10)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.65;font-size:16.5px}
+  .wrap{max-width:840px;margin:0 auto;padding:44px 22px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+  .pill{font-size:12.5px;background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:4px 11px;border-radius:999px}
+  .pill b{color:var(--ink)}
+  h2{font-size:21px;margin:40px 0 10px;letter-spacing:-.3px}
+  h2 .num{color:var(--purple);font-family:var(--mono);font-size:15px;margin-right:8px}
+  p{margin:11px 0}
+  strong{color:#fff}
+  .muted{color:var(--muted)}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(31,200,192,.35)}
+  code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 19px;margin:16px 0}
+  .exam{border:1px solid var(--amber);background:rgba(242,184,75,.07);border-radius:12px;padding:14px 18px;margin:18px 0;font-size:15px}
+  .exam .h{font-weight:700;color:var(--amber);font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--mono);margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  td:first-child{color:#fff;font-weight:600}
+  footer{margin-top:50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:20px}
+  .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px;border:none}
+  .home{font-family:var(--mono);font-size:12.5px;margin:0 0 20px;display:block}
+  .home a{color:var(--muted);text-decoration:none;border:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="home"><a href="../index.html">&larr; NCA 6.10 Study Hub</a></span>
+  <p class="kicker">NCA 6.10 Study Guide · Section 3 of 4</p>
+  <h1>Maintain Environmental Health</h1>
+  <p class="sub">This section is "where do I look, and how do I check status." Know the health dashboard, the difference between an alert and a check, what NCC and Pulse each do, and the role of the Support Portal. Maps to <a href="../../../modules/04-prism-management/index.html">Module 4 (Prism)</a> and <a href="../../../modules/02-nutanix-architecture/index.html">Module 2</a>.</p>
+  <div class="meta">
+    <span class="pill">🎯 Section <b>3 of 4</b></span>
+    <span class="pill">Maps to <b>Modules 2, 4</b></span>
+    <span class="pill">Versions <b>AOS 6.10 · pc2024.2</b></span>
+  </div>
+
+  <h2><span class="num">3.1</span>The Health dashboard and alerts</h2>
+  <p>Prism has a <strong>Health</strong> dashboard that shows the status of hosts, disks, VMs, storage, and the cluster's data-resiliency state in one place. Two related but distinct concepts:</p>
+  <table>
+    <tr><th>Concept</th><th>What it is</th></tr>
+    <tr><td>Health checks</td><td>Scheduled tests of configuration, performance, and operation (powered by NCC, §3.2). They run on a schedule and surface pass/warn/fail status.</td></tr>
+    <tr><td>Alerts</td><td><strong>Event-driven</strong> notifications raised when something crosses a threshold or fails. Alerts have severities (info / warning / critical) and can email or notify out.</td></tr>
+  </table>
+  <div class="exam"><div class="h">Exam shape</div>
+  Checks are <strong>scheduled/proactive</strong>; alerts are <strong>event-driven/reactive</strong>. "Where do you see overall cluster status and resiliency at a glance?" → the <strong>Health dashboard</strong> in Prism.</div>
+
+  <h2><span class="num">3.2</span>NCC, Nutanix Cluster Check</h2>
+  <p><strong>NCC (Nutanix Cluster Check)</strong> is the health-check framework. It runs a large battery of tests across the cluster's components, configuration, performance, and operational state and reports issues so you can fix them before they become outages. You can run NCC from Prism or the CLI (for example <code>ncc health_checks run_all</code>), and NCC is downloaded/updated from the Support Portal.</p>
+  <div class="card"><p style="margin:4px 0"><strong>Pulse is packaged with NCC.</strong> That is why "always-on" telemetry works regardless of AOS or hypervisor version, NCC carries the latest checks and the Pulse mechanism.</p></div>
+
+  <h2><span class="num">3.3</span>Pulse telemetry</h2>
+  <p><strong>Pulse</strong> is Nutanix's proactive support feature. When enabled, it <strong>securely sends cluster health and configuration data to Nutanix on a regular schedule</strong>. That data feeds Nutanix's Insights platform for predictive health and faster, context-aware support, and it can let support open or speed up cases proactively.</p>
+  <div class="exam"><div class="h">Exam shape</div>
+  "Which feature automatically sends diagnostic/telemetry data to Nutanix for proactive support?" → <strong>Pulse</strong>. Pulse is scheduled telemetry; alerts are event-driven. Both can drive proactive support, but they are different mechanisms.</div>
+
+  <h2><span class="num">3.4</span>The Support Portal</h2>
+  <p>The <strong>Nutanix Support Portal</strong> (<code>portal.nutanix.com</code>) is where you download software (AOS, NCC, Foundation, LCM dark-site bundles), manage licenses, open and track support cases, and read documentation and KB articles. Pulse data surfaces in the portal's Insights views to help triage.</p>
+
+  <h2><span class="num">§</span>Section 3 in one breath</h2>
+  <div class="card"><p style="margin:4px 0">Look at the <strong>Health dashboard</strong> for status. <strong>NCC</strong> runs the scheduled checks; <strong>alerts</strong> fire on events. <strong>Pulse</strong> (packaged with NCC) ships telemetry to Nutanix for proactive support, surfaced in the <strong>Support Portal</strong> / Insights.</p></div>
+
+  <h2><span class="num">§</span>Self check</h2>
+  <div class="card">
+    <p>1. Alert vs health check: which is scheduled and which is event-driven?</p>
+    <p>2. What does NCC do, and where do you get it?</p>
+    <p>3. Which feature sends cluster data to Nutanix for proactive support, and what carries it?</p>
+    <p>4. Name three things you do on the Support Portal.</p>
+  </div>
+
+  <footer>
+    Sources: official NCA 6.10 Exam Blueprint Guide, Section 3 (Maintain Environmental Health) + Nutanix documentation (Nutanix Cluster Check Guide; Pulse / Insights; Prism Health monitoring and Alerts). Every claim verified against current Nutanix documentation; confirm the live blueprint before exam day.<br>
+    <a class="next" href="04-cluster-configuration.html">Next · Guide 04: Cluster Configuration &rarr;</a>
+  </footer>
+</div>
+</body>
+</html>

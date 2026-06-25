@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
+  <title>NutaNIX · NCA 6.10 · This Is On The Exam</title>
+  <meta name="description" content="NCA 6.10 (Nutanix Certified Associate) high-yield exam-facts card. The most-tested NCA points, each with the fact, the right answer, and background. Covers LCM, RF2/RF3 and fault tolerance, storage optimization, Prism Element vs Central, AHV HA/ADS/live migration, NCC and Pulse, NC2, networking, and Foundation. Every fact verified against Nutanix documentation; confirm the official blueprint at exam time." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="../../../public/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="NutaNIX · NCA 6.10 · This Is On The Exam" />
+  <meta property="og:description" content="High-yield NCA 6.10 exam facts: the fact, the right answer, the background. Verified against Nutanix docs." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://nixfred.com/nutanix/certs/NCA-6.10/on-the-exam/" />
+  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+  <meta property="og:site_name" content="NutaNIX" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutaNIX · NCA 6.10 · This Is On The Exam" />
+  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+
+  <style>
+    :root {
+      --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
+      --border: #1f3a66;
+      --text-primary: #e8f0ff; --text-secondary: #a8b8d4; --text-tertiary: #6b7a9a;
+      --accent-primary: #4a9eff; --accent-cyan: #00d4ff;
+      --success: #34d399; --warning: #fbbf24; --danger: #f87171;
+      --font-display: "Inter", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; background: var(--bg-base); color: var(--text-primary); font-family: var(--font-display); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: var(--accent-cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.brand { position: sticky; top: 0; z-index: 50; background: rgba(10, 22, 40, 0.65); backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px); border-bottom: 1px solid rgba(31, 58, 102, 0.5); }
+    header.brand .inner { max-width: 1200px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 22px; color: var(--text-primary); text-decoration: none; }
+    .wordmark-nix { color: var(--accent-cyan); }
+    .breadcrumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+    .breadcrumb a { color: var(--text-secondary); }
+    .breadcrumb .sep { color: var(--text-tertiary); padding: 0 6px; }
+
+    main { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; width: 100%; }
+
+    .cert-hero {
+      position: relative; margin: 24px 0 0; border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(900px 360px at 12% -10%, rgba(0,212,255,0.16), transparent 60%),
+        radial-gradient(700px 320px at 92% 0%, rgba(251,191,36,0.12), transparent 55%),
+        linear-gradient(160deg, #0c1d38 0%, #0a1628 70%);
+      padding: 44px 40px 36px;
+    }
+    .module-eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); letter-spacing: 0.04em; margin-bottom: 10px; }
+    h1.module-title { font-size: 44px; line-height: 1.07; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 18px; }
+    .module-title .nix { color: var(--accent-cyan); }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 4px; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: rgba(16, 39, 71, 0.85); }
+    .chip.cert { border-color: rgba(0,212,255,0.45); color: var(--accent-cyan); }
+    .chip.exam { border-color: rgba(251,191,36,0.5); color: var(--warning); }
+
+    .intro { max-width: 860px; margin: 28px auto 8px; color: var(--text-primary); font-size: 17px; line-height: 1.62; }
+    .intro p { margin: 0 0 12px; }
+    .intro strong { color: var(--text-primary); }
+    .intro .src { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-tertiary); }
+
+    .caveat {
+      margin: 18px auto; max-width: 860px; padding: 12px 16px;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-left: 3px solid var(--warning); border-radius: 6px;
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--text-primary);
+    }
+    .caveat strong { color: var(--warning); }
+
+    nav.cat-jump {
+      position: sticky; top: 60px; z-index: 40;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: saturate(150%) blur(10px); -webkit-backdrop-filter: saturate(150%) blur(10px);
+      border: 1px solid var(--border); border-left: 3px solid rgba(251,191,36,0.6);
+      border-radius: 6px; padding: 10px 14px; margin: 24px 0 32px;
+      display: flex; flex-wrap: wrap; gap: 6px 8px;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    nav.cat-jump a {
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    nav.cat-jump a:hover { border-color: var(--warning); color: var(--warning); }
+
+    article.body { max-width: 920px; margin: 0 auto; }
+
+    .exam-card {
+      margin: 8px 0 0; padding: 28px 26px 32px;
+      background: linear-gradient(180deg, rgba(251,191,36,0.07), rgba(251,191,36,0.03));
+      border: 1px solid rgba(251,191,36,0.38); border-radius: 14px;
+    }
+    .exam-card .card-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 8px; }
+    .exam-card .card-head .badge {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #0a1628; background: var(--warning); border-radius: 4px; padding: 5px 10px; font-weight: 700;
+    }
+    .exam-card h2 { margin: 0; font-size: 30px; line-height: 1.1; letter-spacing: -0.02em; color: var(--warning); }
+    .exam-card .lede { color: var(--text-secondary); font-size: 15px; margin: 10px 0 4px; }
+    .exam-card .lede strong { color: var(--text-primary); }
+
+    .fact-section { margin: 38px 0 0; scroll-margin-top: 116px; }
+    .fact-section > h3 {
+      font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -0.01em;
+      color: var(--accent-cyan); margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .fact-section > h3 .stag { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.06em; margin-left: 8px; }
+
+    .fact { border: 1px solid var(--border); border-left: 3px solid var(--warning); border-radius: 8px; background: var(--bg-surface); padding: 16px 18px; margin: 14px 0; }
+    .fact .fact-n { font-family: var(--font-mono); font-size: 11px; color: var(--warning); letter-spacing: 0.06em; }
+    .fact .q { color: var(--text-primary); font-weight: 600; font-size: 15.5px; margin: 5px 0 4px; }
+    .fact .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; display: block; margin: 12px 0 3px; }
+    .fact .a .lbl { color: var(--success); }
+    .fact .bg .lbl { color: var(--accent-cyan); }
+    .fact .a p, .fact .bg p { margin: 0; color: var(--text-secondary); font-size: 14.5px; line-height: 1.6; }
+    .fact .a p { color: var(--text-primary); }
+    .fact p strong { color: var(--text-primary); }
+    .fact .a strong { color: var(--success); }
+    .fact code { font-family: var(--font-mono); font-size: 0.88em; background: #050a16; border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: #cfeeff; }
+
+    .back-home { margin-top: 56px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .back-home a {
+      padding: 14px 24px; background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-cyan); border-radius: 8px; color: var(--text-primary);
+      text-decoration: none; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; transition: border-color 150ms ease;
+    }
+    .back-home a:hover { border-color: var(--warning); border-left-color: var(--warning); }
+
+    footer.site { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; width: 100%; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer.site a { color: var(--text-secondary); }
+    footer.site .path { font-family: var(--font-mono); color: var(--text-tertiary); }
+    footer.site .path .slash { color: var(--accent-cyan); }
+
+    @media (max-width: 760px) {
+      header.brand .inner { padding: 12px 20px; }
+      main { padding: 0 20px 64px; }
+      .cert-hero { padding: 28px 22px; }
+      h1.module-title { font-size: 30px; }
+      nav.cat-jump { top: 56px; font-size: 11px; }
+      .exam-card { padding: 20px 16px 24px; }
+      .exam-card h2 { font-size: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="brand">
+    <div class="inner">
+      <a class="wordmark" href="../../../index.html">Nuta<span class="wordmark-nix">NIX</span></a>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../../index.html">Home</a>
+        <span class="sep">/</span>
+        <a href="../../../certs/index.html">Certs</a>
+        <span class="sep">/</span>
+        <a href="../index.html">NCA 6.10</a>
+        <span class="sep">/</span>
+        <span style="color: var(--text-primary);">On the Exam</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="cert-hero">
+      <div class="module-eyebrow">/nix/nutanix/certs/NCA-6.10/on-the-exam</div>
+      <h1 class="module-title">NCA 6.10 · High-Yield <span class="nix">Exam Facts</span></h1>
+      <div class="meta-row">
+        <span class="chip cert">Nutanix Certified Associate</span>
+        <span class="chip cert">AOS 6.10 · pc2024.2</span>
+        <span class="chip exam">This is on the exam!</span>
+        <span class="chip">fact · right answer · background</span>
+      </div>
+    </section>
+
+    <div class="intro">
+      <p><strong>This is on the exam!</strong> The most-tested NCA 6.10 facts, grouped by the four blueprint sections. Each entry lists the <strong>fact</strong> (what gets asked), the <strong>right answer</strong> (what to pick and why), and <strong>background</strong> (the reasoning). Every item was verified against current Nutanix documentation while building this page.</p>
+      <p class="src">Sources: NCA 6.10 Exam Blueprint Guide + Nutanix docs (AOS Storage / Data Efficiency, Prism, LCM, NCC / Pulse, Data Protection, AHV Networking, Licensing, Foundation, NC2).</p>
+    </div>
+
+    <div class="caveat">
+      <strong>Practice, verify the blueprint.</strong> This reflects NCA 6.10 (AOS 6.10 / pc2024.2) as documented in early-to-mid 2026. Nutanix updates blueprints and product behavior; confirm the official blueprint on <a href="https://university.nutanix.com">university.nutanix.com</a> before you schedule.
+    </div>
+
+    <nav class="cat-jump" aria-label="Section jump nav">
+      <a href="#s1">1 · Lifecycle Management</a>
+      <a href="#s2">2 · Basic Administration</a>
+      <a href="#s3">3 · Environmental Health</a>
+      <a href="#s4">4 · Cluster Configuration</a>
+    </nav>
+
+    <article class="body">
+      <div class="exam-card">
+        <div class="card-head">
+          <span class="badge">On the exam</span>
+          <h2>This is on the exam!</h2>
+        </div>
+        <p class="lede">NCA is foundational: <strong>terminology, what-does-what, and the resiliency numbers</strong>. The densest, most-tested ground is Section 4 (storage, RF/FT) and the LCM workflow.</p>
+
+        <!-- ===== Section 1 ===== -->
+        <section class="fact-section" id="s1">
+          <h3>1 · Describe Lifecycle Management <span class="stag">LCM</span></h3>
+
+          <div class="fact">
+            <div class="fact-n">1.1</div>
+            <p class="q">Which tool updates both software and firmware from one workflow?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>LCM (Life Cycle Manager).</strong> It is the unified, one-click updater for cluster software <em>and</em> firmware, and it resolves dependencies and sequencing for you.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>The classic trap is a distractor that only does firmware or only does software. LCM does both.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">1.2</div>
+            <p class="q">What must you run before LCM can apply updates?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>An <strong>Inventory</strong> operation. It scans the cluster for installed component versions and populates the available updates.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Order: <strong>Inventory → review → Update</strong>. LCM then plans a safe rolling sequence (nodes may reboot).</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">1.3</div>
+            <p class="q">How do you run LCM on a cluster with no internet (dark site)?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>Host the <strong>LCM dark-site bundle on a local web server</strong> inside your network and point LCM at that URL.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>The capability is not lost without Support Portal connectivity; only the source of the bundle changes.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">1.4</div>
+            <p class="q">Name things LCM can update.</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>Nutanix software (<strong>AOS, Foundation, Prism, NCC/Licensing</strong>) and <strong>firmware</strong> (BIOS/BMC, disks, HBA, NIC) across Nutanix NX and qualified OEMs (Dell, HPE, Cisco, Lenovo, Fujitsu) and NC2.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Prism Element rides along with AOS; Prism Central is a separate component with its own upgrade path.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">1.5</div>
+            <p class="q">Why does LCM resolve dependencies itself?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>So you don't hand-pick firmware/software order. LCM computes a <strong>compatible upgrade sequence in advance</strong>, reducing manual risk.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>This is the value proposition vs manually upgrading each component; it works even at dark sites.</p></div>
+          </div>
+        </section>
+
+        <!-- ===== Section 2 ===== -->
+        <section class="fact-section" id="s2">
+          <h3>2 · Describe Nutanix Basic Administration <span class="stag">VM ops · Prism · licensing</span></h3>
+
+          <div class="fact">
+            <div class="fact-n">2.1</div>
+            <p class="q">Is AHV a separately licensed hypervisor?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>No.</strong> AHV is included at no extra licensing cost in every NCI license, and a new node ships with AHV by default.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>AHV is KVM-based, hardened and operationalized by Nutanix. VM ops, live migration, HA, and virtual networking are built in.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.2</div>
+            <p class="q">Host fails unexpectedly. Live migration or HA, and is it a move or a restart?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>HA, and it is a restart.</strong> VMs that were on the failed host are restarted on surviving hosts.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Trap vs Live Migration, which is a planned, no-downtime move of a <em>running</em> VM (memory copied while it runs).</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.3</div>
+            <p class="q">Which feature auto-balances VM load and avoids hot spots?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>ADS (Acropolis Dynamic Scheduling).</strong> Automatic, on by default on every AHV cluster.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>The AHV analog of VMware DRS. ADS-triggered moves use live migration under the hood.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.4</div>
+            <p class="q">Manage many clusters across sites from one screen, PE or PC?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Prism Central (PC)</strong>, a separate VM (or scale-out VM cluster) you deploy to manage multiple clusters.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p><strong>Prism Element (PE)</strong> is built into AOS, runs in every CVM, and manages only its own cluster. PE upgrades with AOS; PC is separate.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.5</div>
+            <p class="q">Does Prism Element cost extra or need a separate deployment?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>No.</strong> PE is built into every cluster (runs inside the CVMs). Prism Central is the piece you deploy separately.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Prism Starter licensing is included with every AOS license; a 90-day Prism Ultimate trial is included too.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.6</div>
+            <p class="q">Use case needs Metro / NearSync / encryption / microsegmentation, which AOS tier?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Ultimate.</strong> Advanced replication (Metro, NearSync, cross-cluster migration), encryption (data-at-rest, native KMS), and Flow microsegmentation are Ultimate features.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>RF3 / erasure coding / &gt;12 nodes → Pro. Basic RF2 + async + compression → Starter.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.7</div>
+            <p class="q">Which AOS tier caps at 12 nodes and offers only RF2?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Starter</strong> (up to 12 nodes per cluster, RF2, compression/dedup, async ≥ 1 hour, LCM).</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>RF3 and erasure coding require <strong>Pro</strong>, which also lifts the node cap above 12.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">2.8</div>
+            <p class="q">CLI: which utility for VM/network ops vs cluster ops?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><code>acli</code> (Acropolis CLI) for VM and network operations; <code>ncli</code> (Nutanix CLI) for cluster-level operations.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Most day-to-day work is in Prism; the CLIs appear in "which command/where" style questions.</p></div>
+          </div>
+        </section>
+
+        <!-- ===== Section 3 ===== -->
+        <section class="fact-section" id="s3">
+          <h3>3 · Maintain Environmental Health <span class="stag">NCC · Pulse · alerts</span></h3>
+
+          <div class="fact">
+            <div class="fact-n">3.1</div>
+            <p class="q">Difference between a health check and an alert?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Checks are scheduled/proactive</strong> (run on a schedule via NCC); <strong>alerts are event-driven/reactive</strong> (raised when something crosses a threshold or fails).</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Alerts carry severities (info / warning / critical) and can notify out by email.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">3.2</div>
+            <p class="q">What is NCC?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Nutanix Cluster Check</strong>, the health-check framework that scans configuration, performance, and operational issues across the cluster. Run from Prism or <code>ncc health_checks run_all</code>.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>NCC is downloaded/updated from the Support Portal, and Pulse is packaged with it.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">3.3</div>
+            <p class="q">Which feature sends cluster telemetry to Nutanix for proactive support?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Pulse.</strong> When enabled it securely sends cluster health and configuration data to Nutanix on a schedule.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Pulse feeds Nutanix Insights for predictive health and faster support. Pulse = scheduled telemetry; alerts = event-driven.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">3.4</div>
+            <p class="q">Where do you see overall cluster status and data resiliency at a glance?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>The <strong>Health dashboard</strong> in Prism (hosts, disks, VMs, storage, and the resiliency state).</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>The data-resiliency widget tells you whether the cluster can currently tolerate its configured failures.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">3.5</div>
+            <p class="q">What is the Support Portal used for?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>Download software (AOS, NCC, Foundation, LCM dark-site bundles), <strong>manage licenses</strong>, open/track support cases, and read docs/KB.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Pulse data surfaces in the portal's Insights views to speed triage.</p></div>
+          </div>
+        </section>
+
+        <!-- ===== Section 4 ===== -->
+        <section class="fact-section" id="s4">
+          <h3>4 · Describe Cluster Configuration Options <span class="stag">storage · RF/FT · network</span></h3>
+
+          <div class="fact">
+            <div class="fact-n">4.1</div>
+            <p class="q">Minimum nodes for RF2? For RF3?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>RF2 needs 3 nodes; RF3 needs 5 nodes.</strong></p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>RF3 keeps 5 copies of metadata, which is why it needs 5 nodes even though data has 3 copies.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.2</div>
+            <p class="q">How many failures does each redundancy level tolerate?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>RF2 / FT1 tolerates 1</strong> node-or-drive failure; <strong>RF3 / FT2 tolerates 2</strong> simultaneous failures.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>FT1 ↔ data RF2 (metadata RF3); FT2 ↔ data RF3 (metadata RF5). Cluster default is RF2 / FT1.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.3</div>
+            <p class="q">Where are RF and storage optimization set?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>On the <strong>storage container</strong> (RF, compression, deduplication, erasure coding are all container-level policies).</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>The storage pool is the raw capacity of all disks; the container is the logical slice where policy lives; vDisks live in containers.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.4</div>
+            <p class="q">Which optimization fits VDI / full clones?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Deduplication</strong> (SHA-1 fingerprint on ingest; removes duplicate blocks). Ideal where many VMs share identical data.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Dedup works inline and post-process across the performance and capacity tiers.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.5</div>
+            <p class="q">Which optimization fits cold, rarely-changed data?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Erasure Coding (EC-X).</strong> RAID-like parity striped across nodes; post-process on data cold for &gt;7 days.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>It reclaims capacity without RF's full-copy overhead, so it suits write-cold/archival data, not hot, frequently overwritten data.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.6</div>
+            <p class="q">Default / safest general storage optimization?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Compression.</strong> Inline for large/sequential I/O (&gt;64&nbsp;KB) or post-process; LZ4 / LZ4HC.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Broadly safe to enable across workloads; the usual default recommendation.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.7</div>
+            <p class="q">Which hypervisors does Nutanix support?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>AHV</strong> (built in, free), <strong>VMware ESXi</strong>, and <strong>Microsoft Hyper-V</strong>. AHV is the default.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Foundation images the chosen hypervisor at cluster build time.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.8</div>
+            <p class="q">What is NC2 and where does it run?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Nutanix Cloud Clusters</strong>, the full Nutanix stack (CVM + AHV + AOS + Prism) on <strong>bare-metal instances in AWS and Azure</strong>.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>It is the "extend or migrate to public cloud without changing the operating model" answer; operated as one cloud with on-prem.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.9</div>
+            <p class="q">What does a two-node (ROBO) cluster require that a three-node does not?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>An external <strong>Witness VM</strong> in a separate failure domain (to arbitrate and keep resiliency).</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>3 nodes is the standard minimum. 1-node ROBO exists on selected hardware with reduced resiliency and a limited guest-VM count.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.10</div>
+            <p class="q">What serves storage on every node?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p>The <strong>Controller VM (CVM)</strong>, which runs the Distributed Storage Fabric (DSF) and presents pooled storage to the hypervisor.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Data locality keeps a VM's hot data on the node where it runs.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.11</div>
+            <p class="q">AHV networking: virtual switch and default bridge?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Open vSwitch (OVS)</strong>, default bridge <strong>br0</strong> with default uplink bond <strong>br0-up</strong>.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Put the CVM and AHV host on the native/untagged VLAN; a bond should have at least two physical NICs for HA. OVS supports VLAN tagging and LACP.</p></div>
+          </div>
+
+          <div class="fact">
+            <div class="fact-n">4.12</div>
+            <p class="q">Which tool images bare-metal nodes and forms a cluster?</p>
+            <span class="lbl a-lbl">Right answer</span>
+            <div class="a"><p><strong>Foundation.</strong> It installs the chosen AOS + hypervisor and forms the cluster; built into the CVMs.</p></div>
+            <span class="lbl bg-lbl">Background</span>
+            <div class="bg"><p>Plan ~3 IPs per node (hypervisor, CVM, IPMI/remote mgmt) plus a cluster IP and a Data Services IP.</p></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="back-home">
+        <a href="../index.html">&larr; NCA study hub</a>
+        <a href="../../../index.html">home &rarr;</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site">
+    <div>Written by Fred Nix · Built for BlueAlly Solutions Architects · Source on <a href="https://github.com/nixfred/nutanix">GitHub</a></div>
+    <span class="path"><span class="slash">/</span>nix<span class="slash">/</span>nutanix<span class="slash">/</span>certs<span class="slash">/</span>NCA-6.10<span class="slash">/</span>on-the-exam</span>
+  </footer>
+</body>
+</html>
