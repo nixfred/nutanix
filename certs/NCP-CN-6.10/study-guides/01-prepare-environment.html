@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guide 01 · Prepare the Environment for an NKP Deployment</title>
+<title>NCP-CN: Prepare the NKP Environment Study Guide | NutaNIX</title>
 <style>
   :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
     --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
@@ -38,6 +38,21 @@
   .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
   @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
 </style>
+<!-- SEO:START (generated) -->
+<meta name="description" content="Free NCP-CN 6.10 study guide for objectives 1.1-1.6: private registry seeding, air-gapped bundles, and prerequisites before nkp create cluster. 2026 exam prep." />
+<link rel="canonical" href="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/01-prepare-environment.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="NCP-CN: Prepare the NKP Environment Study Guide | NutaNIX" />
+<meta property="og:description" content="Free NCP-CN 6.10 study guide for objectives 1.1-1.6: private registry seeding, air-gapped bundles, and prerequisites before nkp create cluster. 2026 exam prep." />
+<meta property="og:url" content="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/01-prepare-environment.html" />
+<meta property="og:site_name" content="NutaNIX" />
+<meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="NCP-CN: Prepare the NKP Environment Study Guide | NutaNIX" />
+<meta name="twitter:description" content="Free NCP-CN 6.10 study guide for objectives 1.1-1.6: private registry seeding, air-gapped bundles, and prerequisites before nkp create cluster. 2026 exam prep." />
+<meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/01-prepare-environment.html#main","name":"Prepare the Environment for an NKP Deployment (NCP-CN 6.10, Objectives 1.1-1.6)","description":"Study guide for NCP-CN 6.10 exam objectives 1.1 through 1.6: everything that must exist before nkp create cluster succeeds, including private registry seeding, air-gapped bundle transfer, and prerequisite troubleshooting.","url":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/01-prepare-environment.html","inLanguage":"en","keywords":"NCP-CN study guide, NKP environment prerequisites, air-gapped NKP deployment, NKP private registry seeding, nkp create cluster prerequisites, NCP-CN objective 1.1, nutanix cloud native exam prep, NKP bundles","isAccessibleForFree":true,"isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"NutaNIX","url":"https://nixfred.com/nutanix/"},"author":{"@type":"Organization","name":"NutaNIX"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nixfred.com/nutanix/"},{"@type":"ListItem","position":2,"name":"Certifications","item":"https://nixfred.com/nutanix/certs/"},{"@type":"ListItem","position":3,"name":"NCP CN 6.10","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/"},{"@type":"ListItem","position":4,"name":"Prepare the Environment for an NKP Deployment (NCP-CN 6.10, Objectives 1.1-1.6)","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/01-prepare-environment.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What must exist before running nkp create cluster?","acceptedAnswer":{"@type":"Answer","text":"For air-gapped installs, a private registry seeded with the NKP bundles (container images plus charts) must exist and be reachable from the bastion and all future cluster nodes. Objectives 1.1-1.6 cover seeding the registry, bundle transfer, credentials, TLS trust, and network reachability."}},{"@type":"Question","name":"Why does the NCP-CN exam emphasize air-gapped deployments?","acceptedAnswer":{"@type":"Answer","text":"Air-gapped is where real enterprise NKP deployments hurt, so the exam loves it. Expect scenario questions on diagnosing a failed seed: if push works from the bastion but nodes fail to pull, suspect node-to-registry trust or DNS, not the seed itself."}},{"@type":"Question","name":"Is this NCP-CN environment-prep study guide free?","acceptedAnswer":{"@type":"Answer","text":"Yes, it is free with no signup, part of the full NCP-CN 6.10 study guide series built for the Nutanix Cloud Native cert."}}]}]}</script>
+<!-- SEO:END -->
 </head>
 <body>
 <div class="wrap">

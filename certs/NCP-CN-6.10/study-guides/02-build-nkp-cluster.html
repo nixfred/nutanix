@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guide 02 · Manage Building an NKP Cluster</title>
+<title>NCP-CN: Build an NKP Cluster Study Guide | NutaNIX</title>
 <style>
   :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
     --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
@@ -38,6 +38,21 @@
   .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
   @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
 </style>
+<!-- SEO:START (generated) -->
+<meta name="description" content="Free NCP-CN 6.10 study guide for objectives 2.1-2.2: build an NKP cluster with the NKP CLI and CAPI on Nutanix AHV, then license Kommander. 2026 exam prep." />
+<link rel="canonical" href="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/02-build-nkp-cluster.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="NCP-CN: Build an NKP Cluster Study Guide | NutaNIX" />
+<meta property="og:description" content="Free NCP-CN 6.10 study guide for objectives 2.1-2.2: build an NKP cluster with the NKP CLI and CAPI on Nutanix AHV, then license Kommander. 2026 exam prep." />
+<meta property="og:url" content="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/02-build-nkp-cluster.html" />
+<meta property="og:site_name" content="NutaNIX" />
+<meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="NCP-CN: Build an NKP Cluster Study Guide | NutaNIX" />
+<meta name="twitter:description" content="Free NCP-CN 6.10 study guide for objectives 2.1-2.2: build an NKP cluster with the NKP CLI and CAPI on Nutanix AHV, then license Kommander. 2026 exam prep." />
+<meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/02-build-nkp-cluster.html#main","name":"Manage Building an NKP Cluster (NCP-CN 6.10, Objectives 2.1-2.2)","description":"Study guide for NCP-CN 6.10 exam objectives 2.1 and 2.2: driving cluster creation with the NKP CLI and Cluster API (CAPI) on the Nutanix AHV provider, then installing and licensing Kommander.","url":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/02-build-nkp-cluster.html","inLanguage":"en","keywords":"NCP-CN study guide, build NKP cluster, nkp create cluster nutanix, NKP CLI CAPI, Kommander licensing, NCP-CN objective 2.1, nutanix cloud native exam prep, deploy kubernetes on nutanix AHV","isAccessibleForFree":true,"isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"NutaNIX","url":"https://nixfred.com/nutanix/"},"author":{"@type":"Organization","name":"NutaNIX"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nixfred.com/nutanix/"},{"@type":"ListItem","position":2,"name":"Certifications","item":"https://nixfred.com/nutanix/certs/"},{"@type":"ListItem","position":3,"name":"NCP CN 6.10","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/"},{"@type":"ListItem","position":4,"name":"Manage Building an NKP Cluster (NCP-CN 6.10, Objectives 2.1-2.2)","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/02-build-nkp-cluster.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do you create an NKP cluster on Nutanix?","acceptedAnswer":{"@type":"Answer","text":"You use the NKP CLI, which drives Cluster API (CAPI) under the hood. The canonical command is nkp create cluster nutanix with flags for the cluster name, the Prism Central endpoint, the Kubernetes service load-balancer IP range, and the control-plane VIP. Objective 2.1 covers customizing and deploying this."}},{"@type":"Question","name":"What does NCP-CN objective 2.2 cover?","acceptedAnswer":{"@type":"Answer","text":"Objective 2.2 covers putting Kommander on top of the cluster and licensing it. Kommander is the management plane that enables fleet operations across multiple NKP clusters."}},{"@type":"Question","name":"Is this NCP-CN cluster-build study guide free?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is free with no signup and part of the complete NCP-CN 6.10 study guide series for the Nutanix Cloud Native exam."}}]}]}</script>
+<!-- SEO:END -->
 </head>
 <body>
 <div class="wrap">

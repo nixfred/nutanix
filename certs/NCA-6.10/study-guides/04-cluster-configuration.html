@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guide 04 · Cluster Configuration (NCA 6.10)</title>
+<title>Nutanix Cluster Configuration Study Guide (NCA 6.10) | NutaNIX</title>
 <link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
 <style>
   :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
@@ -39,6 +39,21 @@
   .home a{color:var(--muted);text-decoration:none;border:none}
   @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
 </style>
+<!-- SEO:START (generated) -->
+<meta name="description" content="Free NCA 6.10 study guide to cluster configuration: storage pools, containers, RF, compression, dedup, erasure coding, supported hypervisors, NC2, and networking." />
+<link rel="canonical" href="https://nixfred.com/nutanix/certs/NCA-6.10/study-guides/04-cluster-configuration.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Nutanix Cluster Configuration Study Guide (NCA 6.10) | NutaNIX" />
+<meta property="og:description" content="Free NCA 6.10 study guide to cluster configuration: storage pools, containers, RF, compression, dedup, erasure coding, supported hypervisors, NC2, and networking." />
+<meta property="og:url" content="https://nixfred.com/nutanix/certs/NCA-6.10/study-guides/04-cluster-configuration.html" />
+<meta property="og:site_name" content="NutaNIX" />
+<meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Nutanix Cluster Configuration Study Guide (NCA 6.10) | NutaNIX" />
+<meta name="twitter:description" content="Free NCA 6.10 study guide to cluster configuration: storage pools, containers, RF, compression, dedup, erasure coding, supported hypervisors, NC2, and networking." />
+<meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://nixfred.com/nutanix/certs/NCA-6.10/study-guides/04-cluster-configuration.html#main","name":"Nutanix Cluster Configuration Study Guide - NCA 6.10","description":"Section 4 of 4 of the free Nutanix Certified Associate (NCA) 6.10 study guide, covering cluster configuration: storage pools and containers, Replication/Redundancy Factor, the three storage-optimization features, supported hypervisors, NC2, networking, and use cases.","url":"https://nixfred.com/nutanix/certs/NCA-6.10/study-guides/04-cluster-configuration.html","inLanguage":"en","keywords":"nutanix cluster configuration, redundancy factor replication factor, nutanix storage container, erasure coding compression dedup, nutanix NC2, nutanix storage pool, NCA 6.10 study guide, nutanix networking basics","isAccessibleForFree":true,"isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"NutaNIX","url":"https://nixfred.com/nutanix/"},"author":{"@type":"Organization","name":"NutaNIX"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nixfred.com/nutanix/"},{"@type":"ListItem","position":2,"name":"Certifications","item":"https://nixfred.com/nutanix/certs/"},{"@type":"ListItem","position":3,"name":"NCA 6.10","item":"https://nixfred.com/nutanix/certs/NCA-6.10/"},{"@type":"ListItem","position":4,"name":"Nutanix Cluster Configuration Study Guide - NCA 6.10","item":"https://nixfred.com/nutanix/certs/NCA-6.10/study-guides/04-cluster-configuration.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Where is Redundancy Factor set in Nutanix?","acceptedAnswer":{"@type":"Answer","text":"Replication/Redundancy Factor and the optimization features are set at the storage container level, not the storage pool. Containers present as datastores or shares to the hypervisor."}},{"@type":"Question","name":"What are the three storage-optimization features in Nutanix?","acceptedAnswer":{"@type":"Answer","text":"Compression, deduplication, and erasure coding (EC-X). All three are configured per storage container to reduce the physical capacity that data consumes."}},{"@type":"Question","name":"What is NC2 in Nutanix?","acceptedAnswer":{"@type":"Answer","text":"Nutanix Cloud Clusters (NC2) runs the Nutanix stack on public-cloud bare-metal instances, such as AWS and Azure, extending the same AOS and AHV experience into the cloud."}}]}]}</script>
+<!-- SEO:END -->
 </head>
 <body>
 <div class="wrap">

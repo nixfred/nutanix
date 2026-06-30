@@ -4,28 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>if("scrollRestoration" in history)history.scrollRestoration="manual";addEventListener("pageshow",function(){if(!location.hash)scrollTo(0,0)});</script>
-  <title>NutaNIX · Module 5: DSF Deep Dive (How Storage Actually Works)</title>
-  <meta name="description" content="The Distributed Storage Fabric end to end: hierarchy, the data path through OpLog and Extent Store, RF vs EC-X, compression and dedup, Curator failure recovery, and twelve practice questions." />
-  <meta name="color-scheme" content="dark" />
+  <title>Nutanix DSF: Distributed Storage Fabric Guide | NutaNIX</title>
+<meta name="color-scheme" content="dark" />
   <link rel="icon" href="../../public/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <meta property="og:title" content="NutaNIX · Module 5: DSF Deep Dive (How Storage Actually Works)" />
-  <meta property="og:description" content="The Distributed Storage Fabric, end to end. Data path, RF vs EC, capacity math." />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://nixfred.com/nutanix/modules/05-dsf-storage/" />
-  <meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="NutaNIX wordmark with NIX in cyan and an isometric cluster on deep navy." />
-  <meta property="og:site_name" content="NutaNIX" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="NutaNIX · Module 5: DSF Deep Dive" />
-  <meta name="twitter:description" content="The Distributed Storage Fabric, end to end. Data path, RF vs EC, capacity math." />
-  <meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
-
-  <style>
+<style>
     :root {
       --bg-base: #0a1628; --bg-surface: #102747; --bg-elevated: #1a3258;
       --border: #1f3a66;
@@ -252,6 +237,21 @@
       * { transition: none !important; animation: none !important; }
     }
   </style>
+<!-- SEO:START (generated) -->
+<meta name="description" content="Nutanix DSF explained end to end: the data path through OpLog and Extent Store, RF vs EC-X, compression, dedup, and Curator recovery. Free study notes for NCP-MCI." />
+<link rel="canonical" href="https://nixfred.com/nutanix/modules/05-dsf-storage/" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Nutanix DSF: Distributed Storage Fabric Guide | NutaNIX" />
+<meta property="og:description" content="Nutanix DSF explained end to end: the data path through OpLog and Extent Store, RF vs EC-X, compression, dedup, and Curator recovery. Free study notes for NCP-MCI." />
+<meta property="og:url" content="https://nixfred.com/nutanix/modules/05-dsf-storage/" />
+<meta property="og:site_name" content="NutaNIX" />
+<meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Nutanix DSF: Distributed Storage Fabric Guide | NutaNIX" />
+<meta name="twitter:description" content="Nutanix DSF explained end to end: the data path through OpLog and Extent Store, RF vs EC-X, compression, dedup, and Curator recovery. Free study notes for NCP-MCI." />
+<meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://nixfred.com/nutanix/modules/05-dsf-storage/#main","name":"Nutanix DSF Deep Dive: How Distributed Storage Works","description":"A deep dive into the Nutanix Distributed Storage Fabric (DSF): the storage hierarchy, the write and read data path through OpLog and Extent Store, replication factor versus erasure coding (EC-X), compression and dedup, Curator failure recovery, and twelve practice questions.","url":"https://nixfred.com/nutanix/modules/05-dsf-storage/","inLanguage":"en","keywords":"nutanix DSF explained, distributed storage fabric, nutanix data path read write, OpLog extent store, RF vs EC-X nutanix, nutanix erasure coding, Stargate Curator Cassandra, NCP-MCI storage study guide","isAccessibleForFree":true,"isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"NutaNIX","url":"https://nixfred.com/nutanix/"},"author":{"@type":"Organization","name":"NutaNIX"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nixfred.com/nutanix/"},{"@type":"ListItem","position":2,"name":"Modules","item":"https://nixfred.com/nutanix/#modules"},{"@type":"ListItem","position":3,"name":"Nutanix DSF Deep Dive: How Distributed Storage Works","item":"https://nixfred.com/nutanix/modules/05-dsf-storage/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Nutanix Distributed Storage Fabric (DSF)?","acceptedAnswer":{"@type":"Answer","text":"DSF is the software-defined storage layer that pools the disks across every node in a Nutanix cluster into one shared, resilient namespace. Controller VMs run its services, so writes land on local flash first (OpLog) and data is replicated and tiered automatically without an external SAN."}},{"@type":"Question","name":"What is the difference between RF and EC-X in Nutanix?","acceptedAnswer":{"@type":"Answer","text":"Replication Factor (RF2 or RF3) keeps two or three full copies of data for resilience and fast writes. EC-X (erasure coding) instead stores parity strips, reclaiming capacity on cold, write-cold data while still tolerating failures. RF favors performance; EC-X favors usable capacity."}},{"@type":"Question","name":"How does a write travel through the Nutanix data path?","acceptedAnswer":{"@type":"Answer","text":"A guest write lands in the local CVM's OpLog on flash and is synchronously replicated to other nodes for resilience, then acknowledged. Stargate later drains it from OpLog into the Extent Store, where Curator handles tiering, compression, dedup, and failure recovery in the background."}}]}]}</script>
+<!-- SEO:END -->
 </head>
 <body>
   <header class="brand">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guide 03 · Perform Day 2 Operations</title>
+<title>NCP-CN Day 2 Operations: NKP Study Guide | NutaNIX</title>
 <style>
   :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
     --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
@@ -38,6 +38,21 @@
   .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
   @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
 </style>
+<!-- SEO:START (generated) -->
+<meta name="description" content="Free NCP-CN 6.10 study guide for objectives 3.1-3.6 Day 2 ops: auth and Dex, logging, backup, monitoring, autoscaling, and lifecycle on NKP. 2026 exam prep." />
+<link rel="canonical" href="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/03-day2-operations.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="NCP-CN Day 2 Operations: NKP Study Guide | NutaNIX" />
+<meta property="og:description" content="Free NCP-CN 6.10 study guide for objectives 3.1-3.6 Day 2 ops: auth and Dex, logging, backup, monitoring, autoscaling, and lifecycle on NKP. 2026 exam prep." />
+<meta property="og:url" content="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/03-day2-operations.html" />
+<meta property="og:site_name" content="NutaNIX" />
+<meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="NCP-CN Day 2 Operations: NKP Study Guide | NutaNIX" />
+<meta name="twitter:description" content="Free NCP-CN 6.10 study guide for objectives 3.1-3.6 Day 2 ops: auth and Dex, logging, backup, monitoring, autoscaling, and lifecycle on NKP. 2026 exam prep." />
+<meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/03-day2-operations.html#main","name":"Perform Day 2 Operations (NCP-CN 6.10, Objectives 3.1-3.6)","description":"Study guide for NCP-CN 6.10 exam objectives 3.1 through 3.6, the largest and densest section: authentication and authorization with Dex, logging, backup, monitoring, autoscaling, and cluster lifecycle on NKP.","url":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/03-day2-operations.html","inLanguage":"en","keywords":"NCP-CN study guide, NKP day 2 operations, NKP authentication Dex OIDC, NKP RBAC layers, NKP monitoring backup autoscaling, NCP-CN objective 3.1, nutanix cloud native exam prep, NKP cluster lifecycle","isAccessibleForFree":true,"isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"NutaNIX","url":"https://nixfred.com/nutanix/"},"author":{"@type":"Organization","name":"NutaNIX"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nixfred.com/nutanix/"},{"@type":"ListItem","position":2,"name":"Certifications","item":"https://nixfred.com/nutanix/certs/"},{"@type":"ListItem","position":3,"name":"NCP CN 6.10","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/"},{"@type":"ListItem","position":4,"name":"Perform Day 2 Operations (NCP-CN 6.10, Objectives 3.1-3.6)","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/03-day2-operations.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does authentication work in NKP for the NCP-CN exam?","acceptedAnswer":{"@type":"Answer","text":"NKP embeds Dex as an OIDC broker. You configure an external identity provider (LDAP, OIDC, or SAML) in Kommander, map IdP groups, and users sign in through a generated login URL. Automation uses tokens. Authorization is layered across Kommander roles and plain Kubernetes RBAC, and the layering is the exam question."}},{"@type":"Question","name":"Why is Day 2 Operations the most important NCP-CN section?","acceptedAnswer":{"@type":"Answer","text":"It is the biggest section, covering six objectives (3.1-3.6) and, per community intel, the densest question territory: auth, logging, backup, monitoring, autoscaling, and lifecycle. The platform is already built here, so the exam tests how you run it."}},{"@type":"Question","name":"Is this NCP-CN Day 2 Operations study guide free?","acceptedAnswer":{"@type":"Answer","text":"Yes, it is free with no signup, part of the full NCP-CN 6.10 study guide series for the Nutanix Cloud Native cert."}}]}]}</script>
+<!-- SEO:END -->
 </head>
 <body>
 <div class="wrap">

@@ -1,0 +1,6 @@
+# Nutanix study site (project page under nixfred.com/nutanix/)
+# Note: the authoritative robots.txt for crawlers is at the domain root (nixfred.com/robots.txt).
+User-agent: *
+Allow: /
+
+Sitemap: https://nixfred.com/nutanix/sitemap.xml

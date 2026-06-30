@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guide 04 · Conduct NKP Fleet Management</title>
+<title>NCP-CN NKP Fleet Management Study Guide | NutaNIX</title>
 <style>
   :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
     --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;
@@ -36,6 +36,21 @@
   .next{display:inline-block;margin-top:10px;background:linear-gradient(180deg,#1fc8c0,#159a93);color:#04201e;font-weight:700;padding:11px 18px;border-radius:10px}
   @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}body{font-size:11pt}}
 </style>
+<!-- SEO:START (generated) -->
+<meta name="description" content="Free NCP-CN 6.10 study guide for objectives 4.1-4.6: NKP fleet management with Kommander workspaces and projects across many clusters. 2026 exam prep." />
+<link rel="canonical" href="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/04-fleet-management.html" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="NCP-CN NKP Fleet Management Study Guide | NutaNIX" />
+<meta property="og:description" content="Free NCP-CN 6.10 study guide for objectives 4.1-4.6: NKP fleet management with Kommander workspaces and projects across many clusters. 2026 exam prep." />
+<meta property="og:url" content="https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/04-fleet-management.html" />
+<meta property="og:site_name" content="NutaNIX" />
+<meta property="og:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="NCP-CN NKP Fleet Management Study Guide | NutaNIX" />
+<meta name="twitter:description" content="Free NCP-CN 6.10 study guide for objectives 4.1-4.6: NKP fleet management with Kommander workspaces and projects across many clusters. 2026 exam prep." />
+<meta name="twitter:image" content="https://nixfred.com/nutanix/public/images/share-card.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","@id":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/04-fleet-management.html#main","name":"Conduct NKP Fleet Management (NCP-CN 6.10, Objectives 4.1-4.6)","description":"Study guide for NCP-CN 6.10 exam objectives 4.1 through 4.6: managing many clusters and teams from one control plane with Kommander, focused on the workspace and project boundary, RBAC, and multi-tenancy.","url":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/04-fleet-management.html","inLanguage":"en","keywords":"NCP-CN study guide, NKP fleet management, Kommander workspaces projects, NKP multi-tenancy, NCP-CN objective 4.1, kubernetes fleet management, nutanix cloud native exam prep, Kommander RBAC","isAccessibleForFree":true,"isFamilyFriendly":true,"publisher":{"@type":"Organization","name":"NutaNIX","url":"https://nixfred.com/nutanix/"},"author":{"@type":"Organization","name":"NutaNIX"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://nixfred.com/nutanix/"},{"@type":"ListItem","position":2,"name":"Certifications","item":"https://nixfred.com/nutanix/certs/"},{"@type":"ListItem","position":3,"name":"NCP CN 6.10","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/"},{"@type":"ListItem","position":4,"name":"Conduct NKP Fleet Management (NCP-CN 6.10, Objectives 4.1-4.6)","item":"https://nixfred.com/nutanix/certs/NCP-CN-6.10/study-guides/04-fleet-management.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a workspace and a project in NKP?","acceptedAnswer":{"@type":"Answer","text":"A workspace is the big isolation box: it holds clusters, workspace-level platform apps, and workspace RBAC (think business unit or tenant). A project is a slice inside a workspace that projects shared namespaces onto selected clusters with its own RBAC, quotas, apps, and GitOps. Getting this boundary crisp answers half the section's questions."}},{"@type":"Question","name":"How do you decide which workspace a cluster belongs to?","acceptedAnswer":{"@type":"Answer","text":"Separate clusters by tenant, team, or environment when isolation, RBAC, or app sets differ; keep them in the same workspace when they share governance. For example, production and dev with different admins belong in different workspaces."}},{"@type":"Question","name":"Is this NCP-CN fleet management study guide free?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is free with no signup and part of the complete NCP-CN 6.10 study guide series built for the Nutanix Cloud Native exam."}}]}]}</script>
+<!-- SEO:END -->
 </head>
 <body>
 <div class="wrap">
