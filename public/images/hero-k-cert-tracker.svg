@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="k-title k-desc">
   <title id="k-title">Appendix K hero: Nutanix cert ladder</title>
-  <desc id="k-desc">A four-tier cert ladder rendered as ascending platforms: NCA Associate at the bottom, four NCP Professional certs (MCI, NS, US, MCA) in the middle, NCM-MCI Master above, NCX-MCI Expert at the top. Each tier shows typical prep time, format, and prerequisite arrow. Mono path top-left. Purple appendix accent.</desc>
+  <desc id="k-desc">A four-tier cert ladder rendered as ascending platforms: NCA Associate at the bottom, five NCP Professional certs (MCI, NS, US, MCA, and the separate-track Cloud Native CN) in the middle, NCM-MCI Master above, NCX-MCI Expert at the top. Each tier shows typical prep time, format, and prerequisite arrow. Mono path top-left. Purple appendix accent.</desc>
 
   <defs>
     <radialGradient id="bgRad" cx="50%" cy="50%" r="80%">
@@ -56,36 +56,43 @@
 
   <text x="800" y="410" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#c084fc">↑</text>
 
-  <!-- TIER 2: NCP family (4 certs side-by-side) -->
+  <!-- TIER 2: NCP family (5 certs side-by-side; NCP-CN is the separate Cloud Native track, purple) -->
   <g transform="translate(120, 420)">
-    <text x="680" y="0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">NCP · PROFESSIONAL · 60-100 HR EACH · 60 QUESTIONS · ~120 MIN</text>
+    <text x="510" y="0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">NCP · PROFESSIONAL · 40-100 HR · ~120 MIN EACH</text>
 
     <g transform="translate(0, 18)">
-      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.16)" stroke="#00d4ff" stroke-width="1.6"/>
-      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-MCI</text>
-      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Multicloud Infrastructure</text>
-      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">core HCI · target first</text>
+      <rect x="0" y="0" width="192" height="80" rx="8" fill="rgba(0,212,255,0.16)" stroke="#00d4ff" stroke-width="1.6"/>
+      <text x="12" y="26" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#00d4ff">NCP-MCI</text>
+      <text x="12" y="46" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#e8f0ff">Multicloud Infra</text>
+      <text x="12" y="64" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#a8b8d4">core HCI · first</text>
     </g>
 
-    <g transform="translate(340, 18)">
-      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
-      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-NS</text>
-      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Network Security</text>
-      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">Flow + OVS + VPC overlays</text>
+    <g transform="translate(207, 18)">
+      <rect x="0" y="0" width="192" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+      <text x="12" y="26" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#00d4ff">NCP-NS</text>
+      <text x="12" y="46" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#e8f0ff">Network Security</text>
+      <text x="12" y="64" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#a8b8d4">Flow · OVS</text>
     </g>
 
-    <g transform="translate(680, 18)">
-      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
-      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-US</text>
-      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Unified Storage</text>
-      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">Files · Objects · Volumes</text>
+    <g transform="translate(414, 18)">
+      <rect x="0" y="0" width="192" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+      <text x="12" y="26" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#00d4ff">NCP-US</text>
+      <text x="12" y="46" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#e8f0ff">Unified Storage</text>
+      <text x="12" y="64" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#a8b8d4">Files · Objects</text>
     </g>
 
-    <g transform="translate(1020, 18)">
-      <rect x="0" y="0" width="320" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
-      <text x="14" y="26" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#00d4ff">NCP-MCA</text>
-      <text x="14" y="46" font-family="JetBrains Mono, monospace" font-size="10" fill="#e8f0ff">Multicloud Automation</text>
-      <text x="14" y="64" font-family="JetBrains Mono, monospace" font-size="10" fill="#a8b8d4">v4 API · Self-Service · X-Play</text>
+    <g transform="translate(621, 18)">
+      <rect x="0" y="0" width="192" height="80" rx="8" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
+      <text x="12" y="26" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#00d4ff">NCP-MCA</text>
+      <text x="12" y="46" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#e8f0ff">Multicloud Auto</text>
+      <text x="12" y="64" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#a8b8d4">v4 API · X-Play</text>
+    </g>
+
+    <g transform="translate(828, 18)">
+      <rect x="0" y="0" width="192" height="80" rx="8" fill="rgba(192,132,252,0.16)" stroke="#c084fc" stroke-width="1.6"/>
+      <text x="12" y="26" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#c084fc">NCP-CN</text>
+      <text x="12" y="46" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#e8f0ff">Cloud Native NKP</text>
+      <text x="12" y="64" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#a8b8d4">Kubernetes · sep</text>
     </g>
   </g>
 
@@ -139,7 +146,7 @@
     <rect x="0" y="0" width="320" height="100" rx="10" fill="rgba(0,212,255,0.10)" stroke="#00d4ff" stroke-width="1.4"/>
     <text x="20" y="28" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#00d4ff" letter-spacing="0.10em">RECOMMENDED ORDER</text>
     <text x="20" y="50" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">NCA → NCP-MCI → NCP-US</text>
-    <text x="20" y="68" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">→ NCP-NS → NCP-MCA</text>
+    <text x="20" y="68" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">→ NCP-NS → NCP-MCA → NCP-CN</text>
     <text x="20" y="86" font-family="JetBrains Mono, monospace" font-size="10" fill="#cfeeff">→ NCM-MCI → NCX-MCI</text>
   </g>
 

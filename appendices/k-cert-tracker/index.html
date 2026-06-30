@@ -311,7 +311,7 @@
 
   <main>
     <figure class="module-hero">
-      <img src="../../public/images/hero-k-cert-tracker.svg" alt="A four-tier cert ladder rendered as ascending platforms: NCA Associate at the bottom, four NCP Professional certs (MCI, NS, US, MCA) in the middle, NCM-MCI Master above, NCX-MCI Expert at the top. Each tier shows typical prep time, format, and a year-marker timeline on the left. Right side strips show the free-exam program (through June 30, 2026), three principles (cert is the proof, knowledge is the goal, hands-on beats reading, verify the blueprint), and the recommended order." />
+      <img src="../../public/images/hero-k-cert-tracker.svg" alt="A four-tier cert ladder rendered as ascending platforms: NCA Associate at the bottom, five NCP Professional certs (MCI, NS, US, MCA, CN) in the middle, NCM-MCI Master above, NCX-MCI Expert at the top. Each tier shows typical prep time, format, and a year-marker timeline on the left. Right side strips show the free-exam program (through June 30, 2026), three principles (cert is the proof, knowledge is the goal, hands-on beats reading, verify the blueprint), and the recommended order." />
     </figure>
 
     <div class="module-title-block">
@@ -319,7 +319,7 @@
       <h1 class="module-title">Appendix K · Cert Tracker</h1>
       <div class="meta-row">
         <span class="chip appendix">REFERENCE</span>
-        <span class="chip">7 certs</span>
+        <span class="chip">8 certs</span>
         <span class="chip">blueprint coverage map</span>
         <span class="chip">study sequence</span>
         <span class="chip">verify-the-blueprint discipline</span>
@@ -327,7 +327,7 @@
     </div>
 
     <div class="intro">
-      <p>The Nutanix cert ladder is the credentialing path BlueAlly SAs walk to demonstrate platform expertise. This appendix maps the curriculum to each cert's blueprint, recommends study sequencing, and provides realistic time-and-effort expectations for each level.</p>
+      <p>The Nutanix cert ladder is the credentialing path BlueAlly SAs walk to demonstrate platform expertise. This appendix maps the curriculum to each cert's blueprint, recommends study sequencing, and provides realistic time-and-effort expectations for each level. One cert, NCP-CN (Cloud Native), sits on a separate Kubernetes and NKP track that the HCI modules do not teach; it has its own dedicated study group (see section 6).</p>
       <p><strong>Three principles for cert preparation:</strong></p>
       <ol>
         <li><strong>The cert is the proof; the knowledge is the goal.</strong> Don't optimize for passing the exam at the expense of understanding the material.</li>
@@ -346,6 +346,7 @@
       <a href="#ncp-ns">NCP-NS</a>
       <a href="#ncp-us">NCP-US</a>
       <a href="#ncp-mca">NCP-MCA</a>
+      <a href="#ncp-cn">NCP-CN</a>
       <a href="#ncm-mci">NCM-MCI</a>
       <a href="#ncx-mci">NCX-MCI</a>
       <a href="#sequence">Study Sequence</a>
@@ -367,10 +368,11 @@ NCP-MCI    Professional   (the core HCI cert, the one most SAs target first)
 NCP-NS     Professional   (Network Security specialization)
 NCP-US     Professional   (Unified Storage specialization)
 NCP-MCA    Professional   (Multicloud Automation specialization)
+NCP-CN     Professional   (Cloud Native / Kubernetes specialization, separate track)
    ↑
 NCA        Associate      (entry-level, foundational concepts)</pre>
 
-      <p>Each NCP specialization is independent (NCP-MCI does not require NCP-NS or NCP-US), but most SAs progress through them in the order shown. NCM and NCX both build on NCP-MCI as the foundation.</p>
+      <p>Each NCP specialization is independent (NCP-MCI does not require NCP-NS or NCP-US), but most SAs progress through them in the order shown. NCM and NCX both build on NCP-MCI as the foundation. NCP-CN (Cloud Native) is the outlier: it is a Kubernetes and NKP specialization on a separate track from the HCI ladder, so the HCI modules do not prepare you for it. It has its own complete study group; see section 6.</p>
 
       <h3 class="sub">Time and effort expectations</h3>
       <table class="std">
@@ -644,8 +646,54 @@ NCA        Associate      (entry-level, foundational concepts)</pre>
         <p>Automation cert is hands-on heavy. The exam will test specific blueprint construction, API usage patterns, and X-Play playbook design. Don't take this without lab time building actual automations.</p>
       </div>
 
+      <!-- ===== NCP-CN ===== -->
+      <h2 class="cat" id="ncp-cn"><span class="num">6</span>NCP-CN · Cloud Native</h2>
+
+      <div class="overview">
+        <span class="label">Overview</span>
+        <p>The Cloud Native specialization. Validates the ability to deploy, configure, operate, and troubleshoot the Nutanix Kubernetes Platform (NKP). This is a Kubernetes and NKP exam, not an HCI or AOS exam.</p>
+        <ul>
+          <li><strong>Format:</strong> 75 questions, 120 minutes, multiple-choice and scenario-based; scaled scoring, pass at 3000 of 6000</li>
+          <li><strong>Versions (6.10):</strong> NKP 2.12, AOS 6.10, Prism Central pc2024.2</li>
+          <li><strong>Audience:</strong> SAs and engineers running Kubernetes on Nutanix; assumes CKA-level Kubernetes fluency going in</li>
+          <li><strong>Realistic prep:</strong> 40-80 hours with a solid Kubernetes background; budget more if Kubernetes is new to you</li>
+        </ul>
+      </div>
+
+      <div class="caveat">
+        <strong>Separate track:</strong> the ten HCI modules in this curriculum teach AOS, AHV, Prism, DSF, and the HCI cert ladder. They do <strong>not</strong> cover Kubernetes or NKP, so they are not the prep path for NCP-CN. Cloud Native has its own complete study package: the <a href="../../certs/NCP-CN-6.10/index.html">NCP-CN 6.10 Study Hub</a>, with four blueprint-mapped study guides, a verified question bank, flashcards, a timed mock exam, and local hands-on labs you can run without a Nutanix cluster.
+      </div>
+
+      <h3 class="sub">Blueprint coverage map</h3>
+      <table class="bp">
+        <thead><tr><th>Blueprint section</th><th>Weight</th><th>Study-group coverage</th></tr></thead>
+        <tbody>
+          <tr><td>1 &middot; Prepare the Environment</td><td>~23%</td><td><a href="../../certs/NCP-CN-6.10/study-guides/01-prepare-environment.html">Guide 01: Prepare the Environment</a></td></tr>
+          <tr><td>2 &middot; Build an NKP Cluster</td><td>~16%</td><td><a href="../../certs/NCP-CN-6.10/study-guides/02-build-nkp-cluster.html">Guide 02: Build an NKP Cluster</a></td></tr>
+          <tr><td>3 &middot; Day 2 Operations</td><td>~32%</td><td><a href="../../certs/NCP-CN-6.10/study-guides/03-day2-operations.html">Guide 03: Day 2 Operations</a> (the densest domain)</td></tr>
+          <tr><td>4 &middot; Fleet Management</td><td>~29%</td><td><a href="../../certs/NCP-CN-6.10/study-guides/04-fleet-management.html">Guide 04: Fleet Management</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="study">
+        <span class="label">Study sequence</span>
+        <ol>
+          <li>Confirm CKA-level Kubernetes first; if rusty, work the <a href="../../certs/NCP-CN-6.10/study-guides/00-kubernetes-crash-course.html">Kubernetes Crash Course</a> and the watch-first videos in the study hub</li>
+          <li>Read the four blueprint study guides in order, Sections 1 through 4</li>
+          <li>Run the <a href="../../certs/NCP-CN-6.10/labs/index.html">local hands-on labs</a> (kind, Cluster API, Flux, Gatekeeper, Prometheus, Velero) to build muscle without a Nutanix cluster</li>
+          <li>Drill the question bank and section quizzes; review every miss</li>
+          <li>Take the <a href="../../certs/NCP-CN-6.10/quizzes/mock-exam.html">timed 75-question mock</a> cold; 70% or better means schedule the real exam</li>
+          <li>Use the free Nutanix Kubernetes Platform Administration (NKPA) course as the vendor spine alongside the guides</li>
+        </ol>
+      </div>
+
+      <div class="hands-on">
+        <span class="label">Hands-on recommendation</span>
+        <p>Cloud Native is hands-on by nature. The <a href="../../certs/NCP-CN-6.10/labs/index.html">lab track</a> stands up the upstream CNCF projects NKP bundles (Cluster API, Flux, Gatekeeper, Loki and Prometheus, Velero) on your own laptop, which covers most of the exam's day-2 and fleet mechanics. The Nutanix provider parameters and the Kommander UI specifics stay book-knowledge from the study guides.</p>
+      </div>
+
       <!-- ===== NCM-MCI ===== -->
-      <h2 class="cat" id="ncm-mci"><span class="num">6</span>NCM-MCI · Master</h2>
+      <h2 class="cat" id="ncm-mci"><span class="num">7</span>NCM-MCI · Master</h2>
 
       <div class="overview">
         <span class="label">Overview</span>
@@ -701,7 +749,7 @@ NCA        Associate      (entry-level, foundational concepts)</pre>
       </div>
 
       <!-- ===== NCX-MCI ===== -->
-      <h2 class="cat" id="ncx-mci"><span class="num">7</span>NCX-MCI · Expert</h2>
+      <h2 class="cat" id="ncx-mci"><span class="num">8</span>NCX-MCI · Expert</h2>
 
       <div class="overview">
         <span class="label">Overview</span>
@@ -779,14 +827,14 @@ NCA        Associate      (entry-level, foundational concepts)</pre>
       <p>The disposition is teachable but takes time. Most NCX-MCI candidates report that the prep itself made them better SAs, regardless of pass/fail.</p>
 
       <!-- ===== Recommended Sequence ===== -->
-      <h2 class="cat" id="sequence"><span class="num">8</span>Recommended Study Sequence (The Cert Ladder)</h2>
+      <h2 class="cat" id="sequence"><span class="num">9</span>Recommended Study Sequence (The Cert Ladder)</h2>
 
       <h3 class="sub">Year 1 · Foundation</h3>
       <ul>
         <li><strong>Months 1-2:</strong> NCA prep and exam</li>
         <li><strong>Months 3-6:</strong> NCP-MCI prep with hands-on lab work and customer engagements</li>
         <li><strong>Month 6-7:</strong> NCP-MCI exam</li>
-        <li><strong>Months 7-12:</strong> Specialization choice (NCP-NS, NCP-US, or NCP-MCA) based on customer focus</li>
+        <li><strong>Months 7-12:</strong> Specialization choice (NCP-NS, NCP-US, NCP-MCA, or NCP-CN) based on customer focus</li>
       </ul>
 
       <h3 class="sub">Year 2 · Specialization</h3>
@@ -813,6 +861,7 @@ NCA        Associate      (entry-level, foundational concepts)</pre>
           <li><strong>NCP-US</strong> as the typical second specialization (storage consolidation is a common customer trigger)</li>
           <li><strong>NCP-NS</strong> if customer engagements run heavy on networking/security</li>
           <li><strong>NCP-MCA</strong> for SAs supporting automation-focused customers</li>
+          <li><strong>NCP-CN</strong> for SAs supporting Kubernetes or cloud-native customers (separate track; prep via its own <a href="../../certs/NCP-CN-6.10/index.html">study group</a>)</li>
           <li><strong>NCM-MCI</strong> at month 18-24 once design experience accumulates</li>
           <li><strong>NCX-MCI</strong> as a multi-year goal for senior SAs targeting expert-level credentials</li>
         </ol>
