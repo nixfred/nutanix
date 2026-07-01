@@ -58,8 +58,8 @@
 <div class="wrap">
   <p class="kicker">NCP-CN 6.10 · Question Bank</p>
   <h1>Section 4 Quiz: Conduct NKP Fleet Management</h1>
-  <p class="sub">14 original questions on objectives 4.1 to 4.6: workspaces, workload clusters, attach/detach, projects, platform applications. The workspace vs project boundary decides most of these, exactly like the real thing.</p>
-  <div id="scorebar">Score: 0 / 14 answered 0</div>
+  <p class="sub">26 original questions on objectives 4.1 to 4.6: workspaces, workload clusters, attach/detach, projects, platform applications. Expanded with harder managed-vs-attached and project-federation scenarios for retake focus. The workspace vs project boundary decides most of these.</p>
+  <div id="scorebar">Score: 0 / 26 answered 0</div>
   <div id="quiz"></div>
   <footer>Original questions © BlueAlly study package, written against the official NCP-CN 6.10 Exam Blueprint Guide. <a href="../study-guides/04-fleet-management.html">← Back to Guide 04</a> · <a href="../index.html">Study Hub</a></footer>
 </div>
@@ -144,7 +144,43 @@ var QUESTIONS=[
         "Set the app configuration at workspace (global) scope and override it at CLUSTER scope for the exception; cluster scope wins there",
         "Edit Prometheus manually on the exception cluster and hope",
         "Impossible; configuration is all-or-nothing"],
-  a:[1],why:"'Differentiate between global and cluster scope application configuration' is the knowledge item: broad config at the wider scope, per-cluster overrides where needed, and the narrower scope takes precedence on that cluster. Manual drift-edits get reconciled away."}
+  a:[1],why:"'Differentiate between global and cluster scope application configuration' is the knowledge item: broad config at the wider scope, per-cluster overrides where needed, and the narrower scope takes precedence on that cluster. Manual drift-edits get reconciled away."},
+ {obj:"4.3",q:"What can Kommander do on a MANAGED cluster that it canNOT do on an ATTACHED cluster?",
+  opts:["Show its metrics","Federate RBAC and deploy platform apps","Full Kubernetes lifecycle: upgrade its version and scale its node pools","Nothing differs"],
+  a:[2],why:"Managed clusters are NKP-created and fully lifecycle-managed (upgrade, scale, delete). Attached clusters still get app deployment, RBAC federation, and observability, but their lifecycle stays with their own platform."},
+ {obj:"4.3",q:"Decommissioning done right:",
+  opts:["Detach a managed cluster; delete an attached cluster","Detach an ATTACHED cluster (it keeps running); delete a MANAGED cluster (destroys it and its provider resources)","Delete both the same way","Detach requires rebuilding"],
+  a:[1],why:"Attached clusters outlive NKP: detach them and they keep running. Managed clusters are NKP's to destroy with delete. Mixing these up is a classic trap."},
+ {obj:"4.1",q:"The NKP governance hierarchy, widest to narrowest, is:",
+  opts:["Project > Workspace > Global","Global (platform admins) > Workspace (team/tenant) > Project (namespaces)","Workspace > Global > Project","Cluster > Workspace > Project"],
+  a:[1],why:"Global is the platform-admin scope; Workspaces are tenant/team scope holding clusters; Projects are namespace-scope slices within a workspace. Grants federate downward."},
+ {obj:"4.4",q:"A project needs one identical Secret kept in sync in its namespace on all five member clusters. Use:",
+  opts:["Copy it by hand to each cluster","Project-level federated resources","A StatefulSet","Email the YAML"],
+  a:[1],why:"Project resource federation stamps and maintains identical objects (Secrets, ConfigMaps) across all member clusters' project namespaces. Manual copies drift."},
+ {obj:"4.4",q:"Project-level ResourceQuotas and LimitRanges:",
+  opts:["Apply only on the management cluster","Federate the resource ceilings to the project's namespaces across every member cluster","Are advisory only","Block attachment"],
+  a:[1],why:"Project quotas/limit ranges are enforced across the project's namespaces on all member clusters, giving fleet-wide governance for that team."},
+ {obj:"4.5",q:"Continuous deployment at the project level in NKP is delivered by:",
+  opts:["A bundled Jenkins","GitOps (Flux): a Git repo whose manifests sync automatically to the project's clusters","Manual kubectl apply","An Ultimate-only CLI flag"],
+  a:[1],why:"Project CD is GitOps via Flux: point the project at a Git repo and its manifests reconcile onto the member clusters continuously."},
+ {obj:"4.3",q:"Attaching an EKS cluster has extra steps a generic attach does not, because:",
+  opts:["EKS is not Kubernetes","Cloud IAM/authentication must be prepared so Kommander can authenticate to the EKS control plane","EKS lacks namespaces","It needs FIPS"],
+  a:[1],why:"Cloud-managed control planes (EKS/AKS/GKE) need their IAM/auth wiring prepared before attach; there is a named 'preparing the cluster' step. External attach is also an Ultimate capability."},
+ {obj:"4.1",q:"Who is the intended administrator at each scope?",
+  opts:["Developers at Global, admins at Project","Platform admins at Global, team leads at Workspace, developers/QA at Project","Everyone at every scope","Only one global admin exists"],
+  a:[1],why:"NKP maps scopes to personas: Global = platform admins, Workspace = team leads (own their clusters/apps/RBAC), Project = developers/QA (own their namespaces)."},
+ {obj:"4.2",q:"A workspace-scoped role grant should cover a cluster ADDED to the workspace next month. Does it?",
+  opts:["No, you must re-grant per cluster","Yes, workspace RBAC federates to current AND future member clusters automatically","Only if the cluster is managed","Only with Ultimate"],
+  a:[1],why:"Workspace-level access controls federate to all member clusters, including ones added later. That auto-inheritance is the point of granting at the workspace scope."},
+ {obj:"4.4",q:"A developer needs to create Deployments in ONE namespace of ONE cluster, nothing more. The right mechanism is:",
+  opts:["A Kommander global role","Plain Kubernetes RBAC: a Role + RoleBinding in that namespace (or a Project scoped to it)","An Ultimate license","A new workspace"],
+  a:[1],why:"Namespace-scoped, in-cluster permissions are classic Kubernetes RBAC (Role + RoleBinding), or a Project that projects that namespace. A workspace/global grant would be far too broad."},
+ {obj:"4.5",q:"One cluster in a workspace needs different platform-app config than the rest. The mechanism is:",
+  opts:["Fork the app","Set config at workspace scope, then apply a CLUSTER-scoped override on the exception (narrower scope wins)","Stand up a second Kommander","Edit the cluster by hand and hope"],
+  a:[1],why:"Platform apps configure at workspace scope with per-cluster overrides; the narrower cluster scope wins for that one cluster. Apps can also be enabled per cluster within the workspace."},
+ {obj:"4.1",q:"Multi-tenancy on shared NKP infrastructure gives each tenant:",
+  opts:["A shared admin login","Its own workspace with isolated RBAC and a dedicated tenant login URL","One namespace only","A separate management cluster each"],
+  a:[1],why:"Workspaces provide tenant isolation (separate clusters, apps, RBAC), and NKP exposes per-tenant login URLs so a tenant sees only its own workspace. No separate management cluster per tenant is needed."}
 ];
 (function(){
  var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;

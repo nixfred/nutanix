@@ -58,8 +58,8 @@
 <div class="wrap">
   <p class="kicker">NCP-CN 6.10 · Question Bank</p>
   <h1>Section 1 Quiz: Prepare the Environment</h1>
-  <p class="sub">12 original questions calibrated to the official blueprint (objectives 1.1 to 1.6) and community-reported exam emphasis. Multiple-response questions tell you how many to pick, exactly like the real exam. No braindump content.</p>
-  <div id="scorebar">Score: 0 / 12 answered 0</div>
+  <p class="sub">24 original questions on objectives 1.1 to 1.6, expanded with harder air-gap scenarios for retake focus (this is the section most candidates lose points on). Multiple-response questions tell you how many to pick, exactly like the real exam.</p>
+  <div id="scorebar">Score: 0 / 24 answered 0</div>
   <div id="quiz"></div>
   <footer>Original questions © BlueAlly study package, written against the official NCP-CN 6.10 Exam Blueprint Guide. <a href="../study-guides/01-prepare-environment.html">← Back to Guide 01</a> · <a href="../index.html">Study Hub</a></footer>
 </div>
@@ -137,7 +137,43 @@ var QUESTIONS=[
         "It must be reachable from the bastion AND from all current and future cluster nodes",
         "It must have a public IP for Nutanix licensing callbacks",
         "It must run on the management cluster itself"],
-  a:[1],why:"Every node that pulls images needs the registry: bootstrap host, management cluster nodes, workload cluster nodes. Bastion-only reachability is the classic broken design (seed works, clusters fail). Public IPs defeat the air gap, and the registry typically lives OUTSIDE the clusters it feeds."}
+  a:[1],why:"Every node that pulls images needs the registry: bootstrap host, management cluster nodes, workload cluster nodes. Bastion-only reachability is the classic broken design (seed works, clusters fail). Public IPs defeat the air gap, and the registry typically lives OUTSIDE the clusters it feeds."},
+ {obj:"1.1",q:"Which command seeds an air-gapped registry, and what does it push?",
+  opts:["nkp create cluster, which pushes the license","nkp push bundle, which pushes BOTH the Konvoy and Kommander image bundles","docker push of a single image","helm install of the charts"],
+  a:[1],why:"nkp push bundle uploads the Konvoy (cluster lifecycle) AND Kommander (fleet plane) image bundles into your private registry. Both halves must be seeded, not just one."},
+ {obj:"1.1",q:"Your air-gapped registry uses a certificate signed by a private CA. Which flag lets the seed trust it?",
+  opts:["--insecure-skip-verify","--to-registry-ca-cert-file","--registry-public","--no-tls"],
+  a:[1],why:"--to-registry-ca-cert-file passes the private CA cert so the push validates TLS. Disabling TLS/verification is not the supported path; a CA-signed (trusted) cert is best practice."},
+ {obj:"1.1",multi:3,q:"Which THREE registry values does the bastion typically export before an air-gapped install?",
+  opts:["REGISTRY_URL","REGISTRY_USERNAME and REGISTRY_PASSWORD","REGISTRY_CACERT (for a private CA)","REGISTRY_LICENSE_KEY","REGISTRY_PUBLIC_IP"],
+  a:[0,1,2],why:"The seed/install reads REGISTRY_URL, REGISTRY_USERNAME/PASSWORD, and optionally REGISTRY_CACERT for private-CA validation. There is no license-key or public-IP registry variable."},
+ {obj:"1.1",q:"Konvoy vs Kommander, in one line:",
+  opts:["Konvoy is the fleet UI; Kommander builds clusters","Konvoy is cluster lifecycle (CAPI-based create/scale/upgrade); Kommander is the management/fleet plane (workspaces, projects, RBAC, apps)","Two names for the same binary","Kommander only exists on attached clusters"],
+  a:[1],why:"Konvoy = the cluster-lifecycle half (build/manage Kubernetes via CAPI). Kommander = the fleet/management plane on the management cluster. Air-gapped installs must seed BOTH image bundles."},
+ {obj:"1.1",q:"A seed fails; the host's temp directory is mounted noexec. This blocks seeding because:",
+  opts:["noexec deletes the bundle","the push process must execute helper binaries from the temp dir, which noexec forbids","noexec disables TLS","it is unrelated to seeding"],
+  a:[1],why:"A temp directory mounted noexec stops the seed tooling from executing its helpers. Remount without noexec or point the tooling at an exec-capable path. A known real-exam gotcha."},
+ {obj:"1.2",q:"In a fully air-gapped install, where do the BOOTSTRAP cluster's own images come from?",
+  opts:["Public registries; the bootstrap is exempt","The seeded private registry, like everything else","Baked into the NKP CLI","The management cluster"],
+  a:[1],why:"There is no internet in the gap, so even the KinD bootstrap cluster pulls from the seeded registry. That is why the registry must exist BEFORE the bootstrap runs."},
+ {obj:"1.5",q:"Building a node OS image inside the air gap differs from a connected build chiefly in that:",
+  opts:["It must run on the management cluster","Package sources/artifacts are redirected to internal mirrors and local bundles via override files, since upstream repos are unreachable","Images cannot be customized offline","It requires a public IP"],
+  a:[1],why:"An air-gapped image build cannot reach upstream package repos, so overrides point sources at internal mirrors and use local artifacts. Customization (FIPS, extra packages) still works via overrides."},
+ {obj:"1.5",q:"KIB and NIB both build machine images. The distinction the exam wants:",
+  opts:["KIB is Nutanix-only; NIB is for clouds","KIB (Konvoy Image Builder) builds images for providers like AWS/Azure/vSphere; NIB (Nutanix Image Builder) builds AHV images for Nutanix","They are identical","NIB builds Google Cloud images for this exam"],
+  a:[1],why:"NIB = Nutanix Image Builder (AHV/Nutanix images). KIB = Konvoy Image Builder for the other providers. Google Cloud is out of scope for this exam version."},
+ {obj:"1.6",multi:3,q:"Gathering parameters to build a cluster on Nutanix, which THREE are real checklist items?",
+  opts:["A control-plane endpoint/VIP that does NOT overlap the pod/service CIDRs","Prism Central URL and credentials","The storage container backing the CSI driver / default StorageClass","The datacenter's physical switch vendor","The number of dashboards to license"],
+  a:[0,1,2],why:"Networking (subnets, VIP, no CIDR overlap), connectivity (Prism Central URL/creds, registry), and storage (container/StorageClass) are the three buckets. Switch brand and dashboard counts are noise."},
+ {obj:"1.3",q:"A scenario requires attaching an existing EKS cluster AND enabling NKP Insights. The license tier is:",
+  opts:["Starter","Pro","Ultimate","Any tier"],
+  a:[2],why:"Attaching external clusters (EKS/AKS/GKE) and NKP Insights are Ultimate-tier capabilities. Pro covers production platform apps on Nutanix-deployed clusters, not the external-attach fleet story."},
+ {obj:"1.1",q:"The most reliable rule for diagnosing air-gapped pull failures is:",
+  opts:["Rebuild the bastion","Everything that pulls images (bootstrap, management nodes, workload nodes) must REACH and TRUST the registry; check node-side DNS/routing and CA trust","Switch to Pro","Delete and re-seed once"],
+  a:[1],why:"A successful seed only proves bastion-to-registry works. Node pulls fail on node-side reachability (DNS/routing/firewall) or CA trust. The classic seed-works-nodes-fail pattern."},
+ {obj:"1.2",q:"After the management cluster is built, the correct end state is:",
+  opts:["Bootstrap and management both persist","CAPI state PIVOTS into the management cluster and the KinD bootstrap cluster is deleted","The bootstrap becomes a workload cluster","Kommander moves to the bastion"],
+  a:[1],why:"The pivot makes the management cluster self-managing; the temporary KinD bootstrap on the bastion is then torn down."}
 ];
 (function(){
  var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
