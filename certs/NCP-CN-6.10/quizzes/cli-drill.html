@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 · CLI Drill (kubectl &amp; nkp)</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 24px;font-size:15px}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .qn code,.explain code{font-family:var(--mono);background:#0b1119;border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.86em;color:#cfe}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14px;font-family:var(--mono);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Command-Line Drill</p>
+  <h1>CLI Drill: kubectl &amp; nkp</h1>
+  <p class="sub">25 questions on every command-line piece the exam touches: the full <code>nkp</code> subcommand tree (create, push, scale, get, delete, install, config) and the <code>kubectl</code> / <code>docker</code> commands used to build and troubleshoot NKP. Instant feedback so the syntax sticks. Verified against the NKP/DKP CLI docs.</p>
+  <div id="scorebar">Score: 0 / 25 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions, verified against the NKP (DKP) CLI reference and Kubernetes docs. <a href="retake-drill.html">Retake Drill</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"nkp",q:"Which command deploys an NKP cluster onto Nutanix infrastructure?",
+  opts:["kubeadm init","nkp create cluster nutanix","terraform apply","nkp deploy prism"],
+  a:[1],why:"nkp create cluster nutanix drives the whole CAPI build against a Prism Central backend. kubeadm/terraform are not the NKP workflow."},
+ {obj:"nkp",q:"Which flag makes the resulting cluster self-managing (i.e., a management cluster that runs its own CAPI)?",
+  opts:["--management","--self-managed","--pivot=true","--standalone"],
+  a:[1],why:"--self-managed creates the prerequisites and pivots the Cluster API resources into the new cluster so it manages its own lifecycle. That pivot is what defines a management cluster."},
+ {obj:"nkp",q:"What does nkp push bundle do?",
+  opts:["Applies a license","Pushes the Konvoy and Kommander image bundles into your registry (air-gapped seeding)","Creates a nodepool","Backs up etcd"],
+  a:[1],why:"nkp push bundle --bundle <artifacts> seeds a registry with the image bundles so air-gapped clusters can pull locally. It handles both Konvoy and Kommander bundles."},
+ {obj:"nkp",q:"On nkp push bundle, which flag supplies a private CA certificate for the registry?",
+  opts:["--to-registry-ca-cert-file","--tls-off","--ca-skip","--registry-public"],
+  a:[0],why:"--to-registry-ca-cert-file passes the CA so the push trusts a privately-signed registry certificate. A CA-signed cert is best practice over self-signed."},
+ {obj:"nkp",q:"Which command changes the worker count of an existing nodepool?",
+  opts:["nkp scale nodepool --replicas N","nkp resize cluster","kubectl scale cluster","nkp create nodepool --replicas N"],
+  a:[0],why:"nkp scale nodepool --replicas N sets the desired worker count. nkp create nodepool makes a new pool; scaling changes an existing one."},
+ {obj:"nkp",q:"When scaling a nodepool DOWN, how do you control which nodes are removed?",
+  opts:["You cannot; NKP always keeps the newest","Provide a list of node names to delete; if empty, nodes are chosen at random","Delete the VMs in Prism first","Only by rebuilding the pool"],
+  a:[1],why:"nkp scale nodepool accepts a list of node names to mark for deletion when scaling down; leave it empty and NKP selects nodes at random."},
+ {obj:"nkp",q:"Which command retrieves the Kommander dashboard URL, username, and password?",
+  opts:["nkp get dashboard","nkp login","nkp show ui","kubectl get dashboard"],
+  a:[0],why:"nkp get dashboard reads the kubeconfig and returns the Kommander dashboard URL and login credentials."},
+ {obj:"nkp",q:"In nkp get kubeconfig -w platform-team, what does -w specify?",
+  opts:["The wait timeout","The workspace the target cluster belongs to","A worker node","The web port"],
+  a:[1],why:"-w / --workspace scopes the command to a workspace. nkp get kubeconfig -w <ws> fetches the kubeconfig for a cluster in that workspace."},
+ {obj:"nkp",multi:3,q:"Which THREE are valid resources for nkp get?",
+  opts:["clusters","kubeconfig","workspaces","pods","secrets"],
+  a:[0,1,2],why:"nkp get covers NKP-native resources: appdeployments, chart, clusters, dashboard, kubeconfig, nodepools, workspaces. Pods and Secrets are Kubernetes objects you query with kubectl, not nkp get."},
+ {obj:"nkp",q:"To emit editable CAPI manifests instead of immediately building the cluster, add:",
+  opts:["--print","--dry-run -o yaml","--manifest-only","--export"],
+  a:[1],why:"--dry-run -o yaml outputs the Cluster API manifests so you can edit them and kubectl apply. This is the custom-manifest customization path."},
+ {obj:"nkp",q:"Which command builds a Nutanix (AHV) node OS machine image?",
+  opts:["nkp create image nutanix","nkp bake ahv","kubectl create image","foundation image"],
+  a:[0],why:"nkp create image nutanix is the Nutanix Image Builder (NIB) path for AHV images. Konvoy Image Builder (KIB) covers the other providers."},
+ {obj:"nkp",q:"Which command installs the fleet/management plane onto the management cluster?",
+  opts:["nkp install kommander","nkp init fleet","kubectl apply kommander","nkp create kommander"],
+  a:[0],why:"nkp install kommander deploys Kommander (workspaces, projects, RBAC, platform apps) onto the management cluster after it exists; an installer config customizes it."},
+ {obj:"nkp",q:"Which command tears down a managed cluster and its provider resources?",
+  opts:["kubectl delete cluster","nkp delete cluster","nkp destroy","rm -rf cluster/"],
+  a:[1],why:"nkp delete cluster removes the managed cluster and the infrastructure it created. With --self-managed it first moves CAPI resources out before deleting."},
+ {obj:"nkp",q:"nkp config get is used to:",
+  opts:["Show Kommander configuration, including the default workspace","Fetch a pod's config","Print the license","Reset the cluster"],
+  a:[0],why:"nkp config get manages/displays Kommander configuration such as the default workspace context."},
+ {obj:"nkp",q:"You want to create the bootstrap cluster manually before creating the workload cluster. Use:",
+  opts:["nkp create bootstrap","nkp init kind","docker run bootstrap","nkp create cluster --bootstrap-only"],
+  a:[0],why:"nkp create bootstrap stands up the temporary KinD bootstrap cluster explicitly. Normally nkp create cluster creates it for you automatically and pivots."},
+ {obj:"kubectl",q:"Which command lists pods across ALL namespaces?",
+  opts:["kubectl get pods","kubectl get pods -A","kubectl pods --list","kubectl get all"],
+  a:[1],why:"kubectl get pods -A (or --all-namespaces) shows every namespace. Plain kubectl get pods shows only the current/default namespace."},
+ {obj:"kubectl",q:"A screenshot runs kubectl get pods and a pod 'is missing'. Most likely why?",
+  opts:["The pod was deleted","The command lacked -A / --all-namespaces, so only the default namespace showed","kubectl is the wrong version","The node is down"],
+  a:[1],why:"Without -A, kubectl only lists the current namespace. The 'missing' pod is in another namespace. This exact trap appears on the exam."},
+ {obj:"kubectl",q:"Which command shows the logs of a pod's PREVIOUS (crashed) container instance?",
+  opts:["kubectl logs <pod> --previous","kubectl logs <pod> --old","kubectl describe <pod>","kubectl get events"],
+  a:[0],why:"kubectl logs <pod> --previous returns the last terminated container's logs, essential for CrashLoopBackOff triage. Add -c <container> for multi-container pods."},
+ {obj:"kubectl",q:"Which command gives the detailed state of a resource, including its recent Events?",
+  opts:["kubectl get","kubectl describe","kubectl top","kubectl explain"],
+  a:[1],why:"kubectl describe <resource> shows detailed status plus the Events that explain why something is Pending or failing. get is a summary; explain shows schema."},
+ {obj:"kubectl",q:"To point kubectl at an attached EKS cluster's context, you run:",
+  opts:["kubectl config use-context <name>","kubectl switch <name>","kubectl set cluster <name>","kubectl login eks"],
+  a:[0],why:"kubectl config use-context <name> sets the active context. kubectl config get-contexts lists what is available."},
+ {obj:"kubectl",q:"Which command lists the contexts available in your kubeconfig?",
+  opts:["kubectl config get-contexts","kubectl get contexts","kubectl contexts","kubectl config list"],
+  a:[0],why:"kubectl config get-contexts displays the clusters/users/contexts defined in the kubeconfig; the starred one is current."},
+ {obj:"docker",q:"On the bastion, which command checks whether the bootstrap container is running?",
+  opts:["docker ps","docker images","nkp status","systemctl status kind"],
+  a:[0],why:"docker ps lists running containers. Since the bootstrap cluster is Kubernetes-in-Docker, docker ps confirms the KinD container is up. First step when a bootstrap stalls."},
+ {obj:"docker",multi:2,q:"Which TWO commands load an image tarball into a local runtime for an air-gapped workflow?",
+  opts:["docker load -i <file>","podman load -i <file>","docker pull <file>","kubectl load <file>"],
+  a:[0,1],why:"Docker and Podman both use load -i to import an image tarball. NKP supports either runtime; there is no kubectl load, and pull fetches from a registry."},
+ {obj:"kubectl",q:"Diagnosing a stuck NKP cluster build, the CAPI object chain to describe (top down) is:",
+  opts:["Pod → Service → Ingress","Cluster → KubeadmControlPlane / MachineDeployment → Machine → NutanixMachine","Node → Namespace → Pod","Deployment → ReplicaSet → Pod"],
+  a:[1],why:"CAPI models infrastructure: Cluster owns the control plane (KubeadmControlPlane) and worker pools (MachineDeployments), which own Machines, which map to NutanixMachines. Describe the first unhealthy one and read its conditions/events."},
+ {obj:"nkp",q:"Where is an NKP license ultimately applied?",
+  opts:["A flag on nkp create cluster","In Kommander after installation (dashboard or CLI); the tier unlocks features","Baked into the machine image","In the private registry"],
+  a:[1],why:"Licensing is a Kommander operation applied post-install (add/remove a license key); the tier gates features like external attach and Insights."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>

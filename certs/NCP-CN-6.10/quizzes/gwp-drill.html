@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP-CN 6.10 · Global / Workspace / Project Drill</title>
+<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
+<style>
+  :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
+    --teal:#1fc8c0;--purple:#7c7cf0;--amber:#f2b84b;--good:#23c98a;--bad:#ef6a6a;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:16px}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 90px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
+  h1{font-size:27px;margin:0 0 8px;letter-spacing:-.4px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+  .ladder{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 22px;font-family:var(--mono);font-size:13px;color:var(--muted);line-height:1.7}
+  .ladder b{color:var(--amber)}
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .q .tag{font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px}
+  .q .qn{font-weight:700;color:#fff;margin-bottom:6px}
+  .q .multi-note{font-size:12.5px;color:var(--amber);font-family:var(--mono);margin-bottom:8px}
+  .opt{display:block;width:100%;text-align:left;background:#0b1119;color:var(--ink);border:1px solid var(--line);
+    border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font-size:14.5px;font-family:var(--font);transition:.12s}
+  .opt:hover{border-color:var(--teal)}
+  .opt.sel{border-color:var(--purple);background:rgba(124,124,240,.12)}
+  .opt.correct{border-color:var(--good);background:rgba(35,201,138,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(239,106,106,.12)}
+  .opt:disabled{cursor:default;opacity:.9}
+  .check{margin-top:10px;background:var(--purple);border:none;color:#fff;font-weight:700;
+    padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:9px;background:#0b1119;
+    border:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .explain.show{display:block}
+  .explain b{color:var(--good)}
+  #scorebar{position:sticky;top:0;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:14px;color:var(--amber);z-index:5}
+  footer{margin-top:44px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  a{color:var(--teal);text-decoration:none}
+  @media print{:root{--bg:#fff;--panel:#fff;--ink:#111;--muted:#444;--line:#bbb}.explain{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">NCP-CN 6.10 · Multi-Tenancy Drill</p>
+  <h1>Global / Workspace / Project Drill</h1>
+  <p class="sub">16 questions on the one boundary that decides most of Section 4: the Global &rarr; Workspace &rarr; Project hierarchy, who administers each scope, what each contains, and how RBAC and resources federate down it. Instant feedback. Verified against NKP docs.</p>
+  <div class="ladder">
+    <b>Global</b> &nbsp;platform admins &nbsp;·&nbsp; the whole fleet / all workspaces<br>
+    &nbsp;&nbsp;&#8627; <b>Workspace</b> &nbsp;team leads / tenants &nbsp;·&nbsp; groups <b>clusters</b> + apps + RBAC<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#8627; <b>Project</b> &nbsp;developers / QA &nbsp;·&nbsp; groups <b>namespaces</b> across the workspace's clusters
+  </div>
+  <div id="scorebar">Score: 0 / 16 answered 0</div>
+  <div id="quiz"></div>
+  <footer>Original questions, verified against Nutanix NKP multi-tenancy documentation. <a href="section-4.html">Section 4 quiz</a> · <a href="retake-drill.html">Retake Drill</a> · <a href="../index.html">Study Hub</a></footer>
+</div>
+<script>
+var QUESTIONS=[
+ {obj:"hierarchy",q:"List the NKP governance scopes from WIDEST to narrowest.",
+  opts:["Project → Workspace → Global","Global → Workspace → Project","Workspace → Global → Project","Cluster → Workspace → Project"],
+  a:[1],why:"Global is the platform-admin scope over the whole fleet; a Workspace is a tenant/team holding clusters; a Project is a namespace-scope slice inside a workspace. Grants at a wider scope federate downward."},
+ {obj:"workspace",q:"A Workspace primarily groups:",
+  opts:["Namespaces","Clusters (plus their platform apps and RBAC)","Pods","Storage containers"],
+  a:[1],why:"A workspace is the cluster-fleet boundary: it holds one or more clusters and the apps/RBAC that apply to them. Namespaces are the Project level."},
+ {obj:"project",q:"A Project primarily groups:",
+  opts:["Clusters","Namespaces (projected onto the workspace's member clusters)","Whole datacenters","Registries"],
+  a:[1],why:"A project is a namespace-scope construct: it projects a set of namespaces (with RBAC, quotas, apps) onto the clusters that belong to its workspace."},
+ {obj:"persona",q:"Which persona maps to which scope?",
+  opts:["Developers own Global; admins own Projects","Platform admins own Global, team leads own Workspaces, developers/QA own Projects","Everyone owns everything","Only one global admin exists, no other scopes"],
+  a:[1],why:"NKP aligns scopes to personas: Global = platform admins, Workspace = team leads (their clusters/apps/RBAC), Project = developers/QA (their namespaces)."},
+ {obj:"decision",q:"Production and development need different administrators, different platform-app sets, and different clusters. Model this as:",
+  opts:["Two projects in one workspace","Two workspaces","Two namespaces on one cluster","Two Prism Central instances"],
+  a:[1],why:"Different cluster membership plus different governance/RBAC/apps is exactly the workspace boundary. Projects only slice namespaces within a single workspace's clusters."},
+ {obj:"decision",q:"Three teams share ONE workspace's six clusters; each team needs its own namespaces, quotas, and deploy pipeline. Model this as:",
+  opts:["Three workspaces","Three projects within the workspace","Eighteen clusters","Three Global admins"],
+  a:[1],why:"Same governance domain (one workspace), team-level slices = projects. Projects give each team namespaces + RBAC + quotas + GitOps across the shared clusters."},
+ {obj:"rbac",q:"You must grant a team admin over every CURRENT and FUTURE cluster in a workspace. Do it at:",
+  opts:["Each cluster's kubeconfig, one at a time","The workspace level (workspace role binding)","The Linux sudoers file","Prism Central RBAC"],
+  a:[1],why:"Workspace-level access controls federate to all member clusters, including ones added later. That automatic inheritance is the reason to grant at the workspace scope."},
+ {obj:"rbac",q:"A developer needs to create Deployments in ONE namespace of ONE cluster, nothing more. Use:",
+  opts:["A Global role","Kubernetes RBAC: a Role + RoleBinding in that namespace (or a Project scoped to it)","A new workspace","An Ultimate license"],
+  a:[1],why:"Namespace-scoped, in-cluster permission is classic Kubernetes RBAC (Role + RoleBinding), or a Project projecting that namespace. A workspace or global grant would be far too broad."},
+ {obj:"rbac",q:"Role inheritance in NKP flows:",
+  opts:["Project → Workspace → Global (upward)","Wider scope down to narrower: a Workspace grant federates into its Projects and clusters","Randomly","Only within a single cluster"],
+  a:[1],why:"Grants made at a wider scope (Global, then Workspace) federate DOWN into the narrower contexts (Projects, member clusters). You grant once, high, and it flows down."},
+ {obj:"project",q:"A project needs one identical Secret present and kept in sync in its namespace on all five member clusters. Use:",
+  opts:["Copy it by hand to each cluster","Project-level federated resources","A StatefulSet","A ConfigMap on the management cluster only"],
+  a:[1],why:"Project resource federation stamps and maintains identical objects (Secrets, ConfigMaps) across every member cluster's project namespace. Manual copies drift out of sync."},
+ {obj:"project",q:"Project-level ResourceQuotas and LimitRanges:",
+  opts:["Apply only on the management cluster","Federate the ceilings to the project's namespaces across every member cluster","Are advisory only","Prevent attaching clusters"],
+  a:[1],why:"A project's quotas and limit ranges are enforced across its namespaces on all member clusters, giving that team fleet-wide resource governance."},
+ {obj:"workspace",q:"The 'infrastructure provider' (credentials/endpoint to deploy managed clusters) is configured at which scope?",
+  opts:["Global only","The Workspace","Each Project","Each namespace"],
+  a:[1],why:"Infrastructure providers are set at the workspace level; Kommander uses them to deploy managed workload clusters into that workspace's target platform (e.g., Prism Central)."},
+ {obj:"tenancy",q:"Each tenant on shared NKP infrastructure should have isolated RBAC and see only its own environment. NKP delivers this via:",
+  opts:["One shared admin login","A workspace per tenant, with a dedicated per-tenant login URL","A single namespace per tenant","A separate management cluster per tenant"],
+  a:[1],why:"Workspaces provide tenant isolation (clusters, apps, RBAC), and NKP exposes per-tenant login URLs so a tenant only sees its workspace. No separate management cluster per tenant is required."},
+ {obj:"apps",q:"One cluster in a workspace needs different platform-app configuration than the other clusters. The mechanism is:",
+  opts:["Fork the application","Configure at workspace scope, then apply a CLUSTER-scoped override on the exception (narrower scope wins)","Stand up a second Kommander","Hand-edit that cluster and hope"],
+  a:[1],why:"Platform apps configure at workspace scope with per-cluster overrides; the narrower cluster scope wins for that one cluster. Apps can also be enabled per cluster within the workspace."},
+ {obj:"global",q:"The Global scope exists for:",
+  opts:["A single team's namespaces","Platform administrators to manage settings and roles across the entire fleet / all workspaces","Storing container images","Running production workloads"],
+  a:[1],why:"Global is the platform-admin scope: fleet-wide settings, catalog, and roles that sit above every workspace. Workloads run in project namespaces on member clusters, not 'in Global'."},
+ {obj:"project",q:"Which statement about projects is TRUE?",
+  opts:["A project is limited to a single cluster","A project can span multiple clusters in its workspace by projecting its namespaces onto each","Projects hold clusters, not namespaces","Projects replace Kubernetes namespaces entirely"],
+  a:[1],why:"A project projects the same namespace(s), RBAC, quotas, and apps onto all the member clusters chosen from its workspace, so it can span multiple clusters at the namespace level."}
+];
+(function(){
+ var root=document.getElementById('quiz'),score=0,answered=0,total=QUESTIONS.length;
+ function bar(){document.getElementById('scorebar').textContent='Score: '+score+' / '+total+'   answered '+answered;}
+ QUESTIONS.forEach(function(Q,qi){
+  var d=document.createElement('div');d.className='q';
+  var tag='<div class="tag">Q'+(qi+1)+' · '+Q.obj+(Q.multi?' · multiple response':'')+'</div>';
+  var note=Q.multi?'<div class="multi-note">Select '+Q.multi+' answers, then Check.</div>':'';
+  d.innerHTML=tag+'<div class="qn">'+Q.q+'</div>'+note;
+  var sel=new Set(),done=false;
+  Q.opts.forEach(function(o,i){
+   var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;
+   b.onclick=function(){
+    if(done)return;
+    if(Q.multi){ if(sel.has(i)){sel.delete(i);b.classList.remove('sel');} else if(sel.size<Q.multi){sel.add(i);b.classList.add('sel');} }
+    else{ finish([i]); }
+   };
+   d.appendChild(b);
+  });
+  var ex=document.createElement('div');ex.className='explain';
+  ex.innerHTML='<b>Answer: '+Q.a.map(function(i){return String.fromCharCode(65+i)}).join(', ')+'.</b> '+Q.why;
+  if(Q.multi){
+   var c=document.createElement('button');c.className='check';c.textContent='Check';
+   c.onclick=function(){ if(!done&&sel.size===Q.multi) finish(Array.from(sel)); };
+   d.appendChild(c);
+  }
+  d.appendChild(ex);
+  function finish(chosen){
+   done=true;answered++;
+   var right=Q.a.slice().sort().join()===chosen.slice().sort().join();
+   if(right)score++;
+   var opts=d.querySelectorAll('.opt');
+   opts.forEach(function(o,i){
+    o.disabled=true;
+    if(Q.a.indexOf(i)>-1)o.classList.add('correct');
+    else if(chosen.indexOf(i)>-1)o.classList.add('wrong');
+   });
+   ex.classList.add('show');bar();
+  }
+  root.appendChild(d);
+ });
+ bar();
+})();
+</script>
+</body>
+</html>
