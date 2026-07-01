@@ -235,8 +235,8 @@ function grade(auto){
  });
  var pct=Math.round(score/75*100);
  var verdict= pct>=70?'<span class="verdict pass">READY: '+pct+'% — schedule the exam.</span>'
-   : pct>=60?'<span class="verdict" style="color:var(--amber)">CLOSE: '+pct+'% — drill the weakest section, retake in 2-3 days.</span>'
-   :'<span class="verdict fail">NOT YET: '+pct+'% — rebuild the weak sections before retaking.</span>';
+   : pct>=60?'<span class="verdict" style="color:var(--amber)">CLOSE: '+pct+'%, drill the weakest section, then run this mock again in a few days.</span>'
+   :'<span class="verdict fail">NOT YET: '+pct+'%, rebuild the weak sections, then run it again.</span>';
  var rows='';[1,2,3,4].forEach(function(s){
   var p=per[s],pc=Math.round(p[0]/p[1]*100);
   rows+='<tr><td>Section '+s+'</td><td>'+p[0]+' / '+p[1]+'</td><td>'+pc+'%</td></tr>';

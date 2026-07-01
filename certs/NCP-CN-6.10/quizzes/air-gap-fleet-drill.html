@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NCP-CN 6.10 · Retake Drill (Sections 1 &amp; 4 · 30 Q / 45 min)</title>
+<title>NCP-CN 6.10 · Air Gap &amp; Fleet Drill (Sections 1 &amp; 4 · 30 Q / 45 min)</title>
 <link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg">
 <style>
   :root{--bg:#0f1722;--panel:#16212e;--ink:#e7eef5;--muted:#9fb2c4;--line:#26384a;
@@ -52,16 +52,16 @@
 </head>
 <body>
 <div class="wrap">
-  <p class="kicker">NCP-CN 6.10 · Retake Drill · Sections 1 &amp; 4</p>
-  <h1>Retake Drill: Air Gap &amp; Fleet Management</h1>
-  <p class="sub">30 questions from the two sections most candidates lose points on: <b>Section 1 (Prepare the Environment / air gap)</b> and <b>Section 4 (Fleet Management)</b>. 45-minute clock, exam mode, per-section breakdown on submit. Drill these until each section clears 75%+.</p>
+  <p class="kicker">NCP-CN 6.10 · Focused Drill · Sections 1 &amp; 4</p>
+  <h1>Focused Drill: Air Gap &amp; Fleet Management</h1>
+  <p class="sub">30 questions from the two highest-weight, trickiest sections: <b>Section 1 (Prepare the Environment / air gap)</b> and <b>Section 4 (Fleet Management)</b>. 45-minute clock, exam mode, per-section breakdown on submit. Drill these until each section clears 75%+.</p>
 
   <div id="startcard">
-    <strong>Why this drill exists</strong>
+    <strong>Why these two sections</strong>
     <ul>
       <li>The workshop instructors said air gap is <b>60-70% of the create-cluster questions</b>, and workspaces-vs-projects is <b>~20% of the exam</b>. These two sections decide pass/fail.</li>
       <li>15 questions each from Sections 1 and 4, in mixed order. Multiple-response questions say how many to pick.</li>
-      <li>Target: <b>75%+ in BOTH sections</b> before you sit the real exam again. Anything under 60% in either = keep drilling.</li>
+      <li>Target: <b>75%+ in BOTH sections</b> before you book the exam. Anything under 60% in either, keep drilling.</li>
       <li>On submit: per-section score and full review with explanations.</li>
     </ul>
     <button class="bigbtn" onclick="startExam()">Start drill · 45:00</button>
@@ -175,14 +175,14 @@ function grade(auto){
  var s1=Math.round(per[1][0]/per[1][1]*100), s4=Math.round(per[4][0]/per[4][1]*100);
  var ready = s1>=75 && s4>=75;
  var verdict = ready
-   ? '<span class="verdict pass">BOTH SECTIONS 75%+, these two are no longer your weak spots. Sit the retake.</span>'
-   : '<span class="verdict fail">KEEP DRILLING, Section 1: '+s1+'%, Section 4: '+s4+'%. Get BOTH to 75%+ before the retake.</span>';
+   ? '<span class="verdict pass">BOTH SECTIONS 75%+, you own the two toughest domains. Go book it.</span>'
+   : '<span class="verdict fail">KEEP DRILLING, Section 1: '+s1+'%, Section 4: '+s4+'%. Get BOTH to 75%+ before you book.</span>';
  var rows='<tr><td>Section 1 · Air gap</td><td>'+per[1][0]+' / '+per[1][1]+'</td><td>'+s1+'%</td></tr>'
    +'<tr><td>Section 4 · Fleet</td><td>'+per[4][0]+' / '+per[4][1]+'</td><td>'+s4+'%</td></tr>';
  var r=document.getElementById('results');
  r.innerHTML='<h2>Drill results · '+score+' / 30'+(auto?' (time expired)':'')+'</h2>'+verdict
   +'<table><tr><th>Domain</th><th>Score</th><th>%</th></tr>'+rows+'</table>'
-  +'<p style="color:var(--muted);font-size:14px">These are the two sections that cost the last attempt. Review every miss below, then re-drill until both clear 75%.</p>';
+  +'<p style="color:var(--muted);font-size:14px">These are the two highest-weight sections on the blueprint. Review every miss below, then re-drill until both clear 75%.</p>';
  r.style.display='block';document.getElementById('submitbar').style.display='none';
  r.scrollIntoView({behavior:'smooth'});prog();
 }
