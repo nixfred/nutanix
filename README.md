@@ -43,6 +43,19 @@ If you are looking for a vendor-glossy product tour, this is not that.
 
 Each module follows the same shape: cert coverage up top, four mental frames on every concept, a fence around what it is not, a lab exercise, twelve practice questions with traps explained, a hand-authored hero SVG, and 20 to 40 in-page rough.js diagrams.
 
+<table>
+<tr>
+<td width="33%"><img src="public/images/hero-01-hci-foundations.svg" alt="Isometric HCI foundations diagram"><br><strong>HCI foundations</strong><br>Compute, storage, and virtualization collapse into one operating model.</td>
+<td width="33%"><img src="public/images/hero-02-nutanix-architecture.svg" alt="Nutanix distributed architecture diagram"><br><strong>Distributed architecture</strong><br>The CVM and core services without the hand-waving.</td>
+<td width="33%"><img src="public/images/hero-03-ahv-hypervisor.svg" alt="AHV hypervisor architecture diagram"><br><strong>AHV</strong><br>The virtualization layer through a VMware engineer's lens.</td>
+</tr>
+<tr>
+<td width="33%"><img src="public/images/hero-05-dsf-storage.svg" alt="Distributed Storage Fabric data path"><br><strong>DSF storage</strong><br>Data locality, tiering, resiliency, and the I/O path.</td>
+<td width="33%"><img src="public/images/hero-06-networking-flow.svg" alt="Nutanix networking and Flow microsegmentation"><br><strong>Networking and Flow</strong><br>OVS, overlays, and policy boundaries that can be redrawn.</td>
+<td width="33%"><img src="public/images/hero-10-migration-path.svg" alt="Workload migration path to Nutanix"><br><strong>Migration path</strong><br>Move, coexistence, validation, and steady-state choices.</td>
+</tr>
+</table>
+
 | | Module | Focus |
 |---|---|---|
 | **01** | [HCI Foundations](https://nixfred.com/nutanix/modules/01-hci-foundations/) | Why hyperconverged, where it came from, what it replaces |
